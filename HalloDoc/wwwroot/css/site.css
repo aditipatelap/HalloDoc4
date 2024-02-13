@@ -1,0 +1,290 @@
+/*Global CSS*/
+#Errorinfo{
+    color:red;
+}
+/*Toast*/
+.toast {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    z-index: 10000;
+}
+
+.toast-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.toast-error {
+    background-color: #f44336;
+    color: white;
+}
+/*Patient_site CSS*/
+.hallodoc-img {
+    width: 200px;
+    height: 100px;
+}
+.light {
+    width: 30px;
+    height: 30px;
+}
+.under {
+    margin-top: 100%;
+}
+
+.terms {
+    background-color: #f8f8f9;
+    margin-bottom: 5%;
+}
+#subReq{
+    margin-top:200px;
+
+}
+#resetJustify{
+    margin-top:80px;
+}
+
+/*Login Page*/
+#loginJustify {
+    margin-bottom: 200px;
+}
+#anchr {
+    color: rgb(65, 56, 57);
+    text-decoration:none;
+}
+#anchr:hover {
+    color:deepskyblue;
+}
+#L_btn {
+    height:50px;
+    background-color:deepskyblue;   
+}
+#forgetPass {
+    color: deepskyblue;
+    text-decoration: none;
+}
+#back {
+    color: deepskyblue;
+}
+#Input_F{
+    width:35%;
+}
+#Register_Btn{
+    background-color:darkblue;
+    height:50px;
+}
+.my-icon {
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("/images/Contact.png");
+    background-repeat: no-repeat;
+    background-position: center right calc(0.375em + 0.1875rem);
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+#Title {
+    color: rgb(65, 56, 57);
+}
+body {
+    /* background-image:url(/images/Login_right.jpg); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: black;
+    background-position: center;
+}
+.dark-mode {
+    background-color: black;
+    color: white;
+    opacity: 50%;
+}
+
+.my-icon {
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("/images/Contact.png");
+    background-repeat: no-repeat;
+    background-position: center right calc(0.375em + 0.1875rem);
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.title {
+    margin-top: 100%;
+}
+.back {
+    height: 15px;
+    width: 16px;
+}
+#back-btn {
+    color: #00b8e6;
+    text-decoration: none;
+}
+
+#footer {
+    margin-top: 60%;
+}
+
+#reset {
+    background-color: #00b8e6;
+    color: white;
+}
+
+body {
+    /* background-image:url(/images/Login_right.jpg); */
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: black;
+    background-position: center;
+}
+
+.dark-mode {
+    background-color: black;
+    color: white;
+    opacity: 50%;
+}
+
+.my-icon {
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("/images/Contact.png");
+    background-repeat: no-repeat;
+    background-position: center right calc(0.375em + 0.1875rem);
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.hallodoc-img {
+    width: 200px;
+    height: 100px;
+}
+
+
+
+.title {
+    margin-top: 100%;
+}
+
+.light {
+    height: 30px;
+    width: 30px;
+}
+
+.back {
+    height: 15px;
+    width: 16px;
+}
+#back-btn {
+    color: #00b8e6;
+    text-decoration: none;
+}
+#footer {
+    margin-top: 60%;
+}
+#reset {
+    background-color: #00b8e6;
+    color: white;
+}
+/* Header */
+#nav-icon {
+    width: 150px;
+    height: 60px;
+}
+#dark-icon {
+    width: 30px;
+    height: 30px;
+}
+/* Create Request */
+#btn1 {
+    width:250px;
+    height:50px;
+    text-align: left;
+    color: #476BCB;
+    background-color:#E7EAF1;
+    border: 2px solid #D5EDF7 ;
+}
+
+#btn2 {
+    width: 250px;
+    height: 50px;
+    text-align: left;
+    color: #25B2E8;
+    background-color: #E7F2F8;
+    border: 1px solid #77ad7d;
+}
+
+#btn3 {
+    width:250px;
+    height: 50px;
+    text-align: left;
+    background-color: #E9F0E8;
+    color:#308726;
+}
+
+#btn4 {
+    width: 250px;
+    height: 50px;
+    text-align: left;
+    color: #D13390;
+    background-color: #f6E6F0;
+    border: 1px solid #D13390;
+}
+#modelBtn {
+    margin-left: 50%;
+}
+.btns {
+    height: 30px;
+}
+#phone {
+    width: 640px;
+    height: 58px;
+}
+.iti {
+    width: 100%;
+}
+
+#back-btn {
+    color: #00b8e6;
+    text-decoration: none;
+}
+#formJustify{
+    margin-top:150px;
+}
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/images/bg.png");
+    background-position: center;
+    background-size: cover;
+    
+    z-index: -1;
+}
+/**dashboard*****/
+
+
+.tab-links {
+    margin-right: 50px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+}
+
+    .tab-links::after {
+        content: "";
+        width: 0;
+        height: 3px;
+        background-color: deepskyblue;
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        transition: 0.5s;
+    }
+
+    .tab-links.active-link::after {
+        width: 100%;
+    }
+
+.tab-contents {
+    display: none;
+}
+
+    .tab-contents.active-tab {
+        display: block;
+    }

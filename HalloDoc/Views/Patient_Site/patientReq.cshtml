@@ -1,0 +1,183 @@
+﻿@using DataAccess.ViewModel
+@{
+    ViewData["Title"] = "patientReq";
+}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+@model patientReq
+
+@await Html.PartialAsync("_header")
+@await Html.PartialAsync("_Toast")
+
+
+
+<!-- Main Body Part-->
+<div class="container mt-3 d-flex justify-content-between" id="back">
+    <div></div>
+    <div></div>
+    <button class="btn btn-outline-info btn-large" onclick="location.href='@Url.Action("submitReq", "Patient_site")'">
+        <i class="bi bi-chevron-left"></i>Back
+    </button>
+
+</div>
+<form class="container form-group mt-2" method="post">
+
+    <div class="row d-flex">
+
+        <h3 class="d-flex mb-2">Patient Information</h3>
+    </div>
+    <div class="row">
+        <div class=" col-lg-12 form-floating mb-3">
+            <textarea class="form-control" asp-for="Notes" placeholder="Enter Brief Details of symptoms(optional)"
+                      id="floatingTextarea2" style="height: 100px"></textarea>
+            <label for="floatingTextarea2" class="text-dark ms-2">Enter Brief Details of symptoms(optional)</label>
+            <span asp-validation-for="Notes" id="Errorinfo"></span>
+             
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control " asp-for="Firstname" id="floatingInput" placeholder="Your First Name">
+            <label for="floatingInput" class="text-dark ms-2">First Name</label>
+            <span asp-validation-for="Firstname" id="Errorinfo"></span>
+        </div>
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control " asp-for="Lastname" id="floatingInput" placeholder="Your Last Name">
+            <label for="floatingInput" class="text-dark ms-2">Last Name</label>
+            <span asp-validation-for="Lastname" id="Errorinfo"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="Date" class="form-control " asp-for="DOB" id="floatingInput" placeholder="Date">
+            <label for="floatingInput" class="text-dark ms-2">Date of Birth</label>
+            <span asp-validation-for="DOB" id="Errorinfo"></span>
+        </div>
+    </div>
+    <h3 class="mb-2">Patient Contact Information</h3>
+    <div class="row">
+        <div class=" col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="email" class="form-control email" asp-for="Email" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput" class="text-dark ms-2">Email</label>
+            <span asp-validation-for="Email" id=""></span>
+        </div>
+        <div class="col-lg-6 col-sm-12 form-floating mb-3 formgroup">
+            <div class="form-floating">
+                <input type="tel" class="form-control p-3 ps-5 phoneNumber" asp-for="Phonenumber" placeholder="(201) 555-0123">
+                <span asp-validation-for="Phonenumber" id="Errorinfo"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row " id="password" style="display:none">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="password" class="form-control " asp-for="createPassword" id="floatingInput" placeholder="CreatePassword">
+            <label for="floatingInput" class="text-dark ms-2">CreatePassword</label>
+            <span asp-validation-for="createPassword" id="Errorinfo"></span>
+        </div>
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="password" class="form-control " asp-for="confirmPassword" id="floatingInput" placeholder="confirmPassword">
+            <label for="floatingInput" class="text-dark ms-2">ConfrimPassword</label>
+            <span asp-validation-for="confirmPassword" id="Errorinfo"></span>
+        </div>
+    </div>
+    <h3 class="mb-2">Patient Location</h3>
+    <div class="row ">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control " asp-for="Street"  id="floatingInput" placeholder="Street">
+            <label for="floatingInput" class="text-dark ms-2">Street</label>
+            <span asp-validation-for="Street" id="Errorinfo"></span>
+        </div>
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control " asp-for="City"  id="floatingInput" placeholder="City">
+            <label for="floatingInput" class="text-dark ms-2">City</label>
+            <span asp-validation-for="City" id="Errorinfo"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control " asp-for="State"  id="floatingInput" placeholder="state">
+            <label for="floatingInput" class="text-dark ms-2">State</label>
+            <span asp-validation-for="State" id="Errorinfo"></span>
+        </div>
+        <div class=" col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control" asp-for="Zipcode" id="floatingInput" placeholder="number">
+            <label for="floatingInput" class="text-dark ms-2">Zip Code</label>
+            <span asp-validation-for="Zipcode" id="Errorinfo"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 form-floating mb-3">
+            <input type="text" class="form-control"  asp-for="RoomNo"  id="floatingInput" placeholder="Relation With Patient">
+            <label for="floatingInput" class="text-dark ms-2">Room Number #/ Suite (Optional)</label>
+            <span asp-validation-for="RoomNo" id="Errorinfo"></span>
+        </div>
+    </div>
+    <h3 class="mb-2">(Optional)Upload Photo Or Document</h3>
+    @*<div class="form mb-3 col-lg-12 col-md-12 col-sm-12 d-flex">
+
+        <div class="input-group">
+            <input type="file" class="form-control" id="inputGroupFile02">
+            <label class="input-group-text bg-primary text-white" for="inputGroupFile02">
+                <i class="bi bi-cloud-arrow-up "></i>&nbsp;&nbsp;Upload
+            </label>
+
+        </div>
+
+    </div>*@
+    <div class="row my-4 ms-1 justify-content-end">
+        <div class="file-name input-group-text border-top border-bottom -border-start border-rounded-left px-3 py-2 col-11" id="file-name">Select File</div>
+        <div class="file-upload-container col-1 mx-0 px-0">
+            <label for="formFile" class="upload btn btn-info m-0 py-2"><i class="bi bi-cloud-arrow-up "></i>&nbsp;&nbsp;Upload</label>
+            <input class="d-none" type="file" id="formFile">
+        </div>
+        </div>
+    <div class="d-flex justify-content-end  mt-2 mb-2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-outline-primary ms-2">Cancel</button>
+    </div>
+</form>
+@await Html.PartialAsync("_footer")
+
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+    document.getElementById('formFile').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        document.getElementById('file-name').textContent = fileName;
+    });
+    $(document).ready(function () {
+        $('.email').focusout(function () {
+            var email = $(this).val();
+            if (email.trim() !== "") {
+                checkEmailExists(email);
+            }
+        });
+
+        function checkEmailExists(email) {
+            $.ajax({
+                url: '/Patient_site/CheckEmailExists',
+                type: 'GET',
+                data: { email: email },
+                success: function (response) {
+                    if (!response.emailExists) {
+                        $('#password').show();
+                    } else {
+                        $('#password').hide();
+                    }
+                },
+               
+            });
+        }
+    });
+</script>
+
+          

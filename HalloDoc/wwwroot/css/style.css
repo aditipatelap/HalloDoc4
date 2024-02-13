@@ -1,0 +1,96 @@
+﻿.main {
+    margin-top: 10%;
+}
+
+.hallodoc-img {
+    width: 200px;
+    height: 100px;
+}
+
+
+.dark-mode {
+    background-color: black;
+    color: white;
+}
+
+.light {
+    width: 30px;
+    height: 30px;
+}
+
+.under {
+    margin-top: 100%;
+}
+
+.terms {
+    background-color: #f8f8f9;
+    margin-bottom: 5%;
+}
+/* Create Patientpage Request */
+#nav-icon {
+    width: 150px;
+    height: 60px;
+}
+
+#dark-icon {
+    width: 30px;
+    height: 30px;
+}
+
+#btn1 {
+    height: 3rem;
+    width: 15rem;
+    text-align: left;
+    color: #7b7fa0;
+    background-color: #e9eaef;
+    border: 1px solid #7b7fa0;
+}
+
+#btn2 {
+    height: 3rem;
+    width: 15rem;
+    text-align: left;
+    color: #77ad7d;
+    background-color: #e9f0e8;
+    border: 1px solid #77ad7d;
+}
+
+#btn3 {
+    height: 3rem;
+    width: 15rem;
+    text-align: left;
+    background-color: rgb(209, 230, 209);
+    color: rgb(7, 144, 59);
+}
+
+#btn4 {
+    height: 3rem;
+    width: 15rem;
+    text-align: left;
+    color: #996080;
+    background-color: #f7e6ec;
+    border: 1px solid #996080;
+}
+
+#modelBtn {
+    margin-left: 50%;
+}
+
+.btns {
+    height: 30px;
+}
+
+#phone {
+    width: 640px;
+    height: 58px;
+}
+
+.iti {
+    width: 100%;
+}
+
+#back-btn {
+    color: #00b8e6;
+    text-decoration: none;
+}
+

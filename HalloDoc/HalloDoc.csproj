@@ -1,0 +1,83 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\css\images\**" />
+    <Content Remove="wwwroot\css\images\**" />
+    <EmbeddedResource Remove="wwwroot\css\images\**" />
+    <None Remove="wwwroot\css\images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\Admin.cs" />
+    <Compile Remove="Models\Adminregion.cs" />
+    <Compile Remove="Models\Aspnetrole.cs" />
+    <Compile Remove="Models\Aspnetuser.cs" />
+    <Compile Remove="Models\Aspnetuserrole.cs" />
+    <Compile Remove="Models\Blockrequest.cs" />
+    <Compile Remove="Models\Business.cs" />
+    <Compile Remove="Models\Casetag.cs" />
+    <Compile Remove="Models\Concierge.cs" />
+    <Compile Remove="Models\Emaillog.cs" />
+    <Compile Remove="Models\Healthprofessional.cs" />
+    <Compile Remove="Models\Healthprofessionaltype.cs" />
+    <Compile Remove="Models\Menu.cs" />
+    <Compile Remove="Models\Orderdetail.cs" />
+    <Compile Remove="Models\Physician.cs" />
+    <Compile Remove="Models\Physicianlocation.cs" />
+    <Compile Remove="Models\Physiciannotification.cs" />
+    <Compile Remove="Models\Physicianregion.cs" />
+    <Compile Remove="Models\Region.cs" />
+    <Compile Remove="Models\Request.cs" />
+    <Compile Remove="Models\Requestbusiness.cs" />
+    <Compile Remove="Models\Requestclient.cs" />
+    <Compile Remove="Models\Requestclosed.cs" />
+    <Compile Remove="Models\Requestconcierge.cs" />
+    <Compile Remove="Models\Requestnote.cs" />
+    <Compile Remove="Models\Requeststatuslog.cs" />
+    <Compile Remove="Models\Requesttype.cs" />
+    <Compile Remove="Models\Requestwisefile.cs" />
+    <Compile Remove="Models\Role.cs" />
+    <Compile Remove="Models\Rolemenu.cs" />
+    <Compile Remove="Models\Shift.cs" />
+    <Compile Remove="Models\Shiftdetail.cs" />
+    <Compile Remove="Models\Shiftdetailregion.cs" />
+    <Compile Remove="Models\Smslog.cs" />
+    <Compile Remove="Models\User.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Patient_Site\concierge.cshtml" />
+    <Content Remove="Views\Shared\infoModel.cshtml" />
+    <Content Remove="wwwroot\css\Register.css" />
+    <Content Remove="wwwroot\css\style.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+  </ItemGroup>
+
+</Project>
