@@ -15,7 +15,7 @@ namespace BusinessLogic.Interface
         //    EmailIncorrect,
         //    PasswordIncorrect
         //}
-     //  public  ValidationStatus Login(LoginModel loginModel);
+     public  bool Login(LoginModel loginModel);
 
     }
 }

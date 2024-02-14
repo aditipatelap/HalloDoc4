@@ -35,6 +35,7 @@ namespace DataAccess.ViewModel
         public string? createPassword { get; set; }
 
         public string? confirmPassword { get; set; }
+        public string file { get; set; }
 
 
     }
@@ -148,4 +149,22 @@ namespace DataAccess.ViewModel
         public string? File { get; set; }
        
     }
+
+
+
+
+    public class Dashboardmodel
+    {
+        public DateTime createddate { get; set; }
+
+
+
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+}
+    //public class dashboardmodel2
+    //{
+    //    public List<dashboardmodel> dashboards { get; set; }
+    //}
+
 }

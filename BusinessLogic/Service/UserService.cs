@@ -1,43 +1,36 @@
-﻿//using businesslogic.interface;
-//using dataaccess.data;
-//using dataaccess.models;
-//using dataaccess.viewmodel;
-//using system;
-//using system.collections.generic;
-//using system.linq;
-//using system.text;
-//using system.threading.tasks;
+﻿using BusinessLogic.Interface;
+using DataAccess.Models;
+using DataAccess.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace businesslogic.service
-//{
-//    public class loginservice : iuserinterface
-//    {
+namespace BusinessLogic.Service
+{
+    public class LoginService : IUserInterface
+    {
 
-//        private readonly dataaccess.data.applicationdbcontext _db;
+        private readonly DataAccess.Data.ApplicationDbContext _db;
 
-//        public loginservice(dataaccess.data.applicationdbcontext db)
-//        {
-//            _db = db;
-//        }
-//    }
-//}
-//        //public bool login(loginmodel loginmodel)
-//        //{
-
-//        //    //aspnetuser temp1 = _db.aspnetusers.where(x => x.email == loginmodel.email).firstordefault();
-//        //    //aspnetuser temp2 = _db.aspnetusers.where(x => x.passwordhash == loginmodel.password).firstordefault();
-//        //    //aspnetuser temp = _db.aspnetusers.where(x => x.email == loginmodel.email && x.passwordhash == loginmodel.password).firstordefault();
+        public LoginService(DataAccess.Data.ApplicationDbContext db)
+        {
+            _db = db;
+        }
 
 
 
-//        //    return _db.aspnetusers.any(x => x.email == loginmodel.email && x.passwordhash == loginmodel.password);
+        public bool Login(LoginModel loginModel)
+        {
 
-//        //}
-       
+            //Aspnetuser temp1 = _db.Aspnetusers.Where(x => x.Email == loginModel.Email).FirstOrDefault();
+            //Aspnetuser temp2 = _db.Aspnetusers.Where(x => x.Passwordhash == loginModel.Password).FirstOrDefault();
+            //Aspnetuser temp = _db.Aspnetusers.Where(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password).FirstOrDefault();
+            return _db.Aspnetusers.Any(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password);
+
+        }
+    }
 
 
-
-
-
-
-
+}

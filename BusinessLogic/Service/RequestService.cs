@@ -1,24 +1,24 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLogic.Service
-{ 
+{
 
-   
-        public class requestService : IRequestInterface
-        {
+
+    public class requestService : IRequestInterface
+    {
         private readonly DataAccess.Data.ApplicationDbContext _db;
-        public requestService(DataAccess.Data.ApplicationDbContext db)
+        private readonly IHostingEnvironment _env;
+        public requestService(DataAccess.Data.ApplicationDbContext db, IHostingEnvironment Environment)
         {
             _db = db;
+            _env = Environment;
+
         }
         public void PatientInfo(patientReq patientReq)
         {
@@ -32,23 +32,29 @@ namespace BusinessLogic.Service
             req.Phonenumber = patientReq.Phonenumber;
             req.Email = patientReq.Email;
 
+
             _db.Requests.Add(req);
             _db.SaveChanges();
+            Requestwisefile reqfile = new Requestwisefile();
+            reqfile.Createddate = DateTime.Now;
 
-            Requestclient rc = new Requestclient();
-            rc.Requestid = 1;
-            rc.Notes = patientReq.Notes;
-            rc.Firstname = patientReq.Firstname;
-            rc.Lastname = patientReq.Lastname;
-            rc.Phonenumber = patientReq.Phonenumber;
-            rc.Email = patientReq.Email;
-            rc.Street = patientReq.Street;
-            rc.City = patientReq.City;
-            rc.State = patientReq.State;
-            rc.Zipcode = patientReq.Zipcode;
-
-            _db.Requestclients.Add(rc);
+            _db.Requests.Add(req);
             _db.SaveChanges();
+            //Requestclient rc = new Requestclient();
+            //rc.Requestid = 1;
+            //rc.Notes = patientReq.Notes;
+            //rc.Firstname = patientReq.Firstname;
+            //rc.Lastname = patientReq.Lastname;
+            //rc.Phonenumber = patientReq.Phonenumber;
+            //rc.Email = patientReq.Email;
+            //rc.Street = patientReq.Street;
+
+            //rc.City = patientReq.City;
+            //rc.State = patientReq.State;
+            //rc.Zipcode = patientReq.Zipcode;
+
+            //_db.Requestclients.Add(rc);
+            //_db.SaveChanges();
         }
         public void BusinessReq(businessReq businessReq)
         {
@@ -82,9 +88,54 @@ namespace BusinessLogic.Service
 
 
         }
+        //public List<dashboardmodel> Getpatientinfo()
+        //{
+        //    return _db.Requests.Select(x => new dashboardmodel
+        //    {
+        //        createddate=x.Createddate,
+        //        Firstname=x.Firstname
+
+        //    }).ToList();
 
 
+        //}
+        //public List<dashboardmodel> GetPatientInfo()
+        //{
+        //    var user = _db.Requests.Where(x => x.Requestid == 21).FirstOrDefault();
+        //    return new List<dashboardmodel>
+        //    {
+        //        new dashboardmodel {createddate = user.Createddate , currentStatus = (user.Status == 1 ? "PENDING" : "ACTIVE"),document = "DOC.JPG" },
+        //        new dashboardmodel {createddate = DateTime.Now, currentStatus = "pending", document="myname.jpg"},
+        //        new dashboardmodel {createddate = DateTime.Now, currentStatus = "active", document="hername.jpg"}
+        //    };
+        //}
 
+        
+    //    public void UploadFile(IFormFile file)
+    //    {
+
+            
+            
+    //            var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
+    //            var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+    //            // Ensure the uploads directory exists
+    //            //Directory.CreateDirectory(uploadsFolder);
+
+    //            using (var fileStream = new FileStream(filePath, FileMode.Create))
+    //            {
+    //                file.CopyTo(fileStream);
+    //            }
+
+    //            // Save the file name in the model
+                
+            
+          
+        
+            
+
+    //}
     }
-    
 }
+    
+

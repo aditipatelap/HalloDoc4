@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interface;
+﻿
+using BusinessLogic.Interface;
 using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.Models;
@@ -7,9 +8,7 @@ using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-
-
-
+using System.Security.Cryptography.Xml;
 
 namespace HalloDoc.Controllers
 {
@@ -20,40 +19,43 @@ namespace HalloDoc.Controllers
         private readonly IRequestInterface _requestService;
         private readonly DataAccess.Data.ApplicationDbContext _db;
 
-           
+
         private ApplicationDbContext db = new ApplicationDbContext();
-        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService,ApplicationDbContext db)
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
+        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment)
+
         {
             _logger = logger;
             _loginService = loginService;
             _requestService = requestService;
             _db = db;
+            _env = Environment;
         }
 
-       // [HttpPost]
+        //ttpPost]
 
-    //    public IActionResult Patient_Login(LoginModel loginModel)
-    //    {
-    //        ApplicationDbContext db = new ApplicationDbContext();
-    //        if (ModelState.IsValid)
-    //        {
+        //    public IActionResult Patient_Login(LoginModel loginModel)
+        //    {
+        //        ApplicationDbContext db = new ApplicationDbContext();
+        //        if (ModelState.IsValid)
+        //        {
 
 
-    //            if (_loginService.Login(loginModel))
-    //            {
-    //                TempData["ToastMessage"] = "Login successful!";
-    //                TempData["ToastType"] = "toast-success";
-    //                return RedirectToAction("familyFriendReq", "Patient_site");
-    //            }
-    //            else
-    //            {
-    //                TempData["ToastMessage"] = "Invalid username or password.";
-    //                TempData["ToastType"] = "toast-error";
-    //                return RedirectToAction("Patient_Login", "Patient_site");
-    //            }
-    //    }
-    //    return View();
-    //}
+        //            if (_loginService.Login(loginModel))
+        //            {
+        //                TempData["ToastMessage"] = "Login successful!";
+        //                TempData["ToastType"] = "toast-success";
+        //                return RedirectToAction("familyFriendReq", "Patient_site");
+        //            }
+        //            else
+        //            {
+        //                TempData["ToastMessage"] = "Invalid username or password.";
+        //                TempData["ToastType"] = "toast-error";
+        //                return RedirectToAction("Patient_Login", "Patient_site");
+        //            }
+        //    }
+        //    return View();
+        //}
         //Check email
         public JsonResult CheckEmailExists(string email)
         {
@@ -64,13 +66,13 @@ namespace HalloDoc.Controllers
 
         public IActionResult Patient_Login()
         {
-          
+
 
             return View();
         }
         public IActionResult Patient_Login1(LoginModel loginModel)
         {
-    
+
             var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email);
             if (user == null)
             {
@@ -106,17 +108,78 @@ namespace HalloDoc.Controllers
         }
         public IActionResult patientReq()
         {
+
             return View();
         }
         public IActionResult patientDashboard()
         {
-            return View();
+            var data = _db.Requests.Select(m => new
+            {
+                m.Createddate,
+                m.Firstname,
+                m.Lastname,
+            }).ToList();
+            var Dashboardmodel = data.Select(item => new Dashboardmodel
+            {
+                createddate = item.Createddate,
+                Firstname = item.Firstname,
+                Lastname = item.Lastname
+            }).ToList();
+
+            return View(Dashboardmodel);
         }
+
+        //public void Upload(IFormFile file)
+        //{
+        //    _requestService.UploadFile(file);
+
+        //}
+
+        //public IActionResult DisplayData()
+        //{
+
+        //    List<dashboardmodel> data = _requestService.Getpatientinfo();
+        //    return View(data);
+        //}
+        //[HttpGet]
+        //public IActionResult DashboardInfo()
+        //{
+        //    var infos = _requestService.GetPatientInfo();
+        //    var view = new dashboardmodel2{dashboards = infos };
+        //    return View(view);
+        //}
+        // [HttpGet]
+        //public ActionResult patientDashboard()
+        //{
+
+        //}
+
         [HttpPost]
-        public IActionResult PatientReq(patientReq patientReq)
+        public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
         {
             if (ModelState.IsValid)
             {
+                if (file != null && file.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
+                    var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+                    // Ensure the uploads directory exists
+                    Directory.CreateDirectory(uploadsFolder);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+
+                    // Save the file name in the model
+                    patientReq.file = file.FileName;
+                    ViewBag.Message = "File uploaded successfully!";
+                }
+                else
+                {
+                    ViewBag.Error = "No file selected or file is empty.";
+                }
 
                 _requestService.PatientInfo(patientReq);
 
@@ -124,6 +187,8 @@ namespace HalloDoc.Controllers
             }
             return View();
         }
+   
+    
         public IActionResult familyFriendReq()
         {
             return View();

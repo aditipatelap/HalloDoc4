@@ -1,4 +1,6 @@
-﻿@{
+﻿@model List<DataAccess.ViewModel.Dashboardmodel>
+@*@model List<dashboardmodel>
+*@@{
     ViewData["Title"] = "patientDashboard";
 }
 
@@ -23,9 +25,30 @@
                     <th scope="col">Document</th>
                 </tr>
             </thead>
+            <tbody>
+              
+
+            @if (Model != null)
+            {
+                @foreach (var items in Model)
+                {
+
+                    <tr>
+                        <td>@items.createddate</td>
+                        <td>@items.Firstname</td>
+                            <td>@items.Lastname</td>
+
+                    </tr>
+                }
+            }
+            </tbody>
+
             </table>
             </div>
             </div>
+
+
+
             @*<tbody class="table-group-divider mx-5">
                 @if (ViewBag.listofrequest != null)
                 {

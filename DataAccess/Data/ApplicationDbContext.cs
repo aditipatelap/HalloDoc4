@@ -16,6 +16,7 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
+   
     public virtual DbSet<Admin> Admins { get; set; }
 
     public virtual DbSet<Adminregion> Adminregions { get; set; }
