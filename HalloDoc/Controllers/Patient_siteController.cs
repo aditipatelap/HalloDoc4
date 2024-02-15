@@ -4,6 +4,7 @@ using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -113,21 +114,18 @@ namespace HalloDoc.Controllers
         }
         public IActionResult patientDashboard()
         {
-            var data = _db.Requests.Select(m => new
-            {
-                m.Createddate,
-                m.Firstname,
-                m.Lastname,
-            }).ToList();
-            var Dashboardmodel = data.Select(item => new Dashboardmodel
-            {
-                createddate = item.Createddate,
-                Firstname = item.Firstname,
-                Lastname = item.Lastname
-            }).ToList();
+         
+            var result = _requestService.DisplayDashboard();
+           
 
-            return View(Dashboardmodel);
+
+            return View(result);
+
+           
         }
+        
+
+
 
         //public void Upload(IFormFile file)
         //{
@@ -157,34 +155,38 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
         {
-            if (ModelState.IsValid)
+            
+                //if (file != null && file.Length > 0)
+                //{
+                //    var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
+                //    var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+                //    // Ensure the uploads directory exists
+                //    Directory.CreateDirectory(uploadsFolder);
+
+                //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        file.CopyTo(fileStream);
+                //    }
+
+                //    // Save the file name in the model
+                //    patientReq.file = file.FileName;
+                //    ViewBag.Message = "File uploaded successfully!";
+                //}
+                //else
+                //{
+                //    ViewBag.Error = "No file selected or file is empty.";
+                //}
+                _requestService.UploadFile(file,patientReq);
+            if(file!=null && file.Length>0)
             {
-                if (file != null && file.Length > 0)
-                {
-                    var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
-                    var filePath = Path.Combine(uploadsFolder, file.FileName);
-
-                    // Ensure the uploads directory exists
-                    Directory.CreateDirectory(uploadsFolder);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        file.CopyTo(fileStream);
-                    }
-
-                    // Save the file name in the model
-                    patientReq.file = file.FileName;
-                    ViewBag.Message = "File uploaded successfully!";
-                }
-                else
-                {
-                    ViewBag.Error = "No file selected or file is empty.";
-                }
+                ViewBag.Message = "File uploaded successfully";
+            }
 
                 _requestService.PatientInfo(patientReq);
-
+            
                 return RedirectToAction("submitReq", "Patient_site");
-            }
+            
             return View();
         }
    
@@ -235,7 +237,15 @@ namespace HalloDoc.Controllers
         //{
         //    return View();
         //}
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Document()
+        {
+            List<Documentmodel>itemlist = _requestService.ViewDocument();
+
+            return View(itemlist);
+        }
+       
+
+           [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

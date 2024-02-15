@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccess.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,7 +36,7 @@ namespace DataAccess.ViewModel
         public string? createPassword { get; set; }
 
         public string? confirmPassword { get; set; }
-        public string file { get; set; }
+       
 
 
     }
@@ -162,9 +163,33 @@ namespace DataAccess.ViewModel
         public string Firstname { get; set; }
         public string Lastname { get; set; }
 }
+    //public class Patientmodel
+    //{
+    //    public string Firstname { get; set; }
+    //}
+    public class Dashboardpage
+    {
+        public List<Dashboardmodel> Dashboard { get; set; }
+        public string SingleUser { get; set; }
+    }
     //public class dashboardmodel2
     //{
     //    public List<dashboardmodel> dashboards { get; set; }
+    //}
+    public class Documentmodel
+    {
+        public string uploader
+        {
+            get; set;
+        }
+        public DateTime uploaddate { get; set; }
+        public string Firstname { get; set; }
+       
+    }
+    //public class MyViewModel
+    //{
+    //    public List<Dashboardmodel> item { get; set; }
+    //    public List<Dashboardmodel>
     //}
 
 }

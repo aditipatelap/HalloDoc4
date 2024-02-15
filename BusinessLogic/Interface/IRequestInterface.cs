@@ -1,4 +1,5 @@
 ﻿using DataAccess.ViewModel;
+
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,12 @@ namespace BusinessLogic.Interface
 
         // List<dashboardmodel> GetPatientInfo();
 
-      //  public string UploadFile(IFormFile file);
+        public void UploadFile(IFormFile file,patientReq patientreq);
 
+        public List<Documentmodel> ViewDocument();
+        public Dashboardpage DisplayDashboard();
+
+       //* public List<Dashboardmodel> FetchUserProfile();
 
     }
 }

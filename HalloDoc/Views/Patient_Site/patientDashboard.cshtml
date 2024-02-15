@@ -1,4 +1,4 @@
-﻿@model List<DataAccess.ViewModel.Dashboardmodel>
+﻿@model DataAccess.ViewModel.Dashboardpage
 @*@model List<dashboardmodel>
 *@@{
     ViewData["Title"] = "patientDashboard";
@@ -30,8 +30,9 @@
 
             @if (Model != null)
             {
-                @foreach (var items in Model)
+                @foreach (var items in Model.Dashboard)
                 {
+                    
 
                     <tr>
                         <td>@items.createddate</td>
@@ -73,26 +74,28 @@
                 </button>
             
         </div>
+   
         <h4 class="fw-semibold mb-4">User Profile</h4>
 
-        <form class="shadow p-5">
+        <form class="">
            
                 <div class="row gy-3 mb-3">
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-floating">
-                            <input type="email" class="form-control" placeholder="First Name">
+                            <input type="email" class="form-control" value="@Model.SingleUser" placeholder="First Name">
                             <label for="comment" class="floatingLabel text-dark">First Name</label>
                         </div>
                     </div>
 
-                    <div class="col-xs-12 col-sm-6">
-                        <div class="form-floating">
-                        <input type="tel" class="form-control p-3 ps-5" placeholder="First Name">
-                        </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" placeholder="Last Name">
+                        <label for="comment" class="floatingLabel text-dark">Last Name</label>
                     </div>
+                </div>
                     <div class="col-lg-6 col-sm-6">
                         <div class="form-floating">
-                            <input type="date" class="form-control p-3 ps-5" id="phoneNumber" placeholder="Date of Birth">
+                            <input type="date" class="form-control" id="phoneNumber" placeholder="Date of Birth">
                         </div>
                     </div>
                 </div>

@@ -1,10 +1,12 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.AspNetCore.Http.Features;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BusinessLogic.Service
 {
@@ -36,10 +38,15 @@ namespace BusinessLogic.Service
             _db.Requests.Add(req);
             _db.SaveChanges();
             Requestwisefile reqfile = new Requestwisefile();
+            reqfile.Requestid = 21;
             reqfile.Createddate = DateTime.Now;
-
-            _db.Requests.Add(req);
+            reqfile.Filename = patientReq.File;
+            _db.Requestwisefiles.Add(reqfile);
             _db.SaveChanges();
+
+
+            //_db.Requests.Add(req);
+            //_db.SaveChanges();
             //Requestclient rc = new Requestclient();
             //rc.Requestid = 1;
             //rc.Notes = patientReq.Notes;
@@ -110,32 +117,80 @@ namespace BusinessLogic.Service
         //    };
         //}
 
-        
-    //    public void UploadFile(IFormFile file)
-    //    {
 
+        public void UploadFile(IFormFile file, patientReq patientreq)
+        {
+
+
+
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
+            var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+            // Ensure the uploads directory exists
+            //Directory.CreateDirectory(uploadsFolder);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(fileStream);
+            }
+            patientreq.File = file.FileName;
+
+
+            // Save the file name in the mode
+            //
+            //
+        }
+
+        public List<Documentmodel> ViewDocument()
+        {
+            var items = _db.Requestwisefiles.Select(m => new Documentmodel
+            {
+                uploaddate = m.Createddate,
+                uploader = m.Filename
+            }).ToList();
+
+            return items;
+
+        }
+        public Dashboardpage DisplayDashboard()
+        {
             
-            
-    //            var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
-    //            var filePath = Path.Combine(uploadsFolder, file.FileName);
+            var items1= _db.Requests.Select(item => new Dashboardmodel
+            {
+                createddate = item.Createddate,
+                Firstname = item.Firstname,
+                Lastname = item.Lastname
+            }).ToList();
+           
+            User singleUser= _db.Users.FirstOrDefault(u=> u.Userid==3);
+            string usr = singleUser.Firstname;
 
-    //            // Ensure the uploads directory exists
-    //            //Directory.CreateDirectory(uploadsFolder);
+            var result = new Dashboardpage
+            {
+                Dashboard = items1,
+                SingleUser = usr
 
-    //            using (var fileStream = new FileStream(filePath, FileMode.Create))
-    //            {
-    //                file.CopyTo(fileStream);
-    //            }
 
-    //            // Save the file name in the model
-                
-            
-          
-        
-            
+            };
 
-    //}
+            return result;
+
+        }
+       
+
+
+        //public List<Dashboardmodel> FetchUserProfile()
+        //{
+        //    var items = _db.Users.Select(m => new Dashboardmodel
+        //    {
+
+        //        Firstname = m.Firstname
+        //    }).ToList();
+
+        //    return items;
+        //}
+
     }
-}
-    
+
+} 
 
