@@ -1,3 +1,5 @@
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using BusinessLogic.Interface;
 using BusinessLogic.Service;
 using DataAccess.Data;
@@ -12,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContext")));
 builder.Services.AddScoped<IUserInterface, LoginService>();
 builder.Services.AddScoped<IRequestInterface, requestService>();
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 
 
 var app = builder.Build();
@@ -23,7 +26,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseNotyf();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

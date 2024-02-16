@@ -2,6 +2,10 @@
 #Errorinfo{
     color:red;
 }
+
+.floating-input,.form-control input{
+    text-decoration-color: blue; 
+}
 /*Toast*/
 .toast {
     position: absolute;
@@ -46,6 +50,11 @@
 }
 
 /*Login Page*/
+.icon1{
+    position:absolute;
+    top:45%;
+   right:5%;
+}
 #loginJustify {
     margin-bottom: 200px;
 }

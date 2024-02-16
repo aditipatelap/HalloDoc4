@@ -1,4 +1,5 @@
 ﻿
+using AspNetCoreHero.ToastNotification.Abstractions;
 using BusinessLogic.Interface;
 using BusinessLogic.Service;
 using DataAccess.Data;
@@ -19,11 +20,12 @@ namespace HalloDoc.Controllers
         private readonly IUserInterface _loginService;
         private readonly IRequestInterface _requestService;
         private readonly DataAccess.Data.ApplicationDbContext _db;
+        private readonly INotyfService _notyf;
 
 
         private ApplicationDbContext db = new ApplicationDbContext();
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
-        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment)
+        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf)
 
         {
             _logger = logger;
@@ -31,32 +33,68 @@ namespace HalloDoc.Controllers
             _requestService = requestService;
             _db = db;
             _env = Environment;
+            _notyf = notyf;
+        }
+        public IActionResult Patient_Login()
+        {
+            return View();
         }
 
-        //ttpPost]
+        [HttpPost]
 
-        //    public IActionResult Patient_Login(LoginModel loginModel)
-        //    {
-        //        ApplicationDbContext db = new ApplicationDbContext();
-        //        if (ModelState.IsValid)
-        //        {
+        public IActionResult Patient_Login(LoginModel loginModel)
+        {
+           
+            int var=_loginService.Login(loginModel);
+           
+            if(var==1)
+            {
+               // _notyf.Error("email incorrect ");
+
+                ViewBag.Message = "User does not exist";
+                return View();
+                
+            }
+            //else if(var==2)
+            //{
+            //    _notyf.Error("Email incorrect");
+            //    // ViewBag.Message = "Email not found";
+            //    return View();
+            //}
+         else   if(var==3)
+            {
+                _notyf.Error("Password Incorrect");
+                // ViewBag.Message = "password incorrect";
+                return View();
+            }
+
+         else   if (var == 4)
+            {
+               
+                return RedirectToAction("patientDashboard", "Patient_site");
+            }
+            return View();
+                     
+
+            //if (ModelState.IsValid)
+            //{
 
 
-        //            if (_loginService.Login(loginModel))
-        //            {
-        //                TempData["ToastMessage"] = "Login successful!";
-        //                TempData["ToastType"] = "toast-success";
-        //                return RedirectToAction("familyFriendReq", "Patient_site");
-        //            }
-        //            else
-        //            {
-        //                TempData["ToastMessage"] = "Invalid username or password.";
-        //                TempData["ToastType"] = "toast-error";
-        //                return RedirectToAction("Patient_Login", "Patient_site");
-        //            }
-        //    }
-        //    return View();
-        //}
+            //    if (_loginService.Login(loginModel))
+            //    {
+            //        TempData["ToastMessage"] = "Login successful!";
+            //        TempData["ToastType"] = "toast-success";
+            //        return RedirectToAction("familyFriendReq", "Patient_site");
+            //    }
+            //    else
+            //    {
+            //        TempData["ToastMessage"] = "Invalid username or password.";
+            //        TempData["ToastType"] = "toast-error";
+            //        return RedirectToAction("Patient_Login", "Patient_site");
+            //    }
+            //}
+           
+        }
         //Check email
         public JsonResult CheckEmailExists(string email)
         {
@@ -65,40 +103,40 @@ namespace HalloDoc.Controllers
         }
 
 
-        public IActionResult Patient_Login()
-        {
+        //public IActionResult Patient_Login()
+        //{
 
 
-            return View();
-        }
-        public IActionResult Patient_Login1(LoginModel loginModel)
-        {
+        //    return View();
+        //}
+        //public IActionResult Patient_Login1(LoginModel loginModel)
+        //{
 
-            var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email);
-            if (user == null)
-            {
-                ViewBag.Error("Invalid email");
+        //    var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email);
+        //    if (user == null)
+        //    {
+        //        ViewBag.Error("Invalid email");
 
-            }
+        //    }
 
-            if (user != null)
-            {
-                if (user.Passwordhash == loginModel.Password)
-                {
-                    ViewBag.Error("Invalid Password");
+        //    if (user != null)
+        //    {
+        //        if (user.Passwordhash == loginModel.Password)
+        //        {
+        //            ViewBag.Error("Invalid Password");
 
-                }
+        //        }
 
 
 
-            }
-            else
-            {
-                ViewBag.Error("Valid");
-            }
-            return View();
+        //    }
+        //    else
+        //    {
+        //        ViewBag.Error("Valid");
+        //    }
+        //    return View();
 
-        }
+        //}
         public IActionResult resetPassword()
         {
             return View();
