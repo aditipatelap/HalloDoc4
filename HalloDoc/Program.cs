@@ -15,7 +15,13 @@ options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContex
 builder.Services.AddScoped<IUserInterface, LoginService>();
 builder.Services.AddScoped<IRequestInterface, requestService>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
-
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".HalloDoc.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -31,6 +37,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 

@@ -151,18 +151,35 @@ namespace DataAccess.ViewModel
        
     }
 
-
+    public enum status
+    {
+        Active = 1,
+        Pending = 2
+    }
 
 
     public class Dashboardmodel
     {
         public DateTime createddate { get; set; }
+        public status Status { get; set; }  
 
+        public int id { get; set; }
 
+        
+        
+    }
+    public class Profilemodel
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zipcode { get; set; }
+    }
 
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-}
     //public class Patientmodel
     //{
     //    public string Firstname { get; set; }
@@ -170,7 +187,7 @@ namespace DataAccess.ViewModel
     public class Dashboardpage
     {
         public List<Dashboardmodel> Dashboard { get; set; }
-        public string SingleUser { get; set; }
+        public Profilemodel Profiles { get; set; }
     }
     //public class dashboardmodel2
     //{
@@ -184,7 +201,9 @@ namespace DataAccess.ViewModel
         }
         public DateTime uploaddate { get; set; }
         public string Firstname { get; set; }
-       
+        public int id { get; set; }
+
+
     }
     //public class MyViewModel
     //{

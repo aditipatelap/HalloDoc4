@@ -1,12 +1,16 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using static DataAccess.ViewModel.Profilemodel;
+
 
 namespace BusinessLogic.Service
 {
@@ -25,8 +29,10 @@ namespace BusinessLogic.Service
         public void PatientInfo(patientReq patientReq)
         {
             Request req = new Request();
+
             req.Requesttypeid = 1;
             req.Status = 1;
+
             req.Createddate = DateTime.Now;
             req.Isurgentemailsent = new BitArray(1);
             req.Firstname = patientReq.Firstname;
@@ -34,35 +40,80 @@ namespace BusinessLogic.Service
             req.Phonenumber = patientReq.Phonenumber;
             req.Email = patientReq.Email;
 
+            //User user = new User();
+            //var usrE1 = _db.Users.Any(x => x.Email == req.Email);
+            var data = _db.Users.Where(x => x.Email == req.Email).FirstOrDefault();
+            if (data != null)
+            {
+                req.Userid = data.Userid;
+                _db.Requests.Add(req);
+                _db.SaveChanges();
 
-            _db.Requests.Add(req);
+            }
+            else
+            {
+                Aspnetuser Au = new Aspnetuser();
+                //Au.Id = req.Requestid;
+                Au.Email = patientReq.Email;
+                Au.Name = patientReq.Firstname + " " + patientReq.Lastname;
+                Au.Passwordhash = patientReq.createPassword;
+                Au.Phonenumber = patientReq.Phonenumber;
+                Au.Createddate = DateTime.Now;
+
+                _db.Aspnetusers.Add(Au);
+                _db.SaveChanges();
+                User usr = new User();
+                //User usr = new User();
+                usr.Aspnetuserid = Au.Id;
+                usr.Firstname = patientReq.Firstname;
+                usr.Lastname = patientReq.Lastname;
+                usr.Email = patientReq.Email;
+                usr.Mobile = patientReq.Phonenumber;
+                usr.City = patientReq.City;
+                usr.State = patientReq.State;
+                usr.Zip = patientReq.Zipcode;
+                usr.Createdby = Au.Id;
+                usr.Createddate = DateTime.Now.Date;
+                //usr.Status=req.Status;
+                req.Userid = usr.Userid;
+                _db.Users.Add(usr);
+                _db.SaveChanges();
+                _db.Requests.Add(req);
+                _db.SaveChanges();
+
+            }
+
+
+            Requestclient rc = new Requestclient();
+            rc.Requestid = req.Requestid;
+            rc.Notes = patientReq.Notes;
+            rc.Firstname = patientReq.Firstname;
+            rc.Lastname = patientReq.Lastname;
+            rc.Phonenumber = patientReq.Phonenumber;
+            rc.Email = patientReq.Email;
+            rc.Street = patientReq.Street;
+            rc.City = patientReq.City;
+            rc.State = patientReq.State;
+            rc.Zipcode = patientReq.Zipcode;
+
+            _db.Requestclients.Add(rc);
             _db.SaveChanges();
-            Requestwisefile reqfile = new Requestwisefile();
-            reqfile.Requestid = 21;
-            reqfile.Createddate = DateTime.Now;
-            reqfile.Filename = patientReq.File;
-            _db.Requestwisefiles.Add(reqfile);
+
+
+
+            Requestwisefile rf = new Requestwisefile();
+
+            rf.Requestid = req.Requestid;
+
+            rf.Filename = patientReq.File;
+            rf.Createddate = DateTime.Now;
+
+            _db.Requestwisefiles.Add(rf);
             _db.SaveChanges();
 
-
-            //_db.Requests.Add(req);
-            //_db.SaveChanges();
-            //Requestclient rc = new Requestclient();
-            //rc.Requestid = 1;
-            //rc.Notes = patientReq.Notes;
-            //rc.Firstname = patientReq.Firstname;
-            //rc.Lastname = patientReq.Lastname;
-            //rc.Phonenumber = patientReq.Phonenumber;
-            //rc.Email = patientReq.Email;
-            //rc.Street = patientReq.Street;
-
-            //rc.City = patientReq.City;
-            //rc.State = patientReq.State;
-            //rc.Zipcode = patientReq.Zipcode;
-
-            //_db.Requestclients.Add(rc);
-            //_db.SaveChanges();
         }
+       
+          
         public void BusinessReq(businessReq businessReq)
         {
             Request req = new Request();
@@ -141,10 +192,13 @@ namespace BusinessLogic.Service
             //
         }
 
-        public List<Documentmodel> ViewDocument()
+        public List<Documentmodel> ViewDocument(int id)
         {
+            var items1 = _db.Requests.Where(x => x.Userid == id).ToList();
+         
             var items = _db.Requestwisefiles.Select(m => new Documentmodel
             {
+
                 uploaddate = m.Createddate,
                 uploader = m.Filename
             }).ToList();
@@ -152,23 +206,32 @@ namespace BusinessLogic.Service
             return items;
 
         }
-        public Dashboardpage DisplayDashboard()
+       
+        public Dashboardpage DisplayDashboard(int id)
         {
-            
+           
             var items1= _db.Requests.Select(item => new Dashboardmodel
             {
                 createddate = item.Createddate,
-                Firstname = item.Firstname,
-                Lastname = item.Lastname
-            }).ToList();
+               Status=(status)item.Status,
            
-            User singleUser= _db.Users.FirstOrDefault(u=> u.Userid==3);
-            string usr = singleUser.Firstname;
+               
+            }).ToList();
+            User singleUser = _db.Users.FirstOrDefault(u => u.Userid == 3);
+            Profilemodel user = new Profilemodel();
+      
+            user.FirstName = singleUser.Firstname;
+            user.LastName = singleUser.Lastname;
+            user.Email = singleUser.Email;
+            user.PhoneNumber = singleUser.Mobile;
+            user.Street = singleUser.Street;
+            user.City = singleUser.City;
 
-            var result = new Dashboardpage
+
+            var result = new Dashboardpage()
             {
                 Dashboard = items1,
-                SingleUser = usr
+                Profiles=user
 
 
             };
@@ -176,7 +239,25 @@ namespace BusinessLogic.Service
             return result;
 
         }
-       
+       public void UserData(Profilemodel profilemodel, int id)
+        {
+            Profilemodel pm=new Profilemodel();
+
+            User existuser = _db.Users.FirstOrDefault(u => u.Userid ==3);
+            if (existuser!=null)
+            {
+                existuser.Firstname = profilemodel.FirstName;
+                existuser.Lastname = profilemodel.LastName;
+                existuser.Email = profilemodel.Email;
+                existuser.State = profilemodel.State;
+                existuser.Street = profilemodel.Street;
+                existuser.Zip = profilemodel.Zipcode;
+                _db.Update(existuser);
+                _db.SaveChanges();
+               
+
+            }
+        }
 
 
         //public List<Dashboardmodel> FetchUserProfile()

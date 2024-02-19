@@ -5,12 +5,13 @@ using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-
+using DocumentFormat.OpenXml.Presentation;
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography.Xml;
+using static DataAccess.ViewModel.Profilemodel;
 
 namespace HalloDoc.Controllers
 {
@@ -41,10 +42,19 @@ namespace HalloDoc.Controllers
         }
 
         [HttpPost]
-
+        [ValidateAntiForgeryToken]
         public IActionResult Patient_Login(LoginModel loginModel)
         {
-           
+
+            //Aspnetuser user = _db.Aspnetusers.FirstOrDefault(aspnetuser => aspnetuser.Email == loginModel.Email && aspnetuser.Passwordhash ==loginModel.Password);
+            //if (user != null)
+            //{
+            //    User patientUser = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id);
+            //    TempData["success"] = "Login Successful";
+            //    HttpContext.Session.SetInt32("userId", patientUser.Userid);
+            //    return RedirectToAction("Dashboard");
+            //}
+
             int var=_loginService.Login(loginModel);
            
             if(var==1)
@@ -150,18 +160,30 @@ namespace HalloDoc.Controllers
 
             return View();
         }
-        public IActionResult patientDashboard()
-        {
-         
-            var result = _requestService.DisplayDashboard();
-           
 
+        public IActionResult patientDashboard(Profilemodel profilemodel)
+        {
+            int id = 2;
+
+
+
+            var result = _requestService.DisplayDashboard(id);
+
+            
 
             return View(result);
 
-           
+
         }
-        
+        [HttpPost]
+         public IActionResult patientDashboard(Profilemodel profilemodel,int id)
+        {
+            _requestService.UserData(profilemodel, id);
+            return View();
+        }
+
+
+
 
 
 
@@ -277,11 +299,18 @@ namespace HalloDoc.Controllers
         //}
         public IActionResult Document()
         {
-            List<Documentmodel>itemlist = _requestService.ViewDocument();
+            int id = 2;
+            List<Documentmodel> itemlist = _requestService.ViewDocument(id);
 
             return View(itemlist);
         }
-       
+        public IActionResult Information() {
+            return View();
+        }
+       public IActionResult Someonelse()
+        {
+            return View();
+        }
 
            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

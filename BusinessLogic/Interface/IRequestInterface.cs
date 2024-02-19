@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace BusinessLogic.Interface
 {
    public interface IRequestInterface
@@ -18,8 +17,9 @@ namespace BusinessLogic.Interface
 
         public void UploadFile(IFormFile file,patientReq patientreq);
 
-        public List<Documentmodel> ViewDocument();
-        public Dashboardpage DisplayDashboard();
+        public List<Documentmodel> ViewDocument(int id);
+        public Dashboardpage DisplayDashboard( int id);
+        public void UserData(Profilemodel profilemodel, int id);
 
        //* public List<Dashboardmodel> FetchUserProfile();
 

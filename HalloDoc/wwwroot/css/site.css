@@ -52,9 +52,12 @@
 /*Login Page*/
 .icon1{
     position:absolute;
-    top:45%;
-   right:5%;
+    top:25%;
+   right:2%;
+   border:none;
+ background-color:white;
 }
+
 #loginJustify {
     margin-bottom: 200px;
 }

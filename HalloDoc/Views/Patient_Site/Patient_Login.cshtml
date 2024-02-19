@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Patient_Login";
 }
-
 @model LoginModel
 @await Html.PartialAsync("_Toast")
 <style>
@@ -65,11 +64,17 @@
     </div>
     <div class="d-flex justify-content-center align-content-center mt-2 ">
         <div class="form-floating mb-3 col-lg-4 col-md-6 col-sm-12 col-12" id="">
-                <input type="password" asp-for="Password"  class="form-control" id="password" name="Password" placeholder="Your First Name" >
-            <label for="floatingInput" class="text-dark ms-2" >Password</label>
-                <button id="toggleBtn" onclick="togglePassword()"> <i class="fa fa-eye icon1" aria-hidden="true"></i></button>
+              
+            <input type="password" asp-for="Password"  class="form-control password-input" id="passwordInput" name="Password" placeholder="Your First Name" >
+                <button type="button" class="toggle-password icon1" onclick="togglePasswordVisibility()">
+                    <i id="toggleIcon" class="fa fa-eye"></i>
+                </button>
 
+            <label for="passwordInput" class="text-dark ms-2 foating-label" >Password</label>
+@*              <button id="toggleIcon" onclick="togglePassword()"> <i class="fa fa-eye " aria-hidden="true"></i></button>
+*@
                
+
                     <span asp-validation-for="Password" id="Errorinfo"></span>
         </div>
     </div>
@@ -96,24 +101,20 @@
         <a href="#" id="anchr">Privacy policy</a>
        
     </footer>
-    <script>
-
-
-
+<script>
     function togglePasswordVisibility() {
         var passwordInput = document.getElementById("passwordInput");
-        var toggleIcon = document.getElementById("toggleBtn");
+        var toggleIcon = document.getElementById("toggleIcon");
 
-        if (passwordInput.type === "password ") {
+        if (passwordInput.type === "password") {
             passwordInput.type = "text";
-            toggleIcon = <i class="fa fa-eye ">;
+            toggleIcon.classList.remove("fa-eye");
+            toggleIcon.classList.add("fa-eye-slash");
         } else {
             passwordInput.type = "password";
-            toggleIcon.src = "eye.png";
+            toggleIcon.classList.remove("fa-eye-slash");
+            toggleIcon.classList.add("fa-eye");
         }
     }
-
 </script>
-   
-     
 
