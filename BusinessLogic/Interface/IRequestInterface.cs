@@ -17,10 +17,12 @@ namespace BusinessLogic.Interface
 
         public void UploadFile(IFormFile file,patientReq patientreq);
 
-        public List<Documentmodel> ViewDocument(int id);
+        public doc ViewDocument(int id);
         public Dashboardpage DisplayDashboard( int id);
-        public void UserData(Profilemodel profilemodel, int id);
-
+        //public void UserData(Profilemodel pm, int id);
+        public void SaveProfileData(Profilemodel model, int id);
+        public void FileUpload( IFormFile file, int id);
+       
        //* public List<Dashboardmodel> FetchUserProfile();
 
     }

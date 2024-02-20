@@ -165,7 +165,7 @@ namespace DataAccess.ViewModel
 
         public int id { get; set; }
 
-        
+        public int Fcount { get; set; }
         
     }
     public class Profilemodel
@@ -179,20 +179,15 @@ namespace DataAccess.ViewModel
         public string State { get; set; }
         public string Zipcode { get; set; }
     }
+    
 
-    //public class Patientmodel
-    //{
-    //    public string Firstname { get; set; }
-    //}
+
     public class Dashboardpage
     {
         public List<Dashboardmodel> Dashboard { get; set; }
-        public Profilemodel Profiles { get; set; }
+        public Profilemodel? Profiles { get; set; }
     }
-    //public class dashboardmodel2
-    //{
-    //    public List<dashboardmodel> dashboards { get; set; }
-    //}
+  
     public class Documentmodel
     {
         public string uploader
@@ -205,6 +200,12 @@ namespace DataAccess.ViewModel
 
 
     }
+    public class doc
+    {
+        public List<Documentmodel> docs { get; set; }
+        public string Filename { get; set; }
+    }
+
     //public class MyViewModel
     //{
     //    public List<Dashboardmodel> item { get; set; }

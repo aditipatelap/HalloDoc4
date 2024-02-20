@@ -300,3 +300,48 @@ body {
     .tab-contents.active-tab {
         display: block;
     }
+    /********drak mode **********/
+
+/*:root {
+    color-scheme: light dark;
+    --primary-color: #0ba4c2;
+}
+
+html, body {
+    height: 100vh;
+}
+
+body {
+    --text-color: #262626;
+    --bg-color: #fff;
+}
+
+    body.dark-theme {
+        --text-color: #eee;
+        --bg-color: #262626;
+    }
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --text-color: #eee;
+        --bg-color: #262626;
+    }
+
+        body.light-theme {
+            --text-color: #262626;
+            --bg-color: #fff;
+        }
+
+    img {
+        opacity: .75;
+        transition: opacity .5s ease-in-out;
+    }
+}
+
+body, input, select, textarea, label, .modal-content, .iti__country-list {
+    background: var(--bg-color) !important;
+}
+
+h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content, .iti__country-list {
+    color: var(--text-color) !important;
+}*/

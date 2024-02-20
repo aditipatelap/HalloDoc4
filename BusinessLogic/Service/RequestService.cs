@@ -6,7 +6,9 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using static DataAccess.ViewModel.Profilemodel;
@@ -19,8 +21,8 @@ namespace BusinessLogic.Service
     public class requestService : IRequestInterface
     {
         private readonly DataAccess.Data.ApplicationDbContext _db;
-        private readonly IHostingEnvironment _env;
-        public requestService(DataAccess.Data.ApplicationDbContext db, IHostingEnvironment Environment)
+        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
+        public requestService(DataAccess.Data.ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment)
         {
             _db = db;
             _env = Environment;
@@ -191,31 +193,65 @@ namespace BusinessLogic.Service
             //
             //
         }
-
-        public List<Documentmodel> ViewDocument(int id)
+        public void FileUpload( IFormFile file, int id)
         {
-            var items1 = _db.Requests.Where(x => x.Userid == id).ToList();
+
+            if (file != null && file.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
+                var filePath = Path.Combine(uploadsFolder, file.FileName);
+
+                // Ensure the uploads directory exists
+                Directory.CreateDirectory(uploadsFolder);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+                Requestwisefile requestwisefile = new Requestwisefile();
+                // Save the file name in the model
+
+               requestwisefile.Requestid = 21;
+                requestwisefile.Filename = file.FileName;
+                requestwisefile.Createddate = DateTime.Now;
+                _db.Requestwisefiles.Add(requestwisefile);
+                _db.SaveChanges();
+                //ViewBag.Message = "File uploaded successfully!";
+            }
+
+        }
+
+        public doc ViewDocument(int id)
+        {
+            //var items1 = _db.Requests.Where(x => x.Userid == id).ToList();
          
-            var items = _db.Requestwisefiles.Select(m => new Documentmodel
+
+            var items = _db.Requestwisefiles.Where(x => x.Requestid== 21).Select(m => new Documentmodel
             {
 
                 uploaddate = m.Createddate,
                 uploader = m.Filename
             }).ToList();
-
-            return items;
-
-        }
-       
-        public Dashboardpage DisplayDashboard(int id)
-        {
-           
-            var items1= _db.Requests.Select(item => new Dashboardmodel
+            var result = new doc
             {
-                createddate = item.Createddate,
-               Status=(status)item.Status,
-           
-               
+                docs = items
+            };
+            return result;
+
+        }   
+       
+        public Dashboardpage DisplayDashboard(int Userid)
+        {
+            
+            // int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+
+            var items1= _db.Requests.Where(x => x.Userid == Userid).Select(x => new Dashboardmodel
+            {
+                createddate = x.Createddate,
+               Status=(status)x.Status,
+               id= x.Requestid,
+                Fcount = x.Requestwisefiles.Count()
+
             }).ToList();
             User singleUser = _db.Users.FirstOrDefault(u => u.Userid == 3);
             Profilemodel user = new Profilemodel();
@@ -239,27 +275,49 @@ namespace BusinessLogic.Service
             return result;
 
         }
-       public void UserData(Profilemodel profilemodel, int id)
-        {
-            Profilemodel pm=new Profilemodel();
 
-            User existuser = _db.Users.FirstOrDefault(u => u.Userid ==3);
-            if (existuser!=null)
+
+
+        /*   public void UserData(Profilemodel pm, int id)
+           {
+
+
+               User existuser = _db.Users.FirstOrDefault(u => u.Userid == id);
+               if (existuser != null)
+               {
+                   existuser.Firstname = pm.FirstName;
+                   existuser.Lastname = pm.LastName;
+                   existuser.Email = pm.Email;
+                   existuser.State = pm.State;
+                //   existuser.Street = profilemodel.Street
+                  // existuser.Zip = profilemodel.Zipcode;
+   //_db.Update(existuser)
+
+               }
+               _db.SaveChanges();
+
+           }*/
+
+        public void SaveProfileData(Profilemodel model, int id)
+        {
+            var user = _db.Users.FirstOrDefault(x => x.Userid == id);
+
+            if (user != null)
             {
-                existuser.Firstname = profilemodel.FirstName;
-                existuser.Lastname = profilemodel.LastName;
-                existuser.Email = profilemodel.Email;
-                existuser.State = profilemodel.State;
-                existuser.Street = profilemodel.Street;
-                existuser.Zip = profilemodel.Zipcode;
-                _db.Update(existuser);
-                _db.SaveChanges();
-               
+                user.Firstname = model.FirstName;
+                user.Lastname = model.LastName;
+                //DOB
+                user.Mobile = model.PhoneNumber;
+                // user.Email = model.Email;
+                user.Street = model.Street;
+                user.City = model.City;
+                user.State = model.State;
+                user.Zip = model.Zipcode;
+                user.Modifieddate = DateTime.Now;
 
             }
+            _db.SaveChanges();
         }
-
-
         //public List<Dashboardmodel> FetchUserProfile()
         //{
         //    var items = _db.Users.Select(m => new Dashboardmodel

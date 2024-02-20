@@ -4,7 +4,7 @@
 // Write your JavaScript code.
 //Toggle Forget Password
 
-const togglePassword = document.querySelector("#togglePassword");
+/*const togglePassword = document.querySelector("#togglePassword");
 const password = document.querySelector("#password");
 togglePassword.addEventListener("click", () => {
     // Toggle the type attribute using
@@ -22,4 +22,27 @@ function myFunction() {
 document.getElementById('formFile').addEventListener('change', function () {
     var fileName = this.files[0].name;
     document.getElementById('file-name').textContent = fileName;
+})*/;
+/****dark mode/****/
+const btn1 = document.querySelector(".btn-toggle");
+const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+const currentTheme = localStorage.getItem("theme");
+if (currentTheme == "dark") {
+    document.body.classList.toggle("dark-theme");
+}
+else if (currentTheme == "light") {
+    document.body.classList.toggle("light-theme");
+}
+
+btn1.addEventListener("click", function () {
+    if (prefersDarkScheme.matches) {
+        document.body.classList.toggle("light-theme");
+        var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
+    }
+    else {
+        document.body.classList.toggle("dark-theme");
+        var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
+    }
+    localStorage.setItem("theme", theme);
 });

@@ -1,17 +1,11 @@
 ﻿
 using AspNetCoreHero.ToastNotification.Abstractions;
 using BusinessLogic.Interface;
-using BusinessLogic.Service;
 using DataAccess.Data;
-using DataAccess.Models;
 using DataAccess.ViewModel;
-using DocumentFormat.OpenXml.Presentation;
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Security.Cryptography.Xml;
-using static DataAccess.ViewModel.Profilemodel;
 
 namespace HalloDoc.Controllers
 {
@@ -22,11 +16,11 @@ namespace HalloDoc.Controllers
         private readonly IRequestInterface _requestService;
         private readonly DataAccess.Data.ApplicationDbContext _db;
         private readonly INotyfService _notyf;
-
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private ApplicationDbContext db = new ApplicationDbContext();
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
-        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf)
+        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf, IHttpContextAccessor httpContextAccessor)
 
         {
             _logger = logger;
@@ -35,6 +29,7 @@ namespace HalloDoc.Controllers
             _db = db;
             _env = Environment;
             _notyf = notyf;
+            _httpContextAccessor = httpContextAccessor;
         }
         public IActionResult Patient_Login()
         {
@@ -54,36 +49,67 @@ namespace HalloDoc.Controllers
             //    HttpContext.Session.SetInt32("userId", patientUser.Userid);
             //    return RedirectToAction("Dashboard");
             //}
+            if (ModelState.IsValid)
+            {
+                //var user = _aspNetUsersServices.Login(loginModel);
+                var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
+                if (user != null)
+                {
+                    int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+                    _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
 
-            int var=_loginService.Login(loginModel);
+                    string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+
+                    //_httpContextAccessor.HttpContext.Session.SetInt32("id", id);
+                    _httpContextAccessor.HttpContext.Session.SetString("PatientName", userName);
+
+                    _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
+
+
+
+                    return RedirectToAction("patientDashboard", "Patient_Site");
+                }
+                else
+                {
+                    _notyf.Custom("Login Failed", 3, "red", "bi bi-x-circle-fill");
+                    return View();
+                }
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+        //int var=_loginService.Login(loginModel);
            
-            if(var==1)
-            {
-               // _notyf.Error("email incorrect ");
+        //    if(var==1)
+        //    {
+        //       // _notyf.Error("email incorrect ");
 
-                ViewBag.Message = "User does not exist";
-                return View();
+        //        ViewBag.Message = "User does not exist";
+        //        return View();
                 
-            }
-            //else if(var==2)
-            //{
-            //    _notyf.Error("Email incorrect");
-            //    // ViewBag.Message = "Email not found";
-            //    return View();
-            //}
-         else   if(var==3)
-            {
-                _notyf.Error("Password Incorrect");
-                // ViewBag.Message = "password incorrect";
-                return View();
-            }
+        //    }
+        //    //else if(var==2)
+        //    //{
+        //    //    _notyf.Error("Email incorrect");
+        //    //    // ViewBag.Message = "Email not found";
+        //    //    return View();
+        //    //}
+        // else   if(var==3)
+        //    {
+        //        _notyf.Error("Password Incorrect");
+        //        // ViewBag.Message = "password incorrect";
+        //        return View();
+        //    }
 
-         else   if (var == 4)
-            {
+        // else   if (var == 4)
+        //    {
                
-                return RedirectToAction("patientDashboard", "Patient_site");
-            }
-            return View();
+        //        return RedirectToAction("patientDashboard", "Patient_site");
+        //    }
+        //    return View();
                      
 
             //if (ModelState.IsValid)
@@ -104,7 +130,7 @@ namespace HalloDoc.Controllers
             //    }
             //}
            
-        }
+        
         //Check email
         public JsonResult CheckEmailExists(string email)
         {
@@ -161,29 +187,39 @@ namespace HalloDoc.Controllers
             return View();
         }
 
-        public IActionResult patientDashboard(Profilemodel profilemodel)
+        public IActionResult patientDashboard()
         {
-            int id = 2;
+            int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
 
 
 
             var result = _requestService.DisplayDashboard(id);
 
-            
 
             return View(result);
 
 
         }
+
+        /*  u public IActionResult UpdateProfle(Profilemodel profilemodel)
+          {
+              int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+
+              _requestService.UserData(profilemodel, id);
+              return View();
+          }
+        
+  */
+
         [HttpPost]
-         public IActionResult patientDashboard(Profilemodel profilemodel,int id)
+        public ActionResult UpdateProfile(Dashboardpage model)
         {
-            _requestService.UserData(profilemodel, id);
-            return View();
+            //int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+            //_requestService.SaveProfileData(model, id);
+
+            return RedirectToAction("patientDashboard");
+
         }
-
-
-
 
 
 
@@ -300,9 +336,16 @@ namespace HalloDoc.Controllers
         public IActionResult Document()
         {
             int id = 2;
-            List<Documentmodel> itemlist = _requestService.ViewDocument(id);
+            var itemlist = _requestService.ViewDocument(id);
 
             return View(itemlist);
+        }
+        [HttpPost]
+        public IActionResult Document(IFormFile file,int id)
+        {
+            
+           _requestService.FileUpload( file,  id);
+            return RedirectToAction("Document", "Patient_site");
         }
         public IActionResult Information() {
             return View();
