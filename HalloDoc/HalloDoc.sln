@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "..\Busines
 		{EBA11EBC-7F8C-444B-88DE-917234595DD7} = {EBA11EBC-7F8C-444B-88DE-917234595DD7}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "..\Admin\Admin.csproj", "{7C546CA8-1A4A-4E2F-9A01-DDDBD836E8E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Admin", "..\Admin\Admin.csproj", "{7C546CA8-1A4A-4E2F-9A01-DDDBD836E8E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

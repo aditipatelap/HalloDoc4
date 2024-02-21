@@ -57,6 +57,11 @@
    border:none;
  background-color:white;
 }
+.icon4{
+    position:absolute;
+    top:30%;
+    right:5%;
+}
 
 #loginJustify {
     margin-bottom: 200px;
@@ -300,7 +305,7 @@ body {
     .tab-contents.active-tab {
         display: block;
     }
-    /********drak mode **********/
+    /********drak mode ***********/
 
 /*:root {
     color-scheme: light dark;
@@ -343,5 +348,4 @@ body, input, select, textarea, label, .modal-content, .iti__country-list {
 }
 
 h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content, .iti__country-list {
-    color: var(--text-color) !important;
-}*/
+    color: var(--text-color) !important;*/

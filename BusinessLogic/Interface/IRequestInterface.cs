@@ -1,4 +1,5 @@
-﻿using DataAccess.ViewModel;
+﻿using DataAccess.Models;
+using DataAccess.ViewModel;
 
 using Microsoft.AspNetCore.Http;
 using System;
@@ -22,8 +23,12 @@ namespace BusinessLogic.Interface
         //public void UserData(Profilemodel pm, int id);
         public void SaveProfileData(Profilemodel model, int id);
         public void FileUpload( IFormFile file, int id);
-       
-       //* public List<Dashboardmodel> FetchUserProfile();
+        public User Information();
+        public void Someoneelse(patientReq model, int id);
+
+      public void mail(string email);
+
+        //* public List<Dashboardmodel> FetchUserProfile();
 
     }
 }

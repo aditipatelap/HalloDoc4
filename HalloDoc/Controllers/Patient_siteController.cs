@@ -251,6 +251,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
         {
+          
             
                 //if (file != null && file.Length > 0)
                 //{
@@ -294,6 +295,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult FamilyFriendReq(familyReq familyReq)
         {
+            _requestService.mail(familyReq.Email);
             if (ModelState.IsValid)
             { 
 
@@ -348,14 +350,42 @@ namespace HalloDoc.Controllers
             return RedirectToAction("Document", "Patient_site");
         }
         public IActionResult Information() {
+           var res= _requestService.Information();
             return View();
         }
-       public IActionResult Someonelse()
+
+        [HttpPost]
+        public IActionResult Information(patientReq patientreq)
+        {
+          _requestService.PatientInfo(patientreq);
+            return View();
+        }
+        public IActionResult Someonelse()
+        {
+          
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Someonelse(patientReq patientreq,int id)
+        {
+            _requestService.Someoneelse(patientreq,id);
+            return View();
+        }
+       
+
+        [HttpPost]
+        public IActionResult resetPassword(LoginModel model)
+        {
+            _requestService.mail(model.Email);
+            return View();
+        }
+        public IActionResult Dash()
         {
             return View();
         }
 
-           [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

@@ -20,7 +20,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your Email Address.")]
         public string? Email { get; set; }
         [Required(ErrorMessage = "Please enter Your DOB.")]
-        public string? DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         [Required(ErrorMessage = "Please enter Your Street.")]
         public string? Street { get; set; }
@@ -32,13 +32,17 @@ namespace DataAccess.ViewModel
         public string? Zipcode { get; set; }
         [Required(ErrorMessage = "Please enter Your RoomNo.")]
         public string? RoomNo { get; set; }
-        public string? File { get; set; }
+        public string File { get; set; }
         public string? createPassword { get; set; }
 
         public string? confirmPassword { get; set; }
-       
+       public string relation { get; set; }
 
 
+    }
+    public class patientmailmodel
+    {
+        public string email { get; set; }
     }
 
     public class familyReq {
@@ -46,6 +50,7 @@ namespace DataAccess.ViewModel
         public string? F_Firstname { get; set; }
         [Required(ErrorMessage = "Please enter Your Lastname.")]
         public string? F_Lastname { get; set; }
+        public DateTime DOB { get; set; }
         [Required(ErrorMessage = "Please enter Your Phonenumber.")]
         public string? F_Phonenumber { get; set; }
         [Required(ErrorMessage = "Please enter Your Email Address.")]
@@ -62,7 +67,6 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter patient email address.")]
         public string? Email { get; set; }
         [Required(ErrorMessage = "Please enter patient DOB.")]
-        public string? DOB { get; set; }
         public string? Notes { get; set; }
         [Required(ErrorMessage = "Please enter patient Street.")]
         public string? Street { get; set; }
@@ -75,6 +79,7 @@ namespace DataAccess.ViewModel
         public string? RoomNo { get; set; }
         [Required(ErrorMessage = "Please enter patient Country.")]
         public string? Country { get; set; }
+        public string File{ get; set; }
 
     }
 
@@ -153,8 +158,13 @@ namespace DataAccess.ViewModel
 
     public enum status
     {
-        Active = 1,
-        Pending = 2
+        New=1,
+        Pending = 2,
+         Active= 3,
+         Conclude=4,
+         Close=5,
+         Unpaid=6
+
     }
 
 
@@ -167,12 +177,14 @@ namespace DataAccess.ViewModel
 
         public int Fcount { get; set; }
         
+        
     }
     public class Profilemodel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public string Dob { get; set; }
         public string PhoneNumber { get; set; }
         public string Street { get; set; }
         public string City { get; set; }

@@ -21,8 +21,11 @@
         <img class="hallodoc-img " id="img1" src="~/images/Login_Page_Title.png" alt="">
     </div>
     <div>
-        <img onclick="myFunction()" class="light float-right" src="/images/darkmodelight.png" alt="">
+        <button class="m-3 p-2 px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle">
+            <i class="fa fa-moon i-info"></i>
+        </button>
     </div>
+
 </div>
 
 <div class="container " id="resetJustify">
@@ -54,8 +57,8 @@
     <div class="d-flex justify-content-center align-content-center mt-3">
        
     <div class="form-floating mb-3 col-lg-4 col-md-6 col-sm-12 col-12">
-                <input type="email" asp-for="Email" class="form-control my-icon " id="floatingInput" name="Email" placeholder="Your First Name">
-
+                <input type="email" asp-for="Email" class="form-control " id="floatingInput" name="Email" placeholder="Your First Name">
+                <i class="fa fa-user icon4"></i>
         <label for="floatingInput" class="text-dark ms-2">Email</label>
                 <span asp-validation-for="Email" id="Errorinfo"></span>
                 

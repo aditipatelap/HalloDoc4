@@ -53,9 +53,14 @@
 
   <ItemGroup>
     <Content Remove="Views\Patient_Site\concierge.cshtml" />
+    <Content Remove="Views\Patient_Site\Dashboard.cshtml" />
     <Content Remove="Views\Shared\infoModel.cshtml" />
     <Content Remove="wwwroot\css\Register.css" />
     <Content Remove="wwwroot\css\style.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Views\Patient_Site\Dashboard.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
