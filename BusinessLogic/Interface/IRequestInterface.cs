@@ -13,17 +13,19 @@ namespace BusinessLogic.Interface
     {
         public void PatientInfo(patientReq patientReq);
         public void BusinessReq(businessReq businessReq);
+        public void familyreq(familyReq familyReq);
+        public void ConciergeReq(conciergeReq conciergereq);
 
-        // List<dashboardmodel> GetPatientInfo();
+       
 
         public void UploadFile(IFormFile file,patientReq patientreq);
 
-        public doc ViewDocument(int id);
+        public Dashboardpage ViewDocument(int id);
         public Dashboardpage DisplayDashboard( int id);
         //public void UserData(Profilemodel pm, int id);
         public void SaveProfileData(Profilemodel model, int id);
         public void FileUpload( IFormFile file, int id);
-        public User Information();
+        public patientReq Information(patientReq patientreq, int id);
         public void Someoneelse(patientReq model, int id);
 
       public void mail(string email);

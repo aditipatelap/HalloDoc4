@@ -17,6 +17,9 @@ using System.Net;
 using static DataAccess.ViewModel.Profilemodel;
 using Aspose.Email;
 using MimeKit;
+using static BusinessLogic.Service.requestService;
+using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace BusinessLogic.Service
 {
@@ -32,65 +35,81 @@ namespace BusinessLogic.Service
             _env = Environment;
 
         }
+        public enum RequestType {
+            Patient = 1,
+            Business = 2,
+            Family = 3,
+            Concierge = 4
+
+        }
+        public enum Status
+        {
+            New = 1,
+            Active = 2,
+            Pending = 3,
+            Unassigned = 4
+
+        }
         public void PatientInfo(patientReq patientReq)
         {
-            Request req = new Request();
+            Aspnetuser user = _db.Aspnetusers.Where(x => x.Email == patientReq.Email).FirstOrDefault();
+            User users=_db.Users.Where(x => x.Email == patientReq.Email).FirstOrDefault();
+            Aspnetuser Au = new Aspnetuser();
+            User usr = new User();
+            DataAccess.Models.Request req = new DataAccess.Models.Request();
+            Requestclient rc = new Requestclient();
+            Requestwisefile rf = new Requestwisefile();
+            
+            if (user == null)
+            {
+                Au.Id = Guid.NewGuid().ToString();
+                Au.Email = patientReq.Email;
+                Au.Name = patientReq.Firstname + " " + patientReq.Lastname;
+                Au.Passwordhash = patientReq.createPassword;
+                Au.Phonenumber = patientReq.Phonenumber;
+                Au.Createddate = DateTime.Now;
 
-            req.Requesttypeid = 1;
-            req.Status = 1;
+                _db.Aspnetusers.Add(Au);
+                _db.SaveChanges();
+
+
+                usr.Aspnetuserid = Au.Id;
+
+                usr.Firstname = patientReq.Firstname;
+                usr.Lastname = patientReq.Lastname;
+                usr.Email = patientReq.Email;
+                usr.Mobile = patientReq.Phonenumber;
+                usr.City = patientReq.City;
+                usr.State = patientReq.State;
+                usr.Zip = patientReq.Zipcode;
+                usr.Createdby = Au.Id;
+                usr.Createddate = DateTime.Now.Date;
+
+                _db.Users.Add(usr);
+                _db.SaveChanges();
+
+
+            }
+
+
 
             req.Createddate = DateTime.Now;
+            
             req.Isurgentemailsent = new BitArray(1);
             req.Firstname = patientReq.Firstname;
             req.Lastname = patientReq.Lastname;
             req.Phonenumber = patientReq.Phonenumber;
             req.Email = patientReq.Email;
-
-            //User user = new User();
-            //var usrE1 = _db.Users.Any(x => x.Email == req.Email);
-            var data = _db.Users.Where(x => x.Email == req.Email).FirstOrDefault();
-            if (data != null)
+            req.Requesttypeid = (int)RequestType.Patient;
+            req.Status = (short)Status.Unassigned;
+            if (user != null)
             {
-                req.Userid = data.Userid;
-                _db.Requests.Add(req);
-                _db.SaveChanges();
-
+                req.Userid = users.Userid;
+                
             }
-            //else
-            //{
-            //    Aspnetuser Au = new Aspnetuser();
-            //    Au.Id = req.Requestid;
-            //    Au.Email = patientReq.Email;
-            //    Au.Name = patientReq.Firstname + " " + patientReq.Lastname;
-            //    Au.Passwordhash = patientReq.createPassword;
-            //    Au.Phonenumber = patientReq.Phonenumber;
-            //    Au.Createddate = DateTime.Now;
+            _db.Requests.Add(req);
+            _db.SaveChanges();
 
-            //    _db.Aspnetusers.Add(Au);
-            //    _db.SaveChanges();
-            //    User usr = new User();
-            //    //User usr = new User();
-            //    usr.Aspnetuserid = Au.Id;
-            //    usr.Firstname = patientReq.Firstname;
-            //    usr.Lastname = patientReq.Lastname;
-            //    usr.Email = patientReq.Email;
-            //    usr.Mobile = patientReq.Phonenumber;
-            //    usr.City = patientReq.City;
-            //    usr.State = patientReq.State;
-            //    usr.Zip = patientReq.Zipcode;
-            //    usr.Createdby = Au.Id;
-            //    usr.Createddate = DateTime.Now.Date;
-            //    //usr.Status=req.Status;
-            //    req.Userid = usr.Userid;
-            //    _db.Users.Add(usr);
-            //    _db.SaveChanges();
-            //    _db.Requests.Add(req);
-            //    _db.SaveChanges();
-
-            //}
-
-
-            Requestclient rc = new Requestclient();
             rc.Requestid = req.Requestid;
             rc.Notes = patientReq.Notes;
             rc.Firstname = patientReq.Firstname;
@@ -101,54 +120,184 @@ namespace BusinessLogic.Service
             rc.City = patientReq.City;
             rc.State = patientReq.State;
             rc.Zipcode = patientReq.Zipcode;
+            rc.Regionid = 1;
 
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
+            if (patientReq.file != null)
+            {
 
 
+                rf.Requestid = req.Requestid;
+
+                rf.Filename = patientReq.file;
+                rf.Createddate = DateTime.Now;
+
+                _db.Requestwisefiles.Add(rf);
+                _db.SaveChanges();
+            }
+            
+
+
+        }
+    
+
+        public void familyreq(familyReq familyReq)
+        {
+
+            DataAccess.Models.Request req =new DataAccess.Models.Request();  
+            Requestclient rc = new Requestclient();
             Requestwisefile rf = new Requestwisefile();
 
-            rf.Requestid = req.Requestid;
 
-            rf.Filename = patientReq.File;
-            rf.Createddate = DateTime.Now;
-
-            _db.Requestwisefiles.Add(rf);
+            req.Createddate = DateTime.Now;
+            req.Isurgentemailsent = new BitArray(1);
+            req.Firstname = familyReq.F_Firstname;
+            req.Lastname = familyReq.F_Lastname;
+            req.Phonenumber = familyReq.F_Phonenumber;
+            req.Email = familyReq.Email;
+            req.Requesttypeid = (int)RequestType.Patient;
+            req.Status = (short)Status.Unassigned;
+            _db.Requests.Add(req);
             _db.SaveChanges();
+
+            rc.Requestid = req.Requestid;
+            rc.Notes = familyReq.Notes;
+            rc.Firstname = familyReq.Firstname;
+            rc.Lastname = familyReq.Lastname;
+            rc.Phonenumber = familyReq.Phonenumber;
+            rc.Email = familyReq.Email;
+            rc.Street = familyReq.Street;
+            rc.City = familyReq.City;
+            rc.State = familyReq.State;
+            rc.Zipcode = familyReq.Zipcode;
+            rc.Regionid = 1;
+
+            _db.Requestclients.Add(rc);
+            _db.SaveChanges();
+
+            if (familyReq.file != null)
+            {
+
+
+                rf.Requestid = req.Requestid;
+
+                rf.Filename = familyReq.file;
+                rf.Createddate = DateTime.Now;
+
+                _db.Requestwisefiles.Add(rf);
+                _db.SaveChanges();
+            }
+
+           
+
+
+        }
+
+        public void ConciergeReq(conciergeReq conciergereq)
+        {
+            
+            DataAccess.Models.Request req = new DataAccess.Models.Request();
+            Requestclient rc = new Requestclient();
+
+
+            req.Createddate = DateTime.Now;
+            req.Isurgentemailsent = new BitArray(1);
+            req.Firstname = conciergereq.cFirstname;
+            req.Lastname = conciergereq.cLastname;
+            req.Phonenumber = conciergereq.cPhonenumber;
+            req.Email = conciergereq.Email;
+            req.Requesttypeid = (int)RequestType.Patient;
+            req.Status = (short)Status.Unassigned;
+            _db.Requests.Add(req);
+            _db.SaveChanges();
+
+            rc.Requestid = req.Requestid;
+            rc.Notes = conciergereq.Notes;
+            rc.Firstname = conciergereq.Firstname;
+            rc.Lastname = conciergereq.Lastname;
+            rc.Phonenumber = conciergereq.Phonenumber;
+            rc.Email = conciergereq.Email;
+            
+            rc.Regionid = 1;
+
+            _db.Requestclients.Add(rc);
+            _db.SaveChanges();
+
+            Concierge concierge = new()
+            {
+                Conciergename = conciergereq.cFirstname,
+                Address = conciergereq.hotelName,
+                Street = conciergereq.cStreet,
+                City = conciergereq.cCity,
+                State = conciergereq.cState,
+                Zipcode = conciergereq.cZipcode,
+                Createddate = DateTime.Now,
+                Regionid = 1
+            };
+
+            _db.Concierges.Add(concierge);
+            _db.SaveChanges();
+
+            Requestconcierge reqConcierge = new()
+            {
+                Requestid = req.Requestid,
+                Conciergeid = concierge.Conciergeid,
+               
+            };
+
+            _db.Requestconcierges.Add(reqConcierge);
+            _db.SaveChanges();
+
+
+
 
         }
 
 
         public void BusinessReq(businessReq businessReq)
         {
-            Request req = new Request();
-            req.Requesttypeid = 1;
-            req.Status = 1;
-            req.Createddate = DateTime.Now;
+            DataAccess.Models.Request req = new DataAccess.Models.Request();
+             Requestclient rc = new Requestclient();
+             req.Createddate = DateTime.Now;
             req.Isurgentemailsent = new BitArray(1);
             req.Firstname = businessReq.bFirstname;
             req.Lastname = businessReq.bLastname;
             req.Phonenumber = businessReq.bPhonenumber;
-            req.Email = businessReq.bEmail;
-
+            req.Email = businessReq.Email;
+            req.Requesttypeid = (int)RequestType.Business;
+            ;req.Status = (short)Status.Unassigned;
             _db.Requests.Add(req);
             _db.SaveChanges();
 
-            Requestclient rc = new Requestclient();
-            rc.Requestid = 1;
+            rc.Requestid = req.Requestid;
             rc.Notes = businessReq.Notes;
             rc.Firstname = businessReq.Firstname;
             rc.Lastname = businessReq.Lastname;
             rc.Phonenumber = businessReq.Phonenumber;
             rc.Email = businessReq.Email;
-            rc.Street = businessReq.Street;
-            rc.City = businessReq.City;
-            rc.State = businessReq.State;
-            rc.Zipcode = businessReq.Zipcode;
+
+            rc.Regionid = 1;
 
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
+
+            Aspnetuser user=  _db.Aspnetusers.Where(x => x.Email==businessReq.Email).FirstOrDefault();
+
+            Business business = new()
+            {
+               
+                Name = businessReq.businessName,
+                Phonenumber = businessReq.bPhonenumber,
+                Createddate = DateTime.Now,
+                Createdby=user.Id
+               
+            };
+
+            _db.Businesses.Add(business);
+            _db.SaveChanges();
+
 
 
         }
@@ -191,7 +340,7 @@ namespace BusinessLogic.Service
                 {
                     file.CopyTo(fileStream);
                 }
-                patientreq.File = file.FileName;
+                patientreq.file = file.FileName;
             }
 
             // Save the file name in the mode
@@ -216,7 +365,7 @@ namespace BusinessLogic.Service
                 Requestwisefile requestwisefile = new Requestwisefile();
                 // Save the file name in the model
 
-                requestwisefile.Requestid = 21;
+                requestwisefile.Requestid =id ;
                 requestwisefile.Filename = file.FileName;
                 requestwisefile.Createddate = DateTime.Now;
                 _db.Requestwisefiles.Add(requestwisefile);
@@ -226,39 +375,18 @@ namespace BusinessLogic.Service
 
         }
 
-        public doc ViewDocument(int id)
+        public Dashboardpage ViewDocument(int id)
         {
             //var items1 = _db.Requests.Where(x => x.Userid == id).ToList();
+            
 
-
-            var items = _db.Requestwisefiles.Where(x => x.Requestid == 21).Select(m => new Documentmodel
+            var items = _db.Requestwisefiles.Where(x => x.Requestid == id ).Select(m => new Documentmodel
             {
 
                 uploaddate = m.Createddate,
                 uploader = m.Filename
             }).ToList();
-            var result = new doc
-            {
-                docs = items
-            };
-            return result;
-
-        }
-
-        public Dashboardpage DisplayDashboard(int Userid)
-        {
-
-            // int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
-
-            var items1 = _db.Requests.Include(x => x.Requestwisefiles).Where(x => x.Userid == Userid).Select(x => new Dashboardmodel
-            {
-                createddate = x.Createddate,
-                Status = (status)x.Status,
-                id = x.Requestid,
-                Fcount = x.Requestwisefiles.Count()
-
-            }).ToList();
-            User singleUser = _db.Users.FirstOrDefault(u => u.Userid == 3);
+            User singleUser = _db.Users.FirstOrDefault(u => u.Userid == id);
             Profilemodel user = new Profilemodel();
 
             user.FirstName = singleUser.Firstname;
@@ -268,6 +396,43 @@ namespace BusinessLogic.Service
             user.Street = singleUser.Street;
             user.City = singleUser.City;
 
+
+            var result = new Dashboardpage()
+            {
+                models = items,
+                Profiles = user
+
+
+            };
+           
+            return result;
+
+        }
+
+
+        public Dashboardpage DisplayDashboard(int Userid)
+        {
+
+         //   int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+
+            var items1 = _db.Requests.Include(x => x.Requestwisefiles).Where(x => x.Userid == Userid).Select(x => new Dashboardmodel
+            {
+                createddate = x.Createddate,
+                Status = (status)x.Status,
+                id = x.Requestid,
+                Fcount = x.Requestwisefiles.Count()
+
+            }).ToList();
+            User singleUser = _db.Users.FirstOrDefault(u => u.Userid == Userid);
+            Profilemodel user = new Profilemodel();
+
+            user.FirstName = singleUser.Firstname;
+            user.LastName = singleUser.Lastname;
+            user.Email = singleUser.Email;
+            user.PhoneNumber = singleUser.Mobile;
+            user.Street = singleUser.Street;
+            user.City = singleUser.City;
+                
 
             var result = new Dashboardpage()
             {
@@ -303,6 +468,7 @@ namespace BusinessLogic.Service
 
            }*/
 
+        
         public void SaveProfileData(Profilemodel model, int id)
         {
             var user = _db.Users.FirstOrDefault(x => x.Userid == id);
@@ -319,23 +485,23 @@ namespace BusinessLogic.Service
                 user.State = model.State;
                 user.Zip = model.Zipcode;
                 user.Modifieddate = DateTime.Now;
-
+                    
             }
             _db.SaveChanges();
         }
-        public User Information()
+        public patientReq Information(patientReq patientreq,int id)
         {
-            User singleUser = _db.Users.FirstOrDefault(u => u.Userid == 3);
-            Profilemodel user = new Profilemodel();
+            User singleUser = _db.Users.FirstOrDefault(u => u.Userid ==id );
+            patientReq user = new patientReq();
 
-            user.FirstName = singleUser.Firstname;
-            user.LastName = singleUser.Lastname;
+            user.Firstname = singleUser.Firstname;
+            user.Lastname = singleUser.Lastname;
             user.Email = singleUser.Email;
-            user.PhoneNumber = singleUser.Mobile;
+            user.Phonenumber = singleUser.Mobile;
             user.Street = singleUser.Street;
             user.City = singleUser.City;
 
-            return singleUser;
+            return user;
 
         }
 
@@ -345,7 +511,7 @@ namespace BusinessLogic.Service
 
             {
 
-                Request request = new Request();
+                DataAccess.Models.Request request = new DataAccess.Models.Request();
                 Requestclient requestclient = new Requestclient();
 
                 var Year = model.DOB.Year;

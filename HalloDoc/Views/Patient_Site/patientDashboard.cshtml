@@ -1,4 +1,5 @@
-﻿@model DataAccess.ViewModel.Dashboardpage
+﻿@inject IHttpContextAccessor _httpContextAccessor;
+@model DataAccess.ViewModel.Dashboardpage
 
 @{
     ViewData["Title"] = "patientDashboard";
@@ -32,8 +33,7 @@
     </div>
 </div>
 @await Html.PartialAsync("_Dashboardheader")
-<hr>
-<div class="tab d-flex  shadow mt-1 ms-1 ">
+<div class="tab d-flex  shadow mt-1 ms-1  ">
     <p class="tab-links active-link" onclick="opentab('Dashboard')">Dashboard</p>
     <p class="tab-links" onclick="opentab('Profile')">Profile</p>
 
@@ -42,49 +42,84 @@
     <h4 class="mt-5 ms-4">Medical History</h4>
     <div class="container-fluid m-3 bg-light">
         <div class="d-flex justify-content-end  me-4 mt-4">
-            <button type="button" class="btn btn-outline-info   button-info" data-bs-toggle="modal" data-bs-target="#newrequest">Create New Request</button>
+            <button type="button" class="btn btn-outline-info d-none d-md-block  button-info" data-bs-toggle="modal" data-bs-target="#newrequest">Create New Request</button>
+            <button type="button" class="d-block d-md-none hoverbtn btn btn-outline-info float-end " data-bs-toggle="modal" data-bs-target="#newrequest"><i class="text-info fa fa-plus"></i></button>
+        </div>
+        <div class="d-none d-md-block">
+            <table class="table table-responsive  mt-3 p-3 ">
+                <thead class="table-secondary">
+                    <tr>
+                        <th scope="col">Created Date <i class="bi bi-arrow-down"></i></th>
+                        <th scope="col">Current Status</th>
 
+                        <th scope="col">Document</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    @if (Model != null)
+                    {
+                        @foreach (var items in Model.Dashboard)
+                        {
+
+
+                            <tr>
+                                <td>@items.createddate.ToString().Split(' ')[0]</td>
+                                <td>@items.Status</td>
+
+                                <td class="text-dark">
+                                    @if (items.Fcount != 0)
+                                    {
+                                        <button class="btn btn-outline-info " onclick="location.href='@Url.Action("Document", "Patient_Site",new {id=items.id})'">
+                                            (@items.Fcount) Document
+                                        </button>
+                                    }
+                                </td>
+
+
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
         </div>
 
-        <table class="table table-responsive  mt-3 p-3">
-            <thead class="table-secondary">
-                <tr>
-                    <th scope="col">Created Date <i class="bi bi-arrow-down"></i></th>
-                    <th scope="col">Current Status</th>
-
-                    <th scope="col">Document</th>
-                </tr>
-            </thead>
-            <tbody>
-
-
-                @if (Model != null)
+         <div class="d-block d-md-none z-0">
+            <div class="accordion" id='accordion'>
+                @foreach (var item in Model.Dashboard)
                 {
-                    @foreach (var items in Model.Dashboard)
-                    {
+                    <div class="accordion-item">
+                        <h2 class="accordion-header " id="panelsStayOpen-headingTwo">
+                            <button class="smallscrbtn accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                <h6 class="text-black me-3 mt-1"><i class="bi bi-clock  me-2 text-info"></i>Created Date: </h6>
+                                <span class="">@item.createddate.Month &nbsp;@item.createddate.Day,@item.createddate.Year</span>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                            <div class="accordion-body">
+                                <span><i class="bi bi-person-video  me-2 text-info"></i> Provider: @_httpContextAccessor.HttpContext.Session.GetString("PatientName")</span>
+                                <br>
+                                <span><i class="bi bi-check-circle  me-2 text-info"></i> Current Status:  @item.Status </span>
+                                <br>
+                                <span>
+                                    @if (item.Fcount != 0)
+                                    {
+                                        <button class="btn-back btn btn-outline-info w-100" onclick="location.href='@Url.Action("ViewDoc", "Patient",new {reqid=item.id})'">
+                                            (@item.Fcount) Document
+                                        </button>
+                                    }
 
-
-                        <tr>
-                            <td>@items.createddate.ToString().Split(' ')[0]</td>
-                            <td>@items.Status</td>
-
-                            <td class="text-dark">
-                                @if (items.Fcount != 0)
-                                {
-                                    <button class="btn btn-outline-info " onclick="location.href='@Url.Action("Document", "Patient_Site",new {reqid=items.id})'">
-                                        (@items.Fcount) Document
-                                    </button>
-                                }
-                            </td>
-
-
-                        </tr>
-                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 }
-            </tbody>
+            </div>
 
-        </table>
-        </>
+        </div>
+    
     </div>
 
 
@@ -105,125 +140,7 @@
     </tbody>*@
 </div>
 <div id="Profile" class="tab-contents">
-    <div class="container shadow mt-4">
-        <div class=" d-flex justify-content-end">
-
-            <button type="button" class="btn btn-outline-info p-2 pe-3 mt-5  button-info" onclick="location.href='@Url.Action("patientDashboard", "Patient_Site")'">
-                <i class="bi bi-chevron-left i-info"></i>Back
-            </button>
-
-        </div>
-
-        <h4 class="fw-semibold">User Profile</h4>
-
-        <form method="post" action="UpdateProfile">
-
-            <div class="row gy-3 mb-3">
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" asp-for="Profiles.FirstName" placeholder="First Name" disabled>
-                        <label for="comment" class="floatingLabel text-dark">First Name</label>
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" asp-for="Profiles.LastName" placeholder="Last Name" disabled>
-                        <label for="comment" class="floatingLabel text-dark">Last Name</label>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-sm-6">
-                    <div class="form-floating">
-                        <input type="date" class="form-control" asp-for="Profiles.Dob" placeholder="Date of Birth" disabled>
-                    </div>
-                </div>
-            </div>
-            <h4 class="mt-4">Contact Info</h4>
-            <div class="row gy-3">
-
-                <div class="col-lg-2">
-                    <div class="form-floating">
-                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example" disabled>
-                            <option selected>Mobile</option>
-                            <option value="1">Phone</option>
-                            <option value="2">Mobile</option>
-                            <option value="3">Landline</option>
-                        </select>
-                        <label for="floatingSelect">Type</label>
-                    </div>
-
-                </div>
-                <div class="col-lg-5">
-                    <div class=" form-floating">
-                        <input type="tel" class="form-control p-3 ps-5 phoneNumber" placeholder="(201) 555-0123" asp-for="Profiles.PhoneNumber" disabled>
-                        <span asp-validation-for="Profiles.PhoneNumber" id="Errorinfo"></span>
-                    </div>
-                </div>
-                <div class="col-lg-5">
-                    <div class="form-floating">
-                        <input type="email" class="form-control" placeholder="Email" asp-for="Profiles.Email" disabled>
-                        <label for="comment" class="floatingLabel">Email</label>
-
-                    </div>
-                </div>
-
-
-            </div>
-            <h4 class="mt-4">
-                Location Info
-            </h4>
-            <div class="row gy-3 mb-3">
-
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Street" asp-for="Profiles.Street" disabled>
-                        <label for="comment" class="floatingLabel text-dark">Street</label>
-                    </div>
-                </div>
-
-                <div class="col-xs-12 col-sm-6">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="City" asp-for="Profiles.City" disabled>
-                        <label for="comment" class="floatingLabel text-dark">City</label>
-                    </div>
-                </div>
-            </div>
-            <div class="row gy-3">
-
-                <div class="col-xs-12 col-sm-5">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="State" asp-for="Profiles.State" disabled>
-                        <label for="comment" class="floatingLabel text-dark">State</label>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-5">
-                    <div class="form-floating">
-                        <input type="text" class="form-control" placeholder="Zip Code" asp-for="Profiles.Zipcode" disabled>
-                        <label for="comment" class="floatingLabel text-dark">Zip Code</label>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-2">
-                    <button type="button" class=" btn btn-outline-info p-3 d-inline d-xl-none d-lg-none">
-                        <i class="bi bi-geo-alt text-info me-1 i-info "></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-info p-3 d-none d-xl-inline d-lg-inline i-info">
-                        <i class="fa fa-map-marker text-info me-1 i-info"></i>Map
-                    </button>
-                </div>
-            </div>
-            <div class="d-flex justify-content-end">
-                <button type="button" id="editBtn" onclick="editDetails()" class="btn btn-info btn-lg">Edit</button>
-                <button id="saveBtn" type="submit" class="btn btn-info btn-lg" style="display:none">
-                    Save
-                </button>
-                <button id="cancelBtn" type="button" class="btn btn-info btn-lg" style="display:none" onclick="location.href='@Url.Action("patientDashboard", "Patient_Site")'">
-                    Cancel
-                </button>
-
-            </div>
-        </form>
-    </div>
-
+   @await Html.PartialAsync("Profile")
 </div>
 
 

@@ -55,7 +55,8 @@ namespace HalloDoc.Controllers
                 var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
                 if (user != null)
                 {
-                    int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+                    
+                    int id =_db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
                     _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
 
                     string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
@@ -186,6 +187,29 @@ namespace HalloDoc.Controllers
 
             return View();
         }
+        [HttpPost]
+        public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
+        {
+            
+           
+
+             if (file != null && file.Length > 0)
+            {
+
+                _requestService.UploadFile(file, patientReq);
+             
+
+            }
+             
+
+            _requestService.PatientInfo(patientReq);
+
+            return RedirectToAction("submitReq", "Patient_site");
+
+
+
+        }
+
 
         public IActionResult patientDashboard()
         {
@@ -201,21 +225,13 @@ namespace HalloDoc.Controllers
 
         }
 
-        /*  u public IActionResult UpdateProfle(Profilemodel profilemodel)
-          {
-              int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
-
-              _requestService.UserData(profilemodel, id);
-              return View();
-          }
         
-  */
 
         [HttpPost]
         public ActionResult UpdateProfile(Dashboardpage model)
         {
-            //int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
-            //_requestService.SaveProfileData(model, id);
+            int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+            _requestService.SaveProfileData(model.Profiles, id);
 
             return RedirectToAction("patientDashboard");
 
@@ -223,85 +239,22 @@ namespace HalloDoc.Controllers
 
 
 
-        //public void Upload(IFormFile file)
-        //{
-        //    _requestService.UploadFile(file);
+     
+     
 
-        //}
-
-        //public IActionResult DisplayData()
-        //{
-
-        //    List<dashboardmodel> data = _requestService.Getpatientinfo();
-        //    return View(data);
-        //}
-        //[HttpGet]
-        //public IActionResult DashboardInfo()
-        //{
-        //    var infos = _requestService.GetPatientInfo();
-        //    var view = new dashboardmodel2{dashboards = infos };
-        //    return View(view);
-        //}
-        // [HttpGet]
-        //public ActionResult patientDashboard()
-        //{
-
-        //}
-
-        [HttpPost]
-        public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
-        {
-          
-            
-                //if (file != null && file.Length > 0)
-                //{
-                //    var uploadsFolder = Path.Combine(_env.WebRootPath, "Files");
-                //    var filePath = Path.Combine(uploadsFolder, file.FileName);
-
-                //    // Ensure the uploads directory exists
-                //    Directory.CreateDirectory(uploadsFolder);
-
-                //    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                //    {
-                //        file.CopyTo(fileStream);
-                //    }
-
-                //    // Save the file name in the model
-                //    patientReq.file = file.FileName;
-                //    ViewBag.Message = "File uploaded successfully!";
-                //}
-                //else
-                //{
-                //    ViewBag.Error = "No file selected or file is empty.";
-                //}
-                _requestService.UploadFile(file,patientReq);
-            if(file!=null && file.Length>0)
-            {
-                ViewBag.Message = "File uploaded successfully";
-            }
-
-                _requestService.PatientInfo(patientReq);
-            
-                return RedirectToAction("submitReq", "Patient_site");
-            
-            return View();
-        }
-   
+       
     
         public IActionResult familyFriendReq()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult FamilyFriendReq(familyReq familyReq)
-        {
-            _requestService.mail(familyReq.Email);
-            if (ModelState.IsValid)
-            { 
+        public IActionResult familyFriendReq(familyReq familyReq)
 
-                return RedirectToAction("submitReq", "Patient_site");
-            }
-            return View();
+        {
+               _requestService.familyreq(familyReq);
+               _requestService.mail(familyReq.Email);
+            return RedirectToAction("submitReq", "Patient_site");
         }
         public IActionResult conciergeReq()
         {
@@ -310,12 +263,12 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult ConciergeReq(conciergeReq conciergeReq)
         {
-            if (ModelState.IsValid)
-            {
 
-                return RedirectToAction("submitReq", "Patient_site");
-            }
-            return View();
+            _requestService.ConciergeReq(conciergeReq);
+            _requestService.mail(conciergeReq.Email);
+          return RedirectToAction("submitReq", "Patient_site");
+            
+            
         }
         public IActionResult businessReq()
         {
@@ -324,38 +277,41 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult BusinessReq( businessReq businessReq)
         {
-            if (ModelState.IsValid)
-            {
+           
+         
                 _requestService.BusinessReq(businessReq);
-                return RedirectToAction("submitReq", "Patient_site");
-            }
-            return View();
+            _requestService.mail(businessReq.Email);
+            return RedirectToAction("submitReq", "Patient_site");
+            
+          
         }
-        //public IActionResult patientDashboard()
-        //{
-        //    return View();
-        //}
-        public IActionResult Document()
+   
+        public IActionResult Document(int id)
         {
-            int id = 2;
-            var itemlist = _requestService.ViewDocument(id);
+            //int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+            Dashboardpage model = new Dashboardpage();
+            
+                var result = _requestService.ViewDocument(id);
+            
 
-            return View(itemlist);
+            return View(result);
         }
-        [HttpPost]
+        [HttpPost]  
         public IActionResult Document(IFormFile file,int id)
         {
             
            _requestService.FileUpload( file,  id);
             return RedirectToAction("Document", "Patient_site");
         }
-        public IActionResult Information() {
-           var res= _requestService.Information();
-            return View();
+        public IActionResult Information(patientReq patientreq) {
+            int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+            
+          patientreq  = _requestService.Information(patientreq,id);
+            return View(patientreq);
         }
 
         [HttpPost]
-        public IActionResult Information(patientReq patientreq)
+        public IActionResult Information(patientReq patientreq,int id)
         {
           _requestService.PatientInfo(patientreq);
             return View();
