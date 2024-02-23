@@ -15,12 +15,15 @@ namespace DataAccess.ViewModel
         public string? Firstname { get; set; }
         [Required(ErrorMessage = "Please enter Your Lastname.")]
         public string? Lastname { get; set; }
+
+         [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
+       // [StringLength(10, ErrorMessage = "Phone number must be of 10 digit") ]
         [Required(ErrorMessage = "Please enter Your Phonenumber.")]
         public string? Phonenumber { get; set; }
         [Required(ErrorMessage = "Please enter Your Email Address.")]
         public string? Email { get; set; }
        
-        public DateTime DOB { get; set; }
+        public DateTime? DOB { get; set; }
         public string? Notes { get; set; }
        
         public string ? Street { get; set; }
@@ -33,11 +36,16 @@ namespace DataAccess.ViewModel
      
         public string? RoomNo { get; set; }
         public string file { get; set; }
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter and one digit")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 20 characters long")]
+        [Required]
         public string? createPassword { get; set; }
         public string Status { get; set; }
+        [Required]
         [Compare("createPassword", ErrorMessage = "Password and Confirmation Password must match.")]
         public string? confirmPassword { get; set; }
        public string relation { get; set; }
+        public RequestType Requesttypeid { get; set; }
 
 
     }
@@ -80,7 +88,7 @@ namespace DataAccess.ViewModel
         public string? RoomNo { get; set; }
        
         public string? Country { get; set; }
-        public string file{ get; set; }
+        public string ? file{ get; set; }
 
     }
 
@@ -159,12 +167,18 @@ namespace DataAccess.ViewModel
 
     public enum status
     {
-        New=1,
+        New = 1,
         Pending = 2,
-         Active= 3,
-         Conclude=4,
-         Close=5,
-         Unpaid=6
+        Active = 3,
+        Conclude = 4,
+        Close = 5,
+        Unpaid = 6
+
+    }
+            public enum RequestType
+    {
+        Friend=1,
+        Business=2
 
     }
 

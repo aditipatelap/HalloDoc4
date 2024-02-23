@@ -24,17 +24,20 @@
     <div class="d-flex justify-content-end mt-3">
         <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
         <h4 class=" ms-2 d-lg-block d-none"> @_httpContextAccessor.HttpContext.Session.GetString("PatientName")</h4>
-        <div>   <button type="button" class="btn btn-outline-info ms-3">Logout</button></div>
+        <div>   <button type="button" class="btn btn-outline-info ms-3" onclick="location.href='@Url.Action("submitReq", "Patient_site")'">Logout</button></div>
 
-        <a class="navbar-brand ms-3" href="#">
+       @* <a class="navbar-brand ms-3" href="#">*@
             @*       <img src="/images/darkmodelight.png" onclick="myFunction()" id="dark-icon" alt="">
             *@            @*<button class="px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle"
             <i class="fa fa-moon-o" aria-hidden="true"></i>
             </button>*@
             <div>
-                <button class=" px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle">
+                @*<button class="px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle">
                     <i class="fa fa-moon i-info"></i>
-                </button>
+                </button>*@
+            <button class=" px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle">
+                <i class="fa fa-moon i-info"></i>
+            </button>
             </div>
 
         </a>
@@ -48,7 +51,30 @@
             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
         </li>
 *@
+<script>
+    const btn1 = document.querySelector(".btn-toggle");
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
 
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme == "dark") {
+        document.body.classList.toggle("dark-theme");
+    }
+    else if (currentTheme == "light") {
+        document.body.classList.toggle("light-theme");
+    }
 
+    btn1.addEventListener("click", function () {
+        if (prefersDarkScheme.matches) {
+            document.body.classList.toggle("light-theme");
+            var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
+        }
+        else {
+            document.body.classList.toggle("dark-theme");
+            var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
+        }
+        localStorage.setItem("theme", theme);
+    });
+
+</script>
 
 <script src="~/js/site.js" asp-append-version="true"></script>

@@ -207,10 +207,11 @@ body {
 /* Create Request */
 #btn1 {
     width:250px;
-    height:50px;
+    height:70px;
     text-align: left;
-    color: #476BCB;
-    background-color:#E7EAF1;
+    color: #476BCB !important;
+    
+    background-color:#E7EAF1 !important;
     border: 2px solid #D5EDF7 ;
 }
 
@@ -348,4 +349,22 @@ body, input, select, textarea, label, .modal-content, .iti__country-list {
 }
 
 h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content, .iti__country-list {
-    color: var(--text-color) !important;*/
+    color: var(--text-color) !important;
+}*/
+
+
+
+
+
+
+
+/*******************Admin site***********************/
+.newbtn{
+    background:
+   border:
+  :white;
+}
+.activebtn {
+    border: #afff99;
+    background-color: #d9ffcc;
+}

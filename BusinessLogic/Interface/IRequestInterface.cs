@@ -11,7 +11,7 @@ namespace BusinessLogic.Interface
 {
    public interface IRequestInterface
     {
-        public void PatientInfo(patientReq patientReq);
+        void PatientInfo(patientReq patientReq);
         public void BusinessReq(businessReq businessReq);
         public void familyreq(familyReq familyReq);
         public void ConciergeReq(conciergeReq conciergereq);
@@ -20,7 +20,7 @@ namespace BusinessLogic.Interface
 
         public void UploadFile(IFormFile file,patientReq patientreq);
 
-        public Dashboardpage ViewDocument(int id);
+        public Dashboardpage ViewDocument(int userid, int id);
         public Dashboardpage DisplayDashboard( int id);
         //public void UserData(Profilemodel pm, int id);
         public void SaveProfileData(Profilemodel model, int id);

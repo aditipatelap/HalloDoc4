@@ -28,11 +28,35 @@
                 type="button" onclick="location.href='@Url.Action("Patient_Login", "Patient_site")'">
             Registered Patients
         </button>
-    <div class=" small p-2 ">
-        <div class="text-center mt-5">
-                <a href="/" id="anchr">Terms of Condition</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-            <a href="/" id="anchr">Privacy Policy</a>
+    <div class=" small p-2  ">
+        <div class="text-center text-dark mt-5 d-flex ">
+                <p ="/" id="anchr">Terms of Condition</p> &nbsp;&nbsp;&nbsp;<p>|</p>&nbsp;&nbsp;&nbsp;
+            <p href="/" id="anchr">Privacy Policy</p>
         </div>
    </div>
    </div>
 </div>
+<script>
+    const btn1 = document.querySelector(".btn-toggle");
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme == "dark") {
+        document.body.classList.toggle("dark-theme");
+    }
+    else if (currentTheme == "light") {
+        document.body.classList.toggle("light-theme");
+    }
+
+    btn1.addEventListener("click", function () {
+        if (prefersDarkScheme.matches) {
+            document.body.classList.toggle("light-theme");
+            var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
+        }
+        else {
+            document.body.classList.toggle("dark-theme");
+            var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
+        }
+        localStorage.setItem("theme", theme);
+    });
+</script>

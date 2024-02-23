@@ -33,6 +33,7 @@ namespace HalloDoc.Controllers
         }
         public IActionResult Patient_Login()
         {
+            _logger.LogInformation("recevied");
             return View();
         }
 
@@ -41,22 +42,14 @@ namespace HalloDoc.Controllers
         public IActionResult Patient_Login(LoginModel loginModel)
         {
 
-            //Aspnetuser user = _db.Aspnetusers.FirstOrDefault(aspnetuser => aspnetuser.Email == loginModel.Email && aspnetuser.Passwordhash ==loginModel.Password);
-            //if (user != null)
-            //{
-            //    User patientUser = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id);
-            //    TempData["success"] = "Login Successful";
-            //    HttpContext.Session.SetInt32("userId", patientUser.Userid);
-            //    return RedirectToAction("Dashboard");
-            //}
-            if (ModelState.IsValid)
-            {
-                //var user = _aspNetUsersServices.Login(loginModel);
+            
+           
                 var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
+
                 if (user != null)
                 {
-                    
-                    int id =_db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+
+                    int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
                     _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
 
                     string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
@@ -70,16 +63,22 @@ namespace HalloDoc.Controllers
 
                     return RedirectToAction("patientDashboard", "Patient_Site");
                 }
-                else
+                int var = _loginService.Login(loginModel);
+                if (var == 3)
                 {
-                    _notyf.Custom("Login Failed", 3, "red", "bi bi-x-circle-fill");
+                    _notyf.Custom("Password incorrect!", 3, "red", "bi bi-check-circle-fill");
                     return View();
                 }
-            }
-            else
-            {
-                return View();
-            }
+
+                if (var == 2)
+                {
+                    _notyf.Custom("Email Incorrect", 3, "red", "bi bi-x-circle-fill");
+                    return View();
+                }
+
+               
+            
+            return View();
 
         }
         //int var=_loginService.Login(loginModel);
@@ -113,25 +112,12 @@ namespace HalloDoc.Controllers
         //    return View();
                      
 
-            //if (ModelState.IsValid)
-            //{
-
-
-            //    if (_loginService.Login(loginModel))
-            //    {
-            //        TempData["ToastMessage"] = "Login successful!";
-            //        TempData["ToastType"] = "toast-success";
-            //        return RedirectToAction("familyFriendReq", "Patient_site");
-            //    }
-            //    else
-            //    {
-            //        TempData["ToastMessage"] = "Invalid username or password.";
-            //        TempData["ToastType"] = "toast-error";
-            //        return RedirectToAction("Patient_Login", "Patient_site");
-            //    }
-            //}
            
-        
+        public IActionResult CreateAccount()
+        {
+
+            return View();
+        }
         //Check email
         public JsonResult CheckEmailExists(string email)
         {
@@ -191,14 +177,9 @@ namespace HalloDoc.Controllers
         public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
         {
             
-           
-
-             if (file != null && file.Length > 0)
+                if (file != null && file.Length > 0)
             {
-
                 _requestService.UploadFile(file, patientReq);
-             
-
             }
              
 
@@ -288,10 +269,11 @@ namespace HalloDoc.Controllers
    
         public IActionResult Document(int id)
         {
-            //int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+            int userid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
+           
             Dashboardpage model = new Dashboardpage();
             
-                var result = _requestService.ViewDocument(id);
+                var result = _requestService.ViewDocument(userid,id);
             
 
             return View(result);
@@ -306,25 +288,41 @@ namespace HalloDoc.Controllers
         public IActionResult Information(patientReq patientreq) {
             int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
             
+
           patientreq  = _requestService.Information(patientreq,id);
             return View(patientreq);
         }
 
         [HttpPost]
-        public IActionResult Information(patientReq patientreq,int id)
+        public IActionResult Information(patientReq patientreq, Microsoft.AspNetCore.Http.IFormFile file)
         {
+            if (file != null && file.Length > 0)
+            {
+
+                _requestService.UploadFile(file, patientreq);
+
+
+            }
+           // _requestService.UploadFile(patientreq.file, id);
           _requestService.PatientInfo(patientreq);
             return View();
         }
         public IActionResult Someonelse()
         {
-          
+            //familyReq reqeust = new familyReq();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Someonelse(patientReq patientreq,int id)
+        public IActionResult Someonelse(patientReq patientreq, Microsoft.AspNetCore.Http.IFormFile file,int id)
         {
+            if (file != null && file.Length > 0)
+            {
+
+                _requestService.UploadFile(file, patientreq);
+
+
+            }
             _requestService.Someoneelse(patientreq,id);
             return View();
         }

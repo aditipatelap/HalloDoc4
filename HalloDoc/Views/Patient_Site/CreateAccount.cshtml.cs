@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HalloDoc.Views.Patient_Site
 {
-    public class DashModel : PageModel
+    public class CreateAccountModel : PageModel
     {
         public void OnGet()
         {

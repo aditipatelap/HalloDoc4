@@ -5,8 +5,8 @@
         <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
     </a>
     <a class="navbar-brand" href="#">
-        <button onclick=myFunction() id="dark-icon" class="btn btn-outline-info position-absolute  end-0 ">
-            <i class="fa fa-moon-o" aria-hidden="true"></i>
+        <button class="m-3 p-2 px-3 me-3 ms-1 ms-md-3 rounded btn btn-outline-info btn-toggle">
+            <i class="fa fa-moon i-info"></i>
         </button>
     </a>
 </nav>
@@ -19,3 +19,27 @@
 
 
 </div>  *@
+<script>
+    const btn1 = document.querySelector(".btn-toggle");
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const currentTheme = localStorage.getItem("theme");
+    if (currentTheme == "dark") {
+        document.body.classList.toggle("dark-theme");
+    }
+    else if (currentTheme == "light") {
+        document.body.classList.toggle("light-theme");
+    }
+
+    btn1.addEventListener("click", function () {
+        if (prefersDarkScheme.matches) {
+            document.body.classList.toggle("light-theme");
+            var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
+        }
+        else {
+            document.body.classList.toggle("dark-theme");
+            var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
+        }
+        localStorage.setItem("theme", theme);
+    });
+</script>

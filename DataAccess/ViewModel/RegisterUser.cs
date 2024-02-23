@@ -11,11 +11,14 @@ namespace DataAccess.ViewModel
     {
         [Required(ErrorMessage = "Please enter Your Email Address.")]
         public string? Email { get; set; }
-        //[RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter and one digit")]
-        //[StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 20 characters long")]
+       [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$"    , ErrorMessage = "Password must contain at least one uppercase letter and one digit")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 20 characters long")]
 
         [Required(ErrorMessage = "Please enter Your Password.")]
         public string? Password { get; set; }
+        [Required(ErrorMessage = "Please Confirm Your Password.")]
+        [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
+        public string? ConfirmPassword { get; set; }
     }
 
 }
