@@ -359,12 +359,83 @@ h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content
 
 
 /*******************Admin site***********************/
-.newbtn{
-    background:
-   border:
-  :white;
+.newbtn {
+    background-color: rgb(219, 225, 255);
+    color: darkblue;
+    border: 1px solid darkblue;
 }
+    .newbtn:hover {
+        background-color: #4263f5;
+        color: white;
+    }
+
 .activebtn {
-    border: #afff99;
+    color: #14A44D;
     background-color: #d9ffcc;
 }
+    .activebtn:hover {
+        background-color: #2fb800;
+        color: white;
+    }
+.pendingbtn {
+    color: #2cc7f1;
+    background-color: #e5f2fa;
+    border: 1px solid #2cc7f1;
+}
+    .pendingbtn:hover {
+        background-color: #00ffff;
+        color: white;
+    }
+.concludebtn {
+    color: #912261;
+    background-color: #ffdff1;
+    border: 1px solid #912261;
+}
+    .concludebtn:hover {
+        background-color: #912261;
+        color: white;
+    }
+.toclosebtn {
+    color: #0181f8;
+    background-color: #e5f2fa;
+    border: 1px solid #0181f8;
+}
+.toclosebtn:hover {
+    background-color: #0181f8;
+    color: white;
+}
+.unpaidbtn {
+    color: mediumslateblue;
+    background-color: #dce1ff;
+    border: 1px solid mediumslateblue;
+}
+    .unpaidbtn:hover {
+        background-color: mediumslateblue;
+        color: white;
+    }
+#dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.patientdot {
+    background-color: #00e600;
+}
+.businessdot {
+    background-color: darkmagenta;
+}
+.familydot {
+    background-color:orange ;
+
+}
+.condot {
+    background-color:blue;
+}
+.searchicon {
+    position: absolute;
+    top: 51%;
+    left:13%;
+}
+
+
