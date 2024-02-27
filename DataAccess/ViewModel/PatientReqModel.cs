@@ -23,7 +23,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your Email Address.")]
         public string? Email { get; set; }
        
-        public DateTime? DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string? Notes { get; set; }
        
         public string ? Street { get; set; }
@@ -122,7 +122,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter patient Email Address.")]
         public string? Email { get; set; }
        
-        public string? DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         public string? pRoomNo { get; set; }
     }
@@ -149,7 +149,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter patient email address.")]
         public string? Email { get; set; }
        
-        public string? DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         
         public string? Street { get; set; }
@@ -178,8 +178,8 @@ namespace DataAccess.ViewModel
             public enum RequestType
     {
         Friend=1,
-        Business=2
-
+        Business=2,
+        Patient = 3
     }
 
 

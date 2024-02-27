@@ -1,6 +1,8 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Data;
+using DataAccess.Models;
 using DataAccess.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Service
 {
@@ -12,42 +14,61 @@ namespace BusinessLogic.Service
         {
             _db = db;
         }
-        public string DeterminePartialView(string btn)
+       
+        
+        public List<AdminDashboard> GetDashboardData(int statusid)
         {
-            if(btn =="newbtn")
-            {
-                return "_NewPartial";
-            }
-            if (btn == "pendingbtn")
-            {
-                return "_PendingPartial";
-            }
-            if(btn=="activebtn")
-            {
-                return "_ActivePartial";
-            }
-            if (btn == "concludebtn")
-            {
-                return "_ConcludePartial";
-            }
-            if (btn == "toclosebtn")
-            {
-                return "_ToClosePartial";
-            }
-            if (btn == "unpaidbtn")
-            {
-                return "_UnpaidPartial";
-            }
-            else
-                return "";
-        }
-        public AdminDashboard GetDashboardData(int id)
-        {
+            List<int> id=new List<int>();
             
-            AdminDashboard dashboard = new AdminDashboard();
-            //_db.Requests.Where().FirstOrDefault();
+           if(statusid==1)
+            {
+                id.Add(1);
+            }
+           if(statusid==2)
+            {
+                id.Add(2);
+            }
+           if(statusid==3)
+            {
+                id.Add(4);
+                id.Add(5);
 
-            return dashboard;
+            }
+           if(statusid==4)
+            {
+                id.Add(6);
+            }
+            if (statusid == 5)
+            {
+                id.Add(3);
+                id.Add(7);
+                id.Add(8);
+            }
+            if (statusid == 6)
+            {
+                id.Add(9);
+            }
+
+            var dashboard = from Request in _db.Requests
+                            join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                            where id.Contains(Request.Status)
+                            select new AdminDashboard
+                            {
+                                Name = Requestclient.Firstname+" "+Requestclient.Lastname,
+                                Requestor=Request.Firstname+" "+Request.Lastname,
+                                RequestedDate=Request.Createddate,
+                                PatientPhone=Requestclient.Phonenumber,
+                                RequestorPhone=Request.Phonenumber,
+                                Address=Requestclient.Address,
+                                Notes=Requestclient.Notes,
+
+
+                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                                RequestTypeid =Request.Requesttypeid
+                            };
+            var viewModel=dashboard.ToList();
+
+            return viewModel;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace HalloDoc.Controllers
         }
         public IActionResult Dashboard()
         {
+            
            
             return View();
             
@@ -28,11 +29,14 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
-       public IActionResult GetPartialView(string btn)
+       public IActionResult GetPartialView(string btnName,int statusid)
         {
-
-            var partialView = _AdminDash.DeterminePartialView(btn);
-            return PartialView(partialView);
+            var partialview = "_" + btnName;
+            
+            var result = _AdminDash.GetDashboardData(statusid);
+            
+            return PartialView(partialview,result);
         }
+        
     }
 }

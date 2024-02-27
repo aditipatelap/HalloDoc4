@@ -9,7 +9,7 @@ namespace BusinessLogic.Interface
 {
     public  interface IAdminDash
     {
-        public string DeterminePartialView(string btn);
-        public AdminDashboard GetDashboardData(int id);
+        
+        public List<AdminDashboard> GetDashboardData(int statusid);
     }
 }

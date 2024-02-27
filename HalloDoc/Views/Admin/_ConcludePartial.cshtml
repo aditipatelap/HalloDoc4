@@ -1,5 +1,93 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using DataAccess.ViewModel;
+@model List<AdminDashboard>;
+<table class="table table-responsive  m-4 p-3">
+    <thead class="table-secondary">
+        <tr>
+            <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Date Of Birth</th>
+
+         
+            <th scope="col">Physician name</th>
+            <th scope="col">Date of Service <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Phone</th>
+
+            <th scope="col">Address</th>
+            <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Chat With</th>
+
+            <th scope="col">Actions</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var items in Model)
+            {
+                var bgcolor = "red";
+                if (items.RequestTypeid == 1)
+                {
+                    bgcolor = "green";
+
+                }
+                if (items.RequestTypeid == 2)
+                {
+                    bgcolor = "orange";
+
+                }
+                if (items.RequestTypeid == 3)
+                {
+                    bgcolor = "purple";
+
+                }
+
+                if (items.RequestTypeid == 4)
+                {
+                    bgcolor = "blue";
+
+                }
+                <tr style="background: @bgcolor" class="text-white">
+                    <td>@items.Name</td>
+                    <td>@items.Dob</td>
+                    <td>@items.Requestor</td>
+                    <td>@items.Physician</td>
+                    <td>@items.DateofService</td>
+
+                    <td>
+                        <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                        @if (items.RequestorPhone != null)
+                        {
+
+                            <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                        }
+                    </td>
+
+                    <td>@items.Address</td>
+                    <td>@items.Notes</td>
+                    <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+                    <td><button type="button" class="btn  border border-white text-white">Patient</button></td>
+
+
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn border border-white text-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Action
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">View Case</a>
+                                <a class="dropdown-item" href="#">View Uplaods</a>
+                                <a class="dropdown-item" href="#">View Notes</a>
+                                <a class="dropdown-item" href="#">Orders</a>
+
+                                <a class="dropdown-item" href="#">Doctors Note</a>
+                                <a class="dropdown-item" href="#">Encounter</a>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>

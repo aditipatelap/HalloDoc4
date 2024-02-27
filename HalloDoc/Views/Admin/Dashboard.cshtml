@@ -1,7 +1,7 @@
 ﻿@Html.Partial("_AdminHeader")
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
-        <button type="button" class="w-100 btn  newbtn text-start" data-btn="newbtn">
+        <button type="button" class="w-100 btn  newbtn text-start" data-btn="NewPartial" data-id="1">
 
             <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
             <p class="fw-bold fs-3">1452</p>
@@ -9,7 +9,7 @@
         </button>
     </div>
     <div class="col-lg-2">
-        <button type="button" class="w-100 btn    pendingbtn text-start " data-btn="pendingbtn">
+        <button type="button" class="w-100 btn    pendingbtn text-start " data-btn="PendingPartial" data-id="2">
             <i class="fa-solid fa-user"></i> <span class="fw-bolder">Pending</span>
             <p class="fw-bold fs-3">1452</p>
 
@@ -17,21 +17,21 @@
 
     </div>
     <div class="col-lg-2 ">
-        <button type="button" class=" w-100 btn  activebtn text-start border border-success " data-btn="activebtn">
+        <button type="button" class=" w-100 btn  activebtn text-start border border-success " data-btn="ActivePartial" data-id="3">
             <i class="far fa-check-circle"></i> <span class="fw-bolder">ACTIVE</span>
             <p class="fw-bold fs-3">1452</p>
 
         </button>
     </div>
     <div class="col-lg-2 ">
-        <button type="button" class="w-100 btn concludebtn text-start" data-btn="concludebtn">
+        <button type="button" class="w-100 btn concludebtn text-start" data-btn="ConcludePartial" data-id="4">
             <i class="bi bi-arrow-clockwise"></i> <span class="fw-bolder">CONCLUDE</span>
             <p class="fw-bold fs-3">1452</p>
 
         </button>
     </div>
     <div class="col-lg-2">
-        <button type="button" class="w-100 btn  toclosebtn  text-start" data-btn="toclosebtn">
+        <button type="button" class="w-100 btn  toclosebtn  text-start" data-btn="ToClosePartial" data-id="5">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-alarm-fill" viewBox="0 0 16 16">
                 <path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5m2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.04 8.04 0 0 0 .86 5.387M11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.04 8.04 0 0 0-3.527-3.527" />
             </svg> <span class="fw-bolder">TO CLOSE</span>
@@ -41,7 +41,7 @@
     </div>
     <div class="col-lg-2">
 
-        <button type="button" class="w-100 btn rounded unpaidbtn text-start" data-btn="unpaidbtn">
+        <button type="button" class="w-100 btn rounded unpaidbtn text-start" data-btn="UnpaidPartial" data-id="6">
             <i class="bi bi-currency-dollar"></i> <span class="fw-bolder">UNPAID</span>
             <p class="fw-bold fs-3">1452</p>
 
@@ -102,7 +102,7 @@
         </div>
        
 
-<script>
+,<script>
      $(document).ready(function () {
          console.log("Document ready");
 
@@ -122,10 +122,13 @@
                      var btnName = $(this).data("btn");
                      console.log("Button clicked: " + btnName);
 
+                     var statusid = $(this).data("id");
                      // Make an AJAX request to get the partial view content
                      $.ajax({
-                         url: '/Admin/GetPartialView?btn=' + btnName,
+                         url: '@Url.Action("GetPartialView", "Admin")',
+                         //url: '/Admin/GetPartialView?btn=' + btnName,
                          method: 'GET',
+                         data:{btnName:btnName,statusid:statusid},
                          success: function (data) {
                              console.log("AJAX success");
                              // Replace the content of the btnContent div with the retrieved partial view
@@ -144,3 +147,22 @@
      });
 </script>
 
+@*<script>
+    $(document).ready(function () {
+        $(".btn").click(function () {
+            var idValue = $(this).data("id");
+
+            $.ajax({
+                url: '@Url.Action("GetPartialView", "Admin")',
+                type: 'POST',
+                data: { id: idValue },
+                success: function (result) {
+                    // Handle success
+                },
+                error: function (error) {
+                    // Handle error
+                }
+            });
+        });
+    });
+</script>*@

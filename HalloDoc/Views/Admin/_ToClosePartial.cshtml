@@ -5,17 +5,18 @@
         <tr>
             <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
             <th scope="col">Date Of Birth</th>
+            <th scope="col">Region</th>
 
-            <th scope="col">Requstor</th>
-            <th scope="col">Requested Date <i class="bi bi-arrow-down"></i></th>
-            <th scope="col">Phone</th>
+            <th scope="col">Physician name</th>
+            <th scope="col">Date of Service <i class="bi bi-arrow-down"></i></th>
+           
 
             <th scope="col">Address</th>
             <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
             <th scope="col">Chat With</th>
 
             <th scope="col">Actions</th>
-                
+
         </tr>
     </thead>
     <tbody>
@@ -24,7 +25,7 @@
             @foreach (var items in Model)
             {
                 var bgcolor = "red";
-                if(items.RequestTypeid==1)
+                if (items.RequestTypeid == 1)
                 {
                     bgcolor = "green";
 
@@ -47,20 +48,24 @@
                 }
                 <tr style="background: @bgcolor" class="text-white">
                     <td>@items.Name</td>
-                    <td >@items.Dob</td>
-                    <td>@items.Requestor</td>
-                    <td>@items.RequestedDate</td>
-                    <td><button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
-                    @if(items.RequestorPhone!=null)
-                    {
+                    <td>@items.Dob</td>
+                    <td>@items.Region</td>
+                    <td>@items.Physician</td>
+                    <td>@items.DateofService</td>
+
+                    <td>
+                        <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                        @if (items.RequestorPhone != null)
+                        {
 
                             <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
-                    }
+                        }
                     </td>
-                   
+
                     <td>@items.Address</td>
                     <td>@items.Notes</td>
                     <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+                    <td><button type="button" class="btn  border border-white text-white">Patient</button></td>
 
 
                     <td>
@@ -69,12 +74,14 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Assign Case</a>
-                                <a class="dropdown-item" href="#">Cancel Case</a>
                                 <a class="dropdown-item" href="#">View Case</a>
+                                <a class="dropdown-item" href="#">View Uplaods</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
-
-                                <a class="dropdown-item" href="#">Block Patient</a>
+                                <a class="dropdown-item" href="#">Orders</a>
+                                <a class="dropdown-item" href="#">Close case</a>
+                                <a class="dropdown-item" href="#">Doctors Note</a>
+                                <a class="dropdown-item" href="#">Clear Note</a>
+                                <a class="dropdown-item" href="#">Encounter</a>
                             </div>
                         </div>
                     </td>

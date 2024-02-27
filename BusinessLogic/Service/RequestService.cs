@@ -20,6 +20,9 @@ using MimeKit;
 using static BusinessLogic.Service.requestService;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Asn1.Ocsp;
+using DocumentFormat.OpenXml.Bibliography;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
 {
@@ -33,21 +36,6 @@ namespace BusinessLogic.Service
         {
             _db = db;
             _env = Environment;
-
-        }
-        public enum RequestType {
-            Patient = 1,
-            Business = 2,
-            Family = 3,
-            Concierge = 4
-
-        }
-        public enum Status
-        {
-            New = 1,
-            Active = 2,
-            Pending = 3,
-            Unassigned = 4
 
         }
         
@@ -102,10 +90,10 @@ namespace BusinessLogic.Service
             req.Lastname = patientReq.Lastname;
             req.Phonenumber = patientReq.Phonenumber;
             req.Email = patientReq.Email;
-            req.Requesttypeid = (int)RequestType.Patient;
+          //  req.Requesttypeid = (int)RequestType.Patient;
            // Status = (status)x.Status;
           /// req.Requesttypeid = (RequestType)patientReq.Requesttypeid;
-            req.Status = (short)Status.Unassigned;
+            //req.Status = (short)Status.Unassigned;
             if (user != null)
             {
                 req.Userid = users.Userid;
@@ -113,19 +101,24 @@ namespace BusinessLogic.Service
             }
             _db.Requests.Add(req);
             _db.SaveChanges();
-
+            var date = patientReq.DOB.Day;
+            var month = patientReq.DOB.Month.ToString();
+            var year = patientReq.DOB.Year;
             rc.Requestid = req.Requestid;
             rc.Notes = patientReq.Notes;
             rc.Firstname = patientReq.Firstname;
             rc.Lastname = patientReq.Lastname;
             rc.Phonenumber = patientReq.Phonenumber;
             rc.Email = patientReq.Email;
+            rc.Intyear = year;
+            rc.Intdate = date;
+            rc.Strmonth = month;
             rc.Street = patientReq.Street;
             rc.City = patientReq.City;
             rc.State = patientReq.State;
             rc.Zipcode = patientReq.Zipcode;
             rc.Regionid = 1;
-
+            rc.Address = patientReq.Street + " " + patientReq.City + "" + patientReq.State + " " + patientReq.Zipcode;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
@@ -161,11 +154,13 @@ namespace BusinessLogic.Service
             req.Lastname = familyReq.F_Lastname;
             req.Phonenumber = familyReq.F_Phonenumber;
             req.Email = familyReq.Email;
-            req.Requesttypeid = (int)RequestType.Patient;
-            req.Status = (short)Status.Unassigned;
+            req.Requesttypeid = /*(int)RequestType.Patient*/1;
+            req.Status = 1;
             _db.Requests.Add(req);
             _db.SaveChanges();
-
+            var date = familyReq.DOB.Day;
+            var month = familyReq.DOB.Month.ToString();
+            var year = familyReq.DOB.Year;
             rc.Requestid = req.Requestid;
             rc.Notes = familyReq.Notes;
             rc.Firstname = familyReq.Firstname;
@@ -177,7 +172,10 @@ namespace BusinessLogic.Service
             rc.State = familyReq.State;
             rc.Zipcode = familyReq.Zipcode;
             rc.Regionid = 1;
-
+            rc.Intyear = year;
+            rc.Intdate = date;
+            rc.Strmonth = month;
+            rc.Address = familyReq.Street + " " + familyReq.City + "" + familyReq.State + " " + familyReq.Zipcode;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
@@ -212,20 +210,27 @@ namespace BusinessLogic.Service
             req.Lastname = conciergereq.cLastname;
             req.Phonenumber = conciergereq.cPhonenumber;
             req.Email = conciergereq.Email;
-            req.Requesttypeid = (int)RequestType.Patient;
-            req.Status = (short)Status.Unassigned;
+            //req.Requesttypeid = (int)RequestType.Patient;
+            req.Status = 1;
             _db.Requests.Add(req);
             _db.SaveChanges();
 
+
+
+            var date = conciergereq.DOB.Day;
+            var month = conciergereq.DOB.Month.ToString();
+            var year = conciergereq.DOB.Year;
             rc.Requestid = req.Requestid;
             rc.Notes = conciergereq.Notes;
             rc.Firstname = conciergereq.Firstname;
             rc.Lastname = conciergereq.Lastname;
             rc.Phonenumber = conciergereq.Phonenumber;
             rc.Email = conciergereq.Email;
-            
+            rc.Intyear = year;
+            rc.Intdate = date;
+            rc.Strmonth = month;
             rc.Regionid = 1;
-
+            rc.Address = conciergereq.pRoomNo + " " + conciergereq.hotelName;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
@@ -270,20 +275,25 @@ namespace BusinessLogic.Service
             req.Lastname = businessReq.bLastname;
             req.Phonenumber = businessReq.bPhonenumber;
             req.Email = businessReq.Email;
-            req.Requesttypeid = (int)RequestType.Business;
-            ;req.Status = (short)Status.Unassigned;
+            //req.Requesttypeid = (int)RequestType.Business;
+            //;req.Status = (short)Status.Unassigned;
             _db.Requests.Add(req);
             _db.SaveChanges();
 
+            var date = businessReq.DOB.Day;
+            var month = businessReq.DOB.Month.ToString();
+            var year = businessReq.DOB.Year;
             rc.Requestid = req.Requestid;
             rc.Notes = businessReq.Notes;
             rc.Firstname = businessReq.Firstname;
             rc.Lastname = businessReq.Lastname;
             rc.Phonenumber = businessReq.Phonenumber;
             rc.Email = businessReq.Email;
-
+            rc.Intyear = year;
+            rc.Intdate = date;
+            rc.Strmonth = month;
             rc.Regionid = 1;
-
+            rc.Address = businessReq.RoomNo + " " + businessReq.City;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
@@ -521,9 +531,9 @@ namespace BusinessLogic.Service
                 DataAccess.Models.Request request = new DataAccess.Models.Request();
                 Requestclient requestclient = new Requestclient();
 
-                var Year = model.DOB.Value.Year;
-                var Month = model.DOB.Value.Month.ToString();
-                var Date = model.DOB.Value.Day;
+                var Year = model.DOB.Year;
+                var Month = model.DOB.Month.ToString();
+                var Date = model.DOB.Day;
 
 
                 var user = _db.Users.FirstOrDefault(x => x.Userid == id);
