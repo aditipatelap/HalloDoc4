@@ -2,21 +2,22 @@
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Service
 {
-    public  class AdminDash:IAdminDash
+    public  class AdminDashService:IAdminDash
     {
         private readonly DataAccess.Data.ApplicationDbContext _db;
 
-        public AdminDash(ApplicationDbContext db)
+        public AdminDashService(ApplicationDbContext db)
         {
             _db = db;
         }
        
         
-        public List<AdminDashboard> GetDashboardData(int statusid)
+        public AdminDashboard GetDashboardData(int statusid)
         {
             List<int> id=new List<int>();
             
@@ -52,7 +53,7 @@ namespace BusinessLogic.Service
             var dashboard = from Request in _db.Requests
                             join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                             where id.Contains(Request.Status)
-                            select new AdminDashboard
+                            select new AdminDash
                             {
                                 Name = Requestclient.Firstname+" "+Requestclient.Lastname,
                                 Requestor=Request.Firstname+" "+Request.Lastname,
@@ -61,14 +62,19 @@ namespace BusinessLogic.Service
                                 RequestorPhone=Request.Phonenumber,
                                 Address=Requestclient.Address,
                                 Notes=Requestclient.Notes,
-
+                               
 
                              // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                                 RequestTypeid =Request.Requesttypeid
                             };
             var viewModel=dashboard.ToList();
-
-            return viewModel;
+            int count = viewModel.Count;
+            
+            return new AdminDashboard
+            {
+                count = count,
+                Dashboards = viewModel
+            };
         }
     }
 }
