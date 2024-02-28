@@ -1,17 +1,19 @@
-﻿@Html.Partial("_AdminHeader")
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+@Html.Partial("_AdminHeader")
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
         <button type="button" class="w-100 btn  newbtn text-start" data-btn="NewPartial" data-id="1">
 
             <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
-            <p class="fw-bold fs-3">1452</p>
+            <p class="fw-bold fs-3">@*@ViewBag.Request[0]*@ @Model.newcount</p>
 
         </button>
     </div>
     <div class="col-lg-2">
         <button type="button" class="w-100 btn    pendingbtn text-start " data-btn="PendingPartial" data-id="2">
             <i class="fa-solid fa-user"></i> <span class="fw-bolder">Pending</span>
-            <p class="fw-bold fs-3">1452</p>
+            <p class="fw-bold fs-3">@*@ViewBag.Request[1]*@ @Model.pendingcount</p>
 
         </button>
 
@@ -19,12 +21,12 @@
     <div class="col-lg-2 ">
         <button type="button" class=" w-100 btn  activebtn text-start border border-success " data-btn="ActivePartial" data-id="3">
             <i class="far fa-check-circle"></i> <span class="fw-bolder">ACTIVE</span>
-            <p class="fw-bold fs-3">1452</p>
+            <p class="fw-bold fs-3"></p>
 
         </button>
     </div>
     <div class="col-lg-2 ">
-        <button type="button" class="w-100 btn concludebtn text-start" data-btn="ConcludePartial" data-id="4">
+        <button type="button" class="w-100 btn concludebtn text-start" data-btn="ConcludePartial" data-id="6">
             <i class="bi bi-arrow-clockwise"></i> <span class="fw-bolder">CONCLUDE</span>
             <p class="fw-bold fs-3">1452</p>
 
@@ -41,7 +43,7 @@
     </div>
     <div class="col-lg-2">
 
-        <button type="button" class="w-100 btn rounded unpaidbtn text-start" data-btn="UnpaidPartial" data-id="6">
+        <button type="button" class="w-100 btn rounded unpaidbtn text-start" data-btn="UnpaidPartial" data-id="9">
             <i class="bi bi-currency-dollar"></i> <span class="fw-bolder">UNPAID</span>
             <p class="fw-bold fs-3">1452</p>
 
@@ -50,119 +52,123 @@
 </div>
 
 
-<div class="d-flex m-4 p-3 justify-content-between">
-    <div>
-        <span class="fw-bolder fs-4">Patients</span>
-        <span>(New)</span>
-
-    </div>
-
-    <div class="">
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
-    </div>
-</div>
-<div class="d-flex justify-content-between m-3 p-3 bg-white">
-
-   
-        <div class="d-flex">
-
-  
-
-            <i class="searchicon bi bi-search"></i> <input type="text" class="form-control" placeholder="Search...">
-        
-      
-        
-            <select class="form-select form-control ms-3" aria-label="Default select example">
-                <option selected>All Regions</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-           </div>
-        
-
-   
-    <div>
-        <button type="button" class="btn btn-outline-secondary">All</button>
-        <span class=" ms-2 patientdot " id="dot"></span> <span>Patient</span>
-        <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span>
-        <span class="ms-2 businessdot" id="dot"></span><span>Business</span>
-        <span class="ms-2 condot" id="dot"></span><span>Concierge</span>
-
-    </div>
-</div>
 
 
         <div id="btnContent">
+    <div id="myModalContainer">
 
+    </div>
         </div>
-       
+<script>
+    $(document).ready(function () {
+        console.log("Document ready");
 
-,<script>
-     $(document).ready(function () {
-         console.log("Document ready");
+        // Set the default partial view to load
+        var defaultPartial = '/Admin/_NewPartial';
 
-         // Set the default partial view to load
-         var defaultPartial = '/Admin/_NewPartial';
+        // Make an AJAX request to get the default partial view content and set up click event handling
+        $.ajax({
+            url: defaultPartial,
+            method: 'GET',
+            success: function (data) {
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#btnContent").html(data);
 
-         // Make an AJAX request to get the default partial view content and set up click event handling
-         $.ajax({
-             url: defaultPartial,
-             method: 'GET',
-             success: function (data) {
-                 // Replace the content of the btnContent div with the retrieved partial view
-                 $("#btnContent").html(data);
+                // Handle click events on buttons
+                $(document).on("click", ".btn", function () {
+                    var btnName = $(this).data("btn");
+                    console.log("Button clicked: " + btnName);
 
-                 // Handle click events on buttons
-                 $(document).on("click", ".btn", function () {
-                     var btnName = $(this).data("btn");
-                     console.log("Button clicked: " + btnName);
-
-                     var statusid = $(this).data("id");
-                     // Make an AJAX request to get the partial view content
-                     $.ajax({
-                         url: '@Url.Action("GetPartialView", "Admin")',
-                         //url: '/Admin/GetPartialView?btn=' + btnName,
-                         method: 'GET',
-                         data:{btnName:btnName,statusid:statusid},
-                         success: function (data) {
-                             console.log("AJAX success");
-                             // Replace the content of the btnContent div with the retrieved partial view
-                             $("#btnContent").html(data);
-                         },
-                         error: function () {
-                             console.error('Error fetching partial view.');
-                         }
-                     });
-                 });
-             },
-             error: function () {
-                 console.error('Error fetching default partial view.');
-             }
-         });
-     });
+                    var statusid = $(this).data("id");
+                    // Make an AJAX request to get the partial view content
+                    $.ajax({
+                        url: '@Url.Action("GetPartialView", "Admin")',
+                        //url: '/Admin/GetPartialView?btn=' + btnName,
+                        method: 'GET',
+                        data: { btnName: btnName, statusid: statusid },
+                        success: function (data) {
+                            console.log("AJAX success");
+                            // Replace the content of the btnContent div with the retrieved partial view
+                            $("#btnContent").html(data);
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+                });
+            },
+            error: function () {
+                console.error('Error fetching default partial view.');
+            }
+        });
+    });
 </script>
 
-@*<script>
-    $(document).ready(function () {
-        $(".btn").click(function () {
-            var idValue = $(this).data("id");
+    @*// $(document).ready(function () {
+       //  console.log("Document ready");
+        
+                 // Replace the content of the btnContent div with the retrieved partial view
+                
+         // Set the default partial view to load
+         //var defaultPartial = '/Admin/_NewPartial';
 
-            $.ajax({
-                url: '@Url.Action("GetPartialView", "Admin")',
-                type: 'POST',
-                data: { id: idValue },
-                success: function (result) {
-                    // Handle success
-                },
-                error: function (error) {
-                    // Handle error
-                }
-            });
+         // Make an AJAX request to get the default partial view content and set up click event handling
+         //$.ajax({
+         //    url: defaultPartial,
+         //    method: 'GET',
+         //    success: function (data) {
+         //        // Replace the content of the btnContent div with the retrieved partial view
+         //        $("#btnContent").html(data);
+
+                 // Handle click events on buttons
+//                 $(document).on("click", ".btn", function () {
+//                     var btnName = $(this).data("btn");
+//                     console.log("Button clicked: " + btnName);
+
+//                     var statusid = $(this).data("id");
+//                     // Make an AJAX request to get the partial view content
+//                     $.ajax({
+//                         url: '@Url.Action("GetPartialView", "Admin")',
+//                         //url: '/Admin/GetPartialView?btn=' + btnName,
+//                         method: 'GET',
+//                         data:{btnName:btnName,statusid:statusid},
+//                         success: function (data) {
+//                             console.log("AJAX success");
+//                             // Replace the content of the btnContent div with the retrieved partial view
+//                             $("#btnContent").html(data);
+//                         },
+//                         error: function () {
+//                             console.error('Error fetching partial view.');
+//                         }
+//                     });
+//                 });
+//         //    },
+//         //    error: function () {
+//         //        console.error('Error fetching default partial view.');
+//         //    }
+//         //});
+//     });*@
+
+@*<script>
+    $(document).on("click", ".btn", function () {
+        //var btnName = $(this).data("btn");
+      //  console.log("Button clicked: " + btnName);
+
+        var statusid = $(this).data("id");
+        // Make an AJAX request to get the partial view content
+        $.ajax({
+            url: '@Url.Action("GetName", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: {  statusid: statusid },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#reqid").html(data);
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
         });
     });
 </script>*@

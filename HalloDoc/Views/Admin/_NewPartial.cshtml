@@ -1,5 +1,55 @@
 ﻿@using DataAccess.ViewModel;
-@model List<AdminDashboard>;
+@model AdminDashboard
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<div class="d-flex m-4 p-3 justify-content-between">
+    <div>
+        <span class="fw-bolder fs-4 ">Patients</span>
+        <span >(new)</span>
+
+    </div>
+
+    <div class="">
+        <button type="button" class="btn btn-info text-white"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
+        <button type="button" class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
+        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
+        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></button>
+        <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
+    </div>
+</div>
+<div class="d-flex justify-content-between m-3 p-3 bg-white">
+
+
+    <div class="d-flex">
+
+
+
+        <i class="searchicon bi bi-search"></i> <input type="text" class="form-control" placeholder="Search...">
+
+
+
+        <select class="form-select form-control ms-3" aria-label="Default select example">
+            <option selected>All Regions</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+
+
+
+    <div>
+        <button type="button" class="btn btn-outline-secondary">All</button>
+        <span class=" ms-2 patientdot " id="dot"></span> <span>Patient</span>
+        <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span>
+        <span class="ms-2 businessdot" id="dot"></span><span>Business</span>
+        <span class="ms-2 condot" id="dot"></span><span>Concierge</span>
+
+    </div>
+</div>
+
+
+
 <table class="table table-responsive  m-4 p-3">
     <thead class="table-secondary">
         <tr>
@@ -21,7 +71,7 @@
     <tbody>
         @if (Model != null)
         {
-            @foreach (var items in Model)
+            @foreach (var items in Model.Dashboards)
             {
                 var bgcolor = "red";
                 if(items.RequestTypeid==1)
@@ -70,8 +120,12 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="#">Assign Case</a>
-                                <a class="dropdown-item" href="#">Cancel Case</a>
-                                <a class="dropdown-item" href="#">View Case</a>
+                                @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
+                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase">
+                                <i class="bi bi-x-circle"></i>
+                                Cancel Case
+                                </a>
+                                <a class="dropdown-item " href="@Url.Action("ViewCase","Admin")">View Case</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
 
                                 <a class="dropdown-item" href="#">Block Patient</a>
@@ -85,3 +139,36 @@
     </tbody>
 
 </table>
+
+<div class="modal fade col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+    <script>
+        $('.showmodal').click(function () {
+        var modalName = $(this).attr('id');
+        console.log("hello")
+        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
+        //    $('#myModalContainer').html(data);
+        //    $('#myModal').modal('show');
+        //});
+            $.ajax({
+                url: '@Url.Action("GetModalPartialView", "Admin")',
+                                         //url: '/Admin/GetPartialView?btn=' + btnName,
+                                         method: 'GET',
+                                         data:{modalName:modalName},
+                                         success: function (data) {
+                                             console.log("AJAX success");
+                                             // Replace the content of the btnContent div with the retrieved partial view
+                    $('.modelbody').html(data);
+                                            // $('#myModal').modal('show');
+                                             console.log("hiiii");
+                                         },
+                                         error: function () {
+                                             console.error('Error fetching partial view.');
+                                         }
+                                     });
+    });
+    </script>
+

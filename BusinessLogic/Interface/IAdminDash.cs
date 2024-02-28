@@ -9,7 +9,11 @@ namespace BusinessLogic.Interface
 {
     public  interface IAdminDash
     {
-        
-        public List<AdminDashboard> GetDashboardData(int statusid);
+
+        public AdminDashboard GetDashboardData(int statusid);
+        public AdminDashboard GetName(int statusid);
+        //public int[] RequestCount(int statusid);
+        public AdminDashboard RequestCount();
+
     }
 }

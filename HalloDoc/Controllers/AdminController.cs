@@ -20,9 +20,10 @@ namespace HalloDoc.Controllers
         }
         public IActionResult Dashboard()
         {
-            
+            var req = _AdminDash.RequestCount();
+          
            
-            return View();
+            return View(req);
             
         }
         public IActionResult _NewPartial()
@@ -37,6 +38,21 @@ namespace HalloDoc.Controllers
             
             return PartialView(partialview,result);
         }
-        
+        public IActionResult ViewCase()
+        {
+
+            return View();
+        }
+        public IActionResult CancelCase()
+        {
+
+            return View();
+        }
+        public IActionResult GetModalPartialView(string modalName)
+        {
+           var partialname ="_"+ modalName;
+            return PartialView(partialname);
+
+        }
     }
 }

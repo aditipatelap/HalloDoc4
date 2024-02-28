@@ -1,5 +1,5 @@
 ﻿@using DataAccess.ViewModel;
-@model List<AdminDashboard>;
+@model AdminDashboard
 <table class="table table-responsive  m-4 p-3">
     <thead class="table-secondary">
         <tr>
@@ -22,7 +22,7 @@
     <tbody>
         @if (Model != null)
         {
-            @foreach (var items in Model)
+            @foreach (var items in Model.Dashboards)
             {
                 var bgcolor = "red";
                 if (items.RequestTypeid == 1)
@@ -73,8 +73,13 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">View Case</a>
-                                <a class="dropdown-item" href="#">View Uplaods</a>
+                                <a class="dropdown-item" href="@Url.Action("ViewCase","Admin")">View Case</a>
+                                @*<a class="dropdown-item" href="#">View Uplaods</a>*@
+                                @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
+                                <a class="case dropdown-item" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase">
+                                <i class="bi bi-x-circle"></i>
+                                Cancel Case
+                                </a>
                                 <a class="dropdown-item" href="#">View Notes</a>
                                 <a class="dropdown-item" href="#">Transfer</a>
 
@@ -90,3 +95,34 @@
     </tbody>
 
 </table>
+<div class="modal fade col-sm-12" id="CancelCase" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+<script>
+    $('.showmodal').click(function () {
+        var modalName = $(this).attr('id');
+        console.log("hello")
+        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
+        //    $('#myModalContainer').html(data);
+        //    $('#myModal').modal('show');
+        //});
+        $.ajax({
+            url: '@Url.Action("GetModalPartialView", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: { modalName: modalName },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $('.modelbody').html(data);
+                // $('#myModal').modal('show');
+                console.log("hiiii");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    });
+</script>

@@ -14,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContext")));
 builder.Services.AddScoped<IUserInterface, LoginService>();
 builder.Services.AddScoped<IRequestInterface, requestService>();
-builder.Services.AddScoped<IAdminDash, AdminDash>();
+builder.Services.AddScoped<IAdminDash, AdminDashService>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 builder.Services.AddSession(options =>
 {

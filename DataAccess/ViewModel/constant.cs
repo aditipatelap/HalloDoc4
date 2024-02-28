@@ -31,6 +31,17 @@ namespace DataAccess.ViewModel
                     ToClose=5,
                     Unpaid=6
         }
+        public enum Requeststatus
+        {
+            Unassigned=1,
+            Accepted=2,
+            Cancelled=3,
+            MDEnRoute=4,
+            MDonSite=5,
+                Conclude=6,
+                Cancelledbypatient=7,
+
+        }
         public enum RequestType
         {
             Patient = 1,

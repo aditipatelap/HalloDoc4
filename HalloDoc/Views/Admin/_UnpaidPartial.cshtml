@@ -1,5 +1,5 @@
 ﻿@using DataAccess.ViewModel;
-@model List<AdminDashboard>;
+@model AdminDashboard
 <table class="table table-responsive  m-4 p-3">
     <thead class="table-secondary">
         <tr>
@@ -22,7 +22,7 @@
     <tbody>
         @if (Model != null)
         {
-            @foreach (var items in Model)
+            @foreach (var items in Model.Dashboards)
             {
                 var bgcolor = "red";
                 if (items.RequestTypeid == 1)
