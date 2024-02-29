@@ -30,13 +30,13 @@ namespace HalloDoc.Controllers
         {
             return View();
         }
-       public IActionResult GetPartialView(string btnName,int statusid)
+        public IActionResult GetPartialView(string btnName, int statusid, string searchValue)
         {
             var partialview = "_" + btnName;
-            
-            var result = _AdminDash.GetDashboardData(statusid);
-            
-            return PartialView(partialview,result);
+
+            var result = _AdminDash.GetDashboardData(statusid, searchValue);
+
+            return PartialView(partialview, result);
         }
         public IActionResult ViewCase()
         {

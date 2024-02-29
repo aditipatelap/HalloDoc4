@@ -2,51 +2,6 @@
 @model AdminDashboard
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-<div class="d-flex m-4 p-3 justify-content-between">
-    <div>
-        <span class="fw-bolder fs-4 ">Patients</span>
-        <span >(new)</span>
-
-    </div>
-
-    <div class="">
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
-    </div>
-</div>
-<div class="d-flex justify-content-between m-3 p-3 bg-white">
-
-
-    <div class="d-flex">
-
-
-
-        <i class="searchicon bi bi-search"></i> <input type="text" class="form-control" placeholder="Search...">
-
-
-
-        <select class="form-select form-control ms-3" aria-label="Default select example">
-            <option selected>All Regions</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-        </select>
-    </div>
-
-
-
-    <div>
-        <button type="button" class="btn btn-outline-secondary">All</button>
-        <span class=" ms-2 patientdot " id="dot"></span> <span>Patient</span>
-        <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span>
-        <span class="ms-2 businessdot" id="dot"></span><span>Business</span>
-        <span class="ms-2 condot" id="dot"></span><span>Concierge</span>
-
-    </div>
-</div>
 
 
 
@@ -140,7 +95,7 @@
 
 </table>
 
-<div class="modal fade col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
         <div class="modelbody modal-content"></div>
     </div>
@@ -172,3 +127,8 @@
     });
     </script>
 
+@*<style>
+    .modal-backdrop{
+        opacity:0.5;
+    }
+</style>*@

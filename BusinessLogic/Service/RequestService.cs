@@ -81,7 +81,8 @@ namespace BusinessLogic.Service
 
             }
 
-
+            req.Requesttypeid = 1;
+            req.Status = (short)Requeststatus.Unassigned;
 
             req.Createddate = DateTime.Now;
             
@@ -154,8 +155,8 @@ namespace BusinessLogic.Service
             req.Lastname = familyReq.F_Lastname;
             req.Phonenumber = familyReq.F_Phonenumber;
             req.Email = familyReq.Email;
-            req.Requesttypeid = /*(int)RequestType.Patient*/1;
-            req.Status = 1;
+            req.Requesttypeid = 2;
+            req.Status = (short)Requeststatus.Unassigned;
             _db.Requests.Add(req);
             _db.SaveChanges();
             var date = familyReq.DOB.Day;

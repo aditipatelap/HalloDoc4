@@ -69,19 +69,19 @@ namespace BusinessLogic.Service
             dash.Status = (status)statusid;
             return dash;
         }
-      
-        public AdminDashboard GetDashboardData(int statusid)
+
+        public AdminDashboard GetDashboardData(int statusid, string searchValue)
         {
-            List<int> id=new List<int>();
-            if(statusid != 3 && statusid != 5)
+            List<int> id = new List<int>();
+            if (statusid != 3 && statusid != 5)
             {
                 id.Add(statusid);
             }
-            else if(statusid  == 3)
+            else if (statusid == 3)
             {
                 id.Add(4);
                 id.Add(5);
-                
+
             }
             else
             {
@@ -90,30 +90,59 @@ namespace BusinessLogic.Service
                 id.Add(8);
 
             }
-            var dashboard = from Request in _db.Requests
-                            join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                            where id.Contains(Request.Status)
-                            select new AdminDash
-                            {
-                                Name = Requestclient.Firstname+" "+Requestclient.Lastname,
-                                Requestor=Request.Firstname+" "+Request.Lastname,
-                                RequestedDate=Request.Createddate,
-                                PatientPhone=Requestclient.Phonenumber,
-                                RequestorPhone=Request.Phonenumber,
-                                Address=Requestclient.Address,
-                                Notes=Requestclient.Notes,
-                               
+            List<AdminDash> list = new List<AdminDash>();
 
-                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-                                RequestTypeid =Request.Requesttypeid
-                            };
-            var viewModel=dashboard.ToList();
+            if (searchValue == null)
+            {
+                var dashboard = from Request in _db.Requests
+                                join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                                where id.Contains(Request.Status)
+                                select new AdminDash
+                                {
+                                    Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                                    Requestor = Request.Firstname + " " + Request.Lastname,
+                                    RequestedDate = Request.Createddate,
+                                    PatientPhone = Requestclient.Phonenumber,
+                                    RequestorPhone = Request.Phonenumber,
+                                    Address = Requestclient.Address,
+                                    Notes = Requestclient.Notes,
+
+
+                                    // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                                    RequestTypeid = Request.Requesttypeid
+                                };
+
+                list = dashboard.ToList();
+            }
+            else
+            {
+
+                var dashboard = from Request in _db.Requests
+                                join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue)
+                                select new AdminDash
+                                {
+                                    Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                                    Requestor = Request.Firstname + " " + Request.Lastname,
+                                    RequestedDate = Request.Createddate,
+                                    PatientPhone = Requestclient.Phonenumber,
+                                    RequestorPhone = Request.Phonenumber,
+                                    Address = Requestclient.Address,
+                                    Notes = Requestclient.Notes,
+
+
+                                    // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                                    RequestTypeid = Request.Requesttypeid
+                                };
+                list = dashboard.ToList();
+            }
+
 
             AdminDashboard adminDashboard = new AdminDashboard()
             {
-                Dashboards = viewModel,
-                Status=(status)statusid
-                
+                Dashboards = list,
+                Status = (status)statusid
+
             };
             return adminDashboard;
         }
