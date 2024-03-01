@@ -2,9 +2,13 @@
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using MailKit;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
+using System.Web.Helpers;
+using System.Web.Mvc;
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -106,7 +110,7 @@ namespace BusinessLogic.Service
                                     RequestorPhone = Request.Phonenumber,
                                     Address = Requestclient.Address,
                                     Notes = Requestclient.Notes,
-
+                                    requestid=Request.Requestid,
 
                                     // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                                     RequestTypeid = Request.Requesttypeid
@@ -129,7 +133,7 @@ namespace BusinessLogic.Service
                                     RequestorPhone = Request.Phonenumber,
                                     Address = Requestclient.Address,
                                     Notes = Requestclient.Notes,
-
+                                    requestid = Request.Requestid,
 
                                     // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                                     RequestTypeid = Request.Requesttypeid
@@ -146,5 +150,36 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
+        public AdminDashboard AssignRequest()
+        {
+
+
+                var regions = _db.Regions.ToList();
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.Regions = regions;
+                return adminDashboard;
+          }
+        //public AdminDashboard CancelCase(int requestid)
+        //{
+
+
+        //    //var casetag = _db.Casetags.ToList();
+        //    //AdminDashboard adminDashboard = new AdminDashboard();
+        //    //adminDashboard.Caserequest = casetag;
+        //    //adminDashboard.requestid=
+        //    //return adminDashboard;
+        //}
+        public void  submitCancelCase(AdminDashboard model, int requestid)
+        {
+            //var result = _db.Requests.Where(x => x.Requestid == requestid).Select(x => x.Casetag).FirstOrDefault();
+            //result = model.Caserequest;
+            //_db.SaveChanges();
+              
+            
+        }
+
+
+
+
     }
 }

@@ -1,0 +1,77 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="modal-header bg-info ">
+    <h5 class="modal-title text-white" id="exampleModalLabel"> Assign Request  </h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body m-auto">
+    <div class="mb-3 text-secondary">
+        To assign this request, search and select  another Physician.
+    </div>
+   
+    <div class="dropdown my-3  ">
+        <select class="form-select" id="regionName" aria-label="Floating label select example">
+            @if (Model.Regions != null)
+            {
+                <option disabled selected style="display:none">Narrow Down Region Name</option>
+                @foreach (var item in Model.Regions)
+                {
+                    <option value="@item.Regionid">@item.Name</option>
+
+                }
+            }
+        </select>
+    </div>
+    <div class="dropdown my-3  ">
+        <select class="form-select" id="Physician" aria-label="Floating label select example">
+            
+            <option disabled selected style="display:none">Select Physician</option>
+            
+        </select>
+    </div>
+
+    <div class="form-floating my-4">
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+        <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description</label>
+    </div>
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
+        <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+    </div>
+</div>
+<script>
+    $(document).on('change', '#regionName', function () {
+        var selectedvalue = $(this).val();  
+
+        $.ajax({
+            url: '@Url.Action("GetDropDown", "Admin")',
+            type: 'POST',
+            data: { selectedvalue: selectedvalue },
+            success: function (data) {
+                //var secondDropdown = '<select id="secondDropdown">';
+                //$.each(data, function (index, item) {
+                //    secondDropdown += '<option>' + item + '</option>';
+                //});
+                //secondDropdown += '<option disabled selected style="display:none">Select Physician</option></select>';
+                //$('#secondDropdownContainer').html(secondDropdown);
+                console.log("AJAX success");
+                var physician = '';
+                $.each(data, function (index, physicians) {
+                   
+                    physician += '<option>' + physicians + '<option>'
+
+                //    $("#Physician").append('<option value="' + Physician + '">' + Physician + '</option>');
+                });
+
+                $('#Physician').html(physician);
+                
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+
+    });
+</script>

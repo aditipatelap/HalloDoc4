@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAccess.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,14 +21,20 @@ namespace DataAccess.ViewModel
         public string? Notes { get; set; }
         public int RequestTypeid { get; set; }
         public string Region { get; set; }
+        public int requestid { get; set; }
 
 
 
 
     }
+
+
     public class AdminDashboard
     {
+        public IEnumerable<Casetag> Caserequest { get; set; }
+        public IEnumerable<Physician> Physicians { get; set; }
         public List<AdminDash> Dashboards { get; set; }
+        public IEnumerable<Region> Regions {get; set;}
         public int newcount { get; set; }
         public int pendingcount { get; set; }
         public int activecount { get; set; }
@@ -35,6 +42,7 @@ namespace DataAccess.ViewModel
         public int concludecount { get; set; }
         public int unpaidcount { get; set; }
        public status Status { get; set; }
+        public int requestid { get; set; }
 
 
     }

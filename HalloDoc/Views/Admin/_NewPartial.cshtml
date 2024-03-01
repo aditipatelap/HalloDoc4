@@ -74,9 +74,12 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Assign Case</a>
+                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest">
+                                    <i class="bi bi-x-circle"></i>
+                                    Assign Case
+                                </a>
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
-                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase">
+                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" onclick>
                                 <i class="bi bi-x-circle"></i>
                                 Cancel Case
                                 </a>
