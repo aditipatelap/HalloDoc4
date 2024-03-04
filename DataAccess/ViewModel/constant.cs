@@ -40,6 +40,9 @@ namespace DataAccess.ViewModel
             MDonSite=5,
                 Conclude=6,
                 Cancelledbypatient=7,
+                Closed=8,
+                Unpaid=9,
+            Clear=10
 
         }
         public enum RequestType

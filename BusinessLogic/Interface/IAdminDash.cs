@@ -14,8 +14,15 @@ namespace BusinessLogic.Interface
         public AdminDashboard GetName(int statusid);
         //public int[] RequestCount(int statusid);
         public AdminDashboard RequestCount();
-        public AdminDashboard AssignRequest();
-        public void submitCancelCase(AdminDashboard model, int requestid);
+        public AdminDashboard AssignRequest(int requestid);
 
-    }
+        public AdminDashboard CancelCase(int requestid);
+        public void SubmitAssignReq (AdminDashboard model, int requestid);
+        public void submitCancelCase(AdminDashboard model, int requestid);
+        public AdminDashboard BlockCase(int reqid, string patientname);
+        public void SubmitBlockCase(AdminDashboard model, int reqid);
+
+
+
+        }
 }

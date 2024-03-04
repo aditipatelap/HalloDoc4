@@ -74,12 +74,9 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="@Url.Action("ViewCase","Admin")">View Case</a>
-                                @*<a class="dropdown-item" href="#">View Uplaods</a>*@
+                               
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
-                                <a class="case dropdown-item" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase">
-                                <i class="bi bi-x-circle"></i>
-                                Cancel Case
-                                </a>
+                                <a class="dropdown-item" href="@Url.Action("ViewUpload","Admin")">View Uploads</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
                                 <a class="dropdown-item" href="#">Transfer</a>
 

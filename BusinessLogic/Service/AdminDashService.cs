@@ -6,6 +6,7 @@ using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using MailKit;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Reflection.Metadata.Ecma335;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -28,10 +29,10 @@ namespace BusinessLogic.Service
             var req = _db.Requests.ToList();
             dash.newcount = req.Count(x => x.Status == (short)Requeststatus.Unassigned);
             dash.pendingcount= req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
+            dash.activecount= req.Count(x => x.Status == (short)Requeststatus.MDEnRoute || x.Status == (short)Requeststatus.MDonSite);
+            dash.toclosecount = req.Count(x => x.Status == (short)Requeststatus.Cancelled || x.Status==(short)Requeststatus.Cancelledbypatient || x.Status==(short)Requeststatus.Closed);
+            dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatus.Unpaid);
+            dash.concludecount = req.Count(x => x.Status == (short)Requeststatus.Conclude);
            
             return dash;
         }
@@ -123,7 +124,7 @@ namespace BusinessLogic.Service
 
                 var dashboard = from Request in _db.Requests
                                 join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue)
+                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) 
                                 select new AdminDash
                                 {
                                     Name = Requestclient.Firstname + " " + Requestclient.Lastname,
@@ -150,32 +151,81 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
-        public AdminDashboard AssignRequest()
+        public AdminDashboard AssignRequest(int requestid)
         {
 
 
                 var regions = _db.Regions.ToList();
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.Regions = regions;
+            //adminDashboard.patientname= patientname;
+            adminDashboard.requestid= requestid;
+
+            
                 return adminDashboard;
           }
-        //public AdminDashboard CancelCase(int requestid)
-        //{
+        public void SubmitAssignReq(AdminDashboard model,int requestid)
+        {
+           var id= _db.Physicians.Where(x => x.Firstname==model.assignreq.physicianname).FirstOrDefault();
+            var request=_db.Requests.Where(x => x.Requestid== requestid).FirstOrDefault();
 
 
-        //    //var casetag = _db.Casetags.ToList();
-        //    //AdminDashboard adminDashboard = new AdminDashboard();
-        //    //adminDashboard.Caserequest = casetag;
-        //    //adminDashboard.requestid=
-        //    //return adminDashboard;
-        //}
+            request.Physicianid=id.Physicianid;
+            request.Status = 2;
+            
+            _db.SaveChanges();
+
+
+        }
+        public AdminDashboard BlockCase(int reqid, string patientname)
+        {
+
+
+           
+            AdminDashboard adminDashboard = new AdminDashboard();
+           
+            adminDashboard.patientname = patientname;
+            
+            adminDashboard.requestid=reqid;
+
+            return adminDashboard;
+        }
+        public void SubmitBlockCase(AdminDashboard model,int reqid)
+        {
+            Blockrequest blockrequest = new Blockrequest();
+            
+            
+           
+           var request= _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
+            request.Status= 10;
+            BlockReq blockReq = new BlockReq();
+            blockrequest.Reason = model.blockreq.Blockreason;
+            blockrequest.Email = request.Email;
+            //reqid must be not null
+            //blockrequest.Requestid =reqid;
+            _db.Blockrequests.Add(blockrequest);
+            _db.SaveChanges();
+            _db.SaveChanges();
+         }
+
+        public AdminDashboard CancelCase(int requestid)
+        {
+
+
+            var casetag = _db.Casetags.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Caserequest = casetag;
+            adminDashboard.requestid = requestid;
+            return adminDashboard;
+        }
         public void  submitCancelCase(AdminDashboard model, int requestid)
         {
-            //var result = _db.Requests.Where(x => x.Requestid == requestid).Select(x => x.Casetag).FirstOrDefault();
-            //result = model.Caserequest;
-            //_db.SaveChanges();
-              
-            
+            var result = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            result.Status = 3;
+
+            _db.SaveChanges();
+
+
         }
 
 

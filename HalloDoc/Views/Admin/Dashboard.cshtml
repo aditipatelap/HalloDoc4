@@ -1,6 +1,6 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-@Html.Partial("_AdminHeader")
+@Html.Partial("_DashboardHeader")
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
         <button type="button" class="w-100 btn  newbtn text-start" data-btn="NewPartial" data-id="1">
@@ -13,7 +13,7 @@
     <div class="col-lg-2">
         <button type="button" class="w-100 btn    pendingbtn text-start " data-btn="PendingPartial" data-id="2">
             <i class="fa-solid fa-user"></i> <span class="fw-bolder">Pending</span>
-            <p class="fw-bold fs-3">@*@ViewBag.Request[1]*@ @Model.pendingcount</p>
+            <p class="fw-bold fs-3"> @Model.pendingcount</p>
 
         </button>
 
@@ -92,10 +92,10 @@
     </div>
     <div>
         <button type="button" class="btn btn-outline-secondary">All</button>
-        <span class=" ms-2 patientdot " id="dot"></span> <span>Patient</span>
-        <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span>
-        <span class="ms-2 businessdot" id="dot"></span><span>Business</span>
-        <span class="ms-2 condot" id="dot"></span><span>Concierge</span>
+        <button class="searchrequest" data-btn="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
+        <button class="searchrequest" data-btn="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
+        <button class="searchrequest" data-btn="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
+        <button class="searchrequest" data-btn="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
 
     </div>
 </div>
@@ -118,92 +118,92 @@
 
     </div>
         </div>
-<script>
-    var statusidglobal;
-    var btnnameglobal;
-    $(document).ready(function () {
+    <script>
+        var statusidglobal;
+        var btnnameglobal;
+        $(document).ready(function () {
 
-        console.log("Document ready");
+            console.log("Document ready");
        
-        // Set the default partial view to load
-        var defaultPartial = '/Admin/_NewPartial';
+            // Set the default partial view to load
+            var defaultPartial = '/Admin/_NewPartial';
 
-        // Make an AJAX request to get the default partial view content and set up click event handling
-        $.ajax({
-            url: defaultPartial,
-            method: 'GET',
-            success: function (data) {
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#btnContent").html(data);
+            // Make an AJAX request to get the default partial view content and set up click event handling
+            $.ajax({
+                url: defaultPartial,
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#btnContent").html(data);
 
-                // Handle click events on buttons
-                $(document).on("click", ".btn", function () {
-                    var btnName = $(this).data("btn");
-                    btnnameglobal=btnName;
-                    console.log("Button clicked: " + btnnameglobal);
+                    // Handle click events on buttons
+                    $(document).on("click", ".btn", function () {
+                        var btnName = $(this).data("btn");
+                        btnnameglobal=btnName;
+                        console.log("Button clicked: " + btnnameglobal);
                     
 
-                    var statusid = $(this).data("id");
-                    statusidglobal = statusid;
-                    console.log("Button clicked: " + statusidglobal);
-                    // Make an AJAX request to get the partial view content
+                        var statusid = $(this).data("id");
+                        statusidglobal = statusid;
+                        console.log("Button clicked: " + statusidglobal);
+                        // Make an AJAX request to get the partial view content
 
-                    $.ajax({
-                        url: '@Url.Action("GetPartialView", "Admin")',
-                        //url: '/Admin/GetPartialView?btn=' + btnName,
-                        method: 'GET',
-                        data: { btnName: btnName, statusid: statusid },
-                        success: function (data) {
-                            console.log("AJAX success");
-                            // Replace the content of the btnContent div with the retrieved partial view
-                            $("#btnContent").html(data);
+                        $.ajax({
+                            url: '@Url.Action("GetPartialView", "Admin")',
+                            //url: '/Admin/GetPartialView?btn=' + btnName,
+                            method: 'GET',
+                            data: { btnName: btnName, statusid: statusid },
+                            success: function (data) {
+                                console.log("AJAX success");
+                                // Replace the content of the btnContent div with the retrieved partial view
+                                $("#btnContent").html(data);
                                 
-                        },
-                        error: function () {
-                            console.error('Error fetching partial view.');
-                        }
+                            },
+                            error: function () {
+                                console.error('Error fetching partial view.');
+                            }
+                        });
                     });
-                });
-            },
-            error: function () {
-                console.error('Error fetching default partial view.');
-            }
-        });
+                },
+                error: function () {
+                    console.error('Error fetching default partial view.');
+                }
+            });
    
 
 
     
-    });
-
-    document.getElementById('searchButton').addEventListener('click', handleSearchClick);
-
-    function handleSearchClick() {
-        
-        // Get the value from the search input
-        var searchValue = document.getElementById('searchInput').value;
-        console.log(searchValue);
-        console.log(statusidglobal);
-        console.log(btnnameglobal);
-        // Perform the AJAX request
-        
-        $.ajax({
-            type: "GET",
-            // url: "/Admin/GetPartialView?searchValue=" + searchValue,
-            url: '@Url.Action("GetPartialView", "Admin")',
-            data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal },
-            success: function (data) {
-                console.log("AJAX success");
-                // Update the table body with the filtered data
-                $("#btnContent").html(data);
-                //location.reload();
-            },
-            
-            error: function (error) {
-                console.log("Error:", error);
-            }
         });
+
+        document.getElementById('searchButton').addEventListener('click', handleSearchClick);
+    document.getElementById('searchButton').addEventListener('click', handleSearchClick);
+            function handleSearchClick() {
         
-    }
+            // Get the value from the search input
+            var searchValue = document.getElementById('searchInput').value;
+            console.log(searchValue);
+            console.log(statusidglobal);
+            console.log(btnnameglobal);
+            // Perform the AJAX request
+        
+            $.ajax({
+                type: "GET",
+                // url: "/Admin/GetPartialView?searchValue=" + searchValue,
+                url: '@Url.Action("GetPartialView", "Admin")',
+                data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal },
+                success: function (data) {
+                    console.log("AJAX success");
+                    // Update the table body with the filtered data
+                    $("#btnContent").html(data);
+                    //location.reload();
+                },
+            
+                error: function (error) {
+                    console.log("Error:", error);
+                }
+            });
+        
+        }
     
 
-</script>
+    </script>

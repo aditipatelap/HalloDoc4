@@ -1,0 +1,62 @@
+﻿@inject IHttpContextAccessor _httpContextAccessor;
+<nav class="navbar position-sticky">
+    <a class="navbar-brand" href="#">
+        <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
+    </a>
+
+    <div class="d-flex justify-content-end mt-3">
+        <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
+        <h4 class=" ms-2 d-lg-block d-none"> Admin admin @*@_httpContextAccessor.HttpContext.Session.GetString("Admin")*@</h4>
+        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("submitReq", "Patient_site")'">Logout</button></div>
+
+        <button class="me-3 ms-1  btn btn-outline-info btn-toggle">
+            <i class="fa fa-moon i-info"></i>
+        </button>
+    </div>
+
+
+
+
+
+
+
+
+</nav>
+<hr>
+    @*<div class="tab d-flex  shadow mt-1 ms-1 ">
+        <p class="tab-links active-link" onclick="location.href='@Url.Action(" dashboard", "admin")'">dashboard</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+
+    </div>
+    *@
+<ul class="nav">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Provider Location</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">My Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="#">Providers</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Partners</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Access</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Records</a>
+    </li>
+  
+   
+  
+</ul>

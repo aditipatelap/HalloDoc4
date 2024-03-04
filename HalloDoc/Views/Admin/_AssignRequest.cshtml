@@ -1,4 +1,4 @@
-﻿@using DataAccess.ViewModel;
+﻿@using DataAccess.ViewModel
 @model AdminDashboard
 
 <div class="modal-header bg-info ">
@@ -9,7 +9,7 @@
     <div class="mb-3 text-secondary">
         To assign this request, search and select  another Physician.
     </div>
-   
+    <form method="post" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
     <div class="dropdown my-3  ">
         <select class="form-select" id="regionName" aria-label="Floating label select example">
             @if (Model.Regions != null)
@@ -24,21 +24,22 @@
         </select>
     </div>
     <div class="dropdown my-3  ">
-        <select class="form-select" id="Physician" aria-label="Floating label select example">
+        <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example">
             
-            <option disabled selected style="display:none">Select Physician</option>
+            <option  disabled selected style="display:none" >Select Physician</option>
             
         </select>
     </div>
 
     <div class="form-floating my-4">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+        <textarea class="form-control" asp-for="assignreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
         <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description</label>
     </div>
     <div class="d-flex justify-content-end">
         <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
         <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
     </div>
+    </form>
 </div>
 <script>
     $(document).on('change', '#regionName', function () {

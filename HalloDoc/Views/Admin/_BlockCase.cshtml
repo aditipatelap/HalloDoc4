@@ -1,0 +1,26 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="modal-header bg-info ">
+    <h5 class="modal-title text-white" id="exampleModalLabel"> Confirm Block  </h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body m-auto">
+    
+        <div class="mb-3 text-secondary">
+            <p class="text-info fw-bold ">Patient Name: @Model.patientname</p>
+        </div>
+    <form action='@Url.Action("BlockReq", "Admin",new {requestid=Model.requestid})' method="post" enctype="multipart/form-data">
+       
+        <div class="form-floating my-4">
+            <textarea class="form-control" asp-for="blockreq.Blockreason" placeholder="Reason for block request" id="floatingTextarea2" style="height: 100px"></textarea>
+            <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description</label>
+        </div>
+            
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn-back btn btn-info btn-lg p-2 px-4 me-3 info-button me-2 ">Confirm</button>
+            <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+        </div>
+    </form>
+</div>
