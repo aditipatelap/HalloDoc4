@@ -1,8 +1,14 @@
 ﻿using BusinessLogic.Interface;
+using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.ViewModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Claims;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using DocumentFormat.OpenXml.ExtendedProperties;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HalloDoc.Controllers
 {
@@ -11,17 +17,77 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAdminDash _AdminDash;
+        private readonly INotyfService _notyf;
 
-        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor)
+        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf)
         {
             _db = db;
             _AdminDash = adminDash;
             _httpContextAccessor = httpContextAccessor;
+            _notyf = notyf;
         }
         public IActionResult Index()
         {
             return View();
         }
+        public IActionResult AdminLogin() {
+            ClaimsPrincipal claimuser = HttpContext.User;
+            if(claimuser.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Dashboard", "Admin");
+            }
+            return View();
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> AdminLogin(LoginModel loginModel)
+        {
+
+            var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
+
+            if (user != null)
+            {
+                List<Claim> claims = new List<Claim>()
+                {
+                    new Claim(ClaimTypes.NameIdentifier,loginModel.Email),
+                    new Claim("OtherProperties","Example Role")
+                };
+                ClaimsIdentity claimsidentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                //Authenticationproperties
+                AuthenticationProperties properties = new AuthenticationProperties()
+                {
+                    AllowRefresh = true,
+                };
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsidentity), properties);
+                //int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+
+
+                //string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+
+
+
+
+                return RedirectToAction("Dashboard", "Admin");
+            }
+            else
+            {
+                _notyf.Custom("Login Failed!", 3, "green", "bi bi-check-circle-fill");
+
+            }
+            return View();
+
+        }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);  
+
+
+            return RedirectToAction("AdminLogin", "Admin");
+        }
+
+        [Authorize]
+        
         public IActionResult Dashboard()
         {
             var req = _AdminDash.RequestCount();
@@ -51,10 +117,8 @@ namespace HalloDoc.Controllers
         
         public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
         {
-            //_httpContextAccessor.HttpContext.Session.SetInt32("reqid", reqid);
-            //_httpContextAccessor.HttpContext.Session.SetString("patientName", patientname);
-            TempData["reqid"] = _httpContextAccessor.HttpContext.Session.GetInt32("reqid");
-            TempData["patientName"] = _httpContextAccessor.HttpContext.Session.GetString("patientName");
+          
+            
             var partialname = "_" + modalName;
             if (modalName == "AssignRequest")
             {

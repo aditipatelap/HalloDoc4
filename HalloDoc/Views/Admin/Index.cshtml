@@ -1,0 +1,87 @@
+﻿<div class="d-none d-md-block navbar-expand-sm navbar-light shadow">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink  active" aria-current="page" id="home">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="ProviderLocation">Provider Location</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Providers"> Providers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Partners"> Partners</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Access"> Access</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Records"> Records</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<div id="TabContent">
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach(function (navLink) {
+            navLinks[0].style.borderBottom = "2px solid deepskyblue";
+            navLinks[0].style.color = "deepskyblue";
+            navLink.addEventListener("click", function () {
+                // Remove active class from all nav links
+                navLinks.forEach(function (link) {
+                    link.classList.remove("active");
+                    link.style.color = ""; // Reset text color
+                    link.style.borderBottom = "none"; // Reset bottom border
+                });
+
+                // Add active class to the clicked nav link
+                this.classList.add("active");
+
+                // Add bottom border and change text color to "deepskyblue"
+                this.style.borderBottom = "2px solid deepskyblue";
+                this.style.color = "deepskyblue";
+            });
+        });
+        navLinks[0].classList.add("active");
+
+        // Add bottom border and change text color to "deepskyblue"
+        navLinks[0].style.borderBottom = "2px solid deepskyblue";
+        navLinks[0].style.color = "deepskyblue";
+    });
+
+
+    $(document).ready(function () {
+        $(".tablink").click(function () {
+            var TabId = $(this).attr("id");
+            $.ajax({
+                url: '/Admin/GetTabs',
+                data: { Tabid: TabId },
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#TabContent").html(data);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        });
+        $("#home")[0].click();
+    });

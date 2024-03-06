@@ -1,6 +1,6 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-@Html.Partial("_DashboardHeader")
+@Html.Partial("DashboardHeader")
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
         <button type="button" class="w-100 btn  newbtn text-start" data-btn="NewPartial" data-id="1">
@@ -176,7 +176,7 @@
         });
 
         document.getElementById('searchButton').addEventListener('click', handleSearchClick);
-    document.getElementById('searchButton').addEventListener('click', handleSearchClick);
+        document.getElementById('searchButton').addEventListener('click', handleSearchClick);
             function handleSearchClick() {
         
             // Get the value from the search input

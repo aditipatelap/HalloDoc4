@@ -1,0 +1,137 @@
+﻿@inject IHttpContextAccessor _httpContextAccessor;
+<style>
+    .nav-tabs {
+        border-bottom: 0px solid transparent;
+    }
+
+        .nav-tabs .nav-link {
+            border: 0px solid transparent;
+            text-decoration:none;
+            color:black;
+        }
+
+   a{
+       color:black; 
+   }
+    /* Selected link   */
+</style>
+<nav class="navbar position-sticky">
+    <a class="navbar-brand" href="#">
+        <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
+    </a>
+
+    <div class="d-flex justify-content-end mt-3">
+        <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
+        <h4 class=" ms-2 d-lg-block d-none"> Admin admin @*@_httpContextAccessor.HttpContext.Session.GetString("Admin")*@</h4>
+        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("submitReq", "Patient_site")'">>Logout</button></div>
+
+        <button class="me-3 ms-1  btn btn-outline-info btn-toggle">
+            <i class="fa fa-moon i-info"></i>
+        </button>
+    </div>
+
+
+
+
+
+
+
+
+</nav>
+<hr>
+    @*<div class="tab d-flex  shadow mt-1 ms-1 ">
+        <p class="tab-links active-link" onclick="location.href='@Url.Action(" dashboard", "admin")'">dashboard</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+        <p class="tab-links" onclick="location.href='@Url.Action(" dashboard", "admin" )'">profile</p>
+
+    </div>
+    *@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        
+        <a class="nav-link active"  data-bs-toggle="tab" aria-current="page" href="#Dashboard">Dashboard</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  data-bs-toggle="tab" aria-current="page" href="#ProviderLocation">Provider Location</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  data-bs-toggle="tab" aria-current="page" href="#MyProfile">My Profile</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  data-bs-toggle="tab" aria-current="page" href="#Providers">Providers</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#Partners">Partners</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  data-bs-toggle="tab" href="#Access">Access</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link"  data-bs-toggle="tab" href="#Records">Records</a>
+    </li>
+  
+   
+  
+</ul>
+<div class="tab-content">
+  
+
+</div>
+<script>
+    // Add this JavaScript in the <script> tag or in an external script file
+
+    //document.addEventListener('DOMContentLoaded', function () {
+    //    var tabs = document.querySelectorAll('.nav-link');
+
+    //    tabs.forEach(function (tab) {
+    //        tab.addEventListener('click', function () {
+    //            var tabId = this.getAttribute('href').replace('#', '');
+    //            showTab(tabId);
+    //        });
+    //    });
+
+    //    // Show the default tab (Tab 1)
+    //    showTab('Dashboard');
+    //});
+
+    //function showTab(tabId) {
+    //    // Hide all tabs
+    //    var tabContents = document.querySelectorAll('.tab-pane');
+    //    tabContents.forEach(function (tab) {
+    //        tab.classList.remove('active');
+    //    });
+
+    //    // Show the selected tab
+    //    var selectedTab = document.getElementById(tabId);
+    //    selectedTab.classList.add('active');
+    //}
+    document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+       
+        navLinks.forEach(function (navLink) {
+            navLink.addEventListener("click", function () {
+                // Remove active class from all nav links
+                navLinks.forEach(function (link) {
+                    link.classList.remove("active");
+                    link.style.color = ""; // Reset text color
+                    link.style.borderBottom = "none"; // Reset bottom border
+                });
+
+                // Add active class to the clicked nav link
+                this.classList.add("active");
+
+                // Add bottom border and change text color to "deepskyblue"
+                this.style.borderBottom = "2px solid deepskyblue";
+                this.style.color = "deepskyblue";
+            });
+        });
+
+
+    });
+
+
+</script>

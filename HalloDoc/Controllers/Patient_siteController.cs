@@ -1,11 +1,14 @@
 ﻿
 using AspNetCoreHero.ToastNotification.Abstractions;
 using BusinessLogic.Interface;
+
 using DataAccess.Data;
 using DataAccess.ViewModel;
 using HalloDoc.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
@@ -14,7 +17,7 @@ namespace HalloDoc.Controllers
         private readonly ILogger<Patient_siteController> _logger;
         private readonly IUserInterface _loginService;
         private readonly IRequestInterface _requestService;
-        private readonly DataAccess.Data.ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
         private readonly INotyfService _notyf;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -39,57 +42,59 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Patient_Login(LoginModel loginModel)
-        {
-
-            
-           
-                var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
-
-                if (user != null)
-                {
-
-                    int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
-                    _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
-
-                    string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
-
-                    //_httpContextAccessor.HttpContext.Session.SetInt32("id", id);
-                    _httpContextAccessor.HttpContext.Session.SetString("PatientName", userName);
-
-                    _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
+        //public IActionResult Patient_Login(LoginModel loginModel)
+        //{
 
 
 
-                    return RedirectToAction("patientDashboard", "Patient_Site");
-                }
-                int var = _loginService.Login(loginModel);
-                if (var == 3)
-                {
-                    _notyf.Custom("Password incorrect!", 3, "red", "bi bi-check-circle-fill");
-                    return View();
-                }
+        //        var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
 
-                if (var == 2)
-                {
-                    _notyf.Custom("Email Incorrect", 3, "red", "bi bi-x-circle-fill");
-                    return View();
-                }
+        //    SessionUtils.SetLoggedInUser(HttpContext.Session, user);
 
-               
-            
-            return View();
+        //    if (user != null)
+        //        {
 
-        }
+        //            int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+        //            _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
+
+        //            string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+
+        //            //_httpContextAccessor.HttpContext.Session.SetInt32("id", id);
+        //            _httpContextAccessor.HttpContext.Session.SetString("PatientName", userName);
+
+        //            _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
+
+
+
+        //            return RedirectToAction("patientDashboard", "Patient_Site");
+        //        }
+        //        int var = _loginService.Login(loginModel);
+        //        if (var == 3)
+        //        {
+        //            _notyf.Custom("Password incorrect!", 3, "red", "bi bi-check-circle-fill");
+        //            return View();
+        //        }
+
+        //        if (var == 2)
+        //        {
+        //            _notyf.Custom("Email Incorrect", 3, "red", "bi bi-x-circle-fill");
+        //            return View();
+        //        }
+
+
+
+        //    return View();
+
+        //}
         //int var=_loginService.Login(loginModel);
-           
+
         //    if(var==1)
         //    {
         //       // _notyf.Error("email incorrect ");
 
         //        ViewBag.Message = "User does not exist";
         //        return View();
-                
+
         //    }
         //    //else if(var==2)
         //    //{
@@ -106,13 +111,67 @@ namespace HalloDoc.Controllers
 
         // else   if (var == 4)
         //    {
-               
+
         //        return RedirectToAction("patientDashboard", "Patient_site");
         //    }
         //    return View();
-                     
 
-           
+        public IActionResult Patient_Login(LoginModel loginModel)
+        {
+            if (ModelState.IsValid)
+            {
+                //var user = _aspNetUsersServices.Login(loginModel);
+                var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+                if (user == null)
+                {
+                    _notyf.Custom("Invalid Email", 3, "red", "bi bi-x-circle-fill");
+                    return View();
+                }
+                else
+                {
+                    /* if (user.Aspnetuserroles.FirstOrDefault().Roleid == "3")
+                     {
+ */
+
+                    if (user.Passwordhash == loginModel.Password)
+                    {
+                        //SessionUtils.SetLoggedInUser(HttpContext.Session, user);
+
+                        int id = 0;
+                        if (_db.Users.Any(u => u.Aspnetuserid == user.Id))
+                        {
+                            id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
+                        }
+                        else
+                        {
+                            return RedirectToAction("Login", "Admin");
+                        }
+                        _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
+
+                        string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+                        _httpContextAccessor.HttpContext.Session.SetString("PatientName", userName);
+
+                        _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
+
+                        return RedirectToAction("Dashboard", "Patient");
+                    }
+                    else
+                    {
+                        _notyf.Custom("Invalid Password", 3, "red", "bi bi-x-circle-fill");
+                        return View();
+
+                    }
+                    /*  }
+                      else
+                      {
+                          _notyf.Custom("Invalid Page", 3, "red", "bi bi-x-circle-fill");
+                      }*/
+                }
+            }
+            return View();
+        }
+
+
         public IActionResult CreateAccount()
         {
 

@@ -8,8 +8,8 @@ using MailKit;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Reflection.Metadata.Ecma335;
-using System.Web.Helpers;
-using System.Web.Mvc;
+
+
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -164,6 +164,7 @@ namespace BusinessLogic.Service
             
                 return adminDashboard;
           }
+
         public void SubmitAssignReq(AdminDashboard model,int requestid)
         {
            var id= _db.Physicians.Where(x => x.Firstname==model.assignreq.physicianname).FirstOrDefault();

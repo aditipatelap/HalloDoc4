@@ -1,0 +1,126 @@
+﻿@using DataAccess.ViewModel;
+@*Model*@
+@model LoginModel;
+
+@*CSS*@
+<head>
+    <link rel="stylesheet" href="~/css/PatientSite.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/AdminSite.css" asp-append-version="true" />
+</head>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <img src="/images/Login_right.jpg" class="w-100 min-vh-100 d-flex d-sm-block">
+        </div>
+
+        <div class="col-lg-6 col-sm-12" id="formDiv">
+            <div class=" d-flex d-flex   justify-content-between me-2 mt-2">
+                <div></div>
+                <div>
+                    <img class="hallodoc-img " id="img1" src="~/images/Login_Page_Title.png" alt="">
+                </div>
+                <div>
+                    <img onclick="myFunction()" class="light float-right" src="/images/darkmodelight.png" alt="">
+                </div>
+            </div>
+
+            <div id="resetJustify">
+
+                <div class="d-flex justify-content-center align-content-center">
+                    <div class="">
+                        <div class="d-flex">
+                            <a class="d-flex text-decoration-none align-items-center border border-0" id="back">
+                                <i class="bi bi-chevron-left"></i>
+                                <a class="text-decoration-none text-body" asp-controller="Home" asp-action="Index">Back</a>
+                            </a>
+                        </div>
+                        <div class="">
+                            <h3 class="mb-2" id="Title">
+                                Login To Your Account
+                            </h3>
+                        </div>
+
+                    </div>
+                </div>
+
+                <form method="post">
+                    <div class="d-flex justify-content-center align-content-center mt-3">
+
+                        <div class="form-floating mb-3 col-lg-6 col-md-6 col-sm-12 col-12">
+                            <input type="email" class="form-control my-icon email " id="floatingInput" name="Email" asp-for="Email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                            <label for="floatingInput" class="text-dark ms-2">Email</label>
+                            <div>
+                                <span class="text-danger" id="Email" style="display:none">Email id does not exist</span>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="d-flex justify-content-center align-content-center mt-2 ">
+                        <div class="form-floating mb-3 col-lg-6 col-md-6 col-sm-12 col-12" id="">
+                            <input type="password" class="form-control" id="floatingInput password " name="Password" asp-for="Password">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <label for="floatingInput" class="text-dark ms-2">Password</label>
+                            <span id="Errorinfo"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center align-content-center mt-2 mb-4">
+
+                        <button class="btn border-0 col-lg-6 col-md-6 col-sm-12 col-12 mb-3 text-light" id="L_btn" type="submit">
+
+                            Log in
+
+                        </button>
+                        
+                    </div>
+                    <div class="d-flex justify-content-center mb-2">
+                        <a class="mt-2" id="forgetPass">Forgot Password?</a>
+                        <a class="mt-2" id="forgetPass">Patient Login</a>
+                    </div>
+
+                </form>
+                <div class="d-flex  justify-content-center   bottom-0 left-100">
+
+                    <a href="#" id="anchr">Terms of condition</a> &nbsp; <a>|</a>&nbsp;
+                    <a href="#" id="anchr">Privacy policy</a>
+
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+@*<script>
+    $(document).ready(function () {
+        $('.email').focusout(function () {
+            var email = $(this).val();
+            if (email.trim() !== "") {
+                checkEmailExists(email);
+            }
+        });
+
+        function checkEmailExists(email) {
+            $.ajax({
+                url: '/Admin/CheckEmailExists',
+                type: 'GET',
+                data: { email: email },
+                success: function (response) {
+                    if (!response.emailExists) {
+                        $('#Email').show();
+                    } else {
+                        $('#Email').hide();
+                    }
+                },
+
+            });
+        }
+    });
+</script>*@
+<script src="~/js/AdminSite.js" asp-append-version="true"></script>
