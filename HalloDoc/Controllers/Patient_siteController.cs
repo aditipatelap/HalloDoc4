@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using BusinessLogic.Service;
 
 namespace HalloDoc.Controllers
 {
@@ -17,13 +18,16 @@ namespace HalloDoc.Controllers
         private readonly ILogger<Patient_siteController> _logger;
         private readonly IUserInterface _loginService;
         private readonly IRequestInterface _requestService;
+        private readonly IJwtService _JwtService;
         private readonly ApplicationDbContext _db;
         private readonly INotyfService _notyf;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private ApplicationDbContext db = new ApplicationDbContext();
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
-        public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService, ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf, IHttpContextAccessor httpContextAccessor)
+      public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService,
+          ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf, IHttpContextAccessor httpContextAccessor, 
+          IJwtService jwtService)
 
         {
             _logger = logger;
@@ -33,6 +37,7 @@ namespace HalloDoc.Controllers
             _env = Environment;
             _notyf = notyf;
             _httpContextAccessor = httpContextAccessor;
+            _JwtService = jwtService;
         }
         public IActionResult Patient_Login()
         {
@@ -118,8 +123,8 @@ namespace HalloDoc.Controllers
 
         public IActionResult Patient_Login(LoginModel loginModel)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 //var user = _aspNetUsersServices.Login(loginModel);
                 var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
                 if (user == null)
@@ -146,6 +151,8 @@ namespace HalloDoc.Controllers
                         {
                             return RedirectToAction("Login", "Admin");
                         }
+                        var jwtToken = _JwtService.GenerateToken(user);
+                        Response.Cookies.Append("jwt", jwtToken);
                         _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
 
                         string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
@@ -153,7 +160,7 @@ namespace HalloDoc.Controllers
 
                         _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
 
-                        return RedirectToAction("Dashboard", "Patient");
+                        return RedirectToAction("patientDashboard", "Patient_Site");
                     }
                     else
                     {
@@ -166,7 +173,7 @@ namespace HalloDoc.Controllers
                       {
                           _notyf.Custom("Invalid Page", 3, "red", "bi bi-x-circle-fill");
                       }*/
-                }
+                //}
             }
             return View();
         }
@@ -250,7 +257,7 @@ namespace HalloDoc.Controllers
 
         }
 
-
+        [CustomAuthorize("2")]
         public IActionResult patientDashboard()
         {
             int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");

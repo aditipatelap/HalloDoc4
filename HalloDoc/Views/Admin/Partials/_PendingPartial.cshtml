@@ -1,0 +1,144 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<table class="table table-responsive  m-4 p-3">
+    <thead class="table-secondary">
+        <tr>
+            <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Date Of Birth</th>
+
+            <th scope="col">Requstor</th>
+            <th scope="col">Physician name</th>
+            <th scope="col">Date of Service <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Phone</th>
+
+            <th scope="col">Address</th>
+            <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
+            <th scope="col">Chat With</th>
+
+            <th scope="col">Actions</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var items in Model.Dashboards)
+            {
+                var bgcolor = "red";
+                if (items.RequestTypeid == 1)
+                {
+                    bgcolor = "green";
+
+                }
+                if (items.RequestTypeid == 2)
+                {
+                    bgcolor = "orange";
+
+                }
+                if (items.RequestTypeid == 3)
+                {
+                    bgcolor = "purple";
+
+                }
+
+                if (items.RequestTypeid == 4)
+                {
+                    bgcolor = "blue";
+
+                }
+                <tr style="background: @bgcolor" class="text-white">
+                    <td>@items.Name</td>
+                    <td>@items.Dob</td>
+                    <td>@items.Requestor</td>
+                    <td>@items.Physician</td>
+                    <td>@items.DateofService</td>
+
+                    <td>
+                        <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                        @if (items.RequestorPhone != null)
+                        {
+
+                            <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                        }
+                    </td>
+
+                    <td>@items.Address</td>
+                    <td>@items.Notes</td>
+                    <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+
+
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn border border-white text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Action
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item tablink " id="ViewCase">View Case</a>
+                               
+                                @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
+                                <a class="dropdown-item tablink " id="ViewCase">View Uploads</a>
+                                <a class="dropdown-item" href="#">View Notes</a>
+                                <a class="dropdown-item" href="#">Transfer</a>
+
+                                <a class="dropdown-item" href="#">Clear Case</a>
+                                <a class="dropdown-item" href="#">SEnd Agreement</a>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+<div class="modal fade col-sm-12" id="CancelCase" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+<script>
+    console.log("jiiii")
+    $('.showmodal').click(function () {
+        var modalName = $(this).attr('id');
+        console.log("hello")
+        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
+        //    $('#myModalContainer').html(data);
+        //    $('#myModal').modal('show');
+        //});
+        $.ajax({
+            url: '@Url.Action("GetModalPartialView", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: { modalName: modalName },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $('.modelbody').html(data);
+                // $('#myModal').modal('show');
+                console.log("hiiii");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    });
+    $(document).ready(function () {
+        $(".tablink").click(function () {
+            var TabId = $(this).attr("id");
+            $.ajax({
+                url: '/Admin/GetTabs',
+                data: { Tabid: TabId },
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#TabContent").html(data);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        });
+        //$("#Dashboard")[0].click();
+    });
+</script>

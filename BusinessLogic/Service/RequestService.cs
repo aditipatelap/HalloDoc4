@@ -4,25 +4,23 @@ using DataAccess.ViewModel;
 using System.Net.Mail;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Hosting;
+
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
 using System.Net;
 using static DataAccess.ViewModel.Profilemodel;
-using Aspose.Email;
-using MimeKit;
+
 using static BusinessLogic.Service.requestService;
-using Org.BouncyCastle.Ocsp;
-using Org.BouncyCastle.Asn1.Ocsp;
+
 using DocumentFormat.OpenXml.Bibliography;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static DataAccess.ViewModel.Constant;
+using Microsoft.AspNetCore.Hosting;
 
 namespace BusinessLogic.Service
 {
@@ -31,7 +29,7 @@ namespace BusinessLogic.Service
     public class requestService : IRequestInterface
     {
         private readonly DataAccess.Data.ApplicationDbContext _db;
-        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
+        private readonly IHostingEnvironment _env;
         public requestService(DataAccess.Data.ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment)
         {
             _db = db;

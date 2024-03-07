@@ -1,4 +1,25 @@
-﻿<div class="d-none d-md-block navbar-expand-sm navbar-light shadow">
+﻿<style>
+    a{
+        cursor:pointer;
+    }
+</style>
+<nav class="navbar position-sticky">
+    <a class="navbar-brand" href="#">
+        <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
+    </a>
+
+    <div class="d-flex justify-content-end mt-3">
+        <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
+        <h4 class=" ms-2 d-lg-block d-none"> Admin admin @*@_httpContextAccessor.HttpContext.Session.GetString("Admin")*@</h4>
+        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("Logout", "Access")'">Logout</button></div>
+
+        <button class="me-3 ms-1  btn btn-outline-info btn-toggle">
+            <i class="fa fa-moon i-info"></i>
+        </button>
+    </div>
+</nav>
+<hr>
+<div class="d-none d-md-block navbar-expand-sm navbar-light shadow">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -6,7 +27,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link px-4 tablink  active" aria-current="page" id="home">Dashboard</a>
+                    <a class="nav-link px-4 tablink  active" aria-current="page" id="Dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="ProviderLocation">Provider Location</a>
@@ -68,6 +89,7 @@
 
 
     $(document).ready(function () {
+        
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
             $.ajax({
@@ -83,5 +105,6 @@
                 }
             });
         });
-        $("#home")[0].click();
+        $("#Dashboard")[0].click();
     });
+    </script>

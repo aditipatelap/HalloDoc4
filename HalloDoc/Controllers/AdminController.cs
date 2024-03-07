@@ -26,10 +26,7 @@ namespace HalloDoc.Controllers
             _httpContextAccessor = httpContextAccessor;
             _notyf = notyf;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
+       
         public IActionResult AdminLogin() {
             ClaimsPrincipal claimuser = HttpContext.User;
             if(claimuser.Identity.IsAuthenticated)
@@ -86,40 +83,71 @@ namespace HalloDoc.Controllers
             return RedirectToAction("AdminLogin", "Admin");
         }
 
-        [Authorize]
-        
-        public IActionResult Dashboard()
-        {
-            var req = _AdminDash.RequestCount();
-
-
-            return View(req);
-
-        }
-        public IActionResult _NewPartial()
+        public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult GetTabs(string Tabid)
+        {
+            var result ="Tabs/"+ "_" + Tabid;
+            if(Tabid=="Dashboard")
+            {
+                var req = _AdminDash.RequestCount();
+                return PartialView(result,req);
+            }
+            if(Tabid=="MyProfile")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "ProviderLocation")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "Providers")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "Records")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "Access")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "Partners")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "ViewCase")
+            {
+                return PartialView(result);
+            }
+            if (Tabid == "ViewUploads")
+            {
+                return PartialView(result);
+            }
+            return View();
+
         }
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue)
         {
 
-            var partialview = "_" + btnName;
+            var partialview = "Partials/" + "_" + btnName; 
 
             var result = _AdminDash.GetDashboardData(statusid, searchValue);
 
             return PartialView(partialview, result);
         }
-        public IActionResult ViewCase()
-        {
 
-            return View();
-        }
+       
         
-        public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
-        {
+       
           
-            
-            var partialname = "_" + modalName;
+         public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
+        {
+            var partialname = "Partials/" + "_" + modalName;
             if (modalName == "AssignRequest")
             {
                 var result = _AdminDash.AssignRequest(requestid);
