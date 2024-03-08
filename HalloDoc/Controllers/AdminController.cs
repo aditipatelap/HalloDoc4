@@ -88,7 +88,7 @@ namespace HalloDoc.Controllers
             return View();
         }
 
-        public IActionResult GetTabs(string Tabid)
+        public IActionResult GetTabs(string Tabid,int reqid)
         {
             var result ="Tabs/"+ "_" + Tabid;
             if(Tabid=="Dashboard")
@@ -128,6 +128,12 @@ namespace HalloDoc.Controllers
             {
                 return PartialView(result);
             }
+            if (Tabid == "SendOrder")
+            {
+                var orderdetail= _AdminDash.SendOrder(reqid);
+
+                return PartialView(result,orderdetail);
+            }
             return View();
 
         }
@@ -140,12 +146,7 @@ namespace HalloDoc.Controllers
 
             return PartialView(partialview, result);
         }
-
-       
-        
-       
-          
-         public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
+        public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
         {
             var partialname = "Partials/" + "_" + modalName;
             if (modalName == "AssignRequest")
@@ -163,6 +164,11 @@ namespace HalloDoc.Controllers
             if (modalName=="CancelCase")
             {
                var result = _AdminDash.CancelCase(requestid);
+                return PartialView(partialname, result);
+            }
+            if (modalName == "TransferRequest")
+            {
+                var result = _AdminDash.TransferRequest(requestid);
                 return PartialView(partialname, result);
             }
 
@@ -191,6 +197,16 @@ namespace HalloDoc.Controllers
 
 
             return RedirectToAction("Dashboard","Admin");
+        }
+        public IActionResult TransferReq(AdminDashboard model, int requestid)
+        {
+            _AdminDash.SubmitTransferReq(model, requestid);
+            return RedirectToAction("Dashboard", "Admin");
+        }
+        public IActionResult SendOrder(AdminDashboard model, int requestid)
+        {
+            _AdminDash.SendOrderReq(model, requestid);
+            return RedirectToAction("Dashboard", "Admin");
         }
         public IActionResult ViewUpload()
         {

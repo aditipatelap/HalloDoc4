@@ -1,6 +1,7 @@
 ﻿using DataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,15 +50,42 @@ namespace DataAccess.ViewModel
             get; set;
         }
     }
+    public class TranserReq
+    {
+        public string Description { get; set; }
+        public string physicianname { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
+        public string Region { get; set; }
+        
+    }
+    public class SendOrders
+    {
+        public string Description { get; set; }
+        public string Business { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
+        public string Email { get; set; }
+        public string BusinessContact { get; set; }
+        public int FaxNumber { get; set; }
+        public string Prescription { get; set; }
+        public string Profession { get; set; }
+        public int  NUmberofrefill { get; set; }
+
+    }
+
 
     public class AdminDashboard
     {
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
+        public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }
+        public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
         public BlockReq blockreq { get; set;}
         public CancelReq cancelreq { get; set; }    
-        public AssignReq assignreq { get; set; }    
+        public AssignReq assignreq { get; set; }
+        public TranserReq transferreq { get; set; }
+        public SendOrders sendorder { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public IEnumerable<Region> Regions {get; set;}
         public int newcount { get; set; }
         public int pendingcount { get; set; }

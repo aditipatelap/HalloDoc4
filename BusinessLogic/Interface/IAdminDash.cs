@@ -21,6 +21,10 @@ namespace BusinessLogic.Interface
         public void submitCancelCase(AdminDashboard model, int requestid);
         public AdminDashboard BlockCase(int reqid, string patientname);
         public void SubmitBlockCase(AdminDashboard model, int reqid);
+        public AdminDashboard TransferRequest(int requestid);
+        public void SubmitTransferReq(AdminDashboard model, int requestid);
+        public AdminDashboard SendOrder(int requestid);
+        public void SendOrderReq(AdminDashboard model, int requestid);
 
 
 

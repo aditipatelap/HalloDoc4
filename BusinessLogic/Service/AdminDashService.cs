@@ -180,9 +180,6 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard BlockCase(int reqid, string patientname)
         {
-
-
-           
             AdminDashboard adminDashboard = new AdminDashboard();
            
             adminDashboard.patientname = patientname;
@@ -194,10 +191,7 @@ namespace BusinessLogic.Service
         public void SubmitBlockCase(AdminDashboard model,int reqid)
         {
             Blockrequest blockrequest = new Blockrequest();
-            
-            
-           
-           var request= _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
+            var request= _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
             request.Status= 10;
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
@@ -211,8 +205,6 @@ namespace BusinessLogic.Service
 
         public AdminDashboard CancelCase(int requestid)
         {
-
-
             var casetag = _db.Casetags.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.Caserequest = casetag;
@@ -227,6 +219,44 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
 
+        }
+        public AdminDashboard TransferRequest(int requestid)
+        {
+            var regions = _db.Regions.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Regions = regions;
+            adminDashboard.requestid = requestid;
+            return adminDashboard;
+        }
+        public void SubmitTransferReq(AdminDashboard model, int requestid)
+        {
+            var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            request.Physicianid = id.Physicianid;
+            _db.SaveChanges();
+          }
+        public AdminDashboard SendOrder(int requestid)
+        {
+            //var regions = _db.Professions.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            var healthprof = _db.Healthprofessionals.ToList();
+            var healthproftypes = _db.Healthprofessionaltypes.ToList();
+            
+           // adminDashboard.sendorder.Email=
+            adminDashboard.Healthprofessionals = healthprof;
+            adminDashboard.healthprofessionaltypes = healthproftypes;
+
+
+            adminDashboard.requestid = requestid;
+            return adminDashboard;
+        }
+
+        public void SendOrderReq(AdminDashboard model, int requestid)
+        {
+            var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            request.Physicianid = id.Physicianid;
+            _db.SaveChanges();
         }
 
 
