@@ -171,6 +171,11 @@ namespace HalloDoc.Controllers
                 var result = _AdminDash.TransferRequest(requestid);
                 return PartialView(partialname, result);
             }
+            if (modalName == "ClearCase")
+            {
+                
+                return PartialView(partialname);
+            }
 
             return PartialView(partialname);
 

@@ -8,8 +8,7 @@ using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using Microsoft.EntityFrameworkCore;
 
 using System.Reflection.Metadata.Ecma335;
-
-
+using System.Web.Mvc;
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -250,13 +249,22 @@ namespace BusinessLogic.Service
             adminDashboard.requestid = requestid;
             return adminDashboard;
         }
+       
 
         public void SendOrderReq(AdminDashboard model, int requestid)
         {
             var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
             var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             request.Physicianid = id.Physicianid;
+
             _db.SaveChanges();
+        }
+        [HttpPost]
+        public void ClearCase(AdminDashboard model,int requestid)
+        {
+            var req=_db.Requests.Where(x => x.Requestid==requestid).FirstOrDefault();
+            req.Isdeleted = false;
+
         }
 
 
