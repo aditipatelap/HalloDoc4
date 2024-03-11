@@ -29,7 +29,7 @@ public partial class Blockrequest
     public string? Reason { get; set; }
 
     [Column("requestid", TypeName = "character varying")]
-    public string Requestid { get; set; } = null!;
+    public string? Requestid { get; set; }
 
     [Column("ip")]
     [StringLength(20)]

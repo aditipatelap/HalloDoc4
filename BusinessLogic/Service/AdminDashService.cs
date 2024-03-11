@@ -6,8 +6,10 @@ using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Nodes;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using static DataAccess.ViewModel.Constant;
 
@@ -100,7 +102,7 @@ namespace BusinessLogic.Service
             {
                 var dashboard = from Request in _db.Requests
                                 join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                                where id.Contains(Request.Status)
+                                where id.Contains(Request.Status) && Request.Isdeleted==false
                                 select new AdminDash
                                 {
                                     Name = Requestclient.Firstname + " " + Requestclient.Lastname,
@@ -123,7 +125,7 @@ namespace BusinessLogic.Service
 
                 var dashboard = from Request in _db.Requests
                                 join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) 
+                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) && Request.Isdeleted == false
                                 select new AdminDash
                                 {
                                     Name = Requestclient.Firstname + " " + Requestclient.Lastname,
@@ -150,7 +152,40 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
-        public AdminDashboard AssignRequest(int requestid)
+       public AdminDashboard GetViewCase(int requestid)
+        {
+            AdminDashboard dashboard = new AdminDashboard();
+            
+            var items=_db.Requestclients
+                           .Where(req => req.Request.Requestid == requestid)
+                            .Select(req => new ViewCase()
+                            {
+                                RequestId = requestid,
+                                //RequestTypeId = Requesttypeid,
+                               // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
+                                Symptoms = req.Notes,
+                                FirstName = req.Firstname,
+                                LastName = req.Lastname,
+                                DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
+                                Mobile = req.Phonenumber,
+                                Email = req.Email,
+                                Address = req.Address
+                            }).FirstOrDefault();
+            dashboard.viewcase = items;
+
+            return dashboard;
+        }
+        //public ViewCaseModel EditViewCaseData(int RequestID, int RequestTypeId, ViewCaseModel vp)
+        //{
+        //    var userToUpdate = _context.RequestClients.FirstOrDefault(x => x.RequestId == RequestID);
+        //    if (userToUpdate != null)
+        //    {
+        //        userToUpdate.PhoneNumber = vp.Mobile;
+        //        userToUpdate.Email = vp.Email;
+        //        _context.Update(userToUpdate);
+        //        _context.SaveChanges();
+        //    }
+            public AdminDashboard AssignRequest(int requestid)
         {
 
 
@@ -234,8 +269,40 @@ namespace BusinessLogic.Service
             request.Physicianid = id.Physicianid;
             _db.SaveChanges();
           }
+        public JsonArray GetBusiness(int selectedvalue)
+        {
+            AdminDashboard model = new AdminDashboard();
+            var data = new JsonArray();
+            model.Healthprofessionals = _db.Healthprofessionals.Where(x => x.Profession == selectedvalue).ToList();
+            foreach (var i in model.Healthprofessionals)
+            {
+                data.Add(new { businessId = i.Vendorid, businessName = i.Vendorname });
+            }
+            return data;
+        }
+        //public  SendOrders GetVendorDetails(int selectedvalue)
+        //{
+        //    SendOrders orders = new SendOrders();
+        //  orders result = _db.Healthprofessionals.Where(x => x.Profession==selectedvalue).FirstOrDefault();
+        //    //var result = new
+        //    //{
+        //    //    faxnumber = data.Faxnumber,
+        //    //    businesscontact = data.Businesscontact,
+        //    //    email = data.Email
+
+        //    //};
+        //    return orders;
+        //}
+        public Healthprofessional GetBusinessDetails(int selectedvalue)
+        {
+            Healthprofessional businessDetails = _db.Healthprofessionals.First(x => x.Vendorid == selectedvalue);
+
+            return businessDetails;
+        }
+
         public AdminDashboard SendOrder(int requestid)
         {
+
             //var regions = _db.Professions.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             var healthprof = _db.Healthprofessionals.ToList();
@@ -249,21 +316,56 @@ namespace BusinessLogic.Service
             adminDashboard.requestid = requestid;
             return adminDashboard;
         }
-       
 
-        public void SendOrderReq(AdminDashboard model, int requestid)
+     
+         
+        public void SendOrderReq(AdminDashboard model, int requestid,string adminname)
         {
-            var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
-            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
-            request.Physicianid = id.Physicianid;
+            Healthprofessional hf = new Healthprofessional();
+            hf.Email=model.sendorder.Email;
+            hf.Faxnumber = model.sendorder.FaxNumber;
+            hf.Businesscontact = model.sendorder.BusinessContact;
+          
 
-            _db.SaveChanges();
+                Orderdetail orderdetail = new Orderdetail();
+                
+                orderdetail.Vendorid = model.sendorder.VendorId;
+                orderdetail.Businesscontact = model.sendorder.BusinessContact;
+                orderdetail.Email = model.sendorder.Email;
+                orderdetail.Faxnumber = model.sendorder.FaxNumber;
+                orderdetail.Noofrefill = model.sendorder.NUmberofrefill;
+                   orderdetail.Requestid = requestid;
+                orderdetail.Createddate = DateTime.Now;
+                orderdetail.Createdby =adminname;
+
+
+                _db.Orderdetails.Add(orderdetail);
+                _db.SaveChanges();
+           
         }
-        [HttpPost]
-        public void ClearCase(AdminDashboard model,int requestid)
+        public AdminDashboard ClearCase( int requestid)
+        {
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.requestid = requestid;
+            return adminDashboard;
+
+        }
+       
+        public void SubmitClearCase(AdminDashboard model,int requestid,int adminid)
         {
             var req=_db.Requests.Where(x => x.Requestid==requestid).FirstOrDefault();
-            req.Isdeleted = false;
+            if (req != null)
+            {
+                req.Isdeleted = true;
+                req.Status = 10;
+                Requeststatuslog reqlog = new Requeststatuslog();
+                reqlog.Requestid = requestid;
+                reqlog.Status = 10;
+                // reqlog.Adminid = adminid;
+                reqlog.Createddate = DateTime.Now;
+                _db.Requeststatuslogs.Add(reqlog);
+            }
+           _db.SaveChanges();
 
         }
 

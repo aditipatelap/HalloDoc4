@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Models;
 
-[Keyless]
 [Table("casetag")]
 public partial class Casetag
 {
+    [Key]
     [Column("casetagid")]
     public int Casetagid { get; set; }
 

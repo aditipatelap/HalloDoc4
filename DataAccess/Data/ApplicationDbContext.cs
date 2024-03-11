@@ -16,7 +16,6 @@ public partial class ApplicationDbContext : DbContext
     {
     }
 
-   
     public virtual DbSet<Admin> Admins { get; set; }
 
     public virtual DbSet<Adminregion> Adminregions { get; set; }
@@ -168,9 +167,9 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Casetag>(entity =>
         {
-            entity.Property(e => e.Casetagid)
-                .ValueGeneratedOnAdd()
-                .UseIdentityAlwaysColumn();
+            entity.HasKey(e => e.Casetagid).HasName("casetagid");
+
+            entity.Property(e => e.Casetagid).UseIdentityAlwaysColumn();
         });
 
         modelBuilder.Entity<Concierge>(entity =>

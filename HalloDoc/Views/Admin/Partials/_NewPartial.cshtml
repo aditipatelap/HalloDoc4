@@ -83,7 +83,7 @@
                                     <i class="bi bi-x-circle"></i>
                                     Cancel Case
                                 </a>
-                                <a class="dropdown-item tablink " id="ViewCase">View Case</a>
+                                <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid">View Case</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
 
                                 <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
@@ -140,9 +140,11 @@
     $(document).ready(function () {
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
+            var requestid = $(this).data('btn');
+            console.log(requestid);
             $.ajax({
                 url: '/Admin/GetTabs',
-                data: { Tabid: TabId },
+                data: { Tabid: TabId, requestid: requestid },
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -155,5 +157,25 @@
         });
         //$("#Dashboard")[0].click();
     });
+    //$(document).ready(function () {
+    //    $(".tablink").click(function () {
+    //        var TabId = $(this).attr("id");
+    //        var requestid = $(this).data('btn');
+    //        console.log(requestid);
+    //        $.ajax({
+    //            url: '/Admin/GetTabs',
+    //            data: { Tabid: TabId,requestid:requestid },
+    //            method: 'GET',
+    //            success: function (data) {
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#TabContent").html(data);
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+    //    });
+    //    //$("#Dashboard")[0].click();
+    //});
 </script>
 

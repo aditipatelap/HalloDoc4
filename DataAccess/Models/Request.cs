@@ -49,9 +49,6 @@ public partial class Request
     [Column("createddate", TypeName = "timestamp without time zone")]
     public DateTime Createddate { get; set; }
 
-    [Column("isdeleted", TypeName = "bit(1)")]
-    public BitArray? Isdeleted { get; set; }
-
     [Column("modifieddate", TypeName = "timestamp without time zone")]
     public DateTime? Modifieddate { get; set; }
 
@@ -106,6 +103,9 @@ public partial class Request
 
     [Column("createduserid")]
     public int? Createduserid { get; set; }
+
+    [Column("isdeleted")]
+    public bool? Isdeleted { get; set; }
 
     [InverseProperty("Request")]
     public virtual ICollection<Emaillog> Emaillogs { get; set; } = new List<Emaillog>();
