@@ -10,6 +10,8 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using BusinessLogic.Service;
+using static DataAccess.ViewModel.Constant;
+using DataAccess.Models;
 
 namespace HalloDoc.Controllers
 {
@@ -285,12 +287,6 @@ namespace HalloDoc.Controllers
         }
 
 
-
-     
-     
-
-       
-    
         public IActionResult familyFriendReq()
         {
             return View();
@@ -409,6 +405,38 @@ namespace HalloDoc.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public IActionResult SendAgreement(int requestid)
+        {
+            if(_requestService.CheckStatus(requestid))
+
+            {
+                var result = _requestService.GetSendAgreement(requestid);
+                
+                return View(result);
+
+            }
+            else
+            {
+                //return View("");
+                _notyf.Custom("Agreement Already Approved", 3, "Goldenrod", "bi bi-x-circle-fill");
+            }
+            return RedirectToAction("Index", "Admin");
+        }
+        [HttpPost]
+        public IActionResult PostSendAgreement(int requestid)
+        {
+           _requestService.PostSendAgreement(requestid);
+            _notyf.Custom("Agreement Approved Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return RedirectToAction("Index", "Admin");
+        }
+       
+        [HttpPost]
+        public IActionResult SubmitSendAgree(AdminDashboard model,int requestid)
+        {
+             _requestService.CancelAgreemnt(model, requestid);
+            return RedirectToAction("Index", "Admin");
+        
         }
     }
 }

@@ -87,6 +87,16 @@ namespace DataAccess.ViewModel
         public int VendorId { get; set; }
 
     }
+    public class AgreementReq
+    {
+        public string ? PhoneNumber { get; set; }
+        public string ? EmailID
+        {
+            get; set;
+        }
+        public int Requestid { get; set; }
+        public string Notes { get;set; }
+    }
 
 
     public class AdminDashboard
@@ -101,6 +111,7 @@ namespace DataAccess.ViewModel
         public AssignReq assignreq { get; set; }
         public TranserReq transferreq { get; set; }
         public SendOrders sendorder { get; set; }
+        public AgreementReq agreementReq { get; set; }
         [Required(ErrorMessage = "This is a required field")]
         public IEnumerable<Region> Regions {get; set;}
         public ViewCase viewcase { get; set; }

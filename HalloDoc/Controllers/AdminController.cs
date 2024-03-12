@@ -20,13 +20,15 @@ namespace HalloDoc.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAdminDash _AdminDash;
         private readonly INotyfService _notyf;
+        private readonly IRequestInterface _requestInterface;
 
-        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf)
+        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,IRequestInterface requestInterface)
         {
             _db = db;
             _AdminDash = adminDash;
             _httpContextAccessor = httpContextAccessor;
             _notyf = notyf;
+            _requestInterface= requestInterface;
         }
        
         public IActionResult AdminLogin() {
@@ -179,6 +181,11 @@ namespace HalloDoc.Controllers
                 var result = _AdminDash.ClearCase(requestid);
                 return PartialView(partialname,result);
             }
+            if (modalName == "SendAgreement")   
+            {
+                var result = _AdminDash.SendAgreeement(requestid);
+                    return PartialView(partialname, result);
+            }
 
             return PartialView(partialname);
 
@@ -243,6 +250,13 @@ namespace HalloDoc.Controllers
 
             var physicians = _db.Physicians.Where(x => x.Regionid == selectedvalue).Select(x =>  x.Firstname).ToList();
             return Json(physicians);
+        }
+        [HttpPost]
+        public IActionResult SendAgreement(string email, int requestid)
+        {
+            _requestInterface.SendMailService(email,requestid);
+
+            return RedirectToAction("Index", "Admin");
         }
     }
 }

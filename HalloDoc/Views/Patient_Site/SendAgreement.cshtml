@@ -1,0 +1,57 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard;
+<form method="post" asp-action="PostSendAgreement" asp-controller="Patient_site">
+    <input type="hidden" name="requestid" value="@Model.agreementReq.Requestid" />
+<div class="vh-100 overflow-hidden sha">
+    <div class="container w-50">
+        <div class=" d-flex justify-content-center mt-5 pt-5">
+            <div>
+                To provide best medical service, We cannot determine the cost right away. If you agree to our service,
+                so We will provide care and follow-up until all care is completed.
+                So with this points, if you like us to provide care to you click on "Agree" and We'll get started immediately,
+                if you do not agree simply click "Cancel".
+            </div>
+                
+        </div>
+
+        <div class=" d-flex justify-content-between mt-5 pt-5">
+            <button type="submit" class="btn btn-success text-white" id="cancel">Agree</button>
+                <button type="button" class="btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#CancelAgreement" id="cancel">Cancel</button>
+
+        </div>
+    </div>
+</div>
+</form>
+<!-- Modal -->
+<form method="post" asp-action="SubmitSendAgree" asp-controller="Patient_site">
+    <input type="hidden" name="requestid" value="@Model.agreementReq.Requestid" />
+<div class="modal fade " id="CancelAgreement" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info ">    
+                <h5 class="modal-title text-white" id="exampleModalLabel">Cancel Confirmation</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 text-secondary fs-5">
+                    Test test,
+                  @*  <input type="text" name="patientname" value="@Model.agreementReq.Requestid" />*@
+                </div>
+                <div>
+                    <div class="form-floating">
+                        <textarea class="form-control my-3" placeholder="Leave a comment here" id="floatingTextarea2" asp-for="agreementReq.Notes"
+                                  style="height: 100px" required></textarea>
+                        <label for="floatingTextarea2" class="floatingLabel input-txt">
+                           Please provide a brief explanation for your cancelation
+                        </label>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-info btn-lg p-2 px-4 me-3 info-button me-2 " id="continue">Confirm</button>
+                    <button type="reset" class="btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>

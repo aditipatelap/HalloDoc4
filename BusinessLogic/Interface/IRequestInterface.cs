@@ -29,7 +29,11 @@ namespace BusinessLogic.Interface
         public void Someoneelse(patientReq model, int id);
 
       public void mail(string email);
-
+        public void SendMailService(string email, int requestid);
+        public AdminDashboard GetSendAgreement(int requestid);
+        public void PostSendAgreement(int requestid);
+        public void CancelAgreemnt(AdminDashboard model, int reqid);
+        public bool CheckStatus(int reqid);
         //* public List<Dashboardmodel> FetchUserProfile();
 
     }

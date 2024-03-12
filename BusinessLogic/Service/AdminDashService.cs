@@ -79,21 +79,21 @@ namespace BusinessLogic.Service
         public AdminDashboard GetDashboardData(int statusid, string searchValue)
         {
             List<int> id = new List<int>();
-            if (statusid != 3 && statusid != 5)
+            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite  && statusid != (short)Requeststatus.Cancelled || statusid!=(short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
             {
                 id.Add(statusid);
             }
-            else if (statusid == 3)
+            else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
             {
-                id.Add(4);
-                id.Add(5);
+                id.Add((short)Requeststatus.MDEnRoute);
+                id.Add((short)Requeststatus.MDonSite);
 
             }
             else
             {
-                id.Add(3);
-                id.Add(7);
-                id.Add(8);
+                id.Add((short)Requeststatus.Cancelled);
+                id.Add( (short)Requeststatus.Cancelledbypatient);
+                id.Add((short)Requeststatus.Closed);
 
             }
             List<AdminDash> list = new List<AdminDash>();
@@ -206,8 +206,8 @@ namespace BusinessLogic.Service
 
 
             request.Physicianid=id.Physicianid;
-            request.Status = 2;
-            
+            request.Status = (short)Requeststatus.Accepted;
+
             _db.SaveChanges();
 
 
@@ -226,7 +226,7 @@ namespace BusinessLogic.Service
         {
             Blockrequest blockrequest = new Blockrequest();
             var request= _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
-            request.Status= 10;
+            request.Status = (short)Requeststatus.Clear;
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
             blockrequest.Email = request.Email;
@@ -248,7 +248,7 @@ namespace BusinessLogic.Service
         public void  submitCancelCase(AdminDashboard model, int requestid)
         {
             var result = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
-            result.Status = 3;
+            result.Status = (short)Requeststatus.Cancelled;
 
             _db.SaveChanges();
 
@@ -317,9 +317,7 @@ namespace BusinessLogic.Service
             return adminDashboard;
         }
 
-     
-         
-        public void SendOrderReq(AdminDashboard model, int requestid,string adminname)
+         public void SendOrderReq(AdminDashboard model, int requestid,string adminname)
         {
             Healthprofessional hf = new Healthprofessional();
             hf.Email=model.sendorder.Email;
@@ -357,16 +355,30 @@ namespace BusinessLogic.Service
             if (req != null)
             {
                 req.Isdeleted = true;
-                req.Status = 10;
+                req.Status = (short)Requeststatus.Clear;
                 Requeststatuslog reqlog = new Requeststatuslog();
                 reqlog.Requestid = requestid;
-                reqlog.Status = 10;
+                reqlog.Status = req.Status;
                 // reqlog.Adminid = adminid;
                 reqlog.Createddate = DateTime.Now;
                 _db.Requeststatuslogs.Add(reqlog);
             }
            _db.SaveChanges();
 
+        }
+        public AdminDashboard SendAgreeement(int requestid) {
+            var req = _db.Requestclients.Where(x => x.Requestid == requestid).Select(x => new AgreementReq {
+                PhoneNumber = x.Phonenumber,
+                EmailID = x.Email,
+                Requestid=x.Requestid
+           }).FirstOrDefault();
+            AdminDashboard model = new AdminDashboard()
+            {
+                
+                agreementReq = req
+            };
+
+            return model;
         }
 
 

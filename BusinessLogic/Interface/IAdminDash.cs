@@ -1,5 +1,6 @@
 ﻿using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Presentation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace BusinessLogic.Interface
         public AdminDashboard ClearCase(int requestid);
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);
         public AdminDashboard GetViewCase(int requestid);
+        public AdminDashboard SendAgreeement(int requestid);
+
 
 
         }
