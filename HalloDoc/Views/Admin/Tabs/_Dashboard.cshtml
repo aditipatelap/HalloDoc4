@@ -134,7 +134,7 @@
                 url: '@Url.Action("GetPartialView", "Admin")',
                 //url: '/Admin/GetPartialView?btn=' + btnName,
                 method: 'GET',
-                data: { btnName: btnName, statusid: statusid },
+                data: { btnName: btnName, statusid: statusid ,currentpage:1},
                 success: function (data) {
                     console.log("AJAX success");
                     // Replace the content of the btnContent div with the retrieved partial view

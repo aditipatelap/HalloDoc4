@@ -1,0 +1,84 @@
+﻿@using DataAccess.ViewModel
+@model AdminDashboard
+<link rel="stylesheet" href="~/css/AdminSite.css">
+<div class="container pb-5">
+    <div class="margin-viewdoc">
+        <div class="container m-4 p-4 d-flex justify-content-between" id="back">
+            <div><h3 class="text-black fw-bold">Documents</h3></div>
+            <div></div>
+            <button class="btn btn-outline-info btn-large" onclick="location.href='@Url.Action("Index", "Admin")'">
+                <i class="bi bi-chevron-left"></i>Back
+            </button>
+        </div>
+        <div class="bglight rounded p-3 shadow mt-3" id="content">
+            <span class="text-secondary">Patient Name</span>
+
+            <div class="mt-1">
+                <div class="d-flex">
+                    <h4 style="color:deepskyblue">
+                        <span class="text-info  fw-bold ">Patient Name: @*@Model.patientname*@</span> <span class="text-dark mt-2">(12002080501070)</span>
+                    </h4>
+                </div>
+                @*(@Model.requests.FirstOrDefault(x => x.Requestid == (Model.requests.FirstOrDefault(m =>m.Userid == Model.user.Userid).Requestid)).Confirmationnumber)*@
+
+                <p class="small text-secondary mt-2">Check here for any files that you or the doctors of your subrequests requestors have attached for you to review.</p>
+
+                <form method="post" class="d-flex" enctype="multipart/form-data">
+
+                    <input class="form-control " type="file" id="formFile" name="file">
+                    <button type="submit" for="formFile" class="submitBtn input-group-text bg-primary text-white" multiple>
+                        <i class="bi bi-cloud-arrow-up "></i>&nbsp;Upload
+                    </button>
+                </form>
+
+
+            </div>
+            <div class="container mt-5 d-flex justify-content-between">
+                <div class="text-black"><h5 class="text-black">Document</h5></div>
+                <div>
+                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
+                        Download All
+                    </button>
+                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
+                        Delete All
+                    </button>
+                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
+                        Send Mail
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div id="ViewUploadsTable">
+
+</div>
+
+
+  
+</div>
+<script>
+    $(document).ready(function () {
+        $('.submitBtn').click(function () {
+            var id = $(this).data("btn");
+            var formData = new FormData();
+            var fileInput = document.getElementById('formFile').files[0];
+            formData.append('Document', fileInput);
+            formData.append('reqid', id);
+
+            $.ajax({
+                url: '@Url.Action("PostViewUpload", "Admin")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#ViewUploadsTable').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>

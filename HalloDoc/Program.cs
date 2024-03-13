@@ -13,10 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContext")));
-builder.Services.AddScoped<IUserInterface, PatientLoginService>();
+
 builder.Services.AddScoped<IRequestInterface, requestService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-
+builder.Services.AddScoped<ILoginInterface, LoginService>();
 builder.Services.AddScoped<IAdminDash, AdminDashService>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 builder.Services.AddSession(options =>

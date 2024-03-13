@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Interface
 {
-    public interface IUserInterface
+    public interface ILoginInterface
     {
         //enum ValidationStatus
         //{
@@ -15,7 +15,7 @@ namespace BusinessLogic.Interface
         //    EmailIncorrect,
         //    PasswordIncorrect
         //}
-     public  int Login(LoginModel loginModel);
+     //public  int Login(LoginModel loginModel);
 
     }
 }

@@ -11,9 +11,11 @@ using DocumentFormat.OpenXml.ExtendedProperties;
 using Microsoft.AspNetCore.Authorization;
 using System.Runtime.CompilerServices;
 using DocumentFormat.OpenXml.Presentation;
+using static DataAccess.ViewModel.Constant;
 
 namespace HalloDoc.Controllers
 {
+    //[CustomAuthorize("1")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -42,6 +44,7 @@ namespace HalloDoc.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> AdminLogin(LoginModel loginModel)
+
         {
 
             var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
@@ -98,6 +101,7 @@ namespace HalloDoc.Controllers
             if(Tabid=="Dashboard")
             {
                 var req = _AdminDash.RequestCount();
+
                 return PartialView(result,req);
             }
             if(Tabid=="MyProfile")
@@ -129,9 +133,10 @@ namespace HalloDoc.Controllers
                var model = _AdminDash.GetViewCase(requestid);
                 return PartialView(result,model);
             }
-            if (Tabid == "ViewUploads")
+            if (Tabid == "ViewUpload")
             {
-                return PartialView(result);
+                var model=_AdminDash.GetViewUpload(requestid);
+                return PartialView(result,model);
             }
             if (Tabid == "SendOrder")
             {
@@ -142,12 +147,18 @@ namespace HalloDoc.Controllers
             return View();
 
         }
-        public IActionResult GetPartialView(string btnName, int statusid, string searchValue)
+        //public IActionResult PaginatedDashboard()
+        //{
+        //    _AdminDash.GetDashboardData(statusid, searchValue);
+        //    return PartialView(partialview, result);
+        //}
+       
+        public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage)
         {
 
             var partialview = "Partials/" + "_" + btnName; 
 
-            var result = _AdminDash.GetDashboardData(statusid, searchValue);
+            var result = _AdminDash.GetDashboardData(statusid, searchValue,currentpage);
 
             return PartialView(partialview, result);
         }

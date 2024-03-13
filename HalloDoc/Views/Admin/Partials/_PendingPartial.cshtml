@@ -76,7 +76,7 @@
                                 <a class="dropdown-item tablink " id="ViewCase">View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
-                                <a class="dropdown-item tablink " id="ViewCase">View Uploads</a>
+                                <a class="dropdown-item tablink " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
                                     <i class="bi bi-x-circle"></i>
@@ -100,6 +100,25 @@
     </tbody>
 
 </table>
+<div class="mb-0 fixed-bottom">
+    <ul class="pagination align-items-center">
+        @if (Model.CurrentPage > 1)
+        {
+            <li class="page-item"><a class="page-link custompagination" data-page="@(Model.CurrentPage - 1)">Previous</a></li>
+        }
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <!-- Added "active" class conditionally -->
+                <a class="page-link custompagination" href="#" data-page="@i">@i</a> <!-- Added "active" class conditionally -->
+            </li>
+        }
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <li class="page-item"><a class="page-link custompagination" href="#" data-page="@(Model.CurrentPage + 1)">Next</a></li>
+        }
+    </ul>
+</div>
 <div class="modal fade col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
         <div class="modelbody modal-content"></div>
@@ -135,9 +154,10 @@
     $(document).ready(function () {
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
+            var requestid = $(this).data('btn');
             $.ajax({
                 url: '/Admin/GetTabs',
-                data: { Tabid: TabId },
+                data: { Tabid: TabId ,requestid:requestid},
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -150,4 +170,28 @@
         });
         //$("#Dashboard")[0].click();
     });
+    $(document).ready(function () {
+        console.log("dygdax");
+        $(".custompagination").click(function () {
+
+            var currentpage = $(this).data('page');
+            var btnName = "NewPartial";
+            var statusid = 1;
+            //console.log(requestid);
+            $.ajax({
+                url: '/Admin/GetPartialView',
+                data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#btnContent").html(data);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        });
+        //$("#Dashboard")[0].click();
+    });
+
 </script>

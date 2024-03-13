@@ -18,7 +18,7 @@ namespace HalloDoc.Controllers
     public class Patient_siteController : Controller
     {
         private readonly ILogger<Patient_siteController> _logger;
-        private readonly IUserInterface _loginService;
+        private readonly ILoginInterface _loginService;
         private readonly IRequestInterface _requestService;
         private readonly IJwtService _JwtService;
         private readonly ApplicationDbContext _db;
@@ -27,7 +27,7 @@ namespace HalloDoc.Controllers
 
         private ApplicationDbContext db = new ApplicationDbContext();
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _env;
-      public Patient_siteController(ILogger<Patient_siteController> logger, IUserInterface loginService, IRequestInterface requestService,
+      public Patient_siteController(ILogger<Patient_siteController> logger, ILoginInterface loginService, IRequestInterface requestService,
           ApplicationDbContext db, Microsoft.AspNetCore.Hosting.IHostingEnvironment Environment,INotyfService notyf, IHttpContextAccessor httpContextAccessor, 
           IJwtService jwtService)
 

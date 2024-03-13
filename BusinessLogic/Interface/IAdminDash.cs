@@ -13,7 +13,7 @@ namespace BusinessLogic.Interface
     public  interface IAdminDash
     {
 
-        public AdminDashboard GetDashboardData(int statusid, string searchValue);
+        public AdminDashboard GetDashboardData(int statusid, string searchValue,int currentpage=1);
         public AdminDashboard GetName(int statusid);
         //public int[] RequestCount(int statusid);
         public AdminDashboard RequestCount();
@@ -33,6 +33,7 @@ namespace BusinessLogic.Interface
         public AdminDashboard ClearCase(int requestid);
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);
         public AdminDashboard GetViewCase(int requestid);
+        public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
 
 

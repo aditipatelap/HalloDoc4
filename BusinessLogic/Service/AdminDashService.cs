@@ -3,6 +3,7 @@ using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Office2010.ExcelAc;
 
 using Microsoft.EntityFrameworkCore;
@@ -29,21 +30,21 @@ namespace BusinessLogic.Service
             AdminDashboard dash = new AdminDashboard();
             var req = _db.Requests.ToList();
             dash.newcount = req.Count(x => x.Status == (short)Requeststatus.Unassigned);
-            dash.pendingcount= req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.activecount= req.Count(x => x.Status == (short)Requeststatus.MDEnRoute || x.Status == (short)Requeststatus.MDonSite);
-            dash.toclosecount = req.Count(x => x.Status == (short)Requeststatus.Cancelled || x.Status==(short)Requeststatus.Cancelledbypatient || x.Status==(short)Requeststatus.Closed);
+            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
+            dash.activecount = req.Count(x => x.Status == (short)Requeststatus.MDEnRoute || x.Status == (short)Requeststatus.MDonSite);
+            dash.toclosecount = req.Count(x => x.Status == (short)Requeststatus.Cancelled || x.Status == (short)Requeststatus.Cancelledbypatient || x.Status == (short)Requeststatus.Closed);
             dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatus.Unpaid);
             dash.concludecount = req.Count(x => x.Status == (short)Requeststatus.Conclude);
-           
+
             return dash;
         }
-      //public AdminDashboard GetName(int statusid)
-      //  {
-      //      AdminDashboard adminDashboard = new AdminDashboard();
-      //    adminDashboard.Status = (status)statusid;
-      //      return adminDashboard;
+        //public AdminDashboard GetName(int statusid)
+        //  {
+        //      AdminDashboard adminDashboard = new AdminDashboard();
+        //    adminDashboard.Status = (status)statusid;
+        //      return adminDashboard;
 
-      //  }
+        //  }
         //public  RequestCount(int statusid)
         //{
 
@@ -69,17 +70,19 @@ namespace BusinessLogic.Service
         //    //return reqcount;
         //  }
 
-      public AdminDashboard GetName(int statusid)
+        public AdminDashboard GetName(int statusid)
         {
             AdminDashboard dash = new AdminDashboard();
             dash.Status = (status)statusid;
             return dash;
         }
+        
 
-        public AdminDashboard GetDashboardData(int statusid, string searchValue)
-        {
+        public AdminDashboard GetDashboardData(int statusid, string searchValue,int currentpage )
+            {
+
             List<int> id = new List<int>();
-            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite  && statusid != (short)Requeststatus.Cancelled || statusid!=(short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
+            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
             {
                 id.Add(statusid);
             }
@@ -92,77 +95,84 @@ namespace BusinessLogic.Service
             else
             {
                 id.Add((short)Requeststatus.Cancelled);
-                id.Add( (short)Requeststatus.Cancelledbypatient);
+                id.Add((short)Requeststatus.Cancelledbypatient);
                 id.Add((short)Requeststatus.Closed);
 
             }
-            List<AdminDash> list = new List<AdminDash>();
+            // List<AdminDash> list = new List<AdminDash>();
 
-            if (searchValue == null)
-            {
-                var dashboard = from Request in _db.Requests
-                                join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                                where id.Contains(Request.Status) && Request.Isdeleted==false
-                                select new AdminDash
-                                {
-                                    Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-                                    Requestor = Request.Firstname + " " + Request.Lastname,
-                                    RequestedDate = Request.Createddate,
-                                    PatientPhone = Requestclient.Phonenumber,
-                                    RequestorPhone = Request.Phonenumber,
-                                    Address = Requestclient.Address,
-                                    Notes = Requestclient.Notes,
-                                    requestid=Request.Requestid,
+            var dashboard = (from Request in _db.Requests
+                             join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                             where id.Contains(Request.Status) && Request.Isdeleted == false
+                             select new AdminDash
+                             {
+                                 Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                                 Requestor = Request.Firstname + " " + Request.Lastname,
+                                 RequestedDate = Request.Createddate,
+                                 PatientPhone = Requestclient.Phonenumber,
+                                 RequestorPhone = Request.Phonenumber,
+                                 Address = Requestclient.Address,
+                                 Notes = Requestclient.Notes,
+                                 requestid = Request.Requestid,
 
-                                    // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-                                    RequestTypeid = Request.Requesttypeid
-                                };
+                                 // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                                 RequestTypeid = Request.Requesttypeid
+                             });
 
-                list = dashboard.ToList();
-            }
-            else
-            {
+               
+            int totalrecords = dashboard.Count();
+            int pagesize = 5;
+            int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
+           var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 
-                var dashboard = from Request in _db.Requests
-                                join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                                where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) && Request.Isdeleted == false
-                                select new AdminDash
-                                {
-                                    Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-                                    Requestor = Request.Firstname + " " + Request.Lastname,
-                                    RequestedDate = Request.Createddate,
-                                    PatientPhone = Requestclient.Phonenumber,
-                                    RequestorPhone = Request.Phonenumber,
-                                    Address = Requestclient.Address,
-                                    Notes = Requestclient.Notes,
-                                    requestid = Request.Requestid,
+            
+            //else
+            //{
 
-                                    // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-                                    RequestTypeid = Request.Requesttypeid
-                                };
-                list = dashboard.ToList();
-            }
+            //    var dashboard = from Request in _db.Requests
+            //                    join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+            //                    where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) && Request.Isdeleted == false
+            //                    select new AdminDash
+            //                    {
+            //                        Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+            //                        Requestor = Request.Firstname + " " + Request.Lastname,
+            //                        RequestedDate = Request.Createddate,
+            //                        PatientPhone = Requestclient.Phonenumber,
+            //                        RequestorPhone = Request.Phonenumber,
+            //                        Address = Requestclient.Address,
+            //                        Notes = Requestclient.Notes,
+            //                        requestid = Request.Requestid,
+
+            //                        // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+            //                        RequestTypeid = Request.Requesttypeid
+            //                    };
+            //    list = dashboard.ToList();
+            //}
+           
 
 
             AdminDashboard adminDashboard = new AdminDashboard()
             {
-                Dashboards = list,
+                Dashboards = paginateddashboard,
+                CurrentPage=currentpage,
+                TotalPages=totalPages,
+                PageSize=pagesize,
                 Status = (status)statusid
 
             };
             return adminDashboard;
         }
-       public AdminDashboard GetViewCase(int requestid)
+        public AdminDashboard GetViewCase(int requestid)
         {
             AdminDashboard dashboard = new AdminDashboard();
-            
-            var items=_db.Requestclients
+
+            var items = _db.Requestclients
                            .Where(req => req.Request.Requestid == requestid)
                             .Select(req => new ViewCase()
                             {
                                 RequestId = requestid,
                                 //RequestTypeId = Requesttypeid,
-                               // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
+                                // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
                                 Symptoms = req.Notes,
                                 FirstName = req.Firstname,
                                 LastName = req.Lastname,
@@ -172,7 +182,7 @@ namespace BusinessLogic.Service
                                 Address = req.Address
                             }).FirstOrDefault();
             dashboard.viewcase = items;
-
+            
             return dashboard;
         }
         //public ViewCaseModel EditViewCaseData(int RequestID, int RequestTypeId, ViewCaseModel vp)
@@ -185,27 +195,27 @@ namespace BusinessLogic.Service
         //        _context.Update(userToUpdate);
         //        _context.SaveChanges();
         //    }
-            public AdminDashboard AssignRequest(int requestid)
+        public AdminDashboard AssignRequest(int requestid)
         {
 
 
-                var regions = _db.Regions.ToList();
-                AdminDashboard adminDashboard = new AdminDashboard();
-                adminDashboard.Regions = regions;
+            var regions = _db.Regions.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Regions = regions;
             //adminDashboard.patientname= patientname;
-            adminDashboard.requestid= requestid;
+            adminDashboard.requestid = requestid;
 
-            
-                return adminDashboard;
-          }
 
-        public void SubmitAssignReq(AdminDashboard model,int requestid)
+            return adminDashboard;
+        }
+
+        public void SubmitAssignReq(AdminDashboard model, int requestid)
         {
-           var id= _db.Physicians.Where(x => x.Firstname==model.assignreq.physicianname).FirstOrDefault();
-            var request=_db.Requests.Where(x => x.Requestid== requestid).FirstOrDefault();
+            var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
 
 
-            request.Physicianid=id.Physicianid;
+            request.Physicianid = id.Physicianid;
             request.Status = (short)Requeststatus.Accepted;
 
             _db.SaveChanges();
@@ -215,17 +225,17 @@ namespace BusinessLogic.Service
         public AdminDashboard BlockCase(int reqid, string patientname)
         {
             AdminDashboard adminDashboard = new AdminDashboard();
-           
+
             adminDashboard.patientname = patientname;
-            
-            adminDashboard.requestid=reqid;
+
+            adminDashboard.requestid = reqid;
 
             return adminDashboard;
         }
-        public void SubmitBlockCase(AdminDashboard model,int reqid)
+        public void SubmitBlockCase(AdminDashboard model, int reqid)
         {
             Blockrequest blockrequest = new Blockrequest();
-            var request= _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
             request.Status = (short)Requeststatus.Clear;
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
@@ -235,7 +245,7 @@ namespace BusinessLogic.Service
             _db.Blockrequests.Add(blockrequest);
             _db.SaveChanges();
             _db.SaveChanges();
-         }
+        }
 
         public AdminDashboard CancelCase(int requestid)
         {
@@ -245,7 +255,7 @@ namespace BusinessLogic.Service
             adminDashboard.requestid = requestid;
             return adminDashboard;
         }
-        public void  submitCancelCase(AdminDashboard model, int requestid)
+        public void submitCancelCase(AdminDashboard model, int requestid)
         {
             var result = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             result.Status = (short)Requeststatus.Cancelled;
@@ -268,7 +278,7 @@ namespace BusinessLogic.Service
             var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             request.Physicianid = id.Physicianid;
             _db.SaveChanges();
-          }
+        }
         public JsonArray GetBusiness(int selectedvalue)
         {
             AdminDashboard model = new AdminDashboard();
@@ -299,7 +309,6 @@ namespace BusinessLogic.Service
 
             return businessDetails;
         }
-
         public AdminDashboard SendOrder(int requestid)
         {
 
@@ -307,8 +316,8 @@ namespace BusinessLogic.Service
             AdminDashboard adminDashboard = new AdminDashboard();
             var healthprof = _db.Healthprofessionals.ToList();
             var healthproftypes = _db.Healthprofessionaltypes.ToList();
-            
-           // adminDashboard.sendorder.Email=
+
+            // adminDashboard.sendorder.Email=
             adminDashboard.Healthprofessionals = healthprof;
             adminDashboard.healthprofessionaltypes = healthproftypes;
 
@@ -317,41 +326,41 @@ namespace BusinessLogic.Service
             return adminDashboard;
         }
 
-         public void SendOrderReq(AdminDashboard model, int requestid,string adminname)
+        public void SendOrderReq(AdminDashboard model, int requestid, string adminname)
         {
             Healthprofessional hf = new Healthprofessional();
-            hf.Email=model.sendorder.Email;
+            hf.Email = model.sendorder.Email;
             hf.Faxnumber = model.sendorder.FaxNumber;
             hf.Businesscontact = model.sendorder.BusinessContact;
-          
-
-                Orderdetail orderdetail = new Orderdetail();
-                
-                orderdetail.Vendorid = model.sendorder.VendorId;
-                orderdetail.Businesscontact = model.sendorder.BusinessContact;
-                orderdetail.Email = model.sendorder.Email;
-                orderdetail.Faxnumber = model.sendorder.FaxNumber;
-                orderdetail.Noofrefill = model.sendorder.NUmberofrefill;
-                   orderdetail.Requestid = requestid;
-                orderdetail.Createddate = DateTime.Now;
-                orderdetail.Createdby =adminname;
 
 
-                _db.Orderdetails.Add(orderdetail);
-                _db.SaveChanges();
-           
+            Orderdetail orderdetail = new Orderdetail();
+
+            orderdetail.Vendorid = model.sendorder.VendorId;
+            orderdetail.Businesscontact = model.sendorder.BusinessContact;
+            orderdetail.Email = model.sendorder.Email;
+            orderdetail.Faxnumber = model.sendorder.FaxNumber;
+            orderdetail.Noofrefill = model.sendorder.NUmberofrefill;
+            orderdetail.Requestid = requestid;
+            orderdetail.Createddate = DateTime.Now;
+            orderdetail.Createdby = adminname;
+
+
+            _db.Orderdetails.Add(orderdetail);
+            _db.SaveChanges();
+
         }
-        public AdminDashboard ClearCase( int requestid)
+        public AdminDashboard ClearCase(int requestid)
         {
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.requestid = requestid;
             return adminDashboard;
 
         }
-       
-        public void SubmitClearCase(AdminDashboard model,int requestid,int adminid)
+
+        public void SubmitClearCase(AdminDashboard model, int requestid, int adminid)
         {
-            var req=_db.Requests.Where(x => x.Requestid==requestid).FirstOrDefault();
+            var req = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             if (req != null)
             {
                 req.Isdeleted = true;
@@ -363,18 +372,37 @@ namespace BusinessLogic.Service
                 reqlog.Createddate = DateTime.Now;
                 _db.Requeststatuslogs.Add(reqlog);
             }
-           _db.SaveChanges();
+            _db.SaveChanges();
 
         }
-        public AdminDashboard SendAgreeement(int requestid) {
-            var req = _db.Requestclients.Where(x => x.Requestid == requestid).Select(x => new AgreementReq {
+        public AdminDashboard GetViewUpload(int requestid)
+        {
+            var items = _db.Requestwisefiles.Where(x => x.Requestid == requestid).Select(m => new ViewUpload
+            {
+
+                uploaddate = m.Createddate,
+                uploader = m.Filename
+            }).ToList();
+            var result = new AdminDashboard()
+            {
+                 ViewUpload= items,
+               
+            };
+
+            return result;
+
+        }
+        public AdminDashboard SendAgreeement(int requestid)
+        {
+            var req = _db.Requestclients.Where(x => x.Requestid == requestid).Select(x => new AgreementReq
+            {
                 PhoneNumber = x.Phonenumber,
                 EmailID = x.Email,
-                Requestid=x.Requestid
-           }).FirstOrDefault();
+                Requestid = x.Requestid
+            }).FirstOrDefault();
             AdminDashboard model = new AdminDashboard()
             {
-                
+
                 agreementReq = req
             };
 

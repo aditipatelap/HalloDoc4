@@ -24,6 +24,8 @@ namespace DataAccess.ViewModel
         public string Region { get; set; }
         public int requestid { get; set; }
         public RequestType Status { get; set; }  
+        public int PageSize { get; set; }
+
 
 
 
@@ -87,6 +89,17 @@ namespace DataAccess.ViewModel
         public int VendorId { get; set; }
 
     }
+    public class ViewUpload
+    {
+        public string uploader
+        {
+            get; set;
+        }
+        public DateTime uploaddate { get; set; }
+        public string Firstname { get; set; }
+        public int id { get; set; }
+        public string Filename { get; set; }
+    }
     public class AgreementReq
     {
         public string ? PhoneNumber { get; set; }
@@ -106,6 +119,11 @@ namespace DataAccess.ViewModel
         public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }
         public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
+        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
+
+        public List<ViewUpload> ViewUpload { get; set; }
         public BlockReq blockreq { get; set;}
         public CancelReq cancelreq { get; set; }    
         public AssignReq assignreq { get; set; }

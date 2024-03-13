@@ -1,0 +1,36 @@
+﻿<table class="table">
+    <thead class="table-secondary m-3 p-3">
+        <tr>
+
+            <th scope="col">
+                <input type="checkbox" id="selectAll" class="doc-checkbox" />
+            </th>
+            <th></th>
+            <th scope="col">Documents</th>
+            <th scope="col">Upload Date <i class="bi bi-arrow-up"></i></th>
+            <th scope="col">Actions</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var items in Model.ViewUpload)
+        {
+
+            <tr>
+
+                <td>
+                    <input type="checkbox" id="fileUpload" name="selectedFiles" value="@items.uploader">
+                </td>
+                <td class="text-dark"><i class="bi bi-file-earmark-minus-fill"></i>  &nbsp;@items.uploader</td>
+
+                <td class="text-dark">@items.uploaddate.ToString().Split(' ')[0]</td>
+                <td>
+                    <button type="button" class="btn btn-outline-info"><a href="~/Files/@items.uploader" class="text-decoration-none ElementColor " download /><i class="fa fa-cloud-arrow-down"></i></button>
+                    <button type="button" class="btn btn-outline-info"><a href="~/Files/@items.uploader" class="text-decoration-none ElementColor " /><i class="fa fa-delete"></i></button>
+                </td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>
