@@ -153,12 +153,12 @@ namespace HalloDoc.Controllers
         //    return PartialView(partialview, result);
         //}
        
-        public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage)
+        public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage ,  string dropdown,int reqtype)
         {
 
             var partialview = "Partials/" + "_" + btnName; 
 
-            var result = _AdminDash.GetDashboardData(statusid, searchValue,currentpage);
+            var result = _AdminDash.GetDashboardData(statusid, searchValue,currentpage,dropdown,reqtype);
 
             return PartialView(partialview, result);
         }

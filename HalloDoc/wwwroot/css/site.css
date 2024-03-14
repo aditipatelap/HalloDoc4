@@ -364,55 +364,95 @@ h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content
     color: darkblue;
     border: 1px solid darkblue;
 }
-    .newbtn:hover {
+    .newbtn:hover, .newbtn.active {
         background-color: #4263f5;
         color: white;
+        box-shadow: none;
     }
+.darkbluetri {
+    color: #4263f5;
+    display: none;
+}
 
+.triangle-down {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid;
+}
 .activebtn {
     color: #14A44D;
     background-color: #d9ffcc;
 }
-    .activebtn:hover {
+    .activebtn:hover, .activebtn.active {
         background-color: #2fb800;
         color: white;
+        box-shadow: none;
     }
+.lightbluetri {
+    color: #00ffff;
+    display: none;
+}
+
 .pendingbtn {
     color: #2cc7f1;
     background-color: #e5f2fa;
     border: 1px solid #2cc7f1;
 }
-    .pendingbtn:hover {
+    .pendingbtn:hover, .pendingbtn.active {
         background-color: #00ffff;
         color: white;
+        box-shadow: none;
     }
+.greentri {
+    color: #2fb800;
+    display: none;
+}
+
 .concludebtn {
     color: #912261;
     background-color: #ffdff1;
     border: 1px solid #912261;
 }
-    .concludebtn:hover {
+    .concludebtn:hover, .concludebtn.active {
         background-color: #912261;
         color: white;
+        box-shadow: none;
     }
+.pinktri {
+    color: #912261;
+    display: none;
+}
+
 .toclosebtn {
     color: #0181f8;
     background-color: #e5f2fa;
     border: 1px solid #0181f8;
 }
-.toclosebtn:hover {
-    background-color: #0181f8;
-    color: white;
+    .toclosebtn:hover, .toclosebtn.active {
+        background-color: #0181f8;
+        color: white;
+        box-shadow: none;
+    }
+.bluetri {
+    color: #0181f8;
+    display: none;
 }
 .unpaidbtn {
     color: mediumslateblue;
     background-color: #dce1ff;
     border: 1px solid mediumslateblue;
 }
-    .unpaidbtn:hover {
+    .unpaidbtn:hover, .unpaidbtn.active {
         background-color: mediumslateblue;
         color: white;
+        box-shadow: none;
     }
+.purpletri {
+    color: mediumslateblue;
+    display: none;
+}
 #dot {
     height: 15px;
     width: 15px;

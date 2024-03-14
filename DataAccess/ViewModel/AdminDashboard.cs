@@ -13,7 +13,7 @@ namespace DataAccess.ViewModel
         public string? Name { get; set; }
         public string Dob { get; set; }
         public string? Requestor { get; set; }
-        public string? Physician { get; set; }
+        public string? PhysicianName { get; set; }
         public DateTime? RequestedDate { get; set; }
         public DateTime? DateofService { get; set; }
         public string? PatientPhone { get; set; }

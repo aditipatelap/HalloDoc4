@@ -28,7 +28,7 @@ namespace BusinessLogic.Service
         {
 
             AdminDashboard dash = new AdminDashboard();
-            var req = _db.Requests.ToList();
+            var req = _db.Requests.Include(x =>x.Requestclients).Where(x =>x.Requestid==x.Requestclients.FirstOrDefault().Requestid).ToList();
             dash.newcount = req.Count(x => x.Status == (short)Requeststatus.Unassigned);
             dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
             dash.activecount = req.Count(x => x.Status == (short)Requeststatus.MDEnRoute || x.Status == (short)Requeststatus.MDonSite);
@@ -78,7 +78,7 @@ namespace BusinessLogic.Service
         }
         
 
-        public AdminDashboard GetDashboardData(int statusid, string searchValue,int currentpage )
+        public AdminDashboard GetDashboardData(int statusid, string searchValue,int currentpage,string dropdown,int reqtype )
             {
 
             List<int> id = new List<int>();
@@ -103,7 +103,11 @@ namespace BusinessLogic.Service
 
             var dashboard = (from Request in _db.Requests
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                             where id.Contains(Request.Status) && Request.Isdeleted == false
+                             // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+                             where id.Contains(Request.Status) && Request.Isdeleted == false && 
+                             (dropdown == null || Requestclient.Address.Contains(dropdown))&&
+                          (searchValue == null || Requestclient.Firstname.Contains(searchValue))&&
+                          (reqtype==0 || Request.Requesttypeid==reqtype )
                              select new AdminDash
                              {
                                  Name = Requestclient.Firstname + " " + Requestclient.Lastname,
@@ -111,17 +115,18 @@ namespace BusinessLogic.Service
                                  RequestedDate = Request.Createddate,
                                  PatientPhone = Requestclient.Phonenumber,
                                  RequestorPhone = Request.Phonenumber,
+
                                  Address = Requestclient.Address,
                                  Notes = Requestclient.Notes,
                                  requestid = Request.Requestid,
-
+                                 //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
                                  // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                                  RequestTypeid = Request.Requesttypeid
                              });
 
                
             int totalrecords = dashboard.Count();
-            int pagesize = 5;
+            int pagesize = 1;
             int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 

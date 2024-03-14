@@ -50,7 +50,7 @@
                     <td>@items.Name</td>
                     <td>@items.Dob</td>
                     <td>@items.Requestor</td>
-                    <td>@items.Physician</td>
+                    <td>@items.PhysicianName</td>
                     <td>@items.DateofService</td>
 
                     <td>
@@ -109,8 +109,8 @@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                <!-- Added "active" class conditionally -->
-                <a class="page-link custompagination" href="#" data-page="@i">@i</a> <!-- Added "active" class conditionally -->
+              
+                <a class="page-link custompagination" href="#" data-page="@i">@i</a> 
             </li>
         }
         @if (Model.CurrentPage < Model.TotalPages)
