@@ -1,4 +1,6 @@
-﻿<style>
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<style>
     a{
         cursor:pointer;
     }
@@ -10,8 +12,8 @@
 
     <div class="d-flex justify-content-end mt-3">
         <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
-        <h4 class=" ms-2 d-lg-block d-none"> Admin admin @*@_httpContextAccessor.HttpContext.Session.GetString("Admin")*@</h4>
-        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("Logout", "Access")'">Logout</button></div>
+        <h4 class=" ms-2 d-lg-block d-none"> @Model.UserName</h4>
+        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
         <button class="me-3 ms-1  btn btn-outline-info btn-toggle">
             <i class="fa fa-moon i-info"></i>

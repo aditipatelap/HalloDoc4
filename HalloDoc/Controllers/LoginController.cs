@@ -1,7 +1,11 @@
-﻿using BusinessLogic.Interface;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using BusinessLogic.Interface;
+using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Common;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace HalloDoc.Controllers
 {
@@ -9,10 +13,14 @@ namespace HalloDoc.Controllers
     {
         private readonly ILoginInterface _loginInterface;
         private readonly ApplicationDbContext _db;
-        public LoginController(ApplicationDbContext db,ILoginInterface loginInterface)
+        private readonly INotyfService _notyf;
+        private readonly IJwtService _JwtService;
+        public LoginController(ApplicationDbContext db,ILoginInterface loginInterface, INotyfService notyf, IJwtService jwtService)
         {
             _db = db;
             _loginInterface = loginInterface;
+            _notyf = notyf;
+            _JwtService = jwtService;
         }
         public IActionResult AdminLogin()
         {
@@ -23,9 +31,44 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult AdminLogin(LoginModel loginModel)
         {
-           // _loginInterface.Login(loginModel);
-          return RedirectToAction("Index", "Admin");
+           var user=_loginInterface.Login(loginModel);
+            if(user==null)  
+            {
+                _notyf.Custom("Login Failed!", 3, "red", "bi bi-check-circle-fill");
+                return View();
+            }
+            else
+            {
+                var jwtToken = _JwtService.GenerateToken(user);
+               
+                Response.Cookies.Append("jwt", jwtToken);
+                // Decode JWT token to get username
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var decodedToken = tokenHandler.ReadJwtToken(jwtToken);
+                var usernameClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "Username");
+                if (usernameClaim != null)
+                {
+                    string username = usernameClaim.Value;
+                    var model=new AdminDashboard { UserName = username};
+
+                    // Use the username as needed
+                    return RedirectToAction("Index", "Admin",model);
+                }
+
+
+               
+            }
+            return RedirectToAction("Index", "Error");
+
         }
+        public IActionResult AdminLogout()
+        {
+            Response.Cookies.Delete("jwt");
+          // _httpContextAccessor.HttpContext.Session.Clear();
+           return RedirectToAction("AdminLogin", "Login");
+           
+        }
+
         public IActionResult PatientLogin()
         {
             return View();

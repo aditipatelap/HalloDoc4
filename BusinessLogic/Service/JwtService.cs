@@ -1,13 +1,12 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-
 using System.IdentityModel.Tokens.Jwt;
-
 using System.Security.Claims;
 using System.Text;
 
@@ -101,10 +100,7 @@ namespace BusinessLogic.Service
             {
                 if (_role == "1")
                 {
-
-                   
-
-                   // context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Login" }));
+                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Login" }));
                 }
                 else if (_role == "2")
                 {
@@ -120,7 +116,7 @@ namespace BusinessLogic.Service
             {
                 if (_role == "1")
                 {
-                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Login" }));
+                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "AdminLogin" }));
                 }
                 else if (_role == "2")
                 {
@@ -135,7 +131,7 @@ namespace BusinessLogic.Service
             {
                 if (_role == "1")
                 {
-                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Admin", action = "Login" }));
+                    context.Result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Login", action = "AdminLogin" }));
                 }
                 else if (_role == "2")
                 {

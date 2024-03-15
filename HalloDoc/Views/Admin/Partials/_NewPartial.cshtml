@@ -182,16 +182,17 @@
     $(document).ready(function () {
         console.log("dygdax");
         $(".custompagination").click(function () {
-
+           
             var currentpage = $(this).data('page');
             var btnName = "NewPartial";
             var statusid = 1;
+            var searchvalue = $("#searchInput").val();
             //console.log(requestid);
 
 
             $.ajax({
                 url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
+                data: { btnName: btnName, statusid: statusid, currentpage: currentpage,searchvalue:searchvalue},
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view

@@ -15,7 +15,7 @@ using static DataAccess.ViewModel.Constant;
 
 namespace HalloDoc.Controllers
 {
-    //[CustomAuthorize("1")]
+    [CustomAuthorize("1")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -23,76 +23,22 @@ namespace HalloDoc.Controllers
         private readonly IAdminDash _AdminDash;
         private readonly INotyfService _notyf;
         private readonly IRequestInterface _requestInterface;
-
-        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,IRequestInterface requestInterface)
+        private readonly ILoginInterface _loginInterface;
+        public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,
+            IRequestInterface requestInterface,ILoginInterface loginInterface)
         {
             _db = db;
             _AdminDash = adminDash;
             _httpContextAccessor = httpContextAccessor;
             _notyf = notyf;
             _requestInterface= requestInterface;
+            _loginInterface = loginInterface;
         }
        
-        public IActionResult AdminLogin() {
-            ClaimsPrincipal claimuser = HttpContext.User;
-            if(claimuser.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Dashboard", "Admin");
-            }
-            return View();
-
-        }
-        [HttpPost]
-        public async Task<IActionResult> AdminLogin(LoginModel loginModel)
-
+       
+        public IActionResult Index(AdminDashboard model)
         {
-
-            var user = _db.Aspnetusers.FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
-
-            if (user != null)
-            {
-                List<Claim> claims = new List<Claim>()
-                {
-                    new Claim(ClaimTypes.NameIdentifier,loginModel.Email),
-                    new Claim("OtherProperties","Example Role")
-                };
-                ClaimsIdentity claimsidentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                //Authenticationproperties
-                AuthenticationProperties properties = new AuthenticationProperties()
-                {
-                    AllowRefresh = true,
-                };
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsidentity), properties);
-                //int id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
-
-
-                //string userName = _db.Users.Where(x => x.Aspnetuserid == user.Id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
-
-
-
-
-                return RedirectToAction("Dashboard", "Admin");
-            }
-            else
-            {
-                _notyf.Custom("Login Failed!", 3, "green", "bi bi-check-circle-fill");
-
-            }
-            return View();
-
-        }
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);  
-
-
-            return RedirectToAction("AdminLogin", "Admin");
-        }
-
-        public IActionResult Index()
-        {
-            return View();
+            return View(model);
         }
 
         public IActionResult GetTabs(string Tabid,int requestid)
@@ -147,12 +93,18 @@ namespace HalloDoc.Controllers
             return View();
 
         }
-        //public IActionResult PaginatedDashboard()
-        //{
-        //    _AdminDash.GetDashboardData(statusid, searchValue);
-        //    return PartialView(partialview, result);
-        //}
-       
+        public IActionResult DownloadAll(int statusid)
+
+        {
+            statusid = 1;
+            MemoryStream ms = _AdminDash.ExportALl(statusid);
+            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "data.xlsx");
+
+
+        }
+
+
+
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage ,  string dropdown,int reqtype)
         {
 

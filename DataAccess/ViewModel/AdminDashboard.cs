@@ -114,6 +114,7 @@ namespace DataAccess.ViewModel
 
     public class AdminDashboard
     {
+        public string UserName { get;set; }
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
         public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }

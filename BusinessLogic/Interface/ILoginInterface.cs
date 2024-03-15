@@ -1,4 +1,5 @@
-﻿using DataAccess.ViewModel;
+﻿using DataAccess.Models;
+using DataAccess.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,8 @@ namespace BusinessLogic.Interface
 {
     public interface ILoginInterface
     {
-        //enum ValidationStatus
-        //{
-        //    Valid,
-        //    EmailIncorrect,
-        //    PasswordIncorrect
-        //}
-     //public  int Login(LoginModel loginModel);
+        
+     public Aspnetuser Login(LoginModel loginModel);
 
     }
 }

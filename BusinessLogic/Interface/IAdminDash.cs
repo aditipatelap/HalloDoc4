@@ -15,6 +15,7 @@ namespace BusinessLogic.Interface
 
         public AdminDashboard GetDashboardData(int statusid, string searchValue, int currentpage, string dropdown, int reqtype);
         public AdminDashboard GetName(int statusid);
+        public MemoryStream ExportALl(int statusid);
         //public int[] RequestCount(int statusid);
         public AdminDashboard RequestCount();
         public AdminDashboard AssignRequest(int requestid);

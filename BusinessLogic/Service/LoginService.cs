@@ -91,6 +91,18 @@ namespace BusinessLogic.Service
         //    }
 
         //}
+        public Aspnetuser Login(LoginModel loginModel)
+        {
+            Aspnetuser user = new Aspnetuser();
+            user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+           
+                if (user.Passwordhash == loginModel.Password)
+                {
+                return user;
+                }
+            
+            return null;
+        }
     }
 
     }

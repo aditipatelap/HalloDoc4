@@ -3,7 +3,7 @@
 
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
-        <button type="button" class="w-100 btn partialbtn newbtn text-start" data-btn="NewPartial" data-id="1">
+        <button type="button" class="w-100 btn partialbtn newbtn text-start"  data-btn="NewPartial" data-id="1">
 
             <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
             <p class="fw-bold fs-3">@*@ViewBag.Request[0]*@ @Model.newcount</p>
@@ -70,15 +70,15 @@
     </div>
 <div class="d-flex d-flex justify-content-between m-3 p-3 ">
     <div>
-        <span class="fw-bolder fs-4 ">Patients</span>
-        <span>(new)</span>
+       <span class="fw-bolder fs-4 status ">Patients</span>
+        <span id="status"></span>
 
     </div>
     <div class="">
         <button type="button" class="btn btn-info text-white"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></button>
+        <a asp-action="DownloadAll" asp-controller="Admin" type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></a>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
     </div>
 </div>
@@ -127,20 +127,57 @@
 
 
 <div id="btnContent">
-    <div class="modelbody">
-    </div>
+   @* <div class="modelbody">
+    </div>*@
+   
 </div>
 
 
 
-<div id="btnContent">
+@*<div id="btnContent">
     <div id="myModalContainer">
     </div>
 </div>
+    *@
 
 <script>
     var statusidglobal;
     var btnnameglobal;
+    $(document).ready(function () {
+        $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
+        $('.partialbtn').click(function () {
+            console.log("jygjyg")
+            var tabId = $(this).data('id');
+            console.log(tabId);
+            if (tabId == 1) {
+                var tabId = "(NEW)";
+                $('#status').css('font-weight', 'bold').css('color', 'darkblue');
+            }
+            else if (tabId == 2) {
+                var tabId = "(PENDING)";
+                $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
+            }
+            else if (tabId == 3) {
+                var tabId = "(ACTIVE)";
+                $('#status').css('font-weight', 'bold').css('color', 'green');
+            }
+            else if (tabId == 6) {
+                var tabId = "(CONCLUDE)";
+                $('#status').css('font-weight', 'bold').css('color', '#912261');
+
+            }
+            else if (tabId == 5) {
+                var tabId = "(TO CLOSE)";
+                $('#status').css('font-weight', 'bold').css('color', '#0181f8');
+            }
+            else if (tabId == 9) {
+                var tabId = "(UNPAID)";
+                $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
+
+            }
+            $('#status').text(tabId);
+        });
+    });
     $(document).ready(function () {
         $('.partialbtn').click(function () {
             $('.partialbtn').removeClass('active');
@@ -204,7 +241,7 @@
                 url: '@Url.Action("GetPartialView", "Admin")',
                
                 method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1 ,reqtype:reqtype},
+                data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1},
                 success: function (data) {
                     console.log("AJAX success");
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -216,42 +253,42 @@
                 }
             });
         });
-        document.getElementById('searchButton').addEventListener('click', handleSearchClick);
-        function handleSearchClick() {
-
-            // Get the value from the search input
-            var searchValue = document.getElementById('searchInput').value;
-            console.log(searchValue);
-            console.log(statusidglobal);
-            console.log(btnnameglobal);
-            // Perform the AJAX request
-
-            $.ajax({
-                type: "GET",
-                // url: "/Admin/GetPartialView?searchValue=" + searchValue,
-                url: '@Url.Action("GetPartialView", "Admin")',
-                data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal, currentpage: 1 },
-                success: function (data) {
-                    console.log("AJAX success");
-                    // Update the table body with the filtered data
-                    $("#btnContent").html(data);
-                    //location.reload();
-                    $("#searchButton").val('');
-                },
-
-                error: function (error) {
-                    console.log("Error:", error);
-                }
-            });
-
-        }
+        //document.getElementById('searchButton').addEventListener('click', handleSearchClick);
+        //function handleSearchClick() {
+            
     });
 
     $(document).ready(function () {
 
         $("[data-btn='NewPartial'][data-id='1']").click();
     });
+    $("#searchInput").keyup(function () {
+        // Get the value from the search input
+        var searchValue = document.getElementById('searchInput').value;
+        console.log(searchValue);
+        console.log(statusidglobal);
+        console.log(btnnameglobal);
+        // Perform the AJAX request
 
+        $.ajax({
+            type: "GET",
+            // url: "/Admin/GetPartialView?searchValue=" + searchValue,
+            url: '@Url.Action("GetPartialView", "Admin")',
+            data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal, currentpage: 1 },
+            success: function (data) {
+                console.log("AJAX success");
+                // Update the table body with the filtered data
+                $("#btnContent").html(data);
+                //location.reload();
+                $("#searchButton").val('');
+            },
+
+            error: function (error) {
+                console.log("Error:", error);
+            }
+        });
+
+    });
 
 
 

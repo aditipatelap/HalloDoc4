@@ -1,14 +1,9 @@
 ﻿using BusinessLogic.Interface;
+using ClosedXML.Excel;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Nodes;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -106,7 +101,7 @@ namespace BusinessLogic.Service
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
                              where id.Contains(Request.Status) && Request.Isdeleted == false && 
                              (dropdown == null || Requestclient.Address.Contains(dropdown))&&
-                          (searchValue == null || Requestclient.Firstname.Contains(searchValue))&&
+                          (searchValue == null || Requestclient.Firstname.Contains(searchValue)|| Requestclient.Lastname.Contains(searchValue)) && 
                           (reqtype==0 || Request.Requesttypeid==reqtype )
                              select new AdminDash
                              {
@@ -167,6 +162,95 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
+        public MemoryStream ExportALl(int statusid)
+        {
+            List<int> id = new List<int>();
+            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
+            {
+                id.Add(statusid);
+            }
+            else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
+            {
+                id.Add((short)Requeststatus.MDEnRoute);
+                id.Add((short)Requeststatus.MDonSite);
+
+            }
+            else
+            {
+                id.Add((short)Requeststatus.Cancelled);
+                id.Add((short)Requeststatus.Cancelledbypatient);
+                id.Add((short)Requeststatus.Closed);
+
+            }
+            var dashboard = (from Request in _db.Requests
+                             join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                             // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+                             where id.Contains(Request.Status) && Request.Isdeleted == false 
+
+
+                             select new AdminDash
+                             {
+                                 Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                                 Requestor = Request.Firstname + " " + Request.Lastname,
+                                 RequestedDate = Request.Createddate,
+                                 PatientPhone = Requestclient.Phonenumber,
+                                 RequestorPhone = Request.Phonenumber,
+
+                                 Address = Requestclient.Address,
+                                 Notes = Requestclient.Notes,
+                                 requestid = Request.Requestid,
+                                 //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
+                                 // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                                 RequestTypeid = Request.Requesttypeid
+                             }).ToList();
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Dashboard");
+
+                // Add headers
+                var properties = typeof(AdminDash).GetProperties();
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    worksheet.Cell(1, i + 1).Value = properties[i].Name;
+                }
+
+                // Add data
+                for (int i = 0; i < dashboard.Count; i++)
+                {
+                    for (int j = 0; j < properties.Length; j++)
+                    {
+                        var value= properties[j].GetValue(dashboard[i]);
+                       
+                        if(value is DateTime)
+                        {
+                            worksheet.Cell(i + 2, j + 1).Value = ((DateTime)value).ToString("yyyyy-MM-dd   HH:mm:ss");
+
+                        }
+                        else
+                        {
+                            worksheet.Cell(i + 2, j + 1).Value = value != null ? value.ToString() : string.Empty;
+                        }
+                    }
+                }
+
+                // Create a memory stream to store the Excel file
+                using (var stream = new MemoryStream())
+                {
+                    // Save the workbook to the memory stream
+                    workbook.SaveAs(stream)
+    ;
+
+                    // Set the position to the beginning of the stream
+                    stream.Seek(0, SeekOrigin.Begin);
+                    return stream;
+
+                    // Return the Excel file as a stream response
+                   // return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "dashboard_data.xlsx");
+                }
+            }
+        }
+
+    
         public AdminDashboard GetViewCase(int requestid)
         {
             AdminDashboard dashboard = new AdminDashboard();
