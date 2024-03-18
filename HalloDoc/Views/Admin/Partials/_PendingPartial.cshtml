@@ -73,7 +73,7 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item tablink " id="ViewCase">View Case</a>
+                                <a class="dropdown-item tablink " id="ViewCase" >View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
                                 <a class="dropdown-item tablink " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
@@ -125,7 +125,7 @@
     </div>
 </div>
 <script>
-    console.log("jiiii")
+    
     $('.showmodal').click(function () {
         var modalName = $(this).attr('id');
         var requestid = $(this).data('btn');    
@@ -155,9 +155,14 @@
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
             var requestid = $(this).data('btn');
+            console.log("vanshita");
+            console.log(statusidglobal)
+            console.log(btnnameglobal);
+           
             $.ajax({
                 url: '/Admin/GetTabs',
-                data: { Tabid: TabId ,requestid:requestid},
+                data: { Tabid: TabId ,requestid:requestid,statusid:statusidglobal,btnname:btnnameglobal},
+               
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view

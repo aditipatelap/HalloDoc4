@@ -77,11 +77,11 @@ namespace BusinessLogic.Service
             {
 
             List<int> id = new List<int>();
-            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
+            if (statusid != (short)Status.Active || statusid == (short)Status.ToClose)
             {
                 id.Add(statusid);
             }
-            else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
+            else if (statusid == (short)Status.Active)
             {
                 id.Add((short)Requeststatus.MDEnRoute);
                 id.Add((short)Requeststatus.MDonSite);
@@ -99,10 +99,10 @@ namespace BusinessLogic.Service
             var dashboard = (from Request in _db.Requests
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
-                             where id.Contains(Request.Status) && Request.Isdeleted == false && 
-                             (dropdown == null || Requestclient.Address.Contains(dropdown))&&
-                          (searchValue == null || Requestclient.Firstname.Contains(searchValue)|| Requestclient.Lastname.Contains(searchValue)) && 
-                          (reqtype==0 || Request.Requesttypeid==reqtype )
+                             where id.Contains(Request.Status) && Request.Isdeleted == false &&
+                             (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
+                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || Requestclient.Lastname.Contains(searchValue)) &&
+                          (reqtype == 0 || Request.Requesttypeid == reqtype)
                              select new AdminDash
                              {
                                  Name = Requestclient.Firstname + " " + Requestclient.Lastname,
@@ -251,7 +251,7 @@ namespace BusinessLogic.Service
         }
 
     
-        public AdminDashboard GetViewCase(int requestid)
+        public AdminDashboard GetViewCase(int requestid,int statusid,string btnname)
         {
             AdminDashboard dashboard = new AdminDashboard();
 
@@ -271,6 +271,8 @@ namespace BusinessLogic.Service
                                 Address = req.Address
                             }).FirstOrDefault();
             dashboard.viewcase = items;
+            dashboard.statusid = statusid;
+            dashboard.btnname=btnname;
             
             return dashboard;
         }
@@ -497,6 +499,45 @@ namespace BusinessLogic.Service
 
             return model;
         }
+        public AdminDashboard GetEncounterForm(int requestid)
+        {
+            var items = _db.Requestclients.Where(x => x.Requestid == requestid).Select(m => new EncounterForm
+            {
+
+                FirstName = m.Firstname,
+                LastName=m.Lastname,
+                Email=m.Email,
+                Location=m.Address,
+                //Dob = $"{m.Intdate}/{m.Strmonth}/{m.Intyear}",
+                Dob = Convert.ToDateTime(m.Intdate.ToString() + "/" + m.Strmonth + "/" + m.Intyear.ToString()),
+
+
+            }).FirstOrDefault();
+            var result = new AdminDashboard()
+            {
+                encounterform = items
+            };
+            return result;
+
+        }
+       
+        //public AdminDashboard GetEncounterForm(int requestid)
+        //{
+        //    var items = _db.Requestclients.Where(x => x.Requestid == requestid).Select(m => new EncounterForm
+        //    {
+
+        //        FirstName = m.Firstname,
+        //        LastName = m.Lastname,
+        //        Email = m.Email
+
+        //    }).FirstOrDefault();
+        //    var result = new AdminDashboard()
+        //    {
+        //        encounterform = items
+        //    };
+        //    return result;
+
+        //}
 
 
 

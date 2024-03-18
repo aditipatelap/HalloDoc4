@@ -75,8 +75,8 @@
 
     </div>
     <div class="">
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
+        <button type="button" id="SendLink" class="btn btn-info text-white showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
+        <button type="button" id="CreateRequest"class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
         <a asp-action="DownloadAll" asp-controller="Admin" type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></a>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
@@ -129,9 +129,14 @@
 <div id="btnContent">
    @* <div class="modelbody">
     </div>*@
+
    
 </div>
-
+<div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
 
 
 @*<div id="btnContent">
@@ -143,6 +148,54 @@
 <script>
     var statusidglobal;
     var btnnameglobal;
+    //$(document).ready(function () {
+    //    console.log("Page loaded");
+    //    var isFirstTime = localStorage.getItem('isFirstTime');
+    //    console.log(isFirstTime);
+
+    //    if (!isFirstTime) {
+    //        // Call the function on page load if it's the first time
+    //        console.log("aaaaaa")
+    //        defaultFunction();
+    //        console.log("aaa")
+    //        localStorage.setItem('isFirstTime', true);
+
+    //    }
+
+    //    $(document).on("click", ".partialbtn", function () {
+    //        // Call the function on button click
+    //        var btnName = $(this).data("btn");
+    //        btnnameglobal = btnName;
+    //        console.log("Button name: " + btnName);
+    //        var statusid = $(this).data("id");
+    //        statusidglobal = statusid;
+    //        buttonClickFunction(btnnameglobal, statusidglobal);
+    //    });
+    //    function defaultFunction() {
+    //        console.log("Default function called");
+    //        buttonClickFunction('NewPartial', 1);
+    //        //$("[data-btn='NewPartial'][data-id='1']").click();
+
+    //    }
+    //    function buttonClickFunction(btnnameglobal, statusidglobal) {
+
+    //        // Make an AJAX request or perform any other action here
+    //        $.ajax({
+    //            url: '@Url.Action("GetPartialView", "Admin")',
+    //            method: 'GET',
+    //            data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1 },
+    //            success: function (data) {
+    //                console.log("AJAX success");
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#btnContent").html(data);
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+    //    }
+
+    //});
     $(document).ready(function () {
         $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
         $('.partialbtn').click(function () {
@@ -291,6 +344,33 @@
     });
 
 
+
+    $('.showmodal').click(function () {
+        console.log("hi");
+        var modalName = $(this).attr('id');
+       
+      
+        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
+        //$('#myModalContainer').html(data);
+        //    $('#myModal').modal('show');
+        //});
+        $.ajax({
+            url: '@Url.Action("GetModalPartialView", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: { modalName: modalName },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $('.modelbody').html(data);
+                // $('#myModal').modal('show');
+                console.log("hiiii");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    });
 
 
 

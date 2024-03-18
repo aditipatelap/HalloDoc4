@@ -41,7 +41,7 @@ namespace HalloDoc.Controllers
             return View(model);
         }
 
-        public IActionResult GetTabs(string Tabid,int requestid)
+        public IActionResult GetTabs(string Tabid,int requestid,int statusid,string btnname)
         {
             var result ="Tabs/"+ "_" + Tabid;
             if(Tabid=="Dashboard")
@@ -76,7 +76,7 @@ namespace HalloDoc.Controllers
             }
             if (Tabid == "ViewCase")
             {
-               var model = _AdminDash.GetViewCase(requestid);
+               var model = _AdminDash.GetViewCase(requestid,statusid,btnname);
                 return PartialView(result,model);
             }
             if (Tabid == "ViewUpload")
@@ -90,6 +90,13 @@ namespace HalloDoc.Controllers
 
                 return PartialView(result,orderdetail);
             }
+            if (Tabid == "EncounterForm")
+            {
+                var model = _AdminDash.GetEncounterForm(requestid);
+
+                return PartialView(result, model);
+            }
+
             return View();
 
         }
@@ -102,8 +109,6 @@ namespace HalloDoc.Controllers
 
 
         }
-
-
 
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage ,  string dropdown,int reqtype)
         {
@@ -148,6 +153,11 @@ namespace HalloDoc.Controllers
             {
                 var result = _AdminDash.SendAgreeement(requestid);
                     return PartialView(partialname, result);
+            }
+            if (modalName == "SendLink")
+            {
+               
+                return PartialView(partialname);
             }
 
             return PartialView(partialname);

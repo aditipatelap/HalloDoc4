@@ -110,6 +110,24 @@ namespace DataAccess.ViewModel
         public int Requestid { get; set; }
         public string Notes { get;set; }
     }
+    public class EncounterForm
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Location { get; set; }
+        public DateTime Dob { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get;set; }
+
+    }
+    public class SendLink
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+
+    }
 
 
     public class AdminDashboard
@@ -134,6 +152,8 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "This is a required field")]
         public IEnumerable<Region> Regions {get; set;}
         public ViewCase viewcase { get; set; }
+        public EncounterForm encounterform { get; set; }
+        public SendLink sendLink { get; set; }  
         public int newcount { get; set; }
         public int pendingcount { get; set; }
         public int activecount { get; set; }
@@ -143,6 +163,7 @@ namespace DataAccess.ViewModel
        public status Status { get; set; }
         public int requestid { get; set; }
         public string patientname { get;set; }
-
+        public int statusid { get;set; }
+        public string btnname { get;set; }
     }
 }

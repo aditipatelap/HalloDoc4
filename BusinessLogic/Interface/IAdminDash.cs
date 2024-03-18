@@ -33,9 +33,10 @@ namespace BusinessLogic.Interface
         public void SendOrderReq(AdminDashboard model, int requestid,string adminname);
         public AdminDashboard ClearCase(int requestid);
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);
-        public AdminDashboard GetViewCase(int requestid);
+        public AdminDashboard GetViewCase(int requestid,int statusid,string btnname);
         public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
+        public AdminDashboard GetEncounterForm(int requestid);
 
 
 

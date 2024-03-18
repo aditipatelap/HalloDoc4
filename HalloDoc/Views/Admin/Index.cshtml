@@ -60,6 +60,7 @@
 </div>
 
 <script>
+    var tabidglobal;
     document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll(".nav-link");
 
@@ -94,6 +95,7 @@
         
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
+            tabidglobal=TabId;
             $.ajax({
                 url: '/Admin/GetTabs',
                 data: { Tabid: TabId },

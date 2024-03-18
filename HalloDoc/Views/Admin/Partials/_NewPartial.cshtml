@@ -74,7 +74,7 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
+                                <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
                                     <i class="bi bi-x-circle"></i>
                                     Assign Case
                                 </a>
@@ -83,7 +83,7 @@
                                     <i class="bi bi-x-circle"></i>
                                     Cancel Case
                                 </a>
-                                <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid">View Case</a>
+                                <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" >View Case</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
 
                                 <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
@@ -139,7 +139,7 @@
         //    $('#myModal').modal('show');
         //});
         $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
+            url: '@Url.Action("GetModalPartialView", "Admin")', 
             //url: '/Admin/GetPartialView?btn=' + btnName,
             method: 'GET',
             data: { modalName: modalName, patientname: patientname, requestid: requestid },
@@ -161,10 +161,11 @@
         $(".tablink").click(function () {
             var TabId = $(this).attr("id");
             var requestid = $(this).data('btn');
+            //var statusid=$(this).data('value1');
             console.log(requestid);
             $.ajax({
                 url: '/Admin/GetTabs',
-                data: { Tabid: TabId, requestid: requestid },
+                data: { Tabid: TabId, requestid: requestid,statusid:statusidglobal },
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view

@@ -93,7 +93,7 @@ namespace BusinessLogic.Service
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
-        {
+            {
             var jwtService = context.HttpContext.RequestServices.GetService<IJwtService>();
 
             if (jwtService == null)
