@@ -50,16 +50,17 @@
 
         </div>
     </div>
-    <div id="ViewUploadsTable">
-
-</div>
-
-
+    <div class="table-responsive d-none d-md-block" id="DocumentList">
+    </div>
   
 </div>
 <script>
+   
     $(document).ready(function () {
         $('.submitBtn').click(function () {
+            if (formData == null) {
+                alert('Please select file')
+            }
             var id = $(this).data("btn");
             var formData = new FormData();
             var fileInput = document.getElementById('formFile').files[0];

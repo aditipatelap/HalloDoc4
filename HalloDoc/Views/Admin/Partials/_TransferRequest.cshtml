@@ -1,5 +1,7 @@
 ﻿@section Scripts{
     <partial name="_ValidationScriptsPartial"/>}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     @using DataAccess.ViewModel
 @model AdminDashboard
 <style>
@@ -50,12 +52,14 @@
                 <option disabled selected style="display:none">Select Physician <span class="required">*</span></option>
 
             </select>
+            @Html.ValidationMessageFor(Model=>Model.transferreq.physicianname,"",new{@class="text-danger"})
         </div>
 
         <div class="form-floating my-4">
             <textarea class="form-control" asp-for="transferreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
             
             <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description </label>
+            @Html.ValidationMessageFor(Model=>Model.transferreq.Description,"",new{@class="text-danger"})
            
         </div>
         <div class="d-flex justify-content-end">

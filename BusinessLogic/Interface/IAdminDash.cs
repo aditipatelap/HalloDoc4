@@ -20,7 +20,7 @@ namespace BusinessLogic.Interface
         public AdminDashboard RequestCount();
         public AdminDashboard AssignRequest(int requestid);
 
-        public AdminDashboard CancelCase(int requestid);
+        public AdminDashboard CancelCase(int requestid, string patientname);
         public void SubmitAssignReq (AdminDashboard model, int requestid);
         public void submitCancelCase(AdminDashboard model, int requestid);
         public AdminDashboard BlockCase(int reqid, string patientname);
@@ -33,11 +33,13 @@ namespace BusinessLogic.Interface
         public void SendOrderReq(AdminDashboard model, int requestid,string adminname);
         public AdminDashboard ClearCase(int requestid);
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);
-        public AdminDashboard GetViewCase(int requestid,int statusid,string btnname);
+        public AdminDashboard GetViewCase(int requestid);
+        public void EditViewCaseData(AdminDashboard model, int requestid);
         public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
         public AdminDashboard GetEncounterForm(int requestid);
-
+        public AdminDashboard GetMyProfile(string adminid);
+        public void PostMyProfile(string adminid, AdminDashboard adminDashboard);
 
 
         }

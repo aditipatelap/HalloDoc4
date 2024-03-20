@@ -1,6 +1,12 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-
+<style>
+    input[type="search"] {
+        border: none;
+        outline: none;
+        
+    }
+    </style>
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
         <button type="button" class="w-100 btn partialbtn newbtn text-start"  data-btn="NewPartial" data-id="1">
@@ -87,19 +93,13 @@
 
 <div class="d-flex justify-content-between m-3 p-3 bg-white">
     <div class="d-flex">
-        <div class="input-group">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-            <span class="input-group-append">
-                <button class=" btn-outline-secondary  " id="searchButton" type="button">
-                    <i class="fa fa-search"></i>
-                </button>
-            </span>
-        </div>
+       
 
+            <div class="d-flex ms-3 border rounded  ">
+            <i class="bi bi-search m-2 bg-transparent"></i>
+            <input class=" border-0  p-0 shadow-none" id="searchInput" type="search" placeholder="Search" aria-label="Search">
 
-        @*  <i class="searchicon bi bi-search"></i> <input type="text" class="form-control" placeholder="Search...">*@
-
-
+            </div>
 
         <select id="dropdown" class="form-select form-control ms-3" aria-label="Default select example">
             <option value="">All Regions</option>
@@ -111,11 +111,11 @@
         </select>
     </div>
     <div>
-        <button type="button" class="btn btn-outline-secondary">All</button>
-        <button class="searchrequest" data-btn="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
-        <button class="searchrequest" data-btn="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
-        <button class="searchrequest" data-btn="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
-        <button class="searchrequest" data-btn="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
+        <button type="button" class="btn btn-outline-secondary shadow-none searchrequest  active-link" data-btn="0">All</button>
+        <button type="button" class=" btn btn-outline-secondary shadow-none searchrequest active-link" data-btn="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
+        <button class=" btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
+        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
+        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
 
     </div>
 </div>
@@ -139,11 +139,7 @@
 </div>
 
 
-@*<div id="btnContent">
-    <div id="myModalContainer">
-    </div>
-</div>
-    *@
+
 
 <script>
     var statusidglobal;
@@ -198,6 +194,7 @@
     //});
     $(document).ready(function () {
         $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
+       
         $('.partialbtn').click(function () {
             console.log("jygjyg")
             var tabId = $(this).data('id');
@@ -232,6 +229,12 @@
         });
     });
     $(document).ready(function () {
+        $('.active-link').click(function () {
+            $('.active-link').removeClass('active');
+            $(this).addClass('active');
+        });
+    });
+    $(document).ready(function () {
         $('.partialbtn').click(function () {
             $('.partialbtn').removeClass('active');
             $(this).addClass('active');
@@ -239,7 +242,7 @@
             $(this).parent().find('.triangle-down').show();
         });
     });
-    $(document).ready(function () {
+   
         $(document).on("click", ".partialbtn", function () {
             var btnName = $(this).data("btn");
             btnnameglobal = btnName;
@@ -294,7 +297,7 @@
                 url: '@Url.Action("GetPartialView", "Admin")',
                
                 method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1},
+                data: { btnName: btnnameglobal, statusid: statusidglobal,reqtype:reqtype, currentpage: 1},
                 success: function (data) {
                     console.log("AJAX success");
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -306,10 +309,9 @@
                 }
             });
         });
-        //document.getElementById('searchButton').addEventListener('click', handleSearchClick);
-        //function handleSearchClick() {
+     
             
-    });
+    
 
     $(document).ready(function () {
 

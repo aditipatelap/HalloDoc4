@@ -3,6 +3,7 @@ using BusinessLogic.Interface;
 using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,12 +16,14 @@ namespace HalloDoc.Controllers
         private readonly ApplicationDbContext _db;
         private readonly INotyfService _notyf;
         private readonly IJwtService _JwtService;
-        public LoginController(ApplicationDbContext db,ILoginInterface loginInterface, INotyfService notyf, IJwtService jwtService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public LoginController(ApplicationDbContext db,ILoginInterface loginInterface, INotyfService notyf, IJwtService jwtService, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _loginInterface = loginInterface;
             _notyf = notyf;
             _JwtService = jwtService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public IActionResult AdminLogin()
         {
@@ -42,6 +45,8 @@ namespace HalloDoc.Controllers
                 var jwtToken = _JwtService.GenerateToken(user);
                
                 Response.Cookies.Append("jwt", jwtToken);
+                string Adminid = user.Id;
+                _httpContextAccessor.HttpContext.Session.SetString("Adminid", Adminid);
                 // Decode JWT token to get username
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var decodedToken = tokenHandler.ReadJwtToken(jwtToken);

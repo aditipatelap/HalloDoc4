@@ -48,11 +48,57 @@
                 }
                 <tr style="background: @bgcolor" class="text-white">
                     <td>@items.Name</td>
-                    <td>@items.Dob</td>
+                    <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
                     <td>@items.Requestor</td>
                     <td>@items.PhysicianName</td>
                     <td>@items.DateofService</td>
+                    @if (items.PatientPhone != null)
+                    {
+                        <td>
+                            @if (@items.RequestTypeid == 1)
+                            {
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
+                                <br />
+                                <span>(Patient)</span>
+                            }
+                            else if (@items.RequestTypeid == 2)
+                            {
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                <br />
 
+                                <span>(Ptient)</span> <br />
+
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
+                                <br />
+
+                                <span>(Family/Freind)</span> <br />
+                            }
+                            else if (@items.RequestTypeid == 4)
+                            {
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                <br />
+
+                                <span>(Ptient)</span> <br />
+
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                <br />
+
+                                <span>(Business)</span> <br />
+                            }
+                            else if (@items.RequestTypeid == 3)
+                            {
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                <br />
+
+                                <span>(Ptient)</span> <br />
+
+                                <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                <br />
+
+                                <span>(Concierge)</span> <br />
+                            }
+                        </td>
+                    }
                    
 
                     <td>@items.Address</td>

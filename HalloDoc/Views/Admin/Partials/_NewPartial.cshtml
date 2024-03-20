@@ -2,104 +2,162 @@
 @model AdminDashboard
 
 
+@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+{
 
+    <table class="table table-responsive  m-4 p-3 overflow-scroll ">
+        <thead class="table-secondary">
+            <tr>
+                <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
+                <th scope="col">Date Of Birth</th>
 
-<table class="table table-responsive  m-4 p-3 ">
-    <thead class="table-secondary">
-        <tr>
-            <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
-            <th scope="col">Date Of Birth</th>
+                <th scope="col">Requstor</th>
+                <th scope="col">Requested Date <i class="bi bi-arrow-down"></i></th>
+                <th scope="col">Phone</th>
 
-            <th scope="col">Requstor</th>
-            <th scope="col">Requested Date <i class="bi bi-arrow-down"></i></th>
-            <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
+                <th scope="col">Chat With</th>
 
-            <th scope="col">Address</th>
-            <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
-            <th scope="col">Chat With</th>
+                <th scope="col">Actions</th>
 
-            <th scope="col">Actions</th>
-
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            @foreach (var items in Model.Dashboards)
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
             {
-                var bgcolor = "red";
-                if (items.RequestTypeid == 1)
+                @foreach (var items in Model.Dashboards)
                 {
-                    bgcolor = "green";
+                    var bgcolor = "red";
+                    if (items.RequestTypeid == 1)
+                    {
+                        bgcolor = "green";
 
-                }
-                if (items.RequestTypeid == 2)
-                {
-                    bgcolor = "orange";
+                    }
+                    if (items.RequestTypeid == 2)
+                    {
+                        bgcolor = "orange";
 
-                }
-                if (items.RequestTypeid == 3)
-                {
-                    bgcolor = "purple";
+                    }
+                    if (items.RequestTypeid == 3)
+                    {
+                        bgcolor = "purple";
 
-                }
+                    }
 
-                if (items.RequestTypeid == 4)
-                {
-                    bgcolor = "blue";
+                    if (items.RequestTypeid == 4)
+                    {
+                        bgcolor = "blue";
 
-                }
-                <tr style="background: @bgcolor" class="text-white">
-                    <td>@items.Name</td>
-                    <td>@items.Dob</td>
-                    <td>@items.Requestor</td>
-                    <td>@items.RequestedDate</td>
-                    <td>
-                        <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
-                        @if (items.RequestorPhone != null)
+                    }
+                      <tr style="background: @bgcolor" class="text-white">
+                        <td>@items.Name</td>
+                        <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
+                        <td>@items.Requestor</td>
+                        <td>@items.RequestedDate</td>
+                      
+                        @if (items.PatientPhone != null)
                         {
+                            <td>
+                                @if (@items.RequestTypeid == 1)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
+                                    <br />
+                                    <span>(Patient)</span>
+                                }
+                                else if (@items.RequestTypeid == 2)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
 
-                            <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Family/Freind)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 4)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Business)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 3)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Concierge)</span> <br />
+                                }
+                            </td>
                         }
-                    </td>
+                      
+                        <td>@items.Address</td>
+                        <td>@items.Notes</td>
+                        <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+                
+                   @* <tr style="background: @bgcolor" class="text-white">
+                        <td>@items.Name</td>
+                        <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
+                        <td>@items.Requestor</td>
+                        <td>@items.RequestedDate</td>
 
-                    <td>@items.Address</td>
-                    <td>@items.Notes</td>
-                    <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+                        <td>@items.Address</td>
+                        <td>@items.Notes</td>
+                        <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+*@
 
-
-                    <td>
-                        <div class="btn-group">
-                            <button type="button" class="btn  border border-white text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Action
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
-                                    Assign Case
-                                </a>
-                                @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
-                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
-                                    Cancel Case
-                                </a>
-                                <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" >View Case</a>
-                                <a class="dropdown-item" href="#">View Notes</a>
-
-                                <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
-                                    <i class="bi bi-x-circle"></i>
-                                    Block Case
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn  border border-white text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Action
                                 </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
+                                        <i class="bi bi-x-circle"></i>
+                                        Assign Case
+                                    </a>
+                                    @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
+                                    <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                        <i class="bi bi-x-circle"></i>
+                                        Cancel Case
+                                    </a>
+                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid">View Case</a>
+                                    <a class="dropdown-item" href="#">View Notes</a>
+
+                                    <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                        <i class="bi bi-x-circle"></i>
+                                        Block Case
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
 
-                </tr>
+                   </tr> 
+                }
             }
-        }
-    </tbody>
+        </tbody>
 
-</table>
+    </table>
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+    </div>
+}
 <div class="mb-0 fixed-bottom m-4">
     <ul class="pagination align-items-center">
         @if (Model.CurrentPage > 1)
@@ -109,8 +167,8 @@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-               
-                <a class="page-link custompagination" href="#" data-page="@i">@i</a> 
+
+                <a class="page-link custompagination" href="#" data-page="@i">@i</a>
             </li>
         }
         @if (Model.CurrentPage < Model.TotalPages)
@@ -139,7 +197,7 @@
         //    $('#myModal').modal('show');
         //});
         $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")', 
+            url: '@Url.Action("GetModalPartialView", "Admin")',
             //url: '/Admin/GetPartialView?btn=' + btnName,
             method: 'GET',
             data: { modalName: modalName, patientname: patientname, requestid: requestid },
@@ -165,7 +223,7 @@
             console.log(requestid);
             $.ajax({
                 url: '/Admin/GetTabs',
-                data: { Tabid: TabId, requestid: requestid,statusid:statusidglobal },
+                data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -183,7 +241,7 @@
     $(document).ready(function () {
         console.log("dygdax");
         $(".custompagination").click(function () {
-           
+
             var currentpage = $(this).data('page');
             var btnName = "NewPartial";
             var statusid = 1;
@@ -193,7 +251,7 @@
 
             $.ajax({
                 url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage,searchvalue:searchvalue},
+                data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
                 method: 'GET',
                 success: function (data) {
                     // Replace the content of the btnContent div with the retrieved partial view

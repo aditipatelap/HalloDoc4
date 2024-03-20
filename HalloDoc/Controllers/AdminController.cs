@@ -44,7 +44,8 @@ namespace HalloDoc.Controllers
         public IActionResult GetTabs(string Tabid,int requestid,int statusid,string btnname)
         {
             var result ="Tabs/"+ "_" + Tabid;
-            if(Tabid=="Dashboard")
+           string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
+            if (Tabid=="Dashboard")
             {
                 var req = _AdminDash.RequestCount();
 
@@ -52,7 +53,8 @@ namespace HalloDoc.Controllers
             }
             if(Tabid=="MyProfile")
             {
-                return PartialView(result);
+                var req = _AdminDash.GetMyProfile(adminid);
+                return PartialView(result,req);
             }
             if (Tabid == "ProviderLocation")
             {
@@ -76,13 +78,13 @@ namespace HalloDoc.Controllers
             }
             if (Tabid == "ViewCase")
             {
-               var model = _AdminDash.GetViewCase(requestid,statusid,btnname);
+               var model = _AdminDash.GetViewCase(requestid);
                 return PartialView(result,model);
             }
             if (Tabid == "ViewUpload")
             {
-                var model=_AdminDash.GetViewUpload(requestid);
-                return PartialView(result,model);
+                //var model=_AdminDash.GetViewUpload(requestid);
+                return PartialView(result);
             }
             if (Tabid == "SendOrder")
             {
@@ -99,6 +101,11 @@ namespace HalloDoc.Controllers
 
             return View();
 
+        }
+        public IActionResult DocumentList(int requestid)
+        {
+            var res=_AdminDash.GetViewUpload(requestid);
+            return View(res);
         }
         public IActionResult DownloadAll(int statusid)
 
@@ -136,7 +143,7 @@ namespace HalloDoc.Controllers
             }
             if (modalName=="CancelCase")
             {
-               var result = _AdminDash.CancelCase(requestid);
+               var result = _AdminDash.CancelCase(requestid,patientname);
                 return PartialView(partialname, result);
             }
             if (modalName == "TransferRequest")
@@ -216,7 +223,15 @@ namespace HalloDoc.Controllers
         }
         public IActionResult ViewUpload()
         {
+
             return View();
+        }
+        public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
+            {
+            _AdminDash.EditViewCaseData(model, requestid);
+            return RedirectToAction("Index", "Admin");
+
+
         }
         public IActionResult GetDropDown(int selectedvalue)
         {
@@ -230,6 +245,14 @@ namespace HalloDoc.Controllers
             _requestInterface.SendMailService(email,requestid);
 
             return RedirectToAction("Index", "Admin");
+        }
+        public IActionResult PostMyProfile(string adminid,AdminDashboard adminDashboard)
+        {
+            if (ModelState.IsValid)
+            {
+                _AdminDash.PostMyProfile(adminid, adminDashboard);
+            }
+            return View();
         }
     }
 }

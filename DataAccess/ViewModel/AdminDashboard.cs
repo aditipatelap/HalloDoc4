@@ -5,13 +5,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DataAccess.ViewModel.Constant;
 
 namespace DataAccess.ViewModel
 {
     public class AdminDash
     {
         public string? Name { get; set; }
-        public string Dob { get; set; }
+        public int? IntDate { get; set; }
+        public int? IntYear { get; set; }
+        public string? StrMonth { get; set; } 
         public string? Requestor { get; set; }
         public string? PhysicianName { get; set; }
         public DateTime? RequestedDate { get; set; }
@@ -47,17 +50,22 @@ namespace DataAccess.ViewModel
     }
     public class BlockReq
     {
+        [Required(ErrorMessage ="requirwed")]
         public string Blockreason { get; set; }
         
     }
     public class AssignReq
     {
+        [Required(ErrorMessage = "The field is required")]
+
         public string Description { get; set; }
+        [Required(ErrorMessage = "Enter physician name")]
         public string physicianname { get; set; }
 
     }
     public class CancelReq
     {
+        [Required(ErrorMessage = "Please select a reason")]
         public string reason
         {
             get; set;
@@ -69,7 +77,9 @@ namespace DataAccess.ViewModel
     }
     public class TranserReq
     {
+        [Required(ErrorMessage = "required field ")]
         public string Description { get; set; }
+        [Required(ErrorMessage = "Please select a physician")]
         public string physicianname { get; set; }
         [Required(ErrorMessage = "This is a required field")]
         public string Region { get; set; }
@@ -128,6 +138,34 @@ namespace DataAccess.ViewModel
         public string PhoneNumber { get; set; }
 
     }
+    public class Profile
+    {
+            public int? Aspnetid { get; set; }
+            public string? UserName { get; set; }
+            public string? Password { get; set; }
+        [Required(ErrorMessage ="fname is required")]
+            public string? FirstName { get; set; }
+        [Required(ErrorMessage = "lname is required")]
+        public string? LastName { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? Email { get; set; }
+
+            public string? Street { get; set; }
+            public string? City { get; set; }
+            public string? State { get; set; }
+            public string? Zipcode { get; set; }
+
+            public string? Address1 { get; set; }
+            public string? Address2 { get; set; }
+
+            public Status Status { get; set; }
+            public string? Role { get; set; }
+
+            public Region? Region { get; set; }
+            public string? ViewId { get; set; }
+        }
+
+    
 
 
     public class AdminDashboard
@@ -138,6 +176,7 @@ namespace DataAccess.ViewModel
         public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }
         public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
+        public Profile myProfile { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }

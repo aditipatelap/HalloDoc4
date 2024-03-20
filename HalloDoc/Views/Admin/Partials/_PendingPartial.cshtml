@@ -1,6 +1,9 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-<table class="table table-responsive  m-4 p-3">
+@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+{
+
+<table class="table table-responsive  m-4 p-3 overflow-scroll">
     <thead class="table-secondary">
         <tr>
             <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
@@ -48,20 +51,58 @@
                 }
                 <tr style="background: @bgcolor" class="text-white">
                     <td>@items.Name</td>
-                    <td>@items.Dob</td>
+                        <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
                     <td>@items.Requestor</td>
                     <td>@items.PhysicianName</td>
                     <td>@items.DateofService</td>
 
-                    <td>
-                        <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
-                        @if (items.RequestorPhone != null)
+                        @if (items.PatientPhone != null)
                         {
+                            <td>
+                                @if (@items.RequestTypeid == 1)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
+                                    <br />
+                                    <span>(Patient)</span>
+                                }
+                                else if (@items.RequestTypeid == 2)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
 
-                            <button type="button" class="btn border border-white text-white">@items.RequestorPhone</button>
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Family/Freind)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 4)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Business)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 3)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Concierge)</span> <br />
+                                }
+                            </td>
                         }
-                    </td>
-
                     <td>@items.Address</td>
                     <td>@items.Notes</td>
                     <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
@@ -76,7 +117,7 @@
                                 <a class="dropdown-item tablink " id="ViewCase" >View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
-                                <a class="dropdown-item tablink " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
+                                    <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
                                 <a class="dropdown-item" href="#">View Notes</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
                                     <i class="bi bi-x-circle"></i>
@@ -100,7 +141,14 @@
     </tbody>
 
 </table>
-<div class="mb-0 fixed-bottom">
+}
+else
+{
+<div class="d-flex justify-content-center align-items-center pt-5">
+    <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+</div>
+}
+<div class=" mb-0 fixed-bottom m-4">
     <ul class="pagination align-items-center">
         @if (Model.CurrentPage > 1)
         {
@@ -198,5 +246,21 @@
         });
         //$("#Dashboard")[0].click();
     });
+    //$('.tabBtn').click(function () {
+    //    var id = $(this).data("btn");
+    //    var tabBtnId = $(this).attr('id');
+    //    $.ajax({
+    //        url: '@Url.Action("DocumentList", "Admin")',
+    //        type: 'GET',
+    //        data: { requestid: id, requestid: id },
+    //        success: function (result) {
 
+    //            $('#DocumentList').html(result);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            console.error(error);
+    //        }
+    //    });
+
+    //});
 </script>

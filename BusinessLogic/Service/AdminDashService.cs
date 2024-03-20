@@ -101,11 +101,14 @@ namespace BusinessLogic.Service
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
                              where id.Contains(Request.Status) && Request.Isdeleted == false &&
                              (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
-                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || Requestclient.Lastname.Contains(searchValue)) &&
+                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || Requestclient.Lastname.Contains(searchValue) || Request.Firstname.Contains(searchValue) || Request.Lastname.Contains(searchValue)) &&
                           (reqtype == 0 || Request.Requesttypeid == reqtype)
                              select new AdminDash
                              {
                                  Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                                 IntDate = Requestclient.Intdate,
+                                 IntYear = Requestclient.Intyear,
+                                 StrMonth = Requestclient.Strmonth,
                                  Requestor = Request.Firstname + " " + Request.Lastname,
                                  RequestedDate = Request.Createddate,
                                  PatientPhone = Requestclient.Phonenumber,
@@ -126,31 +129,7 @@ namespace BusinessLogic.Service
            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 
             
-            //else
-            //{
-
-            //    var dashboard = from Request in _db.Requests
-            //                    join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-            //                    where id.Contains(Request.Status) && Requestclient.Firstname.Contains(searchValue) && Request.Isdeleted == false
-            //                    select new AdminDash
-            //                    {
-            //                        Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-            //                        Requestor = Request.Firstname + " " + Request.Lastname,
-            //                        RequestedDate = Request.Createddate,
-            //                        PatientPhone = Requestclient.Phonenumber,
-            //                        RequestorPhone = Request.Phonenumber,
-            //                        Address = Requestclient.Address,
-            //                        Notes = Requestclient.Notes,
-            //                        requestid = Request.Requestid,
-
-            //                        // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-            //                        RequestTypeid = Request.Requesttypeid
-            //                    };
-            //    list = dashboard.ToList();
-            //}
-           
-
-
+          
             AdminDashboard adminDashboard = new AdminDashboard()
             {
                 Dashboards = paginateddashboard,
@@ -251,7 +230,7 @@ namespace BusinessLogic.Service
         }
 
     
-        public AdminDashboard GetViewCase(int requestid,int statusid,string btnname)
+        public AdminDashboard GetViewCase(int requestid)
         {
             AdminDashboard dashboard = new AdminDashboard();
 
@@ -261,32 +240,33 @@ namespace BusinessLogic.Service
                             {
                                 RequestId = requestid,
                                 //RequestTypeId = Requesttypeid,
-                                // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
+                                // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + (Month)req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
                                 Symptoms = req.Notes,
                                 FirstName = req.Firstname,
                                 LastName = req.Lastname,
-                                DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
+                                //DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
                                 Mobile = req.Phonenumber,
                                 Email = req.Email,
                                 Address = req.Address
                             }).FirstOrDefault();
             dashboard.viewcase = items;
-            dashboard.statusid = statusid;
-            dashboard.btnname=btnname;
+            dashboard.requestid = requestid;
+            //dashboard.statusid = statusid;
+            //dashboard.btnname=btnname;
             
             return dashboard;
         }
-        //public ViewCaseModel EditViewCaseData(int RequestID, int RequestTypeId, ViewCaseModel vp)
-        //{
-        //    var userToUpdate = _context.RequestClients.FirstOrDefault(x => x.RequestId == RequestID);
-        //    if (userToUpdate != null)
-        //    {
-        //        userToUpdate.PhoneNumber = vp.Mobile;
-        //        userToUpdate.Email = vp.Email;
-        //        _context.Update(userToUpdate);
-        //        _context.SaveChanges();
-        //    }
-        public AdminDashboard AssignRequest(int requestid)
+        public void EditViewCaseData(AdminDashboard model, int requestid)
+        {
+            var requestclient = _db.Requestclients.FirstOrDefault(x => x.Requestid == requestid);
+            if (requestclient != null)
+            {
+                requestclient.Phonenumber = model.viewcase.Mobile;
+                requestclient.Email = model.viewcase.Email;
+            }
+            _db.SaveChanges();
+        }
+         public AdminDashboard AssignRequest(int requestid)
         {
 
 
@@ -338,12 +318,13 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
         }
 
-        public AdminDashboard CancelCase(int requestid)
+        public AdminDashboard CancelCase(int requestid,string patientname)
         {
             var casetag = _db.Casetags.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.Caserequest = casetag;
             adminDashboard.requestid = requestid;
+            adminDashboard.patientname = patientname;
             return adminDashboard;
         }
         public void submitCancelCase(AdminDashboard model, int requestid)
@@ -540,7 +521,45 @@ namespace BusinessLogic.Service
         //}
 
 
+        public AdminDashboard GetMyProfile(string adminid)
+        {
+            var result=_db.Admins.Include(x=>x.Aspnetuser).Where(x => x.Aspnetuserid=="19").FirstOrDefault();
+            var data = new Profile
+            {
+                
+                FirstName = result.Firstname,
+                LastName = result.Lastname,
+                Email = result.Email,
+                Address1 = result.Address1,
+                Address2 = result.Address2,
+                Zipcode = result.Zip,
+                UserName=result.Aspnetuser.Name
+               
+            };
+            var model = new AdminDashboard()
+            {
+                myProfile = data
+            };
+               
+            return model;
 
+        }
+        public void PostMyProfile(string adminid,AdminDashboard adminDashboard)
+        {
+            var result = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == adminid).FirstOrDefault();
+
+            result.Firstname = adminDashboard.myProfile.FirstName;
+            //LastName = result.Lastname,
+            //Email = result.Email,
+            //Address1 = result.Address1,
+            //Address2 = result.Address2,
+            //Zipcode = result.Zip,
+            //UserName = result.Aspnetuser.Name
+
+
+            _db.SaveChanges();
+
+        }
 
     }
 }

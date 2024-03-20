@@ -1,5 +1,6 @@
 ﻿@using DataAccess.ViewModel
 @model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class="modal-header bg-info ">
     <h5 class="modal-title text-white" id="exampleModalLabel"> Assign Request  </h5>
@@ -11,29 +12,38 @@
     </div>
     <form method="post" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
     <div class="dropdown my-3  ">
-        <select class="form-select" id="regionName" aria-label="Floating label select example">
+        <select class="form-select" id="regionName" aria-label="Floating label select example"required >
+                
             @if (Model.Regions != null)
             {
-                <option disabled selected style="display:none">Narrow Down Region Name</option>
+                    <option  selected style="display:none">Narrow Down Region Name  <span class="text-danger"> *</span></option>
+                   
+                   
                 @foreach (var item in Model.Regions)
                 {
+                        <span class="text-danger"> *</span>
                     <option value="@item.Regionid">@item.Name</option>
 
                 }
             }
         </select>
+            @Html.ValidationMessageFor(Model=>Model.Regions,"",new{@class="text-danger"})
     </div>
     <div class="dropdown my-3  ">
-        <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example">
-            
-            <option  disabled selected style="display:none" >Select Physician</option>
+        <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>
+
+                <option disabled selected style="display:none">Select Physician  <span class="text-danger"> *</span></option>
             
         </select>
+            @Html.ValidationMessageFor(Model=>Model.assignreq.physicianname,"",new{@class="text-danger"})
     </div>
 
     <div class="form-floating my-4">
-        <textarea class="form-control" asp-for="assignreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-        <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description</label>
+        <textarea class="form-control" asp-for="assignreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
+
+            <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description  <span class="text-danger"> *</span></label>
+           
+            @Html.ValidationMessageFor(Model=>Model.assignreq.Description,"",new{@class="text-danger"})
     </div>
     <div class="d-flex justify-content-end">
         <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>

@@ -1,24 +1,29 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+@Html.ValidationSummary(true)
 <style>
     a{
         cursor:pointer;
     }
 </style>
-<nav class="navbar position-sticky">
-    <a class="navbar-brand" href="#">
+<nav class="position-sticky">
+    <div class="d-flex justify-content-between">
+        <a class="navbar-brand" href="#">
         <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
     </a>
 
-    <div class="d-flex justify-content-end mt-3">
+    <div class="d-flex justify-content-end m-3">
         <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
         <h4 class=" ms-2 d-lg-block d-none"> @Model.UserName</h4>
-        <div>   <button type="button" class="btn btn-outline-info ms-3 p-2 " onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
+        <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
-        <button class="me-3 ms-1  btn btn-outline-info btn-toggle">
+        <div><button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
             <i class="fa fa-moon i-info"></i>
         </button>
+            </div>
     </div>
+    </div>
+
 </nav>
 <hr>
 <div class="d-none d-md-block navbar-expand-sm navbar-light shadow">
@@ -58,6 +63,12 @@
 
 <div id="TabContent">
 </div>
+@*<footer class="bg-dark text-white mt-2 fixed-bottom" id="footerMain" style="border:1px solid white">
+    <div class=" d-flex justify-content-end p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <a class="text-white text-decoration-none">Term of Condition</a>&nbsp|&nbsp
+        <a class="text-white text-decoration-none">Privacy Policy</a>
+    </div>
+</footer>*@
 
 <script>
     var tabidglobal;
@@ -90,7 +101,7 @@
         navLinks[0].style.color = "deepskyblue";
     });
 
-
+//load dashboard and tabs
     $(document).ready(function () {
         
         $(".tablink").click(function () {
@@ -109,6 +120,6 @@
                 }
             });
         });
-        $("#Dashboard")[0].click();
+        $("#Dashboard").click();
     });
     </script>
