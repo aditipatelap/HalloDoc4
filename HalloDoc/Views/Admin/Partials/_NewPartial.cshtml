@@ -183,108 +183,78 @@ else
     </div>
 </div>
 <script>
+    $('.showmodal').click(ModalDisplay);
 
-    $('.showmodal').click(function () {
-        console.log("hi");
-        var modalName = $(this).attr('id');
-        var patientname = $(this).data('value1');
-        var requestid = $(this).data('btn');
-        console.log(requestid);
-        console.log(patientname);
-        console.log("hello")
-        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
-        //$('#myModalContainer').html(data);
-        //    $('#myModal').modal('show');
+   
+        //$(".tablink").click(function () {
+        //    var TabId = $(this).attr("id");
+        //    var requestid = $(this).data('btn');
+        //    //var statusid=$(this).data('value1');
+        //    console.log(requestid);
+        //    $.ajax({
+        //        url: '/Admin/GetTabs',
+        //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+        //        method: 'GET',
+        //        success: function (data) {
+
+        //            $("#TabContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
         //});
-        $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
-            //url: '/Admin/GetPartialView?btn=' + btnName,
-            method: 'GET',
-            data: { modalName: modalName, patientname: patientname, requestid: requestid },
-            success: function (data) {
-                console.log("AJAX success");
-                // Replace the content of the btnContent div with the retrieved partial view
-                $('.modelbody').html(data);
-                // $('#myModal').modal('show');
-                console.log("hiiii");
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    });
+       
+   
+
+   
+   
+       
+        //$(".custompagination").click(function () {
+
+        //    var currentpage = $(this).data('page');
+        //    var btnName = "NewPartial";
+        //    var statusid = 1;
+        //    var searchvalue = $("#searchInput").val();
+        //    //console.log(requestid);
 
 
-    $(document).ready(function () {
-        $(".tablink").click(function () {
-            var TabId = $(this).attr("id");
-            var requestid = $(this).data('btn');
-            //var statusid=$(this).data('value1');
-            console.log(requestid);
-            $.ajax({
-                url: '/Admin/GetTabs',
-                data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#TabContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        //$("#Dashboard")[0].click();
-    });
-
-    console.log("erh");
-    $(document).ready(function () {
-        console.log("dygdax");
-        $(".custompagination").click(function () {
-
-            var currentpage = $(this).data('page');
-            var btnName = "NewPartial";
-            var statusid = 1;
-            var searchvalue = $("#searchInput").val();
-            //console.log(requestid);
-
-
-            $.ajax({
-                url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        //$("#Dashboard")[0].click();
-    });
+        //    $.ajax({
+        //        url: '/Admin/GetPartialView',
+        //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
+        //        method: 'GET',
+        //        success: function (data) {
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
+       
+   
 
 
 
-    $(document).ready(function () {
-        $(".tablink").click(function () {
-            var tabid = $(this).attr("id");
-            var requestid = $(this).data('btn');
-            console.log(requestid);
-            $.ajax({
-                url: '/admin/gettabs',
-                data: { tabid: tabid, requestid: requestid },
-                method: 'get',
-                success: function (data) {
-                    // replace the content of the btncontent div with the retrieved partial view
-                    $("#tabcontent").html(data);
-                },
-                error: function () {
-                    console.error('error fetching partial view.');
-                }
-            });
-        });
-        //$("#dashboard")[0].click();
-    });
+   
+        //$(".tablink").click(function () {
+        //    var tabid = $(this).attr("id");
+        //    var requestid = $(this).data('btn');
+        //    console.log(requestid);
+        //    $.ajax({
+        //        url: '/admin/gettabs',
+        //        data: { tabid: tabid, requestid: requestid },
+        //        method: 'get',
+        //        success: function (data) {
+        //            // replace the content of the btncontent div with the retrieved partial view
+        //            $("#tabcontent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('error fetching partial view.');
+        //        }
+        //    });
+        //});
+       
+   
 </script>

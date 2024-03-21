@@ -82,7 +82,7 @@
                                     <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
                                     <br />
 
-                                    <span>(Ptient)</span> <br />
+                                    <span>(Patient)</span> <br />
 
                                     <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
                                     <br />
@@ -94,7 +94,7 @@
                                     <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
                                     <br />
 
-                                    <span>(Ptient)</span> <br />
+                                    <span>(Patient)</span> <br />
 
                                     <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
                                     <br />
@@ -118,7 +118,7 @@
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
                                     <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
-                                <a class="dropdown-item" href="#">View Notes</a>
+                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">View Notes</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
                                     <i class="bi bi-x-circle"></i>
                                    Transfer Request
@@ -173,34 +173,9 @@ else
     </div>
 </div>
 <script>
-    
-    $('.showmodal').click(function () {
-        var modalName = $(this).attr('id');
-        var requestid = $(this).data('btn');    
-        console.log("hello")
-        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
-        //    $('#myModalContainer').html(data);
-        //    $('#myModal').modal('show');
-        //});
-        $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
-            //url: '/Admin/GetPartialView?btn=' + btnName,
-            method: 'GET',
-            data: { modalName: modalName, requestid: requestid },
-            success: function (data) {
-                console.log("AJAX success");
-                // Replace the content of the btnContent div with the retrieved partial view
-                $('.modelbody').html(data);
-                // $('#myModal').modal('show');
-                console.log("hiiii");
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    });
-    $(document).ready(function () {
-        $(".tablink").click(function () {
+    $('.showmodal').click(ModalDisplay);
+    //$("[data-btn='NewPartial'][data-id='1']").click(PartialDisplay);
+    $(".tablink").click(function () {
             var TabId = $(this).attr("id");
             var requestid = $(this).data('btn');
             console.log("vanshita");
@@ -221,9 +196,8 @@ else
                 }
             });
         });
-        //$("#Dashboard")[0].click();
-    });
-    $(document).ready(function () {
+   
+ 
         console.log("dygdax");
         $(".custompagination").click(function () {
 
@@ -245,22 +219,24 @@ else
             });
         });
         //$("#Dashboard")[0].click();
+   
+    $('.tabBtn').click(function () {
+        var id = $(this).data("btn");
+        debugger;
+        console.log("seferc ")
+        //var tabBtnId = $(this).attr('id');
+        $.ajax({
+            url: '@Url.Action("ViewUploadsList", "Admin")',
+            type: 'GET',
+            data: { requestid: id },
+            success: function (result) {
+                console.log("Dewa");
+                $('#ViewUploadsTable').html(result);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
     });
-    //$('.tabBtn').click(function () {
-    //    var id = $(this).data("btn");
-    //    var tabBtnId = $(this).attr('id');
-    //    $.ajax({
-    //        url: '@Url.Action("DocumentList", "Admin")',
-    //        type: 'GET',
-    //        data: { requestid: id, requestid: id },
-    //        success: function (result) {
-
-    //            $('#DocumentList').html(result);
-    //        },
-    //        error: function (xhr, status, error) {
-    //            console.error(error);
-    //        }
-    //    });
-
-    //});
 </script>

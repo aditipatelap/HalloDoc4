@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Runtime.CompilerServices;
 using DocumentFormat.OpenXml.Presentation;
 using static DataAccess.ViewModel.Constant;
+using System.IO.Compression;
 
 namespace HalloDoc.Controllers
 {
@@ -41,7 +42,7 @@ namespace HalloDoc.Controllers
             return View(model);
         }
 
-        public IActionResult GetTabs(string Tabid,int requestid,int statusid,string btnname)
+        public IActionResult GetTabs(string Tabid,int requestid,int statusid,string btnname, string patientname, string confirmationno, string email)
         {
             var result ="Tabs/"+ "_" + Tabid;
            string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
@@ -83,9 +84,9 @@ namespace HalloDoc.Controllers
             }
             if (Tabid == "ViewUpload")
             {
-                //var model=_AdminDash.GetViewUpload(requestid);
-                return PartialView(result);
-            }
+                var model=_AdminDash.ViewUploadData(requestid,patientname, confirmationno,  email);
+                return PartialView(result,model);
+            }   
             if (Tabid == "SendOrder")
             {
                 var orderdetail= _AdminDash.SendOrder(requestid);
@@ -98,15 +99,21 @@ namespace HalloDoc.Controllers
 
                 return PartialView(result, model);
             }
+            if (Tabid == "ViewNotes")
+            {
+                var model = _AdminDash.GetViewNotes(requestid);
+
+                return PartialView(result, model);
+            }
 
             return View();
 
         }
-        public IActionResult DocumentList(int requestid)
-        {
-            var res=_AdminDash.GetViewUpload(requestid);
-            return View(res);
-        }
+        //public IActionResult DocumentList(int requestid)
+        //{
+        //    var res=_AdminDash.GetViewUpload(requestid);
+        //    return View(res);
+        //}
         public IActionResult DownloadAll(int statusid)
 
         {
@@ -253,6 +260,68 @@ namespace HalloDoc.Controllers
                 _AdminDash.PostMyProfile(adminid, adminDashboard);
             }
             return View();
+        }
+        [HttpPost]
+        public IActionResult PostViewNotes(int requestid, AdminDashboard model)
+        
+        {
+            _AdminDash.PostViewNotes(requestid, model);
+            return RedirectToAction("GetTabs", new { Tabid = "ViewNotes", requestid = requestid, statusid = 0, btnname = 0 });
+        }
+        /**********view uploads*****************/
+        public IActionResult ViewUploadsList(int requestid)
+        {
+            var model = _AdminDash.ViewUploadDataList(requestid);
+            return PartialView("Tabs/_ViewUploadPartial", model);
+        }
+        [HttpPost]
+        public IActionResult ViewDocument(IFormFile Document, int requestid)
+        {
+            if (Document != null)
+            {
+                _AdminDash.SaveDocument(Document, requestid);
+                _notyf.Custom("Document Uploaded Successfully!", 3, "green", "bi bi-check-circle-fill");
+            }
+            else
+            {
+                _notyf.Custom("Please Select Document", 3, "red", "bi-check-square-fill");
+            }
+            return ViewUploadsList(requestid);
+        }
+        public ActionResult DownloadAll(string file)
+        {
+            List<string> files = file.Split(",").ToList();
+
+            var tempFileName = Guid.NewGuid().ToString() + ".zip";
+            var tempFilePath = Path.Combine(Path.GetTempPath(), tempFileName);
+
+            using (var zip = ZipFile.Open(tempFilePath, ZipArchiveMode.Create))
+            {
+                foreach (var fileName in files)
+                {
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/documents/" + fileName);
+                    zip.CreateEntryFromFile(uploadsFolderPath, fileName);
+                }
+            }
+            var bytes = System.IO.File.ReadAllBytes(tempFilePath);
+            System.IO.File.Delete(tempFilePath);
+
+            return File(bytes, "application/zip", "Documents.zip");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteDocument(string filename, int requestid)
+        {
+            _AdminDash.deleteDocument(filename);
+            _notyf.Custom("Document Deleted Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return ViewUploadsList(requestid);
+
+        }
+        public IActionResult SendEmail(List<string> file, string email, int requestid)
+        {
+            _AdminDash.sendEmail(file, email, requestid);
+            _notyf.Custom("Email Sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return ViewUploadsList(requestid);
         }
     }
 }

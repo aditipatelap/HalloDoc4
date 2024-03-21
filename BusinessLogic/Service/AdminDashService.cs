@@ -3,7 +3,11 @@ using ClosedXML.Excel;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Net;
+using System.Net.Mail;
 using System.Text.Json.Nodes;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -447,23 +451,23 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
-        public AdminDashboard GetViewUpload(int requestid)
-        {
-            var items = _db.Requestwisefiles.Where(x => x.Requestid == requestid).Select(m => new ViewUpload
-            {
+        //public AdminDashboard GetViewUpload(int requestid)
+        //{
+        //    var items = _db.Requestwisefiles.Where(x => x.Requestid == requestid).Select(m => new ViewUpload
+        //    {
 
-                uploaddate = m.Createddate,
-                uploader = m.Filename
-            }).ToList();
-            var result = new AdminDashboard()
-            {
-                 ViewUpload= items,
+        //        uploaddate = m.Createddate,
+        //        uploader = m.Filename
+        //    }).ToList();
+        //    var result = new AdminDashboard()
+        //    {
+        //         ViewUpload= items,
                
-            };
+        //    };
 
-            return result;
+        //    return result;
 
-        }
+       // }
         public AdminDashboard SendAgreeement(int requestid)
         {
             var req = _db.Requestclients.Where(x => x.Requestid == requestid).Select(x => new AgreementReq
@@ -519,8 +523,62 @@ namespace BusinessLogic.Service
         //    return result;
 
         //}
+        public AdminDashboard GetViewNotes(int requestid)
+        {
+            
+                AdminDashboard model = new AdminDashboard();
+                model.requestid = requestid;
+                var data = _db.Requeststatuslogs.Include(x => x.Physician).Where(x => x.Requestid == requestid).Select(x => new ViewNotesModel
+                {
+                    firstName = x.Physician.Firstname,
+                    lastName = x.Physician.Lastname,
+                    CreatedDate = x.Createddate,
+                    TransferNotes = x.Notes
+
+                }).ToList();
+
+                var data2 =_db.Requestnotes.Where(x => x.Requestid == requestid).FirstOrDefault();
+                model.viewnotes = data;
+                if (data2 != null)
+                {
 
 
+                    model.AdminNoes = data2.Adminnotes;
+                    model.PhysicianNotes = data2.Physiciannotes;
+
+                }
+                else
+                {
+                    model.AdminNoes = null;
+                    model.PhysicianNotes = null;
+
+                }
+                return model;
+            }
+        
+        public void PostViewNotes(int requestid, AdminDashboard model)
+        {
+            
+          
+                var data = _db.Requestnotes.FirstOrDefault(x => x.Requestid == requestid);
+                if (data != null)
+                {
+                    data.Adminnotes = model.AdditionalNotes;
+                    data.Modifieddate = DateTime.Now;
+                    data.Modifiedby = "Admin";
+                }
+                else
+                {
+                    var data2 = new Requestnote();
+                    data2.Requestid = requestid;
+                    data2.Adminnotes = model.AdditionalNotes;
+                    data2.Createdby = "Admin";
+                    data2.Createddate = DateTime.Now;
+                    _db.Add(data2);
+                }
+                _db.SaveChanges();
+            }
+        
         public AdminDashboard GetMyProfile(string adminid)
         {
             var result=_db.Admins.Include(x=>x.Aspnetuser).Where(x => x.Aspnetuserid=="19").FirstOrDefault();
@@ -560,6 +618,119 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
+        /**************view uploads**********/
+        /*View Uploads*/
+            
+        string fileName = "";
+        string filePath = "";
+
+        public void SaveDocument(IFormFile Document, int requestid)
+        {
+            if (Document != null)
+            {
+                fileName = $"{Guid.NewGuid().ToString()}_{Document.FileName}";
+                filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Documents", fileName);
+
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Documents");
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                Document.CopyTo(stream);
+
+                var requestWiseFile = new Requestwisefile
+                {
+                    Requestid = requestid,
+                    Filename = fileName,
+                    Createddate = DateTime.Now,
+                    Isdeleted = new BitArray(new bool[1] { false }),
+                    Ispatientrecords = new BitArray(new bool[1]),
+                    Adminid = 4,
+                };
+                _db.Requestwisefiles.Add(requestWiseFile);
+                _db.SaveChanges();
+            }
+        }
+        public AdminDashboard ViewUploadData(int requestid, string patientname, string confirmationno, string email)
+        {
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.requestid = requestid;
+            adminDashboardModel.patientname = patientname;
+            adminDashboardModel.ConfirmationNo = confirmationno;
+            adminDashboardModel.Email = email;
+            return adminDashboardModel;
+        }
+        public AdminDashboard ViewUploadDataList(int requestid)
+        {
+            var items = _db.Requestwisefiles.Include(x => x.Request).Where(x => x.Requestid == requestid && x.Isdeleted == new BitArray(new bool[1] { false })).Select(m => new ViewUpload
+            {
+                CreatedDate = m.Createddate,
+                Month = (Month)m.Createddate.Month,
+                FileName = m.Filename,
+                Requestid = m.Requestid,
+                UploaderName = m.Request.Firstname + " " + m.Request.Lastname,
+                Adminid = m.Adminid,
+            }).ToList();
+            var adminname = "";
+            if (items.Any() && items.FirstOrDefault().Adminid != null)
+            {
+                var adminid = items.First().Adminid;
+                var admin = _db.Admins.FirstOrDefault(x => x.Adminid == adminid);
+                adminname = admin.Firstname + " " + admin.Lastname;
+            }
+
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.ViewUpload = items;
+            adminDashboardModel.requestid = requestid;
+            adminDashboardModel.Adminname = adminname;
+
+            return adminDashboardModel;
+
+        }
+        public void deleteDocument(string filename)
+        {
+            var requestwisefile = _db.Requestwisefiles.FirstOrDefault(r => r.Filename == filename);
+            if (requestwisefile != null)
+            {
+                requestwisefile.Isdeleted = new BitArray(new bool[1] { true });
+            }
+            _db.SaveChanges();
+        }
+        public void sendEmail(List<string> file, string email, int requestid)
+        {
+            var SubjectName = "Email with Document";
+            var EmailTemplate =
+                $"Your files for Requestid {requestid} are as attached.";
+
+            MailMessage message = new MailMessage();
+            message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+            message.To.Add(new MailAddress(email));
+            message.Subject = SubjectName;
+            message.IsBodyHtml = true;
+            message.Body = EmailTemplate;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+            smtp.EnableSsl = true;
+
+            foreach (var filename in file)
+            {
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Documents/" + filename);
+                Attachment a = new Attachment(filePath);
+                message.Attachments.Add(a);
+            }
+
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+
+           // emailLogEntry(EmailTemplate, SubjectName, email, reqid);
+        }
+
+
 
     }
 }

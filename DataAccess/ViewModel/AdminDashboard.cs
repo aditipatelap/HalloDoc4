@@ -99,16 +99,26 @@ namespace DataAccess.ViewModel
         public int VendorId { get; set; }
 
     }
+    public class ViewNotesModel
+    {
+        public string TransferNotes { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+    }
     public class ViewUpload
     {
-        public string uploader
+        public DateTime   CreatedDate
         {
             get; set;
         }
+        public Month Month { get; set; }
         public DateTime uploaddate { get; set; }
-        public string Firstname { get; set; }
-        public int id { get; set; }
-        public string Filename { get; set; }
+        public string UploaderName { get; set; }
+        public int? Adminid { get; set; }
+        public string FileName { get; set; }
+        public int Requestid { get; set; }
     }
     public class AgreementReq
     {
@@ -165,9 +175,6 @@ namespace DataAccess.ViewModel
             public string? ViewId { get; set; }
         }
 
-    
-
-
     public class AdminDashboard
     {
         public string UserName { get;set; }
@@ -191,6 +198,10 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "This is a required field")]
         public IEnumerable<Region> Regions {get; set;}
         public ViewCase viewcase { get; set; }
+        public List<ViewNotesModel> viewnotes { get; set; }
+        public string AdminNoes { get; set; }
+        public string PhysicianNotes { get; set; }
+        public string AdditionalNotes { get; set; }
         public EncounterForm encounterform { get; set; }
         public SendLink sendLink { get; set; }  
         public int newcount { get; set; }
@@ -202,6 +213,9 @@ namespace DataAccess.ViewModel
        public status Status { get; set; }
         public int requestid { get; set; }
         public string patientname { get;set; }
+        public string Adminname { get; set; }
+        public string ConfirmationNo { get; set; }
+        public string Email { get; set; }
         public int statusid { get;set; }
         public string btnname { get;set; }
     }

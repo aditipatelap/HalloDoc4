@@ -1,6 +1,7 @@
 ﻿using DataAccess.Models;
 using DataAccess.ViewModel;
 using DocumentFormat.OpenXml.Presentation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace BusinessLogic.Interface
         public AdminDashboard TransferRequest(int requestid);
         public void SubmitTransferReq(AdminDashboard model, int requestid);
         public AdminDashboard SendOrder(int requestid);
+        public AdminDashboard GetViewNotes(int requestid);
+        public void PostViewNotes(int requestid, AdminDashboard model);
         public JsonArray GetBusiness(int selectedvalue);
         public Healthprofessional GetBusinessDetails(int selectedvalue);    
         public void SendOrderReq(AdminDashboard model, int requestid,string adminname);
@@ -35,11 +38,16 @@ namespace BusinessLogic.Interface
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);
         public AdminDashboard GetViewCase(int requestid);
         public void EditViewCaseData(AdminDashboard model, int requestid);
-        public AdminDashboard GetViewUpload(int requestid);
+       // public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
         public AdminDashboard GetEncounterForm(int requestid);
         public AdminDashboard GetMyProfile(string adminid);
         public void PostMyProfile(string adminid, AdminDashboard adminDashboard);
+        public void SaveDocument(IFormFile Document, int requestid);
+        public AdminDashboard ViewUploadData(int reqid, string patientname, string confirmationno, string email);
+        public AdminDashboard ViewUploadDataList(int reqid);
+        public void deleteDocument(string filename);
+        public void sendEmail(List<string> file, string email, int reqid);
 
 
         }

@@ -1,74 +1,134 @@
-﻿@using DataAccess.ViewModel
+﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-<link rel="stylesheet" href="~/css/AdminSite.css">
-<div class="container pb-5">
-    <div class="margin-viewdoc">
-        <div class="container m-4 p-4 d-flex justify-content-between" id="back">
-            <div><h3 class="text-black fw-bold">Documents</h3></div>
-            <div></div>
-            <button class="btn btn-outline-info btn-large" onclick="location.href='@Url.Action("Index", "Admin")'">
-                <i class="bi bi-chevron-left"></i>Back
+
+<div class="container">
+    <div class="mb-3 mt-5 d-flex justify-content-between">
+        <h4 class="">Documents</h4>
+        <div>
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Dashboard", "Admin")'">
+                <i class="bi bi-chevron-left me-1"></i>Back
             </button>
         </div>
-        <div class="bglight rounded p-3 shadow mt-3" id="content">
-            <span class="text-secondary">Patient Name</span>
+    </div>
+    <div class="shadow border rounded p-5">
+        <span class="fs-6 text-secondary"> Patient Name</span>
+       @* <h4 class="text-info mb-3">@Model.UserName<sapn class="text-secondary fs-5 ms-2">(@Model.ConfirmationNo)</span></h4>*@
 
-            <div class="mt-1">
-                <div class="d-flex">
-                    <h4 style="color:deepskyblue">
-                        <span class="text-info  fw-bold ">Patient Name: @*@Model.patientname*@</span> <span class="text-dark mt-2">(12002080501070)</span>
-                    </h4>
-                </div>
-                @*(@Model.requests.FirstOrDefault(x => x.Requestid == (Model.requests.FirstOrDefault(m =>m.Userid == Model.user.Userid).Requestid)).Confirmationnumber)*@
+        <span class="fs-6 text-secondary ">Check here for any files that you or the doctors of your subsequents requesters have attached for you to review. </span>
 
-                <p class="small text-secondary mt-2">Check here for any files that you or the doctors of your subrequests requestors have attached for you to review.</p>
-
-                <form method="post" class="d-flex" enctype="multipart/form-data">
-
-                    <input class="form-control " type="file" id="formFile" name="file">
-                    <button type="submit" for="formFile" class="submitBtn input-group-text bg-primary text-white" multiple>
-                        <i class="bi bi-cloud-arrow-up "></i>&nbsp;Upload
+        <form enctype="multipart/form-data">
+            <div class="input-group mb-3 mt-3">
+                <input type="file" class="form-control d-none" id="formFile" name="Document">
+                <label class="input-group-text border-0 col-12 p-0 rounded" for="formFile">
+                    <div class="border rounded col-10 p-3 text-start" id="Document">
+                        <span>Select File</span>
+                    </div>
+                    <button type="button" id="submitBtn" class=" btn border  bg-info col-2 text-light p-3" id="FileInput" data-btn="@Model.requestid">
+                        <div>
+                            <i class="bi bi-cloud-arrow-up pe-1 text-white"></i>
+                            <span class="d-none d-xl-inline d-lg-inline ">Upload</span>
+                        </div>
                     </button>
-                </form>
-
-
+                </label>
             </div>
-            <div class="container mt-5 d-flex justify-content-between">
-                <div class="text-black"><h5 class="text-black">Document</h5></div>
-                <div>
-                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
-                        Download All
-                    </button>
-                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
-                        Delete All
-                    </button>
-                    <button class="btn btn-outline-info btn-large" id="downloadSelected" onclick="downloadSelectedFiles()">
-                        Send Mail
-                    </button>
-                </div>
-            </div>
+        </form>
 
+        <div class="d-flex justify-content-between my-4 align-items-center ">
+            <h5 class="  d-block">
+                Documents
+            </h5>
+            <div class=" d-flex justify-content-end ">
+                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info me-2" id="downloadAll">
+                    Download All
+                </button>
+                <button type="button" class="btn d-none d-md-block btn btn-outline-info p-2 me-2 button-info" id="deleteAll" data-btn="@Model.requestid">
+                    Delete All
+                </button>
+                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info" id="sendMail" @*data-btn="@Model.Email"*@ data-reqid="@Model.requestid">
+                    Send Mail
+                </button>
+            </div>
         </div>
+
+        <div id="ViewUploadsTable"></div>
+
     </div>
-    <div class="table-responsive d-none d-md-block" id="DocumentList">
-    </div>
-  
 </div>
+
+
+@* Delete all doc*@
+ <script>
+    $("#deleteAll").click(function () {
+        var selectedFiles = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+        var reqid = $(this).data("btn");
+        if (selectedFiles.length > 0) {
+            selectedFiles.forEach(function (id) {
+                $.ajax({
+                    url: '@Url.Action("DeleteDocument", "Admin")',
+                    type: "Post",
+                    data: { filename: id, reqid: reqid },
+                    success: function (result) {
+                        $("#ViewUploadsTable").html(result);
+                    }
+                });
+            });
+        }
+        else {
+            alert("Please select at least one file.");
+        }
+    });
+</script>
+
+@* Download all doc*@
+<script>
+    $(document).ready(function () {
+        $("#selectAll").change(function () {
+            $(".checkbox").prop('checked', $(this).prop("checked"));
+        });
+
+        $("#downloadAll").click(function () {
+            var selectedFiles = $('input[name="checkbox"]:checked').map(function () {
+                return this.value;
+            }).get();
+
+            if (selectedFiles.length > 0) {
+                alert(selectedFiles);
+                window.location.href = "/Admin/DownloadAll?file=" + selectedFiles;
+            }
+            else {
+                alert("Please select at least one file.");
+            }
+        });
+    });
+</script>
+
+@* for file upload*@
+<script>
+    document.getElementById('formFile').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        document.getElementById('Document').textContent = fileName;
+    });
+</script>
+
+@*Get File on upload *@
 <script>
    
-    $(document).ready(function () {
-        $('.submitBtn').click(function () {
-            if (formData == null) {
-                alert('Please select file')
-            }
+        $('#submitBtn').click(function () {
             var id = $(this).data("btn");
             var formData = new FormData();
             var fileInput = document.getElementById('formFile').files[0];
+            if(fileInput!=null)
+            {
+              
+           
             formData.append('Document', fileInput);
-            formData.append('reqid', id);
+            formData.append('requestid', id);
+            console.log(id);
 
             $.ajax({
-                url: '@Url.Action("PostViewUpload", "Admin")',
+                url: '@Url.Action("ViewDocument", "Admin")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -80,6 +140,46 @@
                     console.error(error);
                 }
             });
+            }
+            else
+            {
+                alert('please select one file')
+            }
         });
-    });
+
 </script>
+
+<script>
+    //send email with file
+    $("#sendMail").click(function () {
+        var email = $(this).data("btn");
+        alert("email: " + email);
+        var requestid = $(this).data("reqid");
+        alert("requestid: " + requestid);
+
+        var selectedFiles = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedFiles.length > 0) {
+            alert("send mail: " + selectedFiles);
+
+            $.ajax({
+                url: "/Admin/SendEmail",
+                type: "Post",
+                data: {
+                    file: selectedFiles,
+                    email: email,
+                    reqid: requestid
+                },
+                success: function (result) {
+                    $('#ViewUploadsTable').html(result);
+                }
+            });
+        }
+        else {
+            alert("Please select at least one file.");
+        }
+    });
+
+</script>  

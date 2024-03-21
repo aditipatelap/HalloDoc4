@@ -111,11 +111,11 @@
         </select>
     </div>
     <div>
-        <button type="button" class="btn btn-outline-secondary shadow-none searchrequest  active-link" data-btn="0">All</button>
-        <button type="button" class=" btn btn-outline-secondary shadow-none searchrequest active-link" data-btn="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
-        <button class=" btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
-        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
-        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
+        <button type="button" class="btn btn-outline-secondary shadow-none searchrequest  active-link" data-btn1="0">All</button>
+        <button type="button" class=" btn btn-outline-secondary shadow-none searchrequest active-link" data-btn1="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
+        <button class=" btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
+        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
+        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
 
     </div>
 </div>
@@ -242,137 +242,189 @@
             $(this).parent().find('.triangle-down').show();
         });
     });
-   
-        $(document).on("click", ".partialbtn", function () {
-            var btnName = $(this).data("btn");
-            btnnameglobal = btnName;
-            console.log("Button clicked: " + btnnameglobal);
-            var statusid = $(this).data("id");
-            statusidglobal = statusid;
-            console.log("Button clicked: " + statusidglobal);
-            // Make an AJAX request to get the partial view content
+    //$(document).ready(function () {
 
-            $.ajax({
-                url: '@Url.Action("GetPartialView", "Admin")',
-                //url: '/Admin/GetPartialView?btn=' + btnName,
-                method: 'GET',
-                data: { btnName: btnName, statusid: statusid, currentpage: 1 },
-                success: function (data) {
-                    console.log("AJAX success");
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-
-        });
-
-        $("#dropdown").change(function () {
-            var dropdown = $(this).val();
-
-            console.log(dropdown);
-            $.ajax({
-                url: '@Url.Action("GetPartialView", "Admin")',
-                //url: '/Admin/GetPartialView?btn=' + btnName,
-                method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1, dropdown: dropdown },
-                success: function (data) {
-                    console.log("AJAX success");
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        $(".searchrequest").click(function () {
-            var reqtype = $(this).data('btn');
-         
-            $.ajax({
-                url: '@Url.Action("GetPartialView", "Admin")',
-               
-                method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal,reqtype:reqtype, currentpage: 1},
-                success: function (data) {
-                    console.log("AJAX success");
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-     
-            
-    
-
+    //    $("[data-btn='NewPartial'][data-id='1']").click();
+    //});
     $(document).ready(function () {
-
-        $("[data-btn='NewPartial'][data-id='1']").click();
-    });
-    $("#searchInput").keyup(function () {
-        // Get the value from the search input
+    $('.partialbtn').click(PartialDisplay);
+    $("#dropdown").change(PartialDisplay);
+    $(".searchrequest").click(PartialDisplay);
+    $("#searchInput").keyup(PartialDisplay);
+    
+        function PartialDisplay(btnName, statusid, searchValue, currentpage, dropdown, reqtype) {
+           
+        var dropdown = $(this).val();
+        var btnName = $(this).data("btn");
+            var statusid = $(this).data("id");
+        var reqtype = $(this).data('btn1');
         var searchValue = document.getElementById('searchInput').value;
-        console.log(searchValue);
-        console.log(statusidglobal);
-        console.log(btnnameglobal);
-        // Perform the AJAX request
+        if (typeof reqtype === 'undefined') {
+            reqtype = 0;
+        }
+        if (!searchValue) {
+            searchValue = null;
+        }
+            if ($(this).hasClass('partialbtn'))
+            {
+                btnnameglobal = btnName;
 
-        $.ajax({
-            type: "GET",
-            // url: "/Admin/GetPartialView?searchValue=" + searchValue,
-            url: '@Url.Action("GetPartialView", "Admin")',
-            data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal, currentpage: 1 },
-            success: function (data) {
-                console.log("AJAX success");
-                // Update the table body with the filtered data
-                $("#btnContent").html(data);
-                //location.reload();
-                $("#searchButton").val('');
-            },
-
-            error: function (error) {
-                console.log("Error:", error);
             }
-        });
+            if ($(this).hasClass('partialbtn')) {
 
-    });
+                statusidglobal = statusid;
 
-
-
-    $('.showmodal').click(function () {
-        console.log("hi");
-        var modalName = $(this).attr('id');
+            }
        
+        console.log("Button clicked: " + btnnameglobal);
+        
+       
+        console.log("Button clicked: " + statusidglobal);
+        console.log(searchValue);
+        console.log(reqtype);
       
-        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
-        //$('#myModalContainer').html(data);
-        //    $('#myModal').modal('show');
-        //});
+            
+        // Make an AJAX request to get the partial view content
+
         $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
+            url: '@Url.Action("GetPartialView", "Admin")',
             //url: '/Admin/GetPartialView?btn=' + btnName,
             method: 'GET',
-            data: { modalName: modalName },
+                data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
             success: function (data) {
                 console.log("AJAX success");
                 // Replace the content of the btnContent div with the retrieved partial view
-                $('.modelbody').html(data);
-                // $('#myModal').modal('show');
-                console.log("hiiii");
+                $("#btnContent").html(data);
+
             },
             error: function () {
                 console.error('Error fetching partial view.');
             }
         });
+    }
     });
+
+    //$(document).on("click", ".partialbtn", function () {
+    //        var btnName = $(this).data("btn");
+    //        btnnameglobal = btnName;
+    //        console.log("Button clicked: " + btnnameglobal);
+    //        var statusid = $(this).data("id");
+    //        statusidglobal = statusid;
+    //        console.log("Button clicked: " + statusidglobal);
+    //        // Make an AJAX request to get the partial view content
+
+    //        $.ajax({
+    //            url: '@Url.Action("GetPartialView", "Admin")',
+    //            //url: '/Admin/GetPartialView?btn=' + btnName,
+    //            method: 'GET',
+    //            data: { btnName: btnName, statusid: statusid, currentpage: 1 },
+    //            success: function (data) {
+    //                console.log("AJAX success");
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#btnContent").html(data);
+
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+
+    //    });
+
+        //$("#dropdown").change(function () {
+        //    var dropdown = $(this).val();
+
+        //    console.log(dropdown);
+        //    $.ajax({
+        //        url: '@Url.Action("GetPartialView", "Admin")',
+        //        //url: '/Admin/GetPartialView?btn=' + btnName,
+        //        method: 'GET',
+        //        data: { btnName: btnnameglobal, statusid: statusidglobal, currentpage: 1, dropdown: dropdown },
+        //        success: function (data) {
+        //            console.log("AJAX success");
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
+        //$(".searchrequest").click(function () {
+        //    var reqtype = $(this).data('btn');
+         
+        //    $.ajax({
+        //        url: '@Url.Action("GetPartialView", "Admin")',
+               
+        //        method: 'GET',
+        //        data: { btnName: btnnameglobal, statusid: statusidglobal,reqtype:reqtype, currentpage: 1},
+        //        success: function (data) {
+        //            console.log("AJAX success");
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
+     
+            
+    
+
+   
+    //$("#searchInput").keyup(function () {
+    //    // Get the value from the search input
+    //    var searchValue = document.getElementById('searchInput').value;
+    //    console.log(searchValue);
+    //    console.log(statusidglobal);
+    //    console.log(btnnameglobal);
+    //    // Perform the AJAX request
+
+    //    $.ajax({
+    //        type: "GET",
+    //        // url: "/Admin/GetPartialView?searchValue=" + searchValue,
+    //        url: '@Url.Action("GetPartialView", "Admin")',
+    //        data: { searchValue: searchValue, statusid: statusidglobal, btnName: btnnameglobal, currentpage: 1 },
+    //        success: function (data) {
+    //            console.log("AJAX success");
+    //            // Update the table body with the filtered data
+    //            $("#btnContent").html(data);
+    //            //location.reload();
+    //            $("#searchButton").val('');
+    //        },
+
+    //        error: function (error) {
+    //            console.log("Error:", error);
+    //        }
+    //    });
+
+    //});
+
+
+    $('.showmodal').click(ModalDisplay);
+   function ModalDisplay () {
+        console.log("hi");
+        var modalName = $(this).attr('id');
+        $.ajax({
+            url: '@Url.Action("GetModalPartialView", "Admin")',
+          
+            method: 'GET',
+            data: { modalName: modalName },
+            success: function (data) {
+                console.log("AJAX success");
+             
+                $('.modelbody').html(data);
+             
+             
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+  }
 
 
 
