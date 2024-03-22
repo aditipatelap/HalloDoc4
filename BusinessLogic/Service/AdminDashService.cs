@@ -4,6 +4,7 @@ using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Net;
@@ -35,7 +36,10 @@ namespace BusinessLogic.Service
             dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatus.Unpaid);
             dash.concludecount = req.Count(x => x.Status == (short)Requeststatus.Conclude);
 
+            
             return dash;
+
+
         }
         //public AdminDashboard GetName(int statusid)
         //  {
@@ -81,7 +85,7 @@ namespace BusinessLogic.Service
             {
 
             List<int> id = new List<int>();
-            if (statusid != (short)Status.Active || statusid == (short)Status.ToClose)
+            if (statusid != (short)Status.Active && statusid != (short)Status.ToClose)
             {
                 id.Add(statusid);
             }
@@ -145,14 +149,102 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
-        public MemoryStream ExportALl(int statusid)
+        //    public MemoryStream ExportALl(int statusid)
+        //    {
+        //        List<int> id = new List<int>();
+        //        if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
+        //        {
+        //            id.Add(statusid);
+        //        }
+        //        else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
+        //        {
+        //            id.Add((short)Requeststatus.MDEnRoute);
+        //            id.Add((short)Requeststatus.MDonSite);
+
+        //        }
+        //        else
+        //        {
+        //            id.Add((short)Requeststatus.Cancelled);
+        //            id.Add((short)Requeststatus.Cancelledbypatient);
+        //            id.Add((short)Requeststatus.Closed);
+
+        //        }
+        //        var dashboard = (from Request in _db.Requests
+        //                         join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+        //                         // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+        //                         where id.Contains(Request.Status) && Request.Isdeleted == false 
+
+
+        //                         select new AdminDash
+        //                         {
+        //                             Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+        //                             Requestor = Request.Firstname + " " + Request.Lastname,
+        //                             RequestedDate = Request.Createddate,
+        //                             PatientPhone = Requestclient.Phonenumber,
+        //                             RequestorPhone = Request.Phonenumber,
+
+        //                             Address = Requestclient.Address,
+        //                             Notes = Requestclient.Notes,
+        //                             requestid = Request.Requestid,
+        //                             //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
+        //                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+        //                             RequestTypeid = Request.Requesttypeid
+        //                         }).ToList();
+        //        using (var workbook = new XLWorkbook())
+        //        {
+        //            var worksheet = workbook.Worksheets.Add("Dashboard");
+
+        //            // Add headers
+        //            var properties = typeof(AdminDash).GetProperties();
+        //            for (int i = 0; i < properties.Length; i++)
+        //            {
+        //                worksheet.Cell(1, i + 1).Value = properties[i].Name;
+        //            }
+
+        //            // Add data
+        //            for (int i = 0; i < dashboard.Count; i++)
+        //            {
+        //                for (int j = 0; j < properties.Length; j++)
+        //                {
+        //                    var value= properties[j].GetValue(dashboard[i]);
+
+        //                    if(value is DateTime)
+        //                    {
+        //                        worksheet.Cell(i + 2, j + 1).Value = ((DateTime)value).ToString("yyyyy-MM-dd   HH:mm:ss");
+
+        //                    }
+        //                    else
+        //                    {
+        //                        worksheet.Cell(i + 2, j + 1).Value = value != null ? value.ToString() : string.Empty;
+        //                    }
+        //                }
+        //            }
+
+        //            // Create a memory stream to store the Excel file
+        //            using (var stream = new MemoryStream())
+        //            {
+        //                // Save the workbook to the memory stream
+        //                workbook.SaveAs(stream)
+        //;
+
+        //                // Set the position to the beginning of the stream
+        //                stream.Seek(0, SeekOrigin.Begin);
+        //                return stream;
+
+        //                // Return the Excel file as a stream response
+        //               // return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "dashboard_data.xlsx");
+        //            }
+        //        }
+        //    }
+
+        public AdminDashboard GetPatientInfoByStatus(int statusid)
         {
             List<int> id = new List<int>();
-            if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
+            if (statusid != (short)Status.Active || statusid == (short)Status.ToClose)
             {
                 id.Add(statusid);
             }
-            else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
+            else if (statusid == (short)Status.Active)
             {
                 id.Add((short)Requeststatus.MDEnRoute);
                 id.Add((short)Requeststatus.MDonSite);
@@ -165,75 +257,37 @@ namespace BusinessLogic.Service
                 id.Add((short)Requeststatus.Closed);
 
             }
-            var dashboard = (from Request in _db.Requests
-                             join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                             // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
-                             where id.Contains(Request.Status) && Request.Isdeleted == false 
+            var query = (from Request in _db.Requests
+                         join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
+                         // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+                         where id.Contains(Request.Status) && Request.Isdeleted == false
+                         select new AdminDash
+                         {
+                             Name = Requestclient.Firstname + " " + Requestclient.Lastname,
+                             IntDate = Requestclient.Intdate,
+                             IntYear = Requestclient.Intyear,
+                             StrMonth = Requestclient.Strmonth,
+                             Requestor = Request.Firstname + " " + Request.Lastname,
+                             RequestedDate = Request.Createddate,
+                             PatientPhone = Requestclient.Phonenumber,
+                             RequestorPhone = Request.Phonenumber,
+
+                             Address = Requestclient.Address,
+                             Notes = Requestclient.Notes,
+                             requestid = Request.Requestid,
+                             //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
+                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
+                             RequestTypeid = Request.Requesttypeid
+                         });
 
 
-                             select new AdminDash
-                             {
-                                 Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-                                 Requestor = Request.Firstname + " " + Request.Lastname,
-                                 RequestedDate = Request.Createddate,
-                                 PatientPhone = Requestclient.Phonenumber,
-                                 RequestorPhone = Request.Phonenumber,
-
-                                 Address = Requestclient.Address,
-                                 Notes = Requestclient.Notes,
-                                 requestid = Request.Requestid,
-                                 //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
-                                 // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-                                 RequestTypeid = Request.Requesttypeid
-                             }).ToList();
-            using (var workbook = new XLWorkbook())
+            var data = new AdminDashboard
             {
-                var worksheet = workbook.Worksheets.Add("Dashboard");
+              adminDashes  = query.ToList(),
+            };
 
-                // Add headers
-                var properties = typeof(AdminDash).GetProperties();
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    worksheet.Cell(1, i + 1).Value = properties[i].Name;
-                }
-
-                // Add data
-                for (int i = 0; i < dashboard.Count; i++)
-                {
-                    for (int j = 0; j < properties.Length; j++)
-                    {
-                        var value= properties[j].GetValue(dashboard[i]);
-                       
-                        if(value is DateTime)
-                        {
-                            worksheet.Cell(i + 2, j + 1).Value = ((DateTime)value).ToString("yyyyy-MM-dd   HH:mm:ss");
-
-                        }
-                        else
-                        {
-                            worksheet.Cell(i + 2, j + 1).Value = value != null ? value.ToString() : string.Empty;
-                        }
-                    }
-                }
-
-                // Create a memory stream to store the Excel file
-                using (var stream = new MemoryStream())
-                {
-                    // Save the workbook to the memory stream
-                    workbook.SaveAs(stream)
-    ;
-
-                    // Set the position to the beginning of the stream
-                    stream.Seek(0, SeekOrigin.Begin);
-                    return stream;
-
-                    // Return the Excel file as a stream response
-                   // return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "dashboard_data.xlsx");
-                }
-            }
+            return data;
         }
-
-    
         public AdminDashboard GetViewCase(int requestid)
         {
             AdminDashboard dashboard = new AdminDashboard();
@@ -251,17 +305,19 @@ namespace BusinessLogic.Service
                                 //DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
                                 Mobile = req.Phonenumber,
                                 Email = req.Email,
-                                Address = req.Address
+                                Address = req.Address,
+                                ConfNo = req.Request.Confirmationnumber,
                             }).FirstOrDefault();
             dashboard.viewcase = items;
             dashboard.requestid = requestid;
+            //dashboard.ConfirmationNo=items.
             //dashboard.statusid = statusid;
             //dashboard.btnname=btnname;
             
             return dashboard;
         }
         public void EditViewCaseData(AdminDashboard model, int requestid)
-        {
+            {
             var requestclient = _db.Requestclients.FirstOrDefault(x => x.Requestid == requestid);
             if (requestclient != null)
             {
@@ -556,11 +612,11 @@ namespace BusinessLogic.Service
                 return model;
             }
         
-        public void PostViewNotes(int requestid, AdminDashboard model)
+        public void PostViewNotes( AdminDashboard model)
         {
             
           
-                var data = _db.Requestnotes.FirstOrDefault(x => x.Requestid == requestid);
+                var data = _db.Requestnotes.FirstOrDefault(x => x.Requestid == model.requestid);
                 if (data != null)
                 {
                     data.Adminnotes = model.AdditionalNotes;
@@ -570,7 +626,7 @@ namespace BusinessLogic.Service
                 else
                 {
                     var data2 = new Requestnote();
-                    data2.Requestid = requestid;
+                    data2.Requestid = model.requestid;
                     data2.Adminnotes = model.AdditionalNotes;
                     data2.Createdby = "Admin";
                     data2.Createddate = DateTime.Now;
@@ -727,8 +783,186 @@ namespace BusinessLogic.Service
             smtp.Send(message);
             smtp.UseDefaultCredentials = false;
 
-           // emailLogEntry(EmailTemplate, SubjectName, email, reqid);
+            // emailLogEntry(EmailTemplate, SubjectName, email, reqid);
         }
+
+        
+       /*********create req*********/
+        public void CreateRequestDatapost(AdminDashboard model)
+        {
+            Request request = new Request();
+            Requestclient requestclient = new Requestclient();
+            Requestnote requestnote = new Requestnote();
+
+            var date = model.CreateReqquestModel.DOB.Day;
+            var month = model.CreateReqquestModel.DOB.Month.ToString();
+            var year = model.CreateReqquestModel.DOB.Year;
+
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
+
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name == model.CreateReqquestModel.City)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     model.CreateReqquestModel.LastName.Substring(0, 2).ToUpper() +
+                                     model.CreateReqquestModel.FirstName.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
+
+
+            request.Requesttypeid = (int)DataAccess.ViewModel.Constant.RequestType.Business;
+            request.Status = (int)Requeststatus.Unassigned;
+            request.Createddate = DateTime.Now;
+            request.Isurgentemailsent = new BitArray(new bool[1] { true });
+            request.Firstname = model.CreateReqquestModel.FirstName;
+            request.Lastname = model.CreateReqquestModel.LastName;
+            request.Phonenumber = model.CreateReqquestModel.PhoneNumber;
+            request.Email = model.CreateReqquestModel.Email;
+            request.Confirmationnumber = confirmationNumber;
+
+            _db.Add(request);
+            _db.SaveChanges();
+
+            requestclient.Requestid = request.Requestid;
+            requestclient.Regionid = regionInfo.Regionid;
+            requestclient.Email = model.CreateReqquestModel.Email;
+            requestclient.Firstname = model.CreateReqquestModel.FirstName;
+            requestclient.Lastname = model.CreateReqquestModel.LastName;
+            requestclient.Phonenumber = model.CreateReqquestModel.PhoneNumber;
+            requestclient.City = model.CreateReqquestModel.City;
+            requestclient.Street = model.CreateReqquestModel.Street;
+            requestclient.State = model.CreateReqquestModel.State;
+            requestclient.Zipcode = model.CreateReqquestModel.ZipCode;
+            requestclient.Address = model.CreateReqquestModel.Street + ' ' + model.CreateReqquestModel.City + ' ' + model.CreateReqquestModel.State;
+            requestclient.Intyear = year;
+            requestclient.Strmonth = month;
+            requestclient.Intdate = date;
+
+            _db.Add(requestclient);
+            _db.SaveChanges();
+
+
+            requestnote.Adminnotes = model.CreateReqquestModel.Notes;
+            requestnote.Requestid = request.Requestid;
+            requestnote.Createddate = DateTime.Now;
+            requestnote.Createdby = "admin";
+
+            _db.Add(requestnote);
+            _db.SaveChanges();
+
+            var SubjectName = "Create Account";
+            var EmailTemplate = "Request for you is generated. To check your request status click on below link to generate account. <a href=\"https://localhost:7265/Patient/CreateAccount\">ClickHere</a>";
+            var isEmailSent = "false";
+
+            MailMessage message = new MailMessage();
+
+            message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+            message.To.Add(new MailAddress(requestclient.Email));
+            message.Subject = SubjectName;
+            message.IsBodyHtml = true;
+            message.Body = EmailTemplate;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+            smtp.EnableSsl = true;
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+            isEmailSent = "true";
+
+            if (isEmailSent == "true")
+            {
+                var emailLog = new Emaillog
+                {
+                    Emailtemplate = EmailTemplate,
+                    Subjectname = SubjectName,
+                    Emailid = requestclient.Email,
+                    Createdate = DateTime.Now,
+                    Requestid = request.Requestid,
+                    Confirmationnumber = request.Confirmationnumber,
+                    Roleid = (int)Roles.Patient,
+                    Physicianid = request.Physicianid,
+                    Sentdate = DateTime.Now,
+                    Isemailsent = new BitArray(new bool[] { true }),
+                };
+                _db.Emaillogs.Add(emailLog);
+                _db.SaveChanges();
+            }
+        }
+        public bool VerifyAddress(string city)
+        {
+            var verify = _db.Regions.Where(x => x.Name == city).FirstOrDefault();
+            if (verify != null)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+         /***close case*********/
+   //public AdminDashboard CloseCaseData(int reqid)
+   //     {
+   //         var items = _db.Requestwisefiles.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(m => new ViewUpload
+   //         {
+   //             CreatedDate = m.Createddate,
+   //             FileName = m.Filename,
+   //             Month = (Month)m.Createddate.Month,
+   //             UploaderName = m.Request.Firstname + " " + m.Request.Lastname,
+
+   //         }).ToList();
+
+   //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCaseModel
+   //         {
+   //             FirstName = x.Firstname,
+   //             LastName = x.Lastname,
+   //             DOB = Convert.ToDateTime(x.Intdate.ToString() + "-" + x.Strmonth + "-" + x.Intyear.ToString()),
+   //             PhoneNumber = x.Phonenumber,
+   //             Email = x.Email,
+   //             ConfirmationNo = x.Request.Confirmationnumber,
+   //         }).FirstOrDefault();
+
+
+   //         AdminDashboard model = new AdminDashboard();
+   //         model.ViewUpload = items;
+   //         model.CloseCaseModel = data;
+   //         model.UserName = data.FirstName + " " + data.LastName;
+   //         model.ConfirmationNo = data.ConfirmationNo;
+   //         model.requestid = reqid;
+
+   //         return model;
+   //     }
+
+        //public void CloseCaseDataPost(AdminDashboard model)
+        //{
+        //    var requestclient = _db.Requestclients.FirstOrDefault(x => x.Requestid == model.requestid);
+        //    if (requestclient != null)
+        //    {
+        //        requestclient.Phonenumber = model.CloseCaseModel.PhoneNumber;
+        //        requestclient.Email = model.CloseCaseModel.Email;
+        //        _db.SaveChanges();
+        //    }
+        //}
+        //public void CloseTheCase(int reqid)
+        //{
+        //    var request = _db.Requests.FirstOrDefault(x => x.Requestid == reqid);
+        //    if (request != null)
+        //    {
+        //        request.Status = (int)Requeststatus.Unpaid;
+        //        request.Modifieddate = DateTime.Now;
+        //        _db.SaveChanges();
+        //    }
+        //}
 
 
 

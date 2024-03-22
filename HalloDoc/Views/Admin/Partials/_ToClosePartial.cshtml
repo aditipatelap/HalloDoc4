@@ -115,50 +115,50 @@
     </div>
 </div>
 <script>
-    console.log("jiiii")
-    $('.showmodal').click(function () {
-        var modalName = $(this).attr('id');
-        var requestid = $(this).data('btn');
-        console.log("hello")
-        //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
-        //    $('#myModalContainer').html(data);
-        //    $('#myModal').modal('show');
-        //});
-        $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
-            //url: '/Admin/GetPartialView?btn=' + btnName,
-            method: 'GET',
-            data: { modalName: modalName, requestid: requestid },
-            success: function (data) {
-                console.log("AJAX success");
-                // Replace the content of the btnContent div with the retrieved partial view
-                $('.modelbody').html(data);
-                // $('#myModal').modal('show');
-                console.log("hiiii");
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    });
-    $(document).ready(function () {
-        $(".tablink").click(function () {
-            var TabId = $(this).attr("id");
-            $.ajax({
-                url: '/Admin/GetTabs',
-                data: { Tabid: TabId },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#TabContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        //$("#Dashboard")[0].click();
-    });
+    //console.log("jiiii")
+    //$('.showmodal').click(function () {
+    //    var modalName = $(this).attr('id');
+    //    var requestid = $(this).data('btn');
+    //    console.log("hello")
+    //    //$.get('/Admin/GetModalPartialView?modal=' + modalName, function(data) {
+    //    //    $('#myModalContainer').html(data);
+    //    //    $('#myModal').modal('show');
+    //    //});
+    //    $.ajax({
+    //        url: '@Url.Action("GetModalPartialView", "Admin")',
+    //        //url: '/Admin/GetPartialView?btn=' + btnName,
+    //        method: 'GET',
+    //        data: { modalName: modalName, requestid: requestid },
+    //        success: function (data) {
+    //            console.log("AJAX success");
+    //            // Replace the content of the btnContent div with the retrieved partial view
+    //            $('.modelbody').html(data);
+    //            // $('#myModal').modal('show');
+    //            console.log("hiiii");
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
+    //$(document).ready(function () {   
+    //    $(".tablink").click(function () {
+    //        var TabId = $(this).attr("id");
+    //        $.ajax({
+    //            url: '/Admin/GetTabs',
+    //            data: { Tabid: TabId },
+    //            method: 'GET',
+    //            success: function (data) {
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#TabContent").html(data);
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+    //    });
+    //    //$("#Dashboard")[0].click();
+    //});
     $(document).ready(function () {
         console.log("dygdax");
         $(".custompagination").click(function () {

@@ -46,7 +46,10 @@ namespace HalloDoc.Controllers
                
                 Response.Cookies.Append("jwt", jwtToken);
                 string Adminid = user.Id;
+                string Username = user.Name;
                 _httpContextAccessor.HttpContext.Session.SetString("Adminid", Adminid);
+                _httpContextAccessor.HttpContext.Session.SetString("Username", Username);
+
                 // Decode JWT token to get username
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var decodedToken = tokenHandler.ReadJwtToken(jwtToken);
@@ -57,7 +60,9 @@ namespace HalloDoc.Controllers
                     var model=new AdminDashboard { UserName = username};
 
                     // Use the username as needed
+                   
                     return RedirectToAction("Index", "Admin",model);
+
                 }
 
 

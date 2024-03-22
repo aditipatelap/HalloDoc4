@@ -1,4 +1,5 @@
 ﻿using DataAccess.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,7 +43,9 @@ namespace DataAccess.ViewModel
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DOB { get; set; }
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
         public string? Mobile { get; set; }
+        [Required(ErrorMessage = "required")]
         public string Email { get; set; }
         public string? Region { get; set; }
         public string Address { get; set; }
@@ -54,6 +57,7 @@ namespace DataAccess.ViewModel
         public string Blockreason { get; set; }
         
     }
+   
     public class AssignReq
     {
         [Required(ErrorMessage = "The field is required")]
@@ -144,7 +148,9 @@ namespace DataAccess.ViewModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        [Required(ErrorMessage = "email is required")]
         public string Email { get; set; }
+        [Required(ErrorMessage = "number is required")]
         public string PhoneNumber { get; set; }
 
     }
@@ -153,9 +159,9 @@ namespace DataAccess.ViewModel
             public int? Aspnetid { get; set; }
             public string? UserName { get; set; }
             public string? Password { get; set; }
-        [Required(ErrorMessage ="fname is required")]
+          [Required(ErrorMessage ="fname is required")]
             public string? FirstName { get; set; }
-        [Required(ErrorMessage = "lname is required")]
+           [Required(ErrorMessage = "lname is required")]
         public string? LastName { get; set; }
             public string? PhoneNumber { get; set; }
             public string? Email { get; set; }
@@ -174,16 +180,44 @@ namespace DataAccess.ViewModel
             public Region? Region { get; set; }
             public string? ViewId { get; set; }
         }
+    public class CreateReqquestModel
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime DOB { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? ZipCode { get; set; }
+        public string? Notes { get; set;}
+
+
+    }
+    public class CloseCaseModel
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public DateTime DOB { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public string ConfirmationNo { get; set; }
+    }
 
     public class AdminDashboard
     {
         public string UserName { get;set; }
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
+        [Required(ErrorMessage = "fname is required")]
         public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }
         public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
         public Profile myProfile { get; set; }
+        public CreateReqquestModel CreateReqquestModel { get; set; }
+        public CloseCaseModel CloseCaseModel { get; set; }
         public int PageSize { get; set; }
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
@@ -213,10 +247,11 @@ namespace DataAccess.ViewModel
        public status Status { get; set; }
         public int requestid { get; set; }
         public string patientname { get;set; }
-        public string Adminname { get; set; }
+        public string Adminname  { get; set; }
         public string ConfirmationNo { get; set; }
         public string Email { get; set; }
         public int statusid { get;set; }
         public string btnname { get;set; }
+        public IEnumerable<AdminDash> adminDashes { get; set; }
     }
 }

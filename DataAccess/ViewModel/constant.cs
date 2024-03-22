@@ -53,6 +53,12 @@ namespace DataAccess.ViewModel
             Concierge = 4
 
         }
+        public enum Roles
+        {
+            Admin=1,
+            Patient=2,
+            
+        }
 
     }
 }

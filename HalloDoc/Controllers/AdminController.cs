@@ -13,6 +13,11 @@ using System.Runtime.CompilerServices;
 using DocumentFormat.OpenXml.Presentation;
 using static DataAccess.ViewModel.Constant;
 using System.IO.Compression;
+using System.Text;
+using System.ComponentModel;
+using System.Reflection;
+using OfficeOpenXml;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace HalloDoc.Controllers
 {
@@ -105,6 +110,12 @@ namespace HalloDoc.Controllers
 
                 return PartialView(result, model);
             }
+            if (Tabid == "CreateNewReq")
+            {
+             
+
+                return PartialView(result);
+            }
 
             return View();
 
@@ -114,15 +125,15 @@ namespace HalloDoc.Controllers
         //    var res=_AdminDash.GetViewUpload(requestid);
         //    return View(res);
         //}
-        public IActionResult DownloadAll(int statusid)
+        //public IActionResult DownloadAll(int statusid)
 
-        {
-            statusid = 1;
-            MemoryStream ms = _AdminDash.ExportALl(statusid);
-            return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "data.xlsx");
+        //{
+        //    statusid = 1;
+        //    MemoryStream ms = _AdminDash.ExportALl(statusid);
+        //    return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "data.xlsx");
 
 
-        }
+        //}
 
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage ,  string dropdown,int reqtype)
         {
@@ -173,11 +184,53 @@ namespace HalloDoc.Controllers
                
                 return PartialView(partialname);
             }
+            if (modalName == "CloseCase")
+            {
+
+                return PartialView(partialname);
+            }
 
             return PartialView(partialname);
 
         }
-        
+        [HttpPost]
+        public FileResult Export(string GridHtml)
+        {
+            return File(Encoding.ASCII.GetBytes(GridHtml), "application/vnd.ms-excel", "Grid.xls");
+        }
+        public FileResult ExportAll(AdminDashboard model)
+        {
+            byte[] excelBytes;
+            IEnumerable<AdminDash> data = _AdminDash.GetPatientInfoByStatus((int)model.statusid).adminDashes;
+            
+            excelBytes = fileToExcel(data);
+            return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sheet.xlsx");
+        }
+        public byte[] fileToExcel<T>(IEnumerable<T> data)
+        {
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+            using (ExcelPackage package = new ExcelPackage())
+            {
+                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Data");
+                PropertyInfo[] properties = typeof(T).GetProperties();
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    worksheet.Cells[1, i + 1].Value = properties[i].Name;
+                }
+                int row = 2;
+
+                foreach (var item in data)
+                {
+                    for (int i = 0; i < properties.Length; i++)
+                    {
+                        worksheet.Cells[row, i + 1].Value = properties[i].GetValue(item);
+                    }
+                    row++;
+                }
+                byte[] excelBytes = package.GetAsByteArray();
+                return excelBytes;
+            }
+        }
         public IActionResult AssignReq(AdminDashboard model, int requestid)
         {
             _AdminDash.SubmitAssignReq(model, requestid);
@@ -262,11 +315,12 @@ namespace HalloDoc.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult PostViewNotes(int requestid, AdminDashboard model)
+        public JsonResult PostViewNotes( AdminDashboard model)
         
         {
-            _AdminDash.PostViewNotes(requestid, model);
-            return RedirectToAction("GetTabs", new { Tabid = "ViewNotes", requestid = requestid, statusid = 0, btnname = 0 });
+            _AdminDash.PostViewNotes(model);
+            return Json(new { success = true });
+            //return RedirectToAction("GetTabs", new { Tabid = "ViewNotes", requestid = requestid, statusid = 0, btnname = 0 });
         }
         /**********view uploads*****************/
         public IActionResult ViewUploadsList(int requestid)
@@ -323,5 +377,50 @@ namespace HalloDoc.Controllers
             _notyf.Custom("Email Sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
             return ViewUploadsList(requestid);
         }
+       /*******create req*/
+ [HttpPost]
+        public IActionResult CreateRequestDatapost(AdminDashboard model)
+        {
+            _AdminDash.CreateRequestDatapost(model);
+
+            _notyf.Custom("Request Created Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return RedirectToAction("Index", "Admin");
+        }
+        public IActionResult VerifyAddress(string city)
+        {
+            if (city != null)
+            {
+                if (_AdminDash.VerifyAddress(city))
+                {
+                    return Json(new { success = true, message = "service avaliable " });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "service not avaliable " });
+                }
+            }
+            else
+            {
+                return Json(new { success = false, message = "Please Enter City Name" });
+            }
+
+        }
+          /****close case**********/
+  //[HttpPost]
+  //      public JsonResult CloseCaseDataPost(AdminDashboard model)
+  //      {
+  //          _AdminDash.CloseCaseDataPost(model);
+  //          return Json(new { success = true });
+  //      }
+
+  //      [HttpPost]
+  //      public IActionResult CloseTheCase(int reqid)
+  //      {
+  //          _AdminDash.CloseTheCase(reqid);
+  //          _notyf.Custom("Case CLosed Successfully!!", 3, "deepskyblue", "bi bi-check2");
+  //          string url = Url.Action("Dashboard", "Admin");
+  //          return Json(new { url });
+  //      }
+
     }
 }

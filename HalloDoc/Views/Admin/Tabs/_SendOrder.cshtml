@@ -1,5 +1,7 @@
 ﻿@using DataAccess.ViewModel
 @model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <div class="container">
     <div class="d-flex justify-content-between mt-4">
         <div class="d-flex">
@@ -11,7 +13,7 @@
     </div>
     <div class="shadow rounded mt-3 py-3">
         <div class="px-3">
-            <form method="post" action='@Url.Action("SendOrder", "Admin",new {requestid=Model.requestid})' id="orderForm" class="needs-validation" data-toggle="validator" role="form" novalidate>
+            <form method="post" action='@Url.Action("SendOrder", "Admin",new {requestid=Model.requestid})' id="orderForm">
                 <div class="row g-2 mt-2">
                     <div class="col-md dropdown my-2 m-auto">
                         <div class="  form-floating">
@@ -23,7 +25,7 @@
                                 }
                             </select>
                             <label for="floatingSelect">Profession</label>
-                            <div class="invalid-feedback">Please select Profession</div>
+                            @Html.ValidationMessageFor(Model=>Model.healthprofessionaltypes,"",new{@class="text-danger"})
                         </div>
                     </div>
                     <div class="col-md dropdown my-2 m-auto">
@@ -36,7 +38,7 @@
                                 }
                             </select>
                             <label for="floatingSelect">Business</label>
-                            <div class="invalid-feedback">Please select Business</div>
+                           
                         </div>
                     </div>
                 </div>
@@ -52,7 +54,7 @@
                         <div class="form-floating">
                             <input type="email" class="form-control" id="Email" placeholder="Email" asp-for="@Model.sendorder.Email" required>
                             <label for="email" class="text-secondary">Email</label>
-                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                           
                         </div>
                     </div>
                 </div>
@@ -61,7 +63,7 @@
                         <div class="form-floating">
                             <input type="text" class="form-control" id="FaxNumber" placeholder="Fax Number" asp-for="@Model.sendorder.FaxNumber" required>
                             <label for="faxNumber" class="text-secondary">Fax Number</label>
-                            <div class="invalid-feedback">Please enter a fax number.</div>
+                          
                         </div>
                     </div>
                     <div class="col-md">
@@ -73,14 +75,15 @@
                 <div class="form-floating my-4">
                     <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" asp-for="@Model.sendorder.Prescription" required></textarea>
                     <label for="floatingTextarea2" class="text-secondary" id="label-floating">Prescription or Order details</label>
-                    <div class="invalid-feedback">Please enter prescription or order details.</div>
+                   
                 </div>
                 <div class="row g-2 mt-2">
                     <div class="col-md dropdown my-2 m-auto">
                         <div class=" col-lg-6 form-floating mb-3">
                             <input type="number" class="form-select h-100" id="floatingSelect" aria-label="Floating label select example" asp-for="@Model.sendorder.NUmberofrefill" required>
                             <label for="floatingSelect">Number Of Refile</label>
-                            <div class="invalid-feedback">Please select the number of refills.</div>
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.NUmberofrefill,"",new{@class="text-danger"})
+                            
                         </div>
                     </div>
                 </div>

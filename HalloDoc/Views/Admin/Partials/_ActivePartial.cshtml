@@ -1,5 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+{
 <table class="table table-responsive  m-4 p-3">
     <thead class="table-secondary">
         <tr>
@@ -129,6 +131,13 @@
     </tbody>
 
 </table>
+}
+else
+{
+<div class="d-flex justify-content-center align-items-center pt-5">
+    <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+</div>
+}
 <div class="mb-0 fixed-bottom m-4">
     <ul class="pagination align-items-center">
         @if (Model.CurrentPage > 1)

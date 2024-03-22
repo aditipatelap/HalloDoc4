@@ -16,7 +16,7 @@
                 <th scope="col">Phone</th>
 
                 <th scope="col">Address</th>
-                <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
+                <th scope="col" class="">Notes <i class="bi bi-arrow-down"></i></th>
                 <th scope="col">Chat With</th>
 
                 <th scope="col">Actions</th>
@@ -134,8 +134,8 @@
                                         <i class="bi bi-x-circle"></i>
                                         Cancel Case
                                     </a>
-                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid">View Case</a>
-                                    <a class="dropdown-item" href="#">View Notes</a>
+                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" data-value1="@Model.ConfirmationNo">View Case</a>
+                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">View Notes</a>
 
                                     <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
                                         <i class="bi bi-x-circle"></i>
@@ -184,26 +184,28 @@ else
 </div>
 <script>
     $('.showmodal').click(ModalDisplay);
+    $('.custompagination').click(Pagination);
 
    
-        //$(".tablink").click(function () {
-        //    var TabId = $(this).attr("id");
-        //    var requestid = $(this).data('btn');
-        //    //var statusid=$(this).data('value1');
-        //    console.log(requestid);
-        //    $.ajax({
-        //        url: '/Admin/GetTabs',
-        //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
-        //        method: 'GET',
-        //        success: function (data) {
+        $(".tablink").click(function () {
+            var TabId = $(this).attr("id");
+            var requestid = $(this).data('btn');
+            
+            //var statusid=$(this).data('value1');
+            console.log(requestid);
+            $.ajax({
+                url: '/Admin/GetTabs',
+                data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+                method: 'GET',
+                success: function (data) {
 
-        //            $("#TabContent").html(data);
-        //        },
-        //        error: function () {
-        //            console.error('Error fetching partial view.');
-        //        }
-        //    });
-        //});
+                    $("#TabContent").html(data);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        });
        
    
 

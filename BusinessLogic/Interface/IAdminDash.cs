@@ -16,8 +16,9 @@ namespace BusinessLogic.Interface
 
         public AdminDashboard GetDashboardData(int statusid, string searchValue, int currentpage, string dropdown, int reqtype);
         public AdminDashboard GetName(int statusid);
-        public MemoryStream ExportALl(int statusid);
+        //public MemoryStream ExportALl(int statusid);
         //public int[] RequestCount(int statusid);
+        public AdminDashboard GetPatientInfoByStatus(int statusid);
         public AdminDashboard RequestCount();
         public AdminDashboard AssignRequest(int requestid);
 
@@ -30,7 +31,7 @@ namespace BusinessLogic.Interface
         public void SubmitTransferReq(AdminDashboard model, int requestid);
         public AdminDashboard SendOrder(int requestid);
         public AdminDashboard GetViewNotes(int requestid);
-        public void PostViewNotes(int requestid, AdminDashboard model);
+        public void PostViewNotes( AdminDashboard model);
         public JsonArray GetBusiness(int selectedvalue);
         public Healthprofessional GetBusinessDetails(int selectedvalue);    
         public void SendOrderReq(AdminDashboard model, int requestid,string adminname);
@@ -48,6 +49,10 @@ namespace BusinessLogic.Interface
         public AdminDashboard ViewUploadDataList(int reqid);
         public void deleteDocument(string filename);
         public void sendEmail(List<string> file, string email, int reqid);
+        public void CreateRequestDatapost(AdminDashboard model);
+        public bool VerifyAddress(string city);
+        //public void CloseCaseDataPost(AdminDashboard model);
+        //public void CloseTheCase(int reqid);
 
 
         }

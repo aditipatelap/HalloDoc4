@@ -1,5 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+@inject IHttpContextAccessor _httpContextAccessor;
+
 @Html.ValidationSummary(true)
 <style>
     a{
@@ -14,7 +16,7 @@
 
     <div class="d-flex justify-content-end m-3">
         <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
-        <h4 class=" ms-2 d-lg-block d-none"> @Model.UserName</h4>
+            <h4 class=" ms-2 d-lg-block d-none"> @_httpContextAccessor.HttpContext.Session.GetString("Username")</h4>
         <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
         <div><button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">

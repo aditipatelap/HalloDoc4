@@ -9,7 +9,7 @@
     </style>
 <div class="row gx-4 m-4 p-3">
     <div class="col-lg-2 ">
-        <button type="button" class="w-100 btn partialbtn newbtn text-start"  data-btn="NewPartial" data-id="1">
+        <button type="button" class="w-100 btn partialbtn newbtn text-start status" data-btn="NewPartial" data-id="1">
 
             <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
             <p class="fw-bold fs-3">@*@ViewBag.Request[0]*@ @Model.newcount</p>
@@ -21,7 +21,7 @@
     </div>
 
 <div class="col-lg-2">
-    <button type="button" class="w-100 btn  partialbtn  pendingbtn text-start " data-btn="PendingPartial" data-id="2">
+        <button type="button" class="w-100 btn  partialbtn  pendingbtn text-start status " data-btn="PendingPartial" data-id="2">
         <i class="fa-solid fa-user"></i> <span class="fw-bolder">Pending</span>
         <p class="fw-bold fs-3"> @Model.pendingcount</p>
 
@@ -31,7 +31,7 @@
     </div>
 </div>
 <div class="col-lg-2 ">
-    <button type="button" class=" w-100 btn partialbtn activebtn text-start border border-success " data-btn="ActivePartial" data-id="3">
+        <button type="button" class=" w-100 btn partialbtn activebtn text-start border border-success status " data-btn="ActivePartial" data-id="3">
         <i class="far fa-check-circle"></i> <span class="fw-bolder">ACTIVE</span>
         <p class="fw-bold fs-3">@Model.activecount</p>
 
@@ -41,7 +41,7 @@
     </div>
 </div>
 <div class="col-lg-2 ">
-    <button type="button" class="w-100 btn partialbtn concludebtn text-start" data-btn="ConcludePartial" data-id="6">
+        <button type="button" class="w-100 btn partialbtn concludebtn text-start status" data-btn="ConcludePartial" data-id="6">
         <i class="bi bi-arrow-clockwise"></i> <span class="fw-bolder">CONCLUDE</span>
         <p class="fw-bold fs-3">@Model.concludecount</p>
 
@@ -51,7 +51,7 @@
     </div>
 </div>
 <div class="col-lg-2">
-    <button type="button" class="w-100 btn partialbtn  toclosebtn  text-start" data-btn="ToClosePartial" data-id="5">
+        <button type="button" class="w-100 btn partialbtn  toclosebtn  text-start status" data-btn="ToClosePartial" data-id="5">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-alarm-fill" viewBox="0 0 16 16">
             <path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5m2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.04 8.04 0 0 0 .86 5.387M11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.04 8.04 0 0 0-3.527-3.527" />
         </svg> <span class="fw-bolder">TO CLOSE</span>
@@ -64,7 +64,7 @@
 </div>
 <div class="col-lg-2">
 
-    <button type="button" class="w-100 btn partialbtn rounded unpaidbtn text-start" data-btn="UnpaidPartial" data-id="9">
+        <button type="button" class="w-100 btn partialbtn rounded unpaidbtn text-start status" data-btn="UnpaidPartial" data-id="9">
         <i class="bi bi-currency-dollar"></i> <span class="fw-bolder">UNPAID</span>
         <p class="fw-bold fs-3">@Model.unpaidcount</p>
 
@@ -80,11 +80,17 @@
         <span id="status"></span>
 
     </div>
-    <div class="">
+    <div class="d-flex gap-2">
         <button type="button" id="SendLink" class="btn btn-info text-white showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
-        <button type="button" id="CreateRequest"class="btn btn-info text-white"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
-        <button type="button" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
-        <a asp-action="DownloadAll" asp-controller="Admin" type="button" class="btn btn-info text-white"><i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></a>
+        <button type="button" id="CreateNewReq" class="btn btn-info text-white tablink"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
+         <form asp-action="Export">
+                <input type="hidden" name="GridHtml" />
+            <button asp-action="Export" type="submit" value="Export" id="btnSubmit" class="btn btn-info text-white"><i class="bi bi-reply"></i><span class="ms-2">Export</span></button>
+            </form>
+               <form asp-action="ExportAll">
+            <input value="" asp-for="statusid" id="hidden" hidden />
+            <button id="ExportAll" type="submit" class="btn btn-info text-white"> <i class="bi bi-reply-all"></i><span class="ms-2">Export All</span></button>
+            </form>
         <button type="button" class="btn btn-info text-white"><i class="bi bi-person"></i><span class="ms-2">Request DTY Support</span></button>
     </div>
 </div>
@@ -144,6 +150,113 @@
 <script>
     var statusidglobal;
     var btnnameglobal;
+    //Export ALl
+    $(".status").click(function () {
+
+        var statusid = $(this).data('id');
+        $("#hidden").val(statusid);
+    });
+    $(document).ready(function () {
+        $('.partialbtn').click(function () {
+            $('.partialbtn').removeClass('active');
+            $(this).addClass('active');
+            $('.triangle-down').hide();
+            $(this).parent().find('.triangle-down').show();
+        });
+    });
+    $(document).ready(function () {
+        $("[data-btn='NewPartial'][data-id='1']").click();
+    });
+    function PartialDisplay() {
+
+        var dropdown = document.getElementById('dropdown').value;
+        var btnName = $(this).data("btn");
+        var statusid = $(this).data("id");
+        var reqtype = $(this).data('btn1');
+        var searchValue = document.getElementById('searchInput').value;
+        if (typeof reqtype === 'undefined') {
+            reqtype = 0;
+        }
+        if (!searchValue) {
+            searchValue = null;
+        }
+        if (!dropdown) {
+            dropdown = null;
+        }
+        if ($(this).hasClass('partialbtn')) {
+            btnnameglobal = btnName;
+
+        }
+        if ($(this).hasClass('partialbtn')) {
+
+            statusidglobal = statusid;
+            $("#hidden").val(statusidglobal);
+
+        }
+
+        console.log("Button clicked: " + btnnameglobal);
+
+
+        console.log("Button clicked: " + statusidglobal);
+        console.log(searchValue);
+        console.log(reqtype);
+        console.log(dropdown);
+
+
+        // Make an AJAX request to get the partial view content
+
+        $.ajax({
+            url: '@Url.Action("GetPartialView", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#btnContent").html(data);
+
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    }
+    //$(".tablink").click(function () {
+    //    var TabId = $(this).attr("id");
+    //    var requestid = $(this).data('btn');
+    //    //console.log(requestid);
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        data: { Tabid: TabId,request },
+    //        method: 'GET',
+    //        success: function (data) {
+    //            // Replace the content of the btnContent div with the retrieved partial view
+    //            $("#TabContent").html(data);
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
+    //$(document).ready(function () {
+    //    debugger;
+    //    console.log("DFwaefa")
+    //    PartialDisplay.call({
+    //        val: function () { return null; },
+    //        data: function (attr) {
+    //            return (attr === "btn") ? "NewPartial" :
+    //                (attr === "id") ? 1 :
+    //                    (attr === "btn1") ? 1 :
+
+    //                        null;
+    //        },
+    //        getElementByID:function(id){
+    //            return (id==='searchInput')
+    //        },
+    //        hasClass: function (className) { return className === 'partialbtn'; }
+    //    });
+    //    //
+    //});
     //$(document).ready(function () {
     //    console.log("Page loaded");
     //    var isFirstTime = localStorage.getItem('isFirstTime');
@@ -157,6 +270,7 @@
     //        localStorage.setItem('isFirstTime', true);
 
     //    }
+    
 
     //    $(document).on("click", ".partialbtn", function () {
     //        // Call the function on button click
@@ -234,103 +348,63 @@
             $(this).addClass('active');
         });
     });
-    $(document).ready(function () {
-        $('.partialbtn').click(function () {
-            $('.partialbtn').removeClass('active');
-            $(this).addClass('active');
-            $('.triangle-down').hide();
-            $(this).parent().find('.triangle-down').show();
-        });
-    });
-    //$(document).ready(function () {
+    function Pagination(){
+    var currentpage = $(this).data('page');
+        var btnName = "NewPartial";
+        var statusid = 1;
+        var searchvalue = $("#searchInput").val();
+        //console.log(requestid);
 
-    //    $("[data-btn='NewPartial'][data-id='1']").click();
-    //});
-    $(document).ready(function () {
-    $('.partialbtn').click(PartialDisplay);
-    $("#dropdown").change(PartialDisplay);
-    $(".searchrequest").click(PartialDisplay);
-    $("#searchInput").keyup(PartialDisplay);
-    
-        function PartialDisplay(btnName, statusid, searchValue, currentpage, dropdown, reqtype) {
-           
-        var dropdown = $(this).val();
-        var btnName = $(this).data("btn");
-            var statusid = $(this).data("id");
-        var reqtype = $(this).data('btn1');
-        var searchValue = document.getElementById('searchInput').value;
-        if (typeof reqtype === 'undefined') {
-            reqtype = 0;
-        }
-        if (!searchValue) {
-            searchValue = null;
-        }
-            if ($(this).hasClass('partialbtn'))
-            {
-                btnnameglobal = btnName;
-
-            }
-            if ($(this).hasClass('partialbtn')) {
-
-                statusidglobal = statusid;
-
-            }
-       
-        console.log("Button clicked: " + btnnameglobal);
-        
-       
-        console.log("Button clicked: " + statusidglobal);
-        console.log(searchValue);
-        console.log(reqtype);
-      
-            
-        // Make an AJAX request to get the partial view content
 
         $.ajax({
-            url: '@Url.Action("GetPartialView", "Admin")',
-            //url: '/Admin/GetPartialView?btn=' + btnName,
+            url: '/Admin/GetPartialView',
+            data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
             method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
             success: function (data) {
-                console.log("AJAX success");
                 // Replace the content of the btnContent div with the retrieved partial view
                 $("#btnContent").html(data);
-
             },
             error: function () {
                 console.error('Error fetching partial view.');
             }
         });
     }
+    
+    $(document).ready(function () {
+    $('.partialbtn').click(PartialDisplay);
+    $("#dropdown").change(PartialDisplay);
+    $(".searchrequest").click(PartialDisplay);
+    $("#searchInput").keyup(PartialDisplay);
+    
+       
     });
 
-    //$(document).on("click", ".partialbtn", function () {
-    //        var btnName = $(this).data("btn");
-    //        btnnameglobal = btnName;
-    //        console.log("Button clicked: " + btnnameglobal);
-    //        var statusid = $(this).data("id");
-    //        statusidglobal = statusid;
-    //        console.log("Button clicked: " + statusidglobal);
-    //        // Make an AJAX request to get the partial view content
+    $(document).on("click", ".partialbtn", function () {
+            var btnName = $(this).data("btn");
+            btnnameglobal = btnName;
+            console.log("Button clicked: " + btnnameglobal);
+            var statusid = $(this).data("id");
+            statusidglobal = statusid;
+            console.log("Button clicked: " + statusidglobal);
+            // Make an AJAX request to get the partial view content
 
-    //        $.ajax({
-    //            url: '@Url.Action("GetPartialView", "Admin")',
-    //            //url: '/Admin/GetPartialView?btn=' + btnName,
-    //            method: 'GET',
-    //            data: { btnName: btnName, statusid: statusid, currentpage: 1 },
-    //            success: function (data) {
-    //                console.log("AJAX success");
-    //                // Replace the content of the btnContent div with the retrieved partial view
-    //                $("#btnContent").html(data);
+            $.ajax({
+                url: '@Url.Action("GetPartialView", "Admin")',
+                //url: '/Admin/GetPartialView?btn=' + btnName,
+                method: 'GET',
+                data: { btnName: btnName, statusid: statusid, currentpage: 1 },
+                success: function (data) {
+                    console.log("AJAX success");
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#btnContent").html(data);
 
-    //            },
-    //            error: function () {
-    //                console.error('Error fetching partial view.');
-    //            }
-    //        });
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
 
-    //    });
-
+        });
         //$("#dropdown").change(function () {
         //    var dropdown = $(this).val();
 
@@ -408,11 +482,21 @@
    function ModalDisplay () {
         console.log("hi");
         var modalName = $(this).attr('id');
+        var patientname = $(this).data('value1');
+        var requestid = $(this).data('btn');
+        if (!patientname) {
+            patientname = null;
+        }
+        if (typeof requestid === 'undefined') {
+            requestid = 0;
+        }
+
+
         $.ajax({
             url: '@Url.Action("GetModalPartialView", "Admin")',
           
             method: 'GET',
-            data: { modalName: modalName },
+            data: { modalName: modalName, patientname: patientname, requestid: requestid },
             success: function (data) {
                 console.log("AJAX success");
              
@@ -425,9 +509,23 @@
             }
         });
   }
+    
+</script>
+    <script type="text/javascript" >
+        $(function () {
+            $("#btnSubmit").click(function () {
 
-
-
-
+            var clonedTable = $("#btnContent").clone();
+                clonedTable.find("td:nth-last-child(1),td:nth-child(2),thead:nth-last-child(1),thead:nth-child(2)").remove();
+                clonedTable.find(".tablePagination ").remove();
+                clonedTable.find(".note ").remove();
+                clonedTable.find(".action ").remove();
+                $("input[name='GridHtml']").val(clonedTable.html());
+            });
+        });
 
 </script>
+
+
+
+
