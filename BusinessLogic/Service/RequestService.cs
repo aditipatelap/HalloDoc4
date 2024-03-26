@@ -674,7 +674,7 @@ namespace BusinessLogic.Service
             message.To.Add(new System.Net.Mail.MailAddress(email));
             message.Subject = "ReviewAgreement";
             message.IsBodyHtml = true;
-            string link = $"https://localhost:7011/Patient_Site/SendAgreement?requestid={requestid}"+requestid;
+            string link = $"https://localhost:7011/Patient_Site/SendAgreement?requestid={requestid}";
             message.Body =$"Please Accept the agreement. <a href=\"{link}\">ClickHere</a>";
 
             SmtpClient smtp = new SmtpClient();

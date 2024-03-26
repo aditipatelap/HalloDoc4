@@ -28,27 +28,27 @@
             @foreach (var items in Model.Dashboards)
             {
                 var bgcolor = "red";
-                if (items.RequestTypeid == 1)
-                {
-                    bgcolor = "green";
+                    if (items.RequestTypeid == 1)
+                    {
+                        bgcolor = "green";
 
-                }
-                if (items.RequestTypeid == 2)
-                {
-                    bgcolor = "orange";
+                    }
+                    if (items.RequestTypeid == 2)
+                    {
+                        bgcolor = "#f59b42";
 
-                }
-                if (items.RequestTypeid == 3)
-                {
-                    bgcolor = "purple";
+                    }
+                    if (items.RequestTypeid == 3)
+                    {
+                        bgcolor = "purple";
 
-                }
+                    }
 
-                if (items.RequestTypeid == 4)
-                {
-                    bgcolor = "blue";
+                    if (items.RequestTypeid == 4)
+                    {
+                        bgcolor = "#0181f8";
 
-                }
+                    }
                 <tr style="background: @bgcolor" class="text-white">
                     <td>@items.Name</td>
                         <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
@@ -114,7 +114,7 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                    <a class="dropdown-item tablink " id="ViewCase"> <i class="bi bi-journal-text"></i>View Case</a>
+                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid"> <i class="bi bi-journal-text"></i>View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
                                     <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"> <i class="fa-solid fa-upload"></i> View Uploads</a>
@@ -175,52 +175,50 @@ else
     </div>
 </div>
 <script>
-    $('.showmodal').click(ModalDisplay);
-
-    //$("[data-btn='NewPartial'][data-id='1']").click(PartialDisplay);
-    $(".tablink").click(function () {
-            var TabId = $(this).attr("id");
-            var requestid = $(this).data('btn');
-            console.log("vanshita");
-            console.log(statusidglobal)
-            console.log(btnnameglobal);
+  
+    //$(".tablink").click(function () {
+    //        var TabId = $(this).attr("id");
+    //        var requestid = $(this).data('btn');
+    //        console.log("vanshita");
+    //        console.log(statusidglobal)
+    //        console.log(btnnameglobal);
            
-            $.ajax({
-                url: '/Admin/GetTabs',
-                data: { Tabid: TabId ,requestid:requestid,statusid:statusidglobal,btnname:btnnameglobal},
+    //        $.ajax({
+    //            url: '/Admin/GetTabs',
+    //            data: { Tabid: TabId ,requestid:requestid,statusid:statusidglobal,btnname:btnnameglobal},
                
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#TabContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
+    //            method: 'GET',
+    //            success: function (data) {
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#TabContent").html(data);
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+    //    });
    
  
-        console.log("dygdax");
-        $(".custompagination").click(function () {
+        //console.log("dygdax");
+        //$(".custompagination").click(function () {
 
-            var currentpage = $(this).data('page');
-            var btnName = "NewPartial";
-            var statusid = 1;
-            //console.log(requestid);
-            $.ajax({
-                url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
+        //    var currentpage = $(this).data('page');
+        //    var btnName = "NewPartial";
+        //    var statusid = 1;
+        //    //console.log(requestid);
+        //    $.ajax({
+        //        url: '/Admin/GetPartialView',
+        //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
+        //        method: 'GET',
+        //        success: function (data) {
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
         //$("#Dashboard")[0].click();
    
     $('.tabBtn').click(function () {

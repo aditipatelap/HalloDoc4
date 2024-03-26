@@ -9,16 +9,13 @@ namespace HalloDoc.Models;
 [Table("aspnetuserroles")]
 public partial class Aspnetuserrole
 {
-    [Key]
-    [Column("roleid")]
-    [StringLength(128)]
-    public string Roleid { get; set; } = null!;
-
-    [Column("userid")]
-    [StringLength(128)]
+    [Column("userid", TypeName = "character varying")]
     public string Userid { get; set; } = null!;
 
-    [ForeignKey("Userid")]
-    [InverseProperty("Aspnetuserroles")]
-    public virtual Aspnetuser User { get; set; } = null!;
+    [Column("roleid")]
+    public int Roleid { get; set; }
+
+    [Key]
+    [Column("aspnetuserroleid")]
+    public int Aspnetuserroleid { get; set; }
 }

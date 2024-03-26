@@ -36,7 +36,7 @@
                     }
                     if (items.RequestTypeid == 2)
                     {
-                        bgcolor = "orange";
+                        bgcolor = "#f59b42";
 
                     }
                     if (items.RequestTypeid == 3)
@@ -47,7 +47,7 @@
 
                     if (items.RequestTypeid == 4)
                     {
-                        bgcolor = "blue";
+                        bgcolor = "#0181f8";
 
                     }
                       <tr style="background: @bgcolor" class="text-white">
@@ -183,29 +183,30 @@ else
     </div>
 </div>
 <script>
-    $('.showmodal').click(ModalDisplay);
-    $('.custompagination').click(Pagination);
-
+    
    
-        $(".tablink").click(function () {
-            var TabId = $(this).attr("id");
-            var requestid = $(this).data('btn');
-            
-            //var statusid=$(this).data('value1');
-            console.log(requestid);
-            $.ajax({
-                url: '/Admin/GetTabs',
-                data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
-                method: 'GET',
-                success: function (data) {
+   
+        //$(".tablink").click(function () {
+        //    var TabId = $(this).attr("id");
+        //    var requestid = $(this).data('btn');
+        //if (typeof requestid === 'undefined') {
+        //    requestid = 0;
+        //}
+        //    //var statusid=$(this).data('value1');
+        //    //console.log(requestid);
+        //    $.ajax({
+        //        url: '/Admin/GetTabs',
+        //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+        //        method: 'GET',
+        //        success: function (data) {
 
-                    $("#TabContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
+        //            $("#TabContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
        
    
 

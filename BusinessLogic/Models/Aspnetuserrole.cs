@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccess.Models;
+namespace BusinessLogic.Models;
 
 [Table("aspnetuserroles")]
 public partial class Aspnetuserrole
@@ -12,14 +12,10 @@ public partial class Aspnetuserrole
     [Column("userid", TypeName = "character varying")]
     public string Userid { get; set; } = null!;
 
+    [Column("roleid")]
+    public int Roleid { get; set; }
+
     [Key]
     [Column("aspnetuserroleid")]
     public int Aspnetuserroleid { get; set; }
-
-    [Column("roleid", TypeName = "character varying")]
-    public string? Roleid { get; set; }
-
-    [ForeignKey("Userid")]
-    [InverseProperty("Aspnetuserroles")]
-    public virtual Aspnetuser User { get; set; } = null!;
 }

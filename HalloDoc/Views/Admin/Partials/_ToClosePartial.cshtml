@@ -1,5 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+{
 <table class="table table-responsive  m-4 p-3">
     <thead class="table-secondary">
         <tr>
@@ -25,27 +27,27 @@
             @foreach (var items in Model.Dashboards)
             {
                 var bgcolor = "red";
-                if (items.RequestTypeid == 1)
-                {
-                    bgcolor = "green";
+                    if (items.RequestTypeid == 1)
+                    {
+                        bgcolor = "green";
 
-                }
-                if (items.RequestTypeid == 2)
-                {
-                    bgcolor = "orange";
+                    }
+                    if (items.RequestTypeid == 2)
+                    {
+                        bgcolor = "#f59b42";
 
-                }
-                if (items.RequestTypeid == 3)
-                {
-                    bgcolor = "purple";
+                    }
+                    if (items.RequestTypeid == 3)
+                    {
+                        bgcolor = "purple";
 
-                }
+                    }
 
-                if (items.RequestTypeid == 4)
-                {
-                    bgcolor = "blue";
+                    if (items.RequestTypeid == 4)
+                    {
+                        bgcolor = "#0181f8";
 
-                }
+                    }
                 <tr style="background: @bgcolor" class="text-white">
                     <td>@items.Name</td>
                     <td>@items.StrMonth @items.IntDate , @items.IntYear</td>    
@@ -68,13 +70,13 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item tablink" id="ViewCase"> <i class="bi bi-journal-text"></i> View Case</a>
+                                <a class="dropdown-item tablink" id="ViewCase" data-btn="@items.requestid"> <i class="bi bi-journal-text"></i> View Case</a>
                                 <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"><i class="fa-solid fa-upload"></i>View Uplaods</a>
                                 <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"><i class="fa fa-list"></i> View Notes</a>
 
                                 <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid"> <i class="fa fa-shopping-cart"></i>Send Order</a>
 
-                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CloseCase" data-btn="@items.requestid">
+                                <a class="dropdown-item tablink" id="CloseCase" data-btn="@items.requestid">
                                     <i class="bi bi-ban"></i>
                                     Close Case
                                 </a>
@@ -96,6 +98,13 @@
     </tbody>
 
 </table>
+}
+else
+{
+<div class="d-flex justify-content-center align-items-center pt-5">
+    <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+</div>
+}
 <div class="mb-0 fixed-bottom m-4">
     <ul class="pagination align-items-center">
         @if (Model.CurrentPage > 1)
@@ -121,8 +130,8 @@
     </div>
 </div>
 <script>
-    $('.showmodal').click(ModalDisplay);
-    $('.tablink').click(TabLoad);
+   
+   // $('.tablink').click(TabLoad);
     //console.log("jiiii")
     //$('.showmodal').click(function () {
     //    var modalName = $(this).attr('id');
@@ -167,28 +176,50 @@
     //    });
     //    //$("#Dashboard")[0].click();
     //});
-    $(document).ready(function () {
-        console.log("dygdax");
-        $(".custompagination").click(function () {
+    //$(document).ready(function () {
+    //    console.log("dygdax");
+    //    $(".custompagination").click(function () {
 
-            var currentpage = $(this).data('page');
-            var btnName = "ToClose";
-            var statusid = 5;
-            //console.log(requestid);
-            $.ajax({
-                url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        //$("#Dashboard")[0].click();
-    });
+    //        var currentpage = $(this).data('page');
+    //        var btnName = "ToClose";
+    //        var statusid = 5;
+    //        //console.log(requestid);
+    //        $.ajax({
+    //            url: '/Admin/GetPartialView',
+    //            data: { btnName: btnName, statusid: statusid, currentpage: currentpage },
+    //            method: 'GET',
+    //            success: function (data) {
+    //                // Replace the content of the btnContent div with the retrieved partial view
+    //                $("#btnContent").html(data);
+    //            },
+    //            error: function () {
+    //                console.error('Error fetching partial view.');
+    //            }
+    //        });
+    //    });
+    //    //$("#Dashboard")[0].click();
+    //});
+    //$(".tablink").click(function () {
+    //    var TabId = $(this).attr("id");
+    //    var requestid = $(this).data('btn');
+    //    if (typeof requestid === 'undefined') {
+    //        requestid = 0;
+    //    }
+    //    //var statusid=$(this).data('value1');
+    //    //console.log(requestid);
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+    //        method: 'GET',
+    //        success: function (data) {
+
+    //            $("#TabContent").html(data);
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
+
 </script>
 

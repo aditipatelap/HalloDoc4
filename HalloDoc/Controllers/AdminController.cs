@@ -116,6 +116,12 @@ namespace HalloDoc.Controllers
 
                 return PartialView(result);
             }
+            if (Tabid == "CloseCase")
+            {
+                var model = _AdminDash.CloseCaseData(requestid);
+
+                return PartialView(result,model);
+            }
 
             return View();
 
@@ -184,11 +190,7 @@ namespace HalloDoc.Controllers
                
                 return PartialView(partialname);
             }
-            if (modalName == "CloseCase")
-            {
-                var result=_AdminDash.CloseCaseData(requestid);
-                return PartialView(partialname,result);
-            }
+            
             if (modalName == "RequestDTY")
             {
 
@@ -201,6 +203,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public FileResult Export(string GridHtml)
         {
+            _notyf.Custom("Document Downloaded Successfully!", 3, "green", "bi bi-check-circle-fill");
             return File(Encoding.ASCII.GetBytes(GridHtml), "application/vnd.ms-excel", "Grid.xls");
         }
         public FileResult ExportAll(AdminDashboard model)
@@ -209,6 +212,7 @@ namespace HalloDoc.Controllers
             IEnumerable<AdminDash> data = _AdminDash.GetPatientInfoByStatus((int)model.statusid).adminDashes;
             
             excelBytes = fileToExcel(data);
+            _notyf.Custom("Document Downloaded Successfully!", 3, "green", "bi bi-check-circle-fill");
             return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sheet.xlsx");
         }
         public byte[] fileToExcel<T>(IEnumerable<T> data)
@@ -239,14 +243,15 @@ namespace HalloDoc.Controllers
         public IActionResult AssignReq(AdminDashboard model, int requestid)
         {
             _AdminDash.SubmitAssignReq(model, requestid);
-             return RedirectToAction("Index", "Admin");
+            _notyf.Custom("Case Assign Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return RedirectToAction("Index", "Admin");
         }
        
         public IActionResult CancelCaseReq(AdminDashboard model,int requestid)
 
         {
             _AdminDash.submitCancelCase(model, requestid);
-
+            _notyf.Custom("Case Cancelled Successfully!", 3, "green", "bi bi-check-circle-fill");
 
             return RedirectToAction("Index", "Admin");
         }
@@ -256,18 +261,20 @@ namespace HalloDoc.Controllers
         {   
             _AdminDash.SubmitBlockCase(model, requestid);
 
-
+            _notyf.Custom("Case Blocked Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
         public IActionResult TransferReq(AdminDashboard model, int requestid)
         {
             _AdminDash.SubmitTransferReq(model, requestid);
+            _notyf.Custom("Case Transferred Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
         [HttpPost]
         public IActionResult SendOrder(AdminDashboard model, int requestid,string adminname)
         {
             _AdminDash.SendOrderReq(model, requestid,adminname);
+            _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
         public IActionResult GetDropDownofBusinessname(int selectedvalue)
@@ -284,6 +291,7 @@ namespace HalloDoc.Controllers
         public IActionResult SubmitClearCase(AdminDashboard model, int requestid,int adminid)
         {
             _AdminDash.SubmitClearCase(model, requestid,adminid);
+            _notyf.Custom("Case Cleared Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
         public IActionResult ViewUpload()
@@ -294,6 +302,7 @@ namespace HalloDoc.Controllers
         public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
             {
             _AdminDash.EditViewCaseData(model, requestid);
+            _notyf.Custom("Data Saved Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
 
 
@@ -308,6 +317,7 @@ namespace HalloDoc.Controllers
         public IActionResult SendAgreement(string email, int requestid)
         {
             _requestInterface.SendMailService(email,requestid);
+            _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
 
             return RedirectToAction("Index", "Admin");
         }
@@ -324,6 +334,7 @@ namespace HalloDoc.Controllers
         
         {
             _AdminDash.PostViewNotes(model);
+            //_notyf.Custom("Notes Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
             return Json(new { success = true });
             //return RedirectToAction("GetTabs", new { Tabid = "ViewNotes", requestid = requestid, statusid = 0, btnname = 0 });
         }

@@ -105,31 +105,18 @@
 
 //load dashboard and tabs
     $(document).ready(function () {
-        
-        $(".tablink").click(function () {
-            var TabId = $(this).attr("id");
-            tabidglobal=TabId;
-            $.ajax({
-                url: '/Admin/GetTabs',
-                data: { Tabid: TabId },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#TabContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        });
-        $("#Dashboard").click();
-    });
+        $("#Dashboard")[0].click();
+     });
     function TabLoad(){
         var TabId = $(this).attr("id");
+        var requestid = $(this).data('btn');
+        if (typeof requestid === 'undefined') {
+            requestid = 0;
+        }
         tabidglobal = TabId;
         $.ajax({
             url: '/Admin/GetTabs',
-            data: { Tabid: TabId },
+            data: { Tabid: TabId,requestid:requestid },
             method: 'GET',
             success: function (data) {
                 // Replace the content of the btnContent div with the retrieved partial view
@@ -139,8 +126,11 @@
                 console.error('Error fetching partial view.');
             }
         });
-        $('.tablink').click(TabLoad);
-
-
+    
     }
+    $(document).on('click', '.tablink', TabLoad);
+
+
+
+   
     </script>

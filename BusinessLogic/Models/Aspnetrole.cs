@@ -4,16 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace HalloDoc.Models;
+namespace BusinessLogic.Models;
 
-[Table("casetag")]
-public partial class Casetag
+[Table("aspnetroles")]
+public partial class Aspnetrole
 {
     [Key]
-    [Column("casetagid")]
-    public int Casetagid { get; set; }
+    [Column("id")]
+    [StringLength(128)]
+    public string Id { get; set; } = null!;
 
     [Column("name")]
-    [StringLength(50)]
+    [StringLength(256)]
     public string Name { get; set; } = null!;
 }

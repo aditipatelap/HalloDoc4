@@ -437,8 +437,23 @@ namespace BusinessLogic.Service
         //    //};
         //    return orders;
         //}
+        //public AdminDashboard GetBusinessDetails(int selectedvalue)
+        //{
+
+        //    var items = _db.Healthprofessionals.Where(x => x.Vendorid == selectedvalue).Select(m => new SendOrders
+        //    {
+        //        FaxNumber = m.Faxnumber,
+        //        BusinessContact = m.Businesscontact,
+        //        Email = m.Email
+        //    }).FirstOrDefault();
+        //    AdminDashboard model = new AdminDashboard();
+        //    model.sendorder = items;
+
+        //    return model;
+        //}
         public Healthprofessional GetBusinessDetails(int selectedvalue)
         {
+
             Healthprofessional businessDetails = _db.Healthprofessionals.First(x => x.Vendorid == selectedvalue);
 
             return businessDetails;
@@ -615,7 +630,7 @@ namespace BusinessLogic.Service
             }
         
         public void PostViewNotes( AdminDashboard model)
-        {
+            {
             
           
                 var data = _db.Requestnotes.FirstOrDefault(x => x.Requestid == model.requestid);
@@ -976,10 +991,11 @@ namespace BusinessLogic.Service
                       .Select(req => new CloseCaseModel
                       {
                           //req = RequestID,
-                          ConfirmationNo = req.Address.Substring(0, 2) + req.Intdate.ToString() + req.Strmonth + req.Intyear.ToString() + req.Lastname.Substring(0, 2) + req.Firstname.Substring(0, 2) + "002",
+                          //ConfirmationNo = req.Address.Substring(0, 2) + req.Intdate.ToString() + req.Strmonth + req.Intyear.ToString() + req.Lastname.Substring(0, 2) + req.Firstname.Substring(0, 2) + "002",
+                          ConfirmationNo = req.Request.Confirmationnumber,
                           FirstName = req.Firstname,
                           LastName = req.Lastname,
-                          DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
+                          //DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
                           PhoneNumber = req.Phonenumber,
                           Email = req.Email,
                       }).FirstOrDefault();

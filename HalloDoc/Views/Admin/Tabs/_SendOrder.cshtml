@@ -132,7 +132,7 @@
 </script>*@
 <script>
     $('#Profession').on('change', function () {
-        debugger;
+      
         var selectedvalue = $('option:selected', this).val();
         console.log(selectedvalue)
         $('#FaxNumber').val('');
@@ -172,9 +172,11 @@
             data: {
                 selectedvalue: selectedvalue,
             },
+            //dataType:'json',
             success: function (result) {
                 console.log(result);
                 $('#FaxNumber').val(result["faxnumber"]);
+                //$('#FaxNumber').val(result.sendorder.FaxNumber);
                 $('#Contact').val(result["  "]);
                 $('#Email').val(result["email"]);
 

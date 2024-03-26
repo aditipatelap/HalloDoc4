@@ -127,14 +127,14 @@ namespace HalloDoc.Controllers
         {
             //if (ModelState.IsValid)
             //{
-                //var user = _aspNetUsersServices.Login(loginModel);
-                var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
-                if (user == null)
-                {
-                    _notyf.Custom("Invalid Email", 3, "red", "bi bi-x-circle-fill");
-                    return View();
-                }
-                else
+            //var user = _aspNetUsersServices.Login(loginModel);
+            var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+            if (user == null)
+            {
+                _notyf.Custom("Invalid Email", 3, "red", "bi bi-x-circle-fill");
+                return View();
+            }
+            else
                 {
                     /* if (user.Aspnetuserroles.FirstOrDefault().Roleid == "3")
                      {
