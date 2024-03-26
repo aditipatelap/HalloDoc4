@@ -1,0 +1,31 @@
+﻿﻿﻿﻿@using DataAccess.ViewModel;
+@model AdminDashboard;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+            <div class="modal-header  bg-info text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Request Support</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method=post asp-action="BlockCase" asp-controller="Admin">
+                <input type="hidden" value="" id="RequestID_ModelBlockCase" name="RequestId" />
+                <div class="modal-body">
+                    <p>
+                        <small>
+                            To all unscheduled physician: We are short on coverage and needs
+                            additional support on call to respond to request.
+                        </small>
+                    </p>
+                    <div class="form-floating mb-3">
+                        <textarea id="changenote" rows="4" name="Notes" class="input-outline w-100 h-100 fs-6 form-control shadow-none" type="text" required></textarea>
+                        <label class="inputs-lable fs-6" for="changenote">Message</label>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class=" btn btn-info text-white">Send</button>
+                    <a class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

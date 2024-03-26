@@ -114,26 +114,28 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item tablink " id="ViewCase" >View Case</a>
+                                    <a class="dropdown-item tablink " id="ViewCase"> <i class="bi bi-journal-text"></i>View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
-                                    <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid">View Uploads</a>
-                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">View Notes</a>
+                                    <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"> <i class="fa-solid fa-upload"></i> View Uploads</a>
+                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">  <i class="fa fa-list"></i> View Notes</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-journals"></i>
                                    Transfer Request
                                 </a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="ClearCase" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-ban"></i>
                                     Clear Case
                                 </a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="SendAgreement" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
-                                    Send Agreement
+                                        <i class="fa fa-paper-plane"></i>
+                                        Send Agreement
                                 </a>
                             </div>
                         </div>
                     </td>
+
+
 
                 </tr>
             }

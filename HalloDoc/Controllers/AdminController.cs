@@ -186,6 +186,11 @@ namespace HalloDoc.Controllers
             }
             if (modalName == "CloseCase")
             {
+                var result=_AdminDash.CloseCaseData(requestid);
+                return PartialView(partialname,result);
+            }
+            if (modalName == "RequestDTY")
+            {
 
                 return PartialView(partialname);
             }
@@ -405,22 +410,50 @@ namespace HalloDoc.Controllers
             }
 
         }
-          /****close case**********/
-  //[HttpPost]
-  //      public JsonResult CloseCaseDataPost(AdminDashboard model)
-  //      {
-  //          _AdminDash.CloseCaseDataPost(model);
-  //          return Json(new { success = true });
-  //      }
+        /****close case**********/
+        //[HttpPost]
+        //      public JsonResult CloseCaseDataPost(AdminDashboard model)
+        //      {
+        //          _AdminDash.CloseCaseDataPost(model);
+        //          return Json(new { success = true });
+        //      }
 
-  //      [HttpPost]
-  //      public IActionResult CloseTheCase(int reqid)
-  //      {
-  //          _AdminDash.CloseTheCase(reqid);
-  //          _notyf.Custom("Case CLosed Successfully!!", 3, "deepskyblue", "bi bi-check2");
-  //          string url = Url.Action("Dashboard", "Admin");
-  //          return Json(new { url });
-  //      }
+        //      [HttpPost]
+        //      public IActionResult CloseTheCase(int reqid)
+        //      {
+        //          _AdminDash.CloseTheCase(reqid);
+        //          _notyf.Custom("Case CLosed Successfully!!", 3, "deepskyblue", "bi bi-check2");
+        //          string url = Url.Action("Dashboard", "Admin");
+        //          return Json(new { url });
+        //      }
+        public IActionResult EditCloseCase(AdminDashboard vc, int requestid)
+        {
+            bool result = _AdminDash.EditCloseCase(vc, requestid);
+            if (result)
+            {
+                _notyf.Success("Case Edited Successfully..");
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                _notyf.Error("Case Not Edited...");
+                return RedirectToAction("Index");
+            }
+        }
+        public IActionResult CloseCaseUnpaid(int RequestID)
+        {
+            bool result = _AdminDash.CloseCase(RequestID);
+            if (result)
+            {
+                _notyf.Success("Case Closed...");
+                _notyf.Information("You can see Closed case in unpaid State...");
+            }
+            else
+            {
+                _notyf.Error("there is some error in CloseCase...");
+            }
+            return RedirectToAction("Index", "Admin");
+        }
 
     }
 }

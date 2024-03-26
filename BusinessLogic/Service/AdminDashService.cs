@@ -1,8 +1,10 @@
 ﻿using BusinessLogic.Interface;
+
 using ClosedXML.Excel;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -107,7 +109,7 @@ namespace BusinessLogic.Service
             var dashboard = (from Request in _db.Requests
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
-                             where id.Contains(Request.Status) && Request.Isdeleted == false &&
+                             where id.Contains(Request.Status) /*&& Request.Isdeleted == false*/ &&
                              (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
                           (searchValue == null || Requestclient.Firstname.Contains(searchValue) || Requestclient.Lastname.Contains(searchValue) || Request.Firstname.Contains(searchValue) || Request.Lastname.Contains(searchValue)) &&
                           (reqtype == 0 || Request.Requesttypeid == reqtype)
@@ -132,7 +134,7 @@ namespace BusinessLogic.Service
 
                
             int totalrecords = dashboard.Count();
-            int pagesize = 1;
+            int pagesize = 5;
             int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 
@@ -884,7 +886,7 @@ namespace BusinessLogic.Service
 
             if (isEmailSent == "true")
             {
-                var emailLog = new Emaillog
+                var emailLog = new DataAccess.Models.Emaillog
                 {
                     Emailtemplate = EmailTemplate,
                     Subjectname = SubjectName,
@@ -910,38 +912,38 @@ namespace BusinessLogic.Service
             }
             else { return false; }
         }
-         /***close case*********/
-   //public AdminDashboard CloseCaseData(int reqid)
-   //     {
-   //         var items = _db.Requestwisefiles.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(m => new ViewUpload
-   //         {
-   //             CreatedDate = m.Createddate,
-   //             FileName = m.Filename,
-   //             Month = (Month)m.Createddate.Month,
-   //             UploaderName = m.Request.Firstname + " " + m.Request.Lastname,
+        /***close case*********/
+        //public AdminDashboard CloseCaseData(int reqid)
+        //     {
+        //         var items = _db.Requestwisefiles.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(m => new ViewUpload
+        //         {
+        //             CreatedDate = m.Createddate,
+        //             FileName = m.Filename,
+        //             Month = (Month)m.Createddate.Month,
+        //             UploaderName = m.Request.Firstname + " " + m.Request.Lastname,
 
-   //         }).ToList();
+        //         }).ToList();
 
-   //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCaseModel
-   //         {
-   //             FirstName = x.Firstname,
-   //             LastName = x.Lastname,
-   //             DOB = Convert.ToDateTime(x.Intdate.ToString() + "-" + x.Strmonth + "-" + x.Intyear.ToString()),
-   //             PhoneNumber = x.Phonenumber,
-   //             Email = x.Email,
-   //             ConfirmationNo = x.Request.Confirmationnumber,
-   //         }).FirstOrDefault();
+        //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCaseModel
+        //         {
+        //             FirstName = x.Firstname,
+        //             LastName = x.Lastname,
+        //             DOB = Convert.ToDateTime(x.Intdate.ToString() + "-" + x.Strmonth + "-" + x.Intyear.ToString()),
+        //             PhoneNumber = x.Phonenumber,
+        //             Email = x.Email,
+        //             ConfirmationNo = x.Request.Confirmationnumber,
+        //         }).FirstOrDefault();
 
 
-   //         AdminDashboard model = new AdminDashboard();
-   //         model.ViewUpload = items;
-   //         model.CloseCaseModel = data;
-   //         model.UserName = data.FirstName + " " + data.LastName;
-   //         model.ConfirmationNo = data.ConfirmationNo;
-   //         model.requestid = reqid;
+        //         AdminDashboard model = new AdminDashboard();
+        //         model.ViewUpload = items;
+        //         model.CloseCaseModel = data;
+        //         model.UserName = data.FirstName + " " + data.LastName;
+        //         model.ConfirmationNo = data.ConfirmationNo;
+        //         model.requestid = reqid;
 
-   //         return model;
-   //     }
+        //         return model;
+        //     }
 
         //public void CloseCaseDataPost(AdminDashboard model)
         //{
@@ -964,7 +966,82 @@ namespace BusinessLogic.Service
         //    }
         //}
 
+        public AdminDashboard CloseCaseData(int RequestID)
+        {
 
+            //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCase
+            var list =
+                       _db.Requestclients.Include(req => req.Request)
+                      .Where(req => req.Requestid == RequestID)
+                      .Select(req => new CloseCaseModel
+                      {
+                          //req = RequestID,
+                          ConfirmationNo = req.Address.Substring(0, 2) + req.Intdate.ToString() + req.Strmonth + req.Intyear.ToString() + req.Lastname.Substring(0, 2) + req.Firstname.Substring(0, 2) + "002",
+                          FirstName = req.Firstname,
+                          LastName = req.Lastname,
+                          DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
+                          PhoneNumber = req.Phonenumber,
+                          Email = req.Email,
+                      }).FirstOrDefault();
+           var items = _db.Requestwisefiles
+                     .Where(r => r.Requestid == RequestID && r.Isdeleted == new BitArray(1))
+                     .OrderByDescending(x => x.Createddate)
+                     .Select(r => new ViewUpload
+                     {
+                         CreatedDate = r.Createddate,
+                         FileName = r.Filename,
+                         // = r.Requestwisefileid,
+                         Requestid = r.Requestid
+
+                     }).ToList();
+        
+            AdminDashboard model = new AdminDashboard();
+            model.ViewUpload = items;
+            model.CloseCaseModel = list;
+            model.UserName = list.FirstName + " " + list.LastName;
+            model.ConfirmationNo = list.ConfirmationNo;
+            model.requestid = RequestID;
+
+            return model;
+        }
+        public bool EditCloseCase(AdminDashboard vp, int RequestID)
+        {
+            var userToUpdate = _db.Requestclients.FirstOrDefault(x => x.Requestid == RequestID); ;
+            if (userToUpdate != null)
+            {
+                userToUpdate.Phonenumber = vp.CloseCaseModel.PhoneNumber;
+                userToUpdate.Email = vp.CloseCaseModel.Email;
+                _db.Update(userToUpdate);
+                _db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool CloseCase(int RequestID)
+        {
+             var requestData = _db.Requests.FirstOrDefault(e => e.Requestid == RequestID);
+                if (requestData != null)
+                {
+                    requestData.Status = 9;
+                    _db.Requests.Update(requestData);
+                    _db.SaveChanges();
+                    Requeststatuslog rsl = new Requeststatuslog();
+                    rsl.Requestid = RequestID;
+                    rsl.Createddate = DateTime.Now;
+                    rsl.Status = 9;
+                    _db.Requeststatuslogs.Add(rsl);
+                    _db.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+           
+        }
 
     }
 }

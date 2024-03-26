@@ -53,7 +53,9 @@ namespace BusinessLogic.Interface
         public bool VerifyAddress(string city);
         //public void CloseCaseDataPost(AdminDashboard model);
         //public void CloseTheCase(int reqid);
-
+        public AdminDashboard CloseCaseData(int RequestID);
+        public bool EditCloseCase(AdminDashboard vp, int RequestID);
+        public bool CloseCase(int RequestID);
 
         }
 }

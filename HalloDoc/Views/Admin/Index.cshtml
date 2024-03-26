@@ -124,4 +124,23 @@
         });
         $("#Dashboard").click();
     });
+    function TabLoad(){
+        var TabId = $(this).attr("id");
+        tabidglobal = TabId;
+        $.ajax({
+            url: '/Admin/GetTabs',
+            data: { Tabid: TabId },
+            method: 'GET',
+            success: function (data) {
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#TabContent").html(data);
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+        $('.tablink').click(TabLoad);
+
+
+    }
     </script>

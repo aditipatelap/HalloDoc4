@@ -7,16 +7,16 @@
     <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
-<div class="modal-body m-auto">
-    <div class="mb-3 text-secondary">
-        <p class="text-info fw-bold ">Patient Name: @Model.patientname</p>
+<div class="modal-body ">
+    <div class="mb-3 text-info fw-bold">
+       Patient Name: @Model.patientname
     </div>
     <form action='@Url.Action("CancelCaseReq", "Admin",new {requestid=Model.requestid})' method="POST" enctype="multipart/form-data">
     <div class="dropdown my-3  ">
         <select class="form-select" id="regionName" asp-for="cancelreq.reason" aria-label="Floating label select example">
             @if (Model.Caserequest != null)
             {
-                <option disabled selected style="display:none">Reasons for cancellation</option>
+                    <option disabled selected style="display:none">Reasons for cancellation<span class="text-danger">*</span></option>
                 @foreach (var item in Model.Caserequest)
                 {
                         <span class="text-danger"> *</span>

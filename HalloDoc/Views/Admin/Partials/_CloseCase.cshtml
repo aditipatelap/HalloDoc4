@@ -1,0 +1,96 @@
+﻿﻿@using DataAccess.ViewModel;
+@model AdminDashboard;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<div class="container  " id="Tab1">
+    <div class="d-flex justify-content-between align-items-center py-4">
+        <h4><b>Close Case </b></h4>
+        <div class=" btn">
+            <a asp-action="Index" asp-controller="Admin" class=" border border-info rounded p-1 m-1 "><i class="fa fa-angle-left p-2 fa-sm text-info"> Back</i> </a>
+        </div>
+    </div>
+    <div class="reqform p-3 text-secondary">
+        <h5>Patient name</h5>
+        <span class="d-flex align-items-center">
+            <h4 class="Patient-name text-info"> @Model.UserName</h4>
+            <span class="mx-2 ">(@Model.ConfirmationNo)</span>
+        </span>
+        <div class="container-fluid">
+            <div class=" d-flex justify-content-between align-items-center">
+                <h5 class="text-black"><b>Documents </b> </h5>
+            </div>
+            <table class="table m-0">
+                <thead>
+                    <tr class="table-secondary">
+                        <th scope="col" class="table-text-header">Document Name</th>
+                        <th scope="col" class="table-text-header">Upload date</th>
+                        <th scope="col" class="table-text-header">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in Model.ViewUpload)
+                    {
+                        <tr>
+                            <td class="table-text ">@item2.FileName</td>
+
+                            <td class="table-text ">@item2.CreatedDate</td>
+                            <td class="table-text">
+                                <a class="btn btn-sm btn-outline-info mx-2 download-link document-button" download href="/Upload/@item2.FileName">
+                                    <i class="fa fa-cloud-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <form class="sbox mt-2 p-3" method="post ">
+            <input type="hidden" asp-for="requestid" class="inputs" />
+            <h5 class="text-black"><b>Patient Information</b></h5>
+            <div class="row">
+                <div class="mb-3 col-lg-6 form-floating">
+                    <input asp-for="CloseCaseModel.FirstName" type="text" class="form-control" placeholder="First Name" disabled>
+                    <label for="FirstName" class="form-label">First Name</label>
+
+                </div>
+                <div class="mb-3 col-lg-6 form-floating">
+                    <input type="text" asp-for="CloseCaseModel.LastName" class="form-control" placeholder="last Name" disabled>
+                    <label for="LastName" class="form-label">Last Name</label>
+                </div>
+                <div class="mb-3 col-lg-6 form-floating">
+                    <input type="date" asp-for="CloseCaseModel.Dob" class="form-control" id="Date" disabled>
+                    <label class="form-label" for="Date">Date of Birth</label>
+                </div>
+                <div class="mb-3 col-lg-5 form-floating phone">
+                    <input type="tel" asp-for="CloseCaseModel.PhoneNumber" class="form-control shadow-none" id="phone" disabled>
+                </div>
+                <div class="mb-3 col-lg-1 form-floating">
+                    <a class=" border border-info rounded p-3 ">
+                        <i class=" fa fa-phone mt-4 fa-lg text-info"> </i>
+                    </a>
+                </div>
+                <div class="mb-3 col-lg-6 form-floating">
+                    <input type="email" asp-for="Email" class="form-control" id="email" placeholder="abc@email.com"
+                           aria-describedby="emailHelp" disabled>
+                    <label for="email" class="form-label">E-mail</label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <a id="editprofile" onclick="enable_disable()" class=" btn btn-info text-white rounded px-3 py-2 me-2">Edit</a>
+                    <input type="submit" asp-action="EditCloseCase" asp-controller="Admin" id="submit" class=" btn bg-info text-white rounded px-3 py-2 me-2" value="Save" style="display: none;">
+                    <button asp-action="CloseCaseUnpaid" asp-controller="Admin" class="btn btn-outline-info px-3 py-1 rounded me-2">Close Case</button>
+                </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    function enable_disable() {
+        $("#email").removeAttr('disabled');
+        $("#phone").removeAttr('disabled');
+        $("#submit").css("display", "block");
+        $("#editprofile").css("display", "none");
+    }
+</script>

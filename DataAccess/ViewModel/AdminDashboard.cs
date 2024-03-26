@@ -65,6 +65,8 @@ namespace DataAccess.ViewModel
         public string Description { get; set; }
         [Required(ErrorMessage = "Enter physician name")]
         public string physicianname { get; set; }
+        [Required(ErrorMessage = "The field is required")]
+        public string RegionItems { get; set; }
 
     }
     public class CancelReq
@@ -182,14 +184,19 @@ namespace DataAccess.ViewModel
         }
     public class CreateReqquestModel
     {
+        [Required(ErrorMessage = "this field is required")]
         public string? FirstName { get; set; }
+        [Required(ErrorMessage = "this field is required")]
         public string? LastName { get; set; }
         public DateTime DOB { get; set; }
+        [Required(ErrorMessage = "this field is required")]
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
-        
+        [Required(ErrorMessage = "this field is required")]
         public string? Street { get; set; }
+        [Required(ErrorMessage = "this field is required")]
         public string? City { get; set; }
+        [Required(ErrorMessage = "this field is required")]
         public string? State { get; set; }
         public string? ZipCode { get; set; }
         public string? Notes { get; set;}
@@ -204,6 +211,8 @@ namespace DataAccess.ViewModel
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string ConfirmationNo { get; set; }
+        public DateTime Dob { get; set; }
+        public List<Requestwisefile> documents{get;set;}
     }
 
     public class AdminDashboard

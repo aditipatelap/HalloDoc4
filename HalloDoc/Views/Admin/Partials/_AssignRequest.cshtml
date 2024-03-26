@@ -1,5 +1,8 @@
 ﻿@using DataAccess.ViewModel
 @model AdminDashboard
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class="modal-header bg-info ">
@@ -11,8 +14,8 @@
         To assign this request, search and select  another Physician.
     </div>
     <form method="post" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
-    <div class="dropdown my-3  ">
-        <select class="form-select" id="regionName" aria-label="Floating label select example"required >
+    @* <div class="dropdown my-3  ">
+            <select class="form-select" id="regionName"  aria-label="Floating label select example" required>
                 
             @if (Model.Regions != null)
             {
@@ -27,8 +30,21 @@
                 }
             }
         </select>
-            @Html.ValidationMessageFor(Model=>Model.Regions,"",new{@class="text-danger"})
-    </div>
+          
+    </div> *@
+        <div class="dropdown my-3">
+            <select class="form-select" id="regionName" asp-for="@Model.assignreq.RegionItems" aria-label="Floating label select example" required>
+                <option value="" selected disabled hidden>Narrow Down Region Name <span class="text-danger">*</span></option>
+                @if (Model.Regions != null)
+                {
+                    foreach (var item in Model.Regions)
+                    {
+                        <option value="@item.Regionid">@item.Name</option>
+                    }
+                }
+            </select>
+            @Html.ValidationMessageFor(Model => Model.assignreq.RegionItems, "", new { @class = "text-danger" })
+        </div>
     <div class="dropdown my-3  ">
         <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>
 
@@ -86,3 +102,17 @@
 
     });
 </script>
+@* <script>
+    $(document).ready(function () {
+        $('#regionName').on('change', function () {
+            var selectedRegion = $(this).val();
+            if (!selectedRegion) {
+                $('#regionName').addClass('is-invalid');
+                $('#regionName-error').text('Please select a region.');
+            } else {
+                $('#regionName').removeClass('is-invalid');
+                $('#regionName-error').text('');
+            }
+        });
+    });
+</script> *@

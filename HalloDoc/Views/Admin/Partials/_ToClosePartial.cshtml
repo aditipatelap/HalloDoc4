@@ -68,18 +68,24 @@
                                 Action
                             </button>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">View Case</a>
-                                <a class="dropdown-item" href="#">View Uplaods</a>
-                                <a class="dropdown-item" href="#">View Notes</a>
-                                <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid">Send Order</a>
+                                <a class="dropdown-item tablink" id="ViewCase"> <i class="bi bi-journal-text"></i> View Case</a>
+                                <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"><i class="fa-solid fa-upload"></i>View Uplaods</a>
+                                <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"><i class="fa fa-list"></i> View Notes</a>
 
-                                <a class="dropdown-item" href="#">Close case</a>
-                                <a class="dropdown-item" href="#">Doctors Note</a>
+                                <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid"> <i class="fa fa-shopping-cart"></i>Send Order</a>
+
+                                <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CloseCase" data-btn="@items.requestid">
+                                    <i class="bi bi-ban"></i>
+                                    Close Case
+                                </a>
+                                <a class="dropdown-item" href="#"><i class="fa fa-id-badge"></i>Doctors Note</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="ClearCase" data-btn="@items.requestid">
-                                    <i class="bi bi-x-circle"></i>
+                                    <i class="fa-regular fa-circle-xmark"></i>
                                     Clear Case
                                 </a>
-                                <a class="dropdown-item" href="#">Encounter</a>
+                                <a class="dropdown-item tablink" id="EncounterForm" data-btn="@items.requestid"><i class="fa-regular fa-rectangle-list"></i> Encounter</a>
+
+
                             </div>
                         </div>
                     </td>
@@ -115,6 +121,8 @@
     </div>
 </div>
 <script>
+    $('.showmodal').click(ModalDisplay);
+    $('.tablink').click(TabLoad);
     //console.log("jiiii")
     //$('.showmodal').click(function () {
     //    var modalName = $(this).attr('id');
@@ -164,8 +172,8 @@
         $(".custompagination").click(function () {
 
             var currentpage = $(this).data('page');
-            var btnName = "NewPartial";
-            var statusid = 1;
+            var btnName = "ToClose";
+            var statusid = 5;
             //console.log(requestid);
             $.ajax({
                 url: '/Admin/GetPartialView',

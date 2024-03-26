@@ -126,19 +126,19 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
-                                        <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-journals"></i>
                                         Assign Case
                                     </a>
                                     @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
                                     <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid" data-value1="@items.Name">
-                                        <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-journal-text"></i>
                                         Cancel Case
                                     </a>
-                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" data-value1="@Model.ConfirmationNo">View Case</a>
-                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">View Notes</a>
+                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" data-value1="@Model.ConfirmationNo"> <i class="fa fa-list"></i>View Case</a>
+                                    <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"> <i class="fa fa-list"></i>View Notes</a>
 
                                     <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
-                                        <i class="bi bi-x-circle"></i>
+                                        <i class="bi bi-ban"></i>
                                         Block Case
                                     </button>
                                 </div>
