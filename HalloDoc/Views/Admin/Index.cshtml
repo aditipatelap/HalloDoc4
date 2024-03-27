@@ -44,9 +44,19 @@
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="Providers"> Providers</a>
+                <li class="dropdown show">
+                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Providers
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item  tablink" href="#" id="Providers">Provider</a>
+                        <a class="dropdown-item" href="#">Scheduling</a>
+                        <a class="dropdown-item" href="#">Invoicing</a>
+                    </div>
                 </li>
+                @*<li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Providers"> Providers</a>
+                </li>*@
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="Partners"> Partners</a>
                 </li>
@@ -74,6 +84,8 @@
 
 <script>
     var tabidglobal;
+    var statusidglobal;
+    var btnnameglobal;
     document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll(".nav-link");
 
@@ -103,6 +115,7 @@
         navLinks[0].style.color = "deepskyblue";
     });
 
+    ////********************dashboard********************* */
 //load dashboard and tabs
     $(document).ready(function () {
         $("#Dashboard")[0].click();
@@ -110,13 +123,34 @@
     function TabLoad(){
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
+        var physicianid=$(this).data('id');
+      
         if (typeof requestid === 'undefined') {
             requestid = 0;
         }
+        if (typeof btnname === 'undefined') {
+            btnname = null;
+        }
+        if (typeof statusid === 'undefined') {
+            statusid = 0;
+        }
+        if (typeof physicianid === 'undefined') {
+            physicianid = 0;
+        }
         tabidglobal = TabId;
+        var payload={
+           
+            tabid: TabId,
+            requestid: requestid,
+            physicianid:physicianid,
+           
+
+          
+        };
         $.ajax({
             url: '/Admin/GetTabs',
-            data: { Tabid: TabId,requestid:requestid },
+            data: payload,
+
             method: 'GET',
             success: function (data) {
                 // Replace the content of the btnContent div with the retrieved partial view
@@ -128,9 +162,169 @@
         });
     
     }
+    function PartialDisplay() {
+       
+        /*******traingle******* */
+        $('.partialbtn').removeClass('active');
+        $(this).addClass('active');
+        $('.triangle-down').hide();
+        $(this).parent().find('.triangle-down').show();
+        /********new pending nd all*****/
+        var tabId = $(this).data('id');
+        console.log(tabId);
+        if (tabId == 1) {
+            var tabId = "(NEW)";
+            $('#status').css('font-weight', 'bold').css('color', 'darkblue');
+        }
+        else if (tabId == 2) {
+            var tabId = "(PENDING)";
+            $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
+        }
+        else if (tabId == 3) {
+            var tabId = "(ACTIVE)";
+            $('#status').css('font-weight', 'bold').css('color', 'green');
+        }
+        else if (tabId == 6) {
+            var tabId = "(CONCLUDE)";
+            $('#status').css('font-weight', 'bold').css('color', '#912261');
+
+        }
+        else if (tabId == 5) {
+            var tabId = "(TO CLOSE)";
+            $('#status').css('font-weight', 'bold').css('color', '#0181f8');
+        }
+        else if (tabId == 9) {
+            var tabId = "(UNPAID)";
+            $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
+
+        }
+        $('#status').text(tabId);
+
+        /******search and all */
+        var dropdown = document.getElementById('dropdown').value;
+        var btnName = $(this).data("btn");
+        var statusid = $(this).data("id");
+        var reqtype = $(this).data('btn1');
+        var searchValue = document.getElementById('searchInput').value;
+        if (typeof reqtype === 'undefined') {
+            reqtype = 0;
+        }
+        if (!searchValue) {
+            searchValue = null;
+        }
+        if (!dropdown) {
+            dropdown = null;
+        }
+        if ($(this).hasClass('partialbtn')) {
+            btnnameglobal = btnName;
+
+        }
+        if ($(this).hasClass('partialbtn')) {
+
+            statusidglobal = statusid;
+            $("#hidden").val(statusidglobal);
+
+        }
+
+        console.log("Button clicked: " + btnnameglobal);
+
+
+        console.log("Button clicked: " + statusidglobal);
+        console.log(searchValue);
+        console.log(reqtype);
+        console.log(dropdown);
+
+
+        // Make an AJAX request to get the partial view content
+
+        $.ajax({
+            url: '@Url.Action("GetPartialView", "Admin")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+            data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#btnContent").html(data);
+                //$(document).off("click", ".partialbtn", PartialDisplay);
+
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    }
     $(document).on('click', '.tablink', TabLoad);
 
+    function Pagination() {
+        var currentpage = $(this).data('page');
+        var btnName = "NewPartial";
+        var statusid = 1;
+        var searchvalue = $("#searchInput").val();
+        //console.log(requestid);
 
 
+        $.ajax({
+            url: '/Admin/GetPartialView',
+            data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
+            method: 'GET',
+            success: function (data) {
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#btnContent").html(data);
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    }
+    $(document).on('click', '.showmodal', ModalDisplay);
    
+    $(document).on('click', '.partialbtn', PartialDisplay);
+    $(document).on('change', '#dropdown', PartialDisplay);
+    $(document).on('click', '.searchrequest', PartialDisplay);
+    $(document).on('keyup', '#searchInput', PartialDisplay);
+    $(document).on('click', '.custompagination', Pagination);
+
+    function ModalDisplay() {
+        console.log("vidihiiiiiiiiiiiiii")
+        var modalName = $(this).attr('id');
+        var patientname = $(this).data('value1');
+        var requestid = $(this).data('btn');
+
+        if (!patientname) {
+            patientname = null;
+        }
+
+        if (typeof requestid === 'undefined') {
+            requestid = 0;
+        }
+
+        $.ajax({
+            url: '@Url.Action("GetModalPartialView", "Admin")',
+            method: 'GET',
+            data: { modalName: modalName, patientname: patientname, requestid: requestid },
+            success: function (data) {
+                console.log("AJAX success");
+
+                $('.modelbody').html(data);
+                //$('#' + modalName).modal('show');
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+/****************providers****************** */
+
+
+
     </script>

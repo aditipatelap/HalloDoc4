@@ -30,8 +30,9 @@ namespace HalloDoc.Controllers
         private readonly INotyfService _notyf;
         private readonly IRequestInterface _requestInterface;
         private readonly ILoginInterface _loginInterface;
+        private readonly IProviderService _providerService;
         public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,
-            IRequestInterface requestInterface,ILoginInterface loginInterface)
+            IRequestInterface requestInterface,ILoginInterface loginInterface,IProviderService providerService)
         {
             _db = db;
             _AdminDash = adminDash;
@@ -39,6 +40,7 @@ namespace HalloDoc.Controllers
             _notyf = notyf;
             _requestInterface= requestInterface;
             _loginInterface = loginInterface;
+           _providerService = providerService;
         }
        
        
@@ -47,80 +49,86 @@ namespace HalloDoc.Controllers
             return View(model);
         }
 
-        public IActionResult GetTabs(string Tabid,int requestid,int statusid,string btnname, string patientname, string confirmationno, string email)
+        public IActionResult GetTabs(AdminDashboard model,int statusid,string btnname, string patientname, string confirmationno, string email)
         {
-            var result ="Tabs/"+ "_" + Tabid;
+            var result ="Tabs/"+ "_" + model.tabid;
            string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
-            if (Tabid=="Dashboard")
+            if (model.tabid == "Dashboard")
             {
                 var req = _AdminDash.RequestCount();
 
                 return PartialView(result,req);
             }
-            if(Tabid=="MyProfile")
+            if(model.tabid == "MyProfile")
             {
                 var req = _AdminDash.GetMyProfile(adminid);
                 return PartialView(result,req);
             }
-            if (Tabid == "ProviderLocation")
+            if (model.tabid == "ProviderLocation")
             {
                 return PartialView(result);
             }
-            if (Tabid == "Providers")
+            if (model.tabid == "Providers")
+            {
+                var data = _providerService.GetProviderData();
+                return PartialView(result, data);
+            }
+            if (model.tabid == "PhysicianAccountEdit")
+            {
+                var data = _providerService.GetProviderAcccountData(model.physicianid);
+                return PartialView(result,data);
+            }
+            if (model.tabid == "Records")
             {
                 return PartialView(result);
             }
-            if (Tabid == "Records")
+            if (model.tabid == "Access")
             {
                 return PartialView(result);
             }
-            if (Tabid == "Access")
+            if (model.tabid == "Partners")
             {
                 return PartialView(result);
             }
-            if (Tabid == "Partners")
+            if (model.tabid == "ViewCase")
             {
-                return PartialView(result);
+               var data = _AdminDash.GetViewCase(model.requestid);
+                return PartialView(result, data);
             }
-            if (Tabid == "ViewCase")
+            if (model.tabid == "ViewUpload")
             {
-               var model = _AdminDash.GetViewCase(requestid);
-                return PartialView(result,model);
-            }
-            if (Tabid == "ViewUpload")
-            {
-                var model=_AdminDash.ViewUploadData(requestid,patientname, confirmationno,  email);
-                return PartialView(result,model);
+                var data = _AdminDash.ViewUploadData(model.requestid,patientname, confirmationno,  email);
+                return PartialView(result, data);
             }   
-            if (Tabid == "SendOrder")
+            if (model.tabid == "SendOrder")
             {
-                var orderdetail= _AdminDash.SendOrder(requestid);
+                var orderdetail= _AdminDash.SendOrder(model.requestid);
 
                 return PartialView(result,orderdetail);
             }
-            if (Tabid == "EncounterForm")
+            if (model.tabid == "EncounterForm")
             {
-                var model = _AdminDash.GetEncounterForm(requestid);
+                var data = _AdminDash.GetEncounterForm(model.requestid);
 
-                return PartialView(result, model);
+                return PartialView(result, data);
             }
-            if (Tabid == "ViewNotes")
+            if (model.tabid == "ViewNotes")
             {
-                var model = _AdminDash.GetViewNotes(requestid);
+                var data = _AdminDash.GetViewNotes(model.requestid);
 
-                return PartialView(result, model);
+                return PartialView(result, data);
             }
-            if (Tabid == "CreateNewReq")
+            if (model.tabid == "CreateNewReq")
             {
              
 
                 return PartialView(result);
             }
-            if (Tabid == "CloseCase")
+            if (model.tabid == "CloseCase")
             {
-                var model = _AdminDash.CloseCaseData(requestid);
+                var data = _AdminDash.CloseCaseData(model.requestid);
 
-                return PartialView(result,model);
+                return PartialView(result, data);
             }
 
             return View();
@@ -146,7 +154,7 @@ namespace HalloDoc.Controllers
 
             var partialview = "Partials/" + "_" + btnName; 
 
-            var result = _AdminDash.GetDashboardData(statusid, searchValue,currentpage,dropdown,reqtype);
+            var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue,currentpage,dropdown,reqtype);
 
             return PartialView(partialview, result);
         }

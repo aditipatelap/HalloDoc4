@@ -181,6 +181,10 @@ namespace DataAccess.ViewModel
 
             public Region? Region { get; set; }
             public string? ViewId { get; set; }
+        /******for porvider profile info*/
+        public string Businessname { get;set; }
+        public string? BusinessWebsite { get; set;}
+        public PhysicianStatus status { get;set; }
         }
     public class CreateReqquestModel
     {
@@ -215,6 +219,23 @@ namespace DataAccess.ViewModel
         public List<Requestwisefile> documents{get;set;}
     }
 
+
+
+    /****************provider*************************/
+    public class ProviderInfo
+    {
+        public string ProviderName { get; set; }
+        public string Role { get; set; }
+        public string OnCall { get; set; }
+        public string ProviderStatus { get; set; }
+        public int physicianid { get; set; }
+        public string Username { get; set; }
+
+       
+    }
+    
+
+
     public class AdminDashboard
     {
         public string UserName { get;set; }
@@ -244,6 +265,7 @@ namespace DataAccess.ViewModel
         public List<ViewNotesModel> viewnotes { get; set; }
         public string AdminNoes { get; set; }
         public string PhysicianNotes { get; set; }
+      
         public string AdditionalNotes { get; set; }
         public EncounterForm encounterform { get; set; }
         public SendLink sendLink { get; set; }  
@@ -262,5 +284,25 @@ namespace DataAccess.ViewModel
         public int statusid { get;set; }
         public string btnname { get;set; }
         public IEnumerable<AdminDash> adminDashes { get; set; }
+
+        //public PayLoad payLoad { get; set; }
+        public string tabid { get; set; }
+       
+        public int physicianid { get; set; }
+
+
+
+
+
+        /*******providers********/
+        public List<ProviderInfo> ProviderInfo { get; set; }
+        
+        /****payload*////
+        //public class PayLoad
+        //{
+        //    public string tabid { get; set; }
+        //    public int requestid { get; set; }
+        //    public string physicianid { get; set; }
+        //}
     }
 }

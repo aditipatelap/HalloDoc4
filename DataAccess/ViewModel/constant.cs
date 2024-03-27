@@ -31,6 +31,12 @@ namespace DataAccess.ViewModel
                     ToClose=5,
                     Unpaid=6
         }
+        public enum PhysicianStatus
+        {
+            Pending=1,
+            Active=2,
+            NotActive=3
+        }
         public enum Requeststatus
         {
             Unassigned=1,

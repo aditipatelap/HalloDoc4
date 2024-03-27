@@ -44,6 +44,9 @@
                 }
             </select>
             @Html.ValidationMessageFor(Model => Model.assignreq.RegionItems, "", new { @class = "text-danger" })
+           @* <span class="invalid-feedback">
+                Please choose a Region.
+            </span>*@
         </div>
     <div class="dropdown my-3  ">
         <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>

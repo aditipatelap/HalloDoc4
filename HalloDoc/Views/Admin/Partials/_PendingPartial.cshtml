@@ -117,7 +117,7 @@
                                     <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid"> <i class="bi bi-journal-text"></i>View Case</a>
                                
                                 @*<button class="dropdown-item showmodal" data-modal="CancelCase" id="CancelCase">Cancel Case</button>*@
-                                    <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"> <i class="fa-solid fa-upload"></i> View Uploads</a>
+                                    <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid" data-value="@Model.btnname" data-value1="@Model.statusid"> <i class="fa-solid fa-upload"></i> View Uploads</a>
                                     <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid">  <i class="fa fa-list"></i> View Notes</a>
                                 <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
                                         <i class="bi bi-journals"></i>

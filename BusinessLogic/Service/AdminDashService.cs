@@ -83,7 +83,7 @@ namespace BusinessLogic.Service
         }
         
 
-        public AdminDashboard GetDashboardData(int statusid, string searchValue,int currentpage,string dropdown,int reqtype )
+        public AdminDashboard GetDashboardData(string btnname,int statusid, string searchValue,int currentpage,string dropdown,int reqtype )
             {
 
             List<int> id = new List<int>();
@@ -146,7 +146,10 @@ namespace BusinessLogic.Service
                 CurrentPage=currentpage,
                 TotalPages=totalPages,
                 PageSize=pagesize,
-                Status = (status)statusid
+                Status = (status)statusid,
+                statusid=statusid,
+                btnname=btnname 
+               
 
             };
             return adminDashboard;
@@ -628,7 +631,7 @@ namespace BusinessLogic.Service
                 }
                 return model;
             }
-        
+        [HttpPost]
         public void PostViewNotes( AdminDashboard model)
             {
             

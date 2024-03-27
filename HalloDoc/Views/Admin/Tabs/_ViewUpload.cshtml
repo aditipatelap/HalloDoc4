@@ -5,8 +5,8 @@
     <div class="mb-3 mt-5 d-flex justify-content-between">
         <h4 class="">Documents</h4>
         <div>
-            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Index", "Admin")'">
-                <i class="bi bi-chevron-left me-1"></i>Back
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info partialbtn" onclick="location.href='@Url.Action("Index", "Admin")'">
+                <i class="bi bi-chevron-left me-1 "></i>Back
             </button>
         </div>
     </div>
@@ -44,7 +44,7 @@
                 <button type="button" class="btn d-none d-md-block btn btn-outline-info p-2 me-2 button-info" id="deleteAll" data-btn="@Model.requestid">
                     Delete All
                 </button>
-                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info" id="sendMail" @*data-btn="@Model.Email"*@ data-reqid="@Model.requestid">
+                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info" id="sendMail" data-btn="vanshitabhansali@etatvasoft.com" data-reqid="@Model.requestid">
                     Send Mail
                 </button>
             </div>
@@ -109,6 +109,7 @@
     document.getElementById('formFile').addEventListener('change', function () {
         var fileName = this.files[0].name;
         document.getElementById('Document').textContent = fileName;
+         
     });
 </script>
 
@@ -116,16 +117,20 @@
 <script>
    
         $('#submitBtn').click(function () {
+  
             var id = $(this).data("btn");
             var formData = new FormData();
             var fileInput = document.getElementById('formFile').files[0];
+         
             if(fileInput!=null)
             {
               
            
             formData.append('Document', fileInput);
             formData.append('requestid', id);
+            
             console.log(id);
+           
 
             $.ajax({
                 url: '@Url.Action("ViewDocument", "Admin")',
@@ -135,6 +140,8 @@
                 contentType: false,
                 success: function (result) {
                     $('#ViewUploadsTable').html(result);
+                    $('#formFile').val('');
+                    
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
@@ -145,6 +152,7 @@
             {
                 alert('please select one file')
             }
+
         });
 
 </script>

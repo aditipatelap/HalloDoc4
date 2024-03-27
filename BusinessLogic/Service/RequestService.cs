@@ -700,7 +700,7 @@ namespace BusinessLogic.Service
             if (req != null)
             {
                 
-                    req.Status = (short)Status.Active;
+                    req.Status = (short)Requeststatus.MDonSite;
                     req.Modifieddate = DateTime.Now;
                     req.Casetag = "Review Agrement";
 
