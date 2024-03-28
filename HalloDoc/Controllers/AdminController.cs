@@ -473,6 +473,17 @@ namespace HalloDoc.Controllers
             }
             return RedirectToAction("Index", "Admin");
         }
+        /////////**********provider*********/
+        ///[
+        [HttpPost]
+        public IActionResult PostProviderData( List<checkboxmodel> dataToSend)
+        {
+
+            _providerService.PostProviderData(dataToSend);
+           
+            _notyf.Information("Information updtaed ...");
+            return Ok(new { message = "Data saved successfully." });
+        }
 
     }
 }

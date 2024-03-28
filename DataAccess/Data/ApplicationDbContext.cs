@@ -239,6 +239,8 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Aspnetuser).WithMany(p => p.Physicians).HasConstraintName("fk_physician");
 
             entity.HasOne(d => d.Region).WithMany(p => p.Physicians).HasConstraintName("fk_physician1");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Physicians).HasConstraintName("fk_physician4");
         });
 
         modelBuilder.Entity<Physicianlocation>(entity =>

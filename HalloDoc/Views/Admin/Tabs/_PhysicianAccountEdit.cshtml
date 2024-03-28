@@ -39,10 +39,10 @@
                 <div class="row g-2 m-1">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select class="form-select dropdown-toggle inputform0" asp-for="@Model.PhysicianProfile.status" disabled>
-    <option value="Active" selected="@((Model.PhysicianProfile.status.Equals( "Active")))">Active</option>
-    <option value="Pending" selected="@((Model.PhysicianProfile.status.Equals("Pending")))">Pending</option>
-    <option value="NotActive" selected="@((Model.PhysicianProfile.status.Equals("NotActive")))">Not Active</option>
+                            <select class="form-select dropdown-toggle inputform0" asp-for="@Model.myProfile.status" disabled>
+    <option value="Active" selected="@((Model.myProfile.status.Equals( "Active")))">Active</option>
+                                <option value="Pending" selected="@((Model.myProfile.status.Equals("Pending")))">Pending</option>
+                                <option value="NotActive" selected="@((Model.myProfile.status.Equals("NotActive")))">Not Active</option>
 </select>
 
                             <label for="">Status</label>

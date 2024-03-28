@@ -41,4 +41,7 @@ public partial class Role
     [Column("ip")]
     [StringLength(20)]
     public string? Ip { get; set; }
+
+    [InverseProperty("Role")]
+    public virtual ICollection<Physician> Physicians { get; set; } = new List<Physician>();
 }

@@ -1,6 +1,7 @@
 ﻿using DataAccess.Models;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -227,14 +228,22 @@ namespace DataAccess.ViewModel
         public string ProviderName { get; set; }
         public string Role { get; set; }
         public string OnCall { get; set; }
-        public string ProviderStatus { get; set; }
+        public PhysicianStatus ProviderStatus { get; set; }
         public int physicianid { get; set; }
         public string Username { get; set; }
+        public BitArray notification { get;set; }
+        public bool notification1 { get; set; }
+        public BitArray checkbox { get; set; }
 
-       
+
     }
-    
-
+   // public class checkbox { }
+    public class checkboxmodel
+    {
+        public int physicianid { get;set; }
+        public bool checkbox { get;set; }
+    }
+   
 
     public class AdminDashboard
     {
@@ -289,6 +298,8 @@ namespace DataAccess.ViewModel
         public string tabid { get; set; }
        
         public int physicianid { get; set; }
+        public List<int> Physicianids { get; set; }
+        public List<BitArray> checkbox { get; set; }
 
 
 
@@ -296,7 +307,10 @@ namespace DataAccess.ViewModel
 
         /*******providers********/
         public List<ProviderInfo> ProviderInfo { get; set; }
-        
+
+        public List<checkboxmodel> checkboxmodel { get; set; }
+        //public List<PhysicancheckboxModel> physicancheckboxModels { get; set; }
+
         /****payload*////
         //public class PayLoad
         //{
@@ -304,5 +318,6 @@ namespace DataAccess.ViewModel
         //    public int requestid { get; set; }
         //    public string physicianid { get; set; }
         //}
+       
     }
 }

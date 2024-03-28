@@ -1,7 +1,9 @@
 ﻿using BusinessLogic.Interface;
+using BusinessLogic.Models;
 using DataAccess.Data;
 using DataAccess.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -16,14 +18,39 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetProviderData()
         {
-            var result=_db.Physicians.Select(x=>new ProviderInfo
+            var result=_db.Physicians.Include(x=>x.Role).Include(x=>x.Physiciannotifications).Select(x=>new ProviderInfo
             {
                 ProviderName = x.Firstname + "" + x.Lastname,
-                physicianid=x.Physicianid
+                physicianid=x.Physicianid,
+                Role=x.Role.Name,
+                notification=x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
+          
+
+
+                ProviderStatus=(PhysicianStatus)x.Status,
+                //OnCall
+
             }).ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.ProviderInfo = result;
             return adminDashboard;
+        }
+         public void PostProviderData(List<checkboxmodel> model)    
+        {
+            foreach (var item in model)
+            {
+                var result = _db.Physiciannotifications.Where(x=>x.Pysicianid==item.physicianid).FirstOrDefault();
+                if (result != null)
+                {
+
+                    result.Isnotificationstopped = new BitArray(new bool[1] { item.checkbox });
+
+                }
+
+
+
+            }
+            _db.SaveChanges();
         }
         public AdminDashboard GetProviderAcccountData(int physicianid)
         {
@@ -48,5 +75,7 @@ namespace BusinessLogic.Service
             adminDashboard.myProfile = result;
             return adminDashboard;
         }
+        
+
     }
 }

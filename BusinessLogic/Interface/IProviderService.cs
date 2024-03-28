@@ -12,6 +12,8 @@ namespace BusinessLogic.Interface
     {
         public AdminDashboard GetProviderData();
         public AdminDashboard GetProviderAcccountData(int physicianid);
+        //public void PostProviderData(AdminDashboard model);
 
+        public void PostProviderData(List<checkboxmodel> model);
     }
 }
