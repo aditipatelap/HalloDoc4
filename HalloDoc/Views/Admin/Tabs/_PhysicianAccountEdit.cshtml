@@ -23,7 +23,7 @@
                 <div class="row g-2 m-1">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="userName">
+                            <input type="text" class="form-control" asp-for="myProfile.UserName"id="userName">
                             <label for="">User Name</label>
                         </div>
                     </div>
@@ -168,7 +168,8 @@
                 <button type="reset" id="cancelBtn2" class="btn btn-danger float-end me-1 d-none">Cancel</button>
                 <button type="submit" id="saveBtn2" class="btn btn-info float-end me-1 d-none">Save</button><br />
             </form>
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" id="ProviderProfile" enctype="multipart/form-data">
+                <input type="hidden" asp-for="physicianid" />
                 <div class="my-3"></div>
                 <h5>Provider Profile</h5>
                 <fieldset id="fieldset4" disabled>
@@ -225,7 +226,7 @@
                         </div>
 
                         <div class="col-lg-12 col-md-12 col sm-12 col-12 ">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Admin Notes"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" asp-for="AdminNoes" placeholder="Admin Notes"></textarea>
                         </div>
                     </div>
 
@@ -396,4 +397,31 @@
 </script>
 <script>
     $('.ProviderPartialViews').click(ProviderPartialViews);
+</script>
+<script>
+    $(document).ready(function () {
+        $('#ProviderProfile').submit(function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            // Serialize form data
+            var formData = $(this).serialize();
+
+            // Send AJAX request
+            $.ajax({
+                url: '/Admin/PostProviderProfile',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // Update partial view container with new content
+                    
+                    $('#TabContent').html(response);
+                    
+                },
+                error: function () {
+                    // Handle errors
+                }
+            });
+        });
+    });
+    
 </script>

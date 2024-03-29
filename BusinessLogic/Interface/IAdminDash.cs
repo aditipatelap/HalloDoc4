@@ -43,8 +43,8 @@ namespace BusinessLogic.Interface
        // public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
         public AdminDashboard GetEncounterForm(int requestid);
-        public AdminDashboard GetMyProfile(string adminid);
-        public void PostMyProfile(string adminid, AdminDashboard adminDashboard);
+        public AdminDashboard MyProfileDataGet(string aspnetuserid);
+        public void PostMyProfile(AdminDashboard model, int adminid);
         public void SaveDocument(IFormFile Document, int requestid);
         public AdminDashboard ViewUploadData(int reqid, string patientname, string confirmationno, string email);
         public AdminDashboard ViewUploadDataList(int reqid);

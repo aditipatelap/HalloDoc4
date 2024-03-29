@@ -16,7 +16,7 @@ namespace DataAccess.ViewModel
         public string? Name { get; set; }
         public int? IntDate { get; set; }
         public int? IntYear { get; set; }
-        public string? StrMonth { get; set; } 
+        public string? StrMonth { get; set; }
         public string? Requestor { get; set; }
         public string? PhysicianName { get; set; }
         public DateTime? RequestedDate { get; set; }
@@ -28,7 +28,7 @@ namespace DataAccess.ViewModel
         public int RequestTypeid { get; set; }
         public string Region { get; set; }
         public int requestid { get; set; }
-        public RequestType Status { get; set; }  
+        public RequestType Status { get; set; }
         public int PageSize { get; set; }
 
 
@@ -54,11 +54,11 @@ namespace DataAccess.ViewModel
     }
     public class BlockReq
     {
-        [Required(ErrorMessage ="requirwed")]
+        [Required(ErrorMessage = "requirwed")]
         public string Blockreason { get; set; }
-        
+
     }
-   
+
     public class AssignReq
     {
         [Required(ErrorMessage = "The field is required")]
@@ -90,7 +90,7 @@ namespace DataAccess.ViewModel
         public string physicianname { get; set; }
         [Required(ErrorMessage = "This is a required field")]
         public string Region { get; set; }
-        
+
     }
     public class SendOrders
     {
@@ -102,7 +102,7 @@ namespace DataAccess.ViewModel
         public string FaxNumber { get; set; }
         public string Prescription { get; set; }
         public string Profession { get; set; }
-        public int  NUmberofrefill { get; set; }
+        public int NUmberofrefill { get; set; }
         public int VendorId { get; set; }
 
     }
@@ -116,7 +116,7 @@ namespace DataAccess.ViewModel
     }
     public class ViewUpload
     {
-        public DateTime   CreatedDate
+        public DateTime CreatedDate
         {
             get; set;
         }
@@ -129,13 +129,13 @@ namespace DataAccess.ViewModel
     }
     public class AgreementReq
     {
-        public string ? PhoneNumber { get; set; }
-        public string ? EmailID
+        public string? PhoneNumber { get; set; }
+        public string? EmailID
         {
             get; set;
         }
         public int Requestid { get; set; }
-        public string Notes { get;set; }
+        public string Notes { get; set; }
     }
     public class EncounterForm
     {
@@ -144,7 +144,7 @@ namespace DataAccess.ViewModel
         public string Location { get; set; }
         public DateTime Dob { get; set; }
         public string Email { get; set; }
-        public string PhoneNumber { get;set; }
+        public string PhoneNumber { get; set; }
 
     }
     public class SendLink
@@ -159,34 +159,42 @@ namespace DataAccess.ViewModel
     }
     public class Profile
     {
-            public int? Aspnetid { get; set; }
-            public string? UserName { get; set; }
-            public string? Password { get; set; }
-          [Required(ErrorMessage ="fname is required")]
-            public string? FirstName { get; set; }
-           [Required(ErrorMessage = "lname is required")]
+        public int? Aspnetid { get; set; }
+        public string? UserName { get; set; }
+        public string? Password { get; set; }
+        [Required(ErrorMessage = "fname is required")]
+        public string? FirstName { get; set; }
+        [Required(ErrorMessage = "lname is required")]
         public string? LastName { get; set; }
-            public string? PhoneNumber { get; set; }
-            public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
 
-            public string? Street { get; set; }
-            public string? City { get; set; }
-            public string? State { get; set; }
-            public string? Zipcode { get; set; }
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Zipcode { get; set; }
+        public string Mobile { get; set; }
+        public string? Address1 { get; set; }
+        public string? Address2 { get; set; }
 
-            public string? Address1 { get; set; }
-            public string? Address2 { get; set; }
-
-            public Status Status { get; set; }
-            public string? Role { get; set; }
-
-            public Region? Region { get; set; }
-            public string? ViewId { get; set; }
+        public Status Status { get; set; }
+        public string? Role { get; set; }
+        public int? regionid { get; set; }
+        public int? roleid { get; set; }
+        public int adminid { get; set; }
+        public string ConfirmEmail { get; set; }
+        public Region? Region { get; set; }
+        public string? ViewId { get; set; }
         /******for porvider profile info*/
-        public string Businessname { get;set; }
-        public string? BusinessWebsite { get; set;}
-        public PhysicianStatus status { get;set; }
-        }
+        public string Businessname { get; set; }
+        public string? BusinessWebsite { get; set; }
+        public PhysicianStatus status { get; set; }
+    }
+    public class RegionCheckbox {
+        public int RegionId
+        { get; set;}
+        public string? Regionname { get; set;}
+}
     public class CreateReqquestModel
     {
         [Required(ErrorMessage = "this field is required")]
@@ -227,12 +235,12 @@ namespace DataAccess.ViewModel
     {
         public string ProviderName { get; set; }
         public string Role { get; set; }
-        public string OnCall { get; set; }
+        public BitArray OnCall { get; set; }
         public PhysicianStatus ProviderStatus { get; set; }
         public int physicianid { get; set; }
         public string Username { get; set; }
         public BitArray notification { get;set; }
-        public bool notification1 { get; set; }
+       
         public BitArray checkbox { get; set; }
 
 
@@ -293,22 +301,23 @@ namespace DataAccess.ViewModel
         public int statusid { get;set; }
         public string btnname { get;set; }
         public IEnumerable<AdminDash> adminDashes { get; set; }
+        
 
         //public PayLoad payLoad { get; set; }
         public string tabid { get; set; }
-       
+        public int regionid { get; set; }
         public int physicianid { get; set; }
         public List<int> Physicianids { get; set; }
         public List<BitArray> checkbox { get; set; }
 
-
-
+        public List<RegionCheckbox> regionCheckbox { get; set; }
+        public GetTabParameter GetTabParameter { get; set; }    
 
 
         /*******providers********/
         public List<ProviderInfo> ProviderInfo { get; set; }
 
-        public List<checkboxmodel> checkboxmodel { get; set; }
+        //public List<checkboxmodel> checkboxmodel { get; set; }
         //public List<PhysicancheckboxModel> physicancheckboxModels { get; set; }
 
         /****payload*////
@@ -319,5 +328,10 @@ namespace DataAccess.ViewModel
         //    public string physicianid { get; set; }
         //}
        
+    }
+    public class GetTabParameter
+    {
+        //public string tabid { get; set; }
+        public int regionid { get; set; }
     }
 }

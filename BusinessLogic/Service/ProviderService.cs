@@ -16,23 +16,25 @@ namespace BusinessLogic.Service
         {
             _db = db;
         }
-        public AdminDashboard GetProviderData()
-        {
-            var result=_db.Physicians.Include(x=>x.Role).Include(x=>x.Physiciannotifications).Select(x=>new ProviderInfo
+        public AdminDashboard GetProviderData(int regionid)
+            {
+            var result=_db.Physicians.Include(x=>x.Role).Include(x=>x.Physiciannotifications).Where( x=>x.Regionid==regionid|| regionid==0).Select(x=>new ProviderInfo
             {
                 ProviderName = x.Firstname + "" + x.Lastname,
                 physicianid=x.Physicianid,
                 Role=x.Role.Name,
                 notification=x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
-          
+                 OnCall=x.Isnondisclosuredoc,
 
 
                 ProviderStatus=(PhysicianStatus)x.Status,
                 //OnCall
 
             }).ToList();
+            var regions=_db.Regions.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.ProviderInfo = result;
+            adminDashboard.Regions = regions;
             return adminDashboard;
         }
          public void PostProviderData(List<checkboxmodel> model)    
@@ -46,9 +48,6 @@ namespace BusinessLogic.Service
                     result.Isnotificationstopped = new BitArray(new bool[1] { item.checkbox });
 
                 }
-
-
-
             }
             _db.SaveChanges();
         }
@@ -64,7 +63,7 @@ namespace BusinessLogic.Service
                 Address1 = x.Address1,
                 Address2 = x.Address2,
                 City=x.City,
-                Zipcode=x.Zip,
+                Zipcode=x.Zip,  
                 Businessname=x.Businessname,
                 BusinessWebsite=x.Businesswebsite,
                 status=(PhysicianStatus)x.Status
@@ -73,9 +72,19 @@ namespace BusinessLogic.Service
             }).FirstOrDefault();
             AdminDashboard adminDashboard= new AdminDashboard();
             adminDashboard.myProfile = result;
+            adminDashboard.physicianid=physicianid;
             return adminDashboard;
         }
+        public void PostProviderProfile(AdminDashboard adminDashboard)
+        {
+            Physician physician = new Physician();
+            physician.Businessname = adminDashboard.myProfile.Businessname;
+            physician.Businesswebsite=adminDashboard.myProfile.BusinessWebsite;
+            physician.Adminnotes = adminDashboard.AdminNoes;
+
         
+
+        }
 
     }
 }

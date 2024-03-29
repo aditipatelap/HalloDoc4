@@ -49,7 +49,8 @@ namespace HalloDoc.Controllers
             return View(model);
         }
 
-        public IActionResult GetTabs(AdminDashboard model,int statusid,string btnname, string patientname, string confirmationno, string email)
+        public IActionResult GetTabs(AdminDashboard model, int statusid, string btnname, string patientname,
+            string confirmationno, string email, string aspnetuserid)
         {
             var result ="Tabs/"+ "_" + model.tabid;
            string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
@@ -61,7 +62,7 @@ namespace HalloDoc.Controllers
             }
             if(model.tabid == "MyProfile")
             {
-                var req = _AdminDash.GetMyProfile(adminid);
+                var req = _AdminDash.MyProfileDataGet("19");
                 return PartialView(result,req);
             }
             if (model.tabid == "ProviderLocation")
@@ -70,7 +71,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Providers")
             {
-                var data = _providerService.GetProviderData();
+                var data = _providerService.GetProviderData(model.regionid);
                 return PartialView(result, data);
             }
             if (model.tabid == "PhysicianAccountEdit")
@@ -329,11 +330,12 @@ namespace HalloDoc.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
-        public IActionResult PostMyProfile(string adminid,AdminDashboard adminDashboard)
+        [HttpPost]
+        public IActionResult PostMyProfile( AdminDashboard adminDashboard,int adminid)
         {
             if (ModelState.IsValid)
             {
-                _AdminDash.PostMyProfile(adminid, adminDashboard);
+                _AdminDash.PostMyProfile( adminDashboard,adminid);
             }
             return View();
         }
@@ -483,6 +485,18 @@ namespace HalloDoc.Controllers
            
             _notyf.Information("Information updtaed ...");
             return Ok(new { message = "Data saved successfully." });
+        }
+        public IActionResult PostProviderProfile(AdminDashboard adminDashboard)
+        {
+            _providerService.PostProviderProfile(adminDashboard);
+            _notyf.Information("Information updtaed ...");
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "PhysicianAccountEdit";
+            admin.physicianid= adminDashboard.physicianid;
+
+            
+
+            return GetTabs(admin,default,default,default,default,default,default);
         }
 
     }

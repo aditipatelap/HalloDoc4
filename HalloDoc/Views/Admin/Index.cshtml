@@ -124,25 +124,36 @@
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
         var physicianid=$(this).data('id');
-      
+        var regionid = $('.filterphysician').val();
+        //var regionid = document.getElementById('dropdown').value;
+        
         if (typeof requestid === 'undefined') {
             requestid = 0;
         }
         if (typeof btnname === 'undefined') {
             btnname = null;
         }
+        if (typeof physicianid === 'undefined') {
+            physicianid = null;
+        }
         if (typeof statusid === 'undefined') {
             statusid = 0;
         }
-        if (typeof physicianid === 'undefined') {
-            physicianid = 0;
+        if (typeof regionid === 'undefined') {
+            regionid = 0;
         }
-        tabidglobal = TabId;
+        console.log(regionid);
+        
+       
+        if ($(this).hasClass('tablink')) {
+            tabidglobal=TabId;
+        }
         var payload={
            
-            tabid: TabId,
+            tabid: tabidglobal,
             requestid: requestid,
             physicianid:physicianid,
+            regionid:regionid,
            
 
           
@@ -155,6 +166,7 @@
             success: function (data) {
                 // Replace the content of the btnContent div with the retrieved partial view
                 $("#TabContent").html(data);
+                $('.filterphysician').val(regionid);
             },
             error: function () {
                 console.error('Error fetching partial view.');
@@ -201,11 +213,11 @@
         $('#status').text(tabId);
 
         /******search and all */
-        var dropdown = document.getElementById('dropdown').value;
+        var dropdown = document.getElementById('filteradmin').value;
         var btnName = $(this).data("btn");
         var statusid = $(this).data("id");
         var reqtype = $(this).data('btn1');
-        var searchValue = document.getElementById('searchInput').value;
+        var searchValue = $('#searchInput').val();
         if (typeof reqtype === 'undefined') {
             reqtype = 0;
         }
@@ -241,7 +253,7 @@
             url: '@Url.Action("GetPartialView", "Admin")',
             //url: '/Admin/GetPartialView?btn=' + btnName,
             method: 'GET',
-            data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
+            data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1,dropdown:dropdown,  reqtype: reqtype },
             success: function (data) {
                 console.log("AJAX success");
                 // Replace the content of the btnContent div with the retrieved partial view
@@ -266,7 +278,7 @@
 
         $.ajax({
             url: '/Admin/GetPartialView',
-            data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
+            data: { btnName: btnName, statusid: statusid, currentpage: currentpage,dropdown:dropdown, searchvalue: searchvalue },
             method: 'GET',
             success: function (data) {
                 // Replace the content of the btnContent div with the retrieved partial view
@@ -280,10 +292,11 @@
     $(document).on('click', '.showmodal', ModalDisplay);
    
     $(document).on('click', '.partialbtn', PartialDisplay);
-    $(document).on('change', '#dropdown', PartialDisplay);
+    $(document).on('change', '#filteradmin', PartialDisplay);
     $(document).on('click', '.searchrequest', PartialDisplay);
     $(document).on('keyup', '#searchInput', PartialDisplay);
     $(document).on('click', '.custompagination', Pagination);
+    $(document).on('change', '.filterphysician', TabLoad);
 
     function ModalDisplay() {
         console.log("vidihiiiiiiiiiiiiii")
