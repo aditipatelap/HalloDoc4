@@ -4,26 +4,27 @@
 
 @Html.ValidationSummary(true)
 <style>
-    a{
-        cursor:pointer;
+    a {
+        cursor: pointer;
     }
 </style>
 <nav class="position-sticky">
     <div class="d-flex justify-content-between">
         <a class="navbar-brand" href="#">
-        <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
-    </a>
+            <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
+        </a>
 
-    <div class="d-flex justify-content-end m-3">
-        <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
+        <div class="d-flex justify-content-end m-3">
+            <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
             <h4 class=" ms-2 d-lg-block d-none"> @_httpContextAccessor.HttpContext.Session.GetString("Username")</h4>
-        <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
+            <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
-        <div><button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
-            <i class="fa fa-moon i-info"></i>
-        </button>
+            <div>
+                <button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
+                    <i class="fa fa-moon i-info"></i>
+                </button>
             </div>
-    </div>
+        </div>
     </div>
 
 </nav>
@@ -54,14 +55,19 @@
                         <a class="dropdown-item" href="#">Invoicing</a>
                     </div>
                 </li>
-                @*<li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="Providers"> Providers</a>
-                </li>*@
+
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="Partners"> Partners</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="Access"> Access</a>
+                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Access
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item  tablink" href="#" id="Access">Account Access</a>
+                        <a class="dropdown-item tablink" id="UserAccess" href="#">User Access</a>
+
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="Records"> Records</a>
@@ -116,19 +122,27 @@
     });
 
     ////********************dashboard********************* */
-//load dashboard and tabs
+    //load dashboard and tabs
     $(document).ready(function () {
         $("#Dashboard")[0].click();
-     });
-    function TabLoad(){
+    });
+    function TabLoad() {
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
-        var physicianid=$(this).data('id');
+        var physicianid = $(this).data('id');
         var regionid = $('.filterphysician').val();
-        //var regionid = document.getElementById('dropdown').value;
-        
+        var accounttype = $('#AccountType').val();
+        var RoleName = $('#RoleName').val();
+        //var roleid = checkbox.getAttribute('data-roleid');
+        var roleid = $('#EditAccess').data('btn');
         if (typeof requestid === 'undefined') {
             requestid = 0;
+        }
+        if (typeof roleid === 'undefined') {
+            requestid = 0;
+        }
+        if (typeof RoleName === 'undefined') {
+            RoleName = null;
         }
         if (typeof btnname === 'undefined') {
             btnname = null;
@@ -142,202 +156,208 @@
         if (typeof regionid === 'undefined') {
             regionid = 0;
         }
-        console.log(regionid);
-        
-       
-        if ($(this).hasClass('tablink')) {
-            tabidglobal=TabId;
-        }
-        var payload={
-           
-            tabid: tabidglobal,
-            requestid: requestid,
-            physicianid:physicianid,
-            regionid:regionid,
-           
 
-          
-        };
-        $.ajax({
-            url: '/Admin/GetTabs',
-            data: payload,
-
-            method: 'GET',
-            success: function (data) {
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#TabContent").html(data);
-                $('.filterphysician').val(regionid);
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
+            if (typeof accounttype === 'undefined') {
+                accounttype = 0;
             }
-        });
-    
-    }
-    function PartialDisplay() {
-       
-        /*******traingle******* */
-        $('.partialbtn').removeClass('active');
-        $(this).addClass('active');
-        $('.triangle-down').hide();
-        $(this).parent().find('.triangle-down').show();
-        /********new pending nd all*****/
-        var tabId = $(this).data('id');
-        console.log(tabId);
-        if (tabId == 1) {
-            var tabId = "(NEW)";
-            $('#status').css('font-weight', 'bold').css('color', 'darkblue');
-        }
-        else if (tabId == 2) {
-            var tabId = "(PENDING)";
-            $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
-        }
-        else if (tabId == 3) {
-            var tabId = "(ACTIVE)";
-            $('#status').css('font-weight', 'bold').css('color', 'green');
-        }
-        else if (tabId == 6) {
-            var tabId = "(CONCLUDE)";
-            $('#status').css('font-weight', 'bold').css('color', '#912261');
-
-        }
-        else if (tabId == 5) {
-            var tabId = "(TO CLOSE)";
-            $('#status').css('font-weight', 'bold').css('color', '#0181f8');
-        }
-        else if (tabId == 9) {
-            var tabId = "(UNPAID)";
-            $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
-
-        }
-        $('#status').text(tabId);
-
-        /******search and all */
-        var dropdown = document.getElementById('filteradmin').value;
-        var btnName = $(this).data("btn");
-        var statusid = $(this).data("id");
-        var reqtype = $(this).data('btn1');
-        var searchValue = $('#searchInput').val();
-        if (typeof reqtype === 'undefined') {
-            reqtype = 0;
-        }
-        if (!searchValue) {
-            searchValue = null;
-        }
-        if (!dropdown) {
-            dropdown = null;
-        }
-        if ($(this).hasClass('partialbtn')) {
-            btnnameglobal = btnName;
-
-        }
-        if ($(this).hasClass('partialbtn')) {
-
-            statusidglobal = statusid;
-            $("#hidden").val(statusidglobal);
-
-        }
-
-        console.log("Button clicked: " + btnnameglobal);
 
 
-        console.log("Button clicked: " + statusidglobal);
-        console.log(searchValue);
-        console.log(reqtype);
-        console.log(dropdown);
-
-
-        // Make an AJAX request to get the partial view content
-
-        $.ajax({
-            url: '@Url.Action("GetPartialView", "Admin")',
-            //url: '/Admin/GetPartialView?btn=' + btnName,
-            method: 'GET',
-            data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1,dropdown:dropdown,  reqtype: reqtype },
-            success: function (data) {
-                console.log("AJAX success");
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#btnContent").html(data);
-                //$(document).off("click", ".partialbtn", PartialDisplay);
-
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
+            if ($(this).hasClass('tablink')) {
+                tabidglobal = TabId;
             }
-        });
-    }
-    $(document).on('click', '.tablink', TabLoad);
+            var payload = {
 
-    function Pagination() {
-        var currentpage = $(this).data('page');
-        var btnName = "NewPartial";
-        var statusid = 1;
-        var searchvalue = $("#searchInput").val();
-        //console.log(requestid);
+                tabid: tabidglobal,
+                requestid: requestid,
+                physicianid: physicianid,
+                regionid: regionid,
+            accounttype: accounttype,
+            roleid:roleid
 
 
-        $.ajax({
-            url: '/Admin/GetPartialView',
-            data: { btnName: btnName, statusid: statusid, currentpage: currentpage,dropdown:dropdown, searchvalue: searchvalue },
-            method: 'GET',
-            success: function (data) {
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#btnContent").html(data);
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    }
-    $(document).on('click', '.showmodal', ModalDisplay);
-   
-    $(document).on('click', '.partialbtn', PartialDisplay);
-    $(document).on('change', '#filteradmin', PartialDisplay);
-    $(document).on('click', '.searchrequest', PartialDisplay);
-    $(document).on('keyup', '#searchInput', PartialDisplay);
-    $(document).on('click', '.custompagination', Pagination);
-    $(document).on('change', '.filterphysician', TabLoad);
+            };
+            $.ajax({
+                url: '/Admin/GetTabs',
+                data: payload,
 
-    function ModalDisplay() {
-        console.log("vidihiiiiiiiiiiiiii")
-        var modalName = $(this).attr('id');
-        var patientname = $(this).data('value1');
-        var requestid = $(this).data('btn');
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#TabContent").html(data);
+                    $('.filterphysician').val(regionid);
+                $('#AccountType').val(accounttype);
+                $('#RoleName').val(RoleName);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
 
-        if (!patientname) {
-            patientname = null;
         }
 
-        if (typeof requestid === 'undefined') {
-            requestid = 0;
+        function PartialDisplay() {
+
+            /*******traingle******* */
+            $('.partialbtn').removeClass('active');
+            $(this).addClass('active');
+            $('.triangle-down').hide();
+            $(this).parent().find('.triangle-down').show();
+            /********new pending nd all*****/
+            var tabId = $(this).data('id');
+            console.log(tabId);
+            if (tabId == 1) {
+                var tabId = "(NEW)";
+                $('#status').css('font-weight', 'bold').css('color', 'darkblue');
+            }
+            else if (tabId == 2) {
+                var tabId = "(PENDING)";
+                $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
+            }
+            else if (tabId == 3) {
+                var tabId = "(ACTIVE)";
+                $('#status').css('font-weight', 'bold').css('color', 'green');
+            }
+            else if (tabId == 6) {
+                var tabId = "(CONCLUDE)";
+                $('#status').css('font-weight', 'bold').css('color', '#912261');
+
+            }
+            else if (tabId == 5) {
+                var tabId = "(TO CLOSE)";
+                $('#status').css('font-weight', 'bold').css('color', '#0181f8');
+            }
+            else if (tabId == 9) {
+                var tabId = "(UNPAID)";
+                $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
+
+            }
+            $('#status').text(tabId);
+
+            /******search and all */
+            var dropdown = document.getElementById('filteradmin').value;
+            var btnName = $(this).data("btn");
+            var statusid = $(this).data("id");
+            var reqtype = $(this).data('btn1');
+            var searchValue = $('#searchInput').val();
+            if (typeof reqtype === 'undefined') {
+                reqtype = 0;
+            }
+            if (!searchValue) {
+                searchValue = null;
+            }
+            if (!dropdown) {
+                dropdown = null;
+            }
+            if ($(this).hasClass('partialbtn')) {
+                btnnameglobal = btnName;
+
+            }
+            if ($(this).hasClass('partialbtn')) {
+
+                statusidglobal = statusid;
+                $("#hidden").val(statusidglobal);
+
+            }
+
+            console.log("Button clicked: " + btnnameglobal);
+
+
+            console.log("Button clicked: " + statusidglobal);
+            console.log(searchValue);
+            console.log(reqtype);
+            console.log(dropdown);
+
+
+            // Make an AJAX request to get the partial view content
+
+            $.ajax({
+                url: '@Url.Action("GetPartialView", "Admin")',
+                //url: '/Admin/GetPartialView?btn=' + btnName,
+                method: 'GET',
+                data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
+                success: function (data) {
+                    console.log("AJAX success");
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#btnContent").html(data);
+                    //$(document).off("click", ".partialbtn", PartialDisplay);
+
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        }
+        $(document).on('click', '.tablink', TabLoad);
+
+        function Pagination() {
+            var currentpage = $(this).data('page');
+            var btnName = "NewPartial";
+            var statusid = 1;
+            var searchvalue = $("#searchInput").val();
+            //console.log(requestid);
+
+
+            $.ajax({
+                url: '/Admin/GetPartialView',
+                data: { btnName: btnName, statusid: statusid, currentpage: currentpage, dropdown: dropdown, searchvalue: searchvalue },
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#btnContent").html(data);
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+        }
+        $(document).on('click', '.showmodal', ModalDisplay);
+
+        $(document).on('click', '.partialbtn', PartialDisplay);
+        $(document).on('change', '#filteradmin', PartialDisplay);
+        $(document).on('click', '.searchrequest', PartialDisplay);
+        $(document).on('keyup', '#searchInput', PartialDisplay);
+        $(document).on('click', '.custompagination', Pagination);
+        $(document).on('change', '.filterphysician', TabLoad);
+        $(document).on('change', '#AccountType', TabLoad);
+
+        function ModalDisplay() {
+            console.log("vidihiiiiiiiiiiiiii")
+            var modalName = $(this).attr('id');
+            var patientname = $(this).data('value1');
+            var requestid = $(this).data('btn');
+
+            if (!patientname) {
+                patientname = null;
+            }
+
+            if (typeof requestid === 'undefined') {
+                requestid = 0;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetModalPartialView", "Admin")',
+                method: 'GET',
+                data: { modalName: modalName, patientname: patientname, requestid: requestid },
+                success: function (data) {
+                    console.log("AJAX success");
+
+                    $('.modelbody').html(data);
+                    //$('#' + modalName).modal('show');
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
         }
 
-        $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
-            method: 'GET',
-            data: { modalName: modalName, patientname: patientname, requestid: requestid },
-            success: function (data) {
-                console.log("AJAX success");
-
-                $('.modelbody').html(data);
-                //$('#' + modalName).modal('show');
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    }
 
 
 
 
 
+</script>
 
 
 
 
-/****************providers****************** */
 
-
-
-    </script>

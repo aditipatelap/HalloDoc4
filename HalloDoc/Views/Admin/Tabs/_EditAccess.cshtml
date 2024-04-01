@@ -1,0 +1,152 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<div class="container">
+    <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex">
+            <h4 class="m-0 pt-2 ">Edit Role</h4>
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Index", "Admin")'">
+                <i class="bi bi-chevron-left i-info"></i>Back
+            </button>
+        </div>
+    </div>
+    <div class="p-5 shadow mt-3">
+        <h5 class="p-1 mx-2 fs-5 mb-3"> Details</h5>
+        <form id="createRoleForm">
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <input type="text" class=" form-control" id="Rolename" asp-for=EditaccountAccess.rolename placeholder="Email" disabled>
+                        <label class="text-secondary floatingLabel">Role Name</label>
+                        <div class="invalid-feedback">
+                            Please enter a role name.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+
+                        @*<select class="form-select form-control dropdwn text-secondary" asp-for="@Model.EditaccountAccess.AccountType" id="AccountType" aria-label="Floating label select example" data-btn="CreateRoles" required>
+                            <option selected value="0">All</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Physician</option>
+                            <option value="3">Patient</option>
+
+                        </select>
+*@
+                        <select class="form-select p-3 pla1" id="RoleSelect" asp-for="@Model.EditaccountAccess.AccountType" aria-label="form-select-lg example" disabled>
+                            <option selected value="0">All</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Physician</option>
+                            <option value="3">Patient</option>
+                        </select>
+                        <label class="text-secondary floatingLabel">Account type</label>
+                       
+                      
+                    </div>
+                </div>
+            </div>
+            
+            <div class="my-2">
+
+                @foreach (var i in Model.menu)
+                {
+                    var selected = Model.rolemenus.Any(x => x.Menuid == i.Menuid);
+                    if (selected)
+                    {
+                        <div class="form-check d-flex d-inline-block ">
+                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid" checked>
+                            <label class="form-check-label" for="flexCheckDefault">
+                                @i.Name
+                            </label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                @i.Name
+                            </label>
+                        </div>
+                    }
+                }
+
+
+                <div class="invalid-feedback">
+                    Please select at least one menu.
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end mb-3 ">
+                <button type="button" class="btn btn-info btn-lg me-2 info-button d-none" id="savebtn">Save</button>
+                <button type="button" class="btn btn-info btn-lg me-2 info-button d-block" id="editbtn" onclick="Editbtn()">Edit</button>
+                <button type="button" class="btn btn-outline-info btn-lg  button-info">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    //$('#AccountType').change(function () {
+    //    var RoleName = $('#RoleName').val();
+    //    var AccountTypeId = $(this).val();
+    //    var tabId = $(this).data('btn');
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        type: 'GET',
+    //        data: { Tabid: tabId, AccountTypeId: AccountTypeId },
+    //        success: function (result) {
+    //            $("#TabContent").html(result);
+    //            $('#RoleName').val(RoleName);
+    //            $('#AccountType').val(AccountTypeId);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            console.error(error);
+    //        }
+    //    });
+    //});
+    function Editbtn()
+    {
+        $('#editbtn').removeClass('d-block');
+        $('#savebtn').removeClass('d-none');
+        $('#editbtn').addClass('d-none');
+        $('#savebtn').addClass('d-block');
+       
+    }
+    //create role
+
+    $('#savebtn').click(function () {
+        var form = $('#createRoleForm')[0];
+
+
+        //var AccountTypeId = $('#AccountType').val();
+        var RoleName = $('#Rolename').val();
+        var MenuIds = [];
+
+        $('.check_Menu:checked').each(function () {
+            var menuid = $(this).val();
+            MenuIds.push(menuid);
+        });
+
+
+
+        $.ajax({
+            url: "/Admin/EditRolePost",
+            method: "POST",
+            data: {  RoleName: RoleName, MenuIds: MenuIds },
+            success: function (result) {
+                $("#TabContent").html(result);
+                // $('#accounttype').val(0);
+                // $('#rolename').val('');
+                // $('.check_menu:checked').prop('checked', false);
+                // form.classlist.remove('was-validated');
+                toastr.success("Role Edited successfully!");
+            },
+            error: function () {
+                toastr.error("Error while Create Role");
+            }
+        });
+
+    });
+</script>

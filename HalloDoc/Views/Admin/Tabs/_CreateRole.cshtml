@@ -1,0 +1,118 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<div class="container">
+    <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex">
+            <h4 class="m-0 pt-2 ">Create Role</h4>
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Index", "Admin")'">
+                <i class="bi bi-chevron-left i-info"></i>Back
+            </button>
+        </div>
+    </div>
+    <div class="p-5 shadow mt-3">
+        <h5 class="p-1 mx-2 fs-5 mb-3"> Details</h5>
+        <form id="createRoleForm">
+            <div class="row g-2">
+                <div class="col-md">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="RoleName" placeholder="Role Name" required>
+                        <label for="RoleName" class="text-secondary floatingLabel">Role Name</label>
+                        <div class="invalid-feedback">
+                            Please enter a role name.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <select class="form-select form-control dropdwn text-secondary" id="AccountType" aria-label="Floating label select example" data-btn="CreateRoles" required>
+                            <option value="0" selected>All</option>
+                            <option value="1">Admin</option>
+                            <option value="2">Provider</option>
+                            <option value="3">Patient</option>
+                        </select>
+                        <label for="AccountType floatingLabel">Account Type</label>
+                        <div class="invalid-feedback">
+                            Please select an account type.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my-2">
+                @foreach (var item in Model.menu)
+                {
+                    <span class="form-check form-check-inline">
+                        <input class="check_Menu form-check-input" type="checkbox" value="@item.Menuid" id="MenuData">
+                        <label class="form-check-label me-2 pe-2" for="MenuData">
+                            @item.Name
+                        </label>
+                    </span>
+                }
+                <div class="invalid-feedback">
+                    Please select at least one menu.
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end mb-3 ">
+                <button type="button" class="btn btn-info btn-lg me-2 info-button" id="savebtn">Save</button>
+                <button type="button" class="btn btn-outline-info btn-lg  button-info">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    //$('#AccountType').change(function () {
+    //    var RoleName = $('#RoleName').val();
+    //    var AccountTypeId = $(this).val();
+    //    var tabId = $(this).data('btn');
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        type: 'GET',
+    //        data: { Tabid: tabId, AccountTypeId: AccountTypeId },
+    //        success: function (result) {
+    //            $("#TabContent").html(result);
+    //            $('#RoleName').val(RoleName);
+    //            $('#AccountType').val(AccountTypeId);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            console.error(error);
+    //        }
+    //    });
+    //});
+
+    //create role
+
+    $('#savebtn').click(function () {
+        var form = $('#createRoleForm')[0];
+
+     
+            var AccountTypeId = $('#AccountType').val();
+            var RoleName = $('#RoleName').val();
+            var MenuIds = [];
+
+            $('.check_Menu:checked').each(function () {
+                var menuid = $(this).val();
+                MenuIds.push(menuid);
+            });
+
+
+            $.ajax({
+                url: "/Admin/CreateRolesPost",
+                method: "POST",
+                data: { AccountTypeId: AccountTypeId, RoleName: RoleName, MenuIds: MenuIds },
+                success: function (result) {
+                    $("#TabContent").html(result);
+                    // $('#accounttype').val(0);
+                    // $('#rolename').val('');
+                    // $('.check_menu:checked').prop('checked', false);
+                    // form.classlist.remove('was-validated');
+                    toastr.success("Role Created successfully!");
+                },
+                error: function () {
+                    toastr.error("Error while Create Role");
+                }
+            });
+        
+    });
+</script>

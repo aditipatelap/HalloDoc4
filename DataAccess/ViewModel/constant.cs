@@ -62,7 +62,8 @@ namespace DataAccess.ViewModel
         public enum Roles
         {
             Admin=1,
-            Patient=2,
+            Provider = 2,
+            Patient =3,
             
         }
 

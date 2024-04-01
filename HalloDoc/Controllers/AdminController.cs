@@ -18,6 +18,9 @@ using System.ComponentModel;
 using System.Reflection;
 using OfficeOpenXml;
 using Microsoft.AspNetCore.Http.HttpResults;
+using DataAccess.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
+
 
 namespace HalloDoc.Controllers
 {
@@ -85,7 +88,23 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Access")
             {
-                return PartialView(result);
+                var data = _providerService.GetAccessData();
+                return PartialView(result,data);
+            }
+            if (model.tabid == "CreateRole")
+            {
+                var data = _providerService.GetCreateRoleData(model.accounttype);
+                return PartialView(result, data);
+            }
+            if (model.tabid == "EditAccess")
+            {
+                var data = _providerService.GetEditRoleData(model.roleid);
+                return PartialView(result, data);
+            }
+            if (model.tabid == "UserAccess")
+            {
+                var data = _providerService.UserAccessDataGet(model.searchuseraccess);
+                return PartialView(result, data);
             }
             if (model.tabid == "Partners")
             {
@@ -497,6 +516,32 @@ namespace HalloDoc.Controllers
             
 
             return GetTabs(admin,default,default,default,default,default,default);
+        }
+        public IActionResult CreateRolesPost(short AccountTypeId,string RoleName,List<int> MenuIds)
+        {
+            _providerService.CreateRolePost(AccountTypeId, RoleName, MenuIds);
+            _notyf.Information("Role Created Successfully ...");
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "CreateRole";
+            return GetTabs(admin, default, default, default, default, default, default);
+
+        }
+        public IActionResult EditRolePost(string rolename,List<int> MenuIds)
+        {
+            _providerService.EditRolePost(rolename, MenuIds);
+
+            _notyf.Information("Role Updated Successfully ...");
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "Access";
+            return GetTabs(admin, default, default, default, default, default, default);
+        }
+        public IActionResult DeleteRolePost (int roleid)
+        {
+            _providerService.DeleteRolePost(roleid);
+            _notyf.Information("Role Deleted Successfully ...");
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "Access";
+            return GetTabs(admin, default, default, default, default, default, default);
         }
 
     }

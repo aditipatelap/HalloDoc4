@@ -251,7 +251,31 @@ namespace DataAccess.ViewModel
         public int physicianid { get;set; }
         public bool checkbox { get;set; }
     }
-   
+    public class AccountAccess
+    {
+        public string Name { get; set; }    
+        public Roles AccountType { get;set; }
+        public int roleid { get; set; }
+    }
+    public class EditAccountAccess
+    {
+        public string? rolename { get; set;}
+        public short AccountType { get; set; }
+
+    }
+    public class MenuCheckbox
+    {
+        public int menuid
+        { get; set; }
+        public string? menuname { get; set; }
+    }
+    public class UserAccessModel
+    {
+        public string AccountPOC { get; set; }
+        public string AccountType { get; set; }
+        public int PhoneNumber { get; set; }
+        public string status { get; set; }
+    }
 
     public class AdminDashboard
     {
@@ -300,6 +324,9 @@ namespace DataAccess.ViewModel
         public string Email { get; set; }
         public int statusid { get;set; }
         public string btnname { get;set; }
+        public int accounttype { get; set; }
+        public int roleid { get;set; }  
+        public string searchuseraccess { get;set; }
         public IEnumerable<AdminDash> adminDashes { get; set; }
         
 
@@ -313,10 +340,15 @@ namespace DataAccess.ViewModel
         public List<RegionCheckbox> regionCheckbox { get; set; }
         public GetTabParameter GetTabParameter { get; set; }    
 
-
+       
         /*******providers********/
+        public IEnumerable<Rolemenu> rolemenus { get; set; }
+        public List<AccountAccess> accountAccess { get; set; }
+        public List<MenuCheckbox> menuCheckboxes { get; set; }
+        public EditAccountAccess EditaccountAccess { get; set; }
         public List<ProviderInfo> ProviderInfo { get; set; }
-
+        public IEnumerable<Menu> ? menu { get; set; }
+       public  List<UserAccessModel> userAccessModels { get; set; } 
         //public List<checkboxmodel> checkboxmodel { get; set; }
         //public List<PhysicancheckboxModel> physicancheckboxModels { get; set; }
 
@@ -327,7 +359,7 @@ namespace DataAccess.ViewModel
         //    public int requestid { get; set; }
         //    public string physicianid { get; set; }
         //}
-       
+
     }
     public class GetTabParameter
     {

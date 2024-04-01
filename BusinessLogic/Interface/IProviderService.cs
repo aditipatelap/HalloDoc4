@@ -16,5 +16,12 @@ namespace BusinessLogic.Interface
 
         public void PostProviderData(List<checkboxmodel> model);
         public void PostProviderProfile(AdminDashboard adminDashboard);
+        public AdminDashboard GetAccessData();
+        public AdminDashboard GetCreateRoleData(int accounttype);
+        public void CreateRolePost(short AccountTypeId, string RoleName, List<int> MenuIds);
+        public AdminDashboard GetEditRoleData(int roleid);
+        public void EditRolePost(string rolename, List<int> MenuIds);
+        public void DeleteRolePost(int roleid);
+        public AdminDashboard UserAccessDataGet(string SearchUsers);
     }
 }
