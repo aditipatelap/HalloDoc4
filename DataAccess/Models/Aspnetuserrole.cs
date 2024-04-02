@@ -16,8 +16,12 @@ public partial class Aspnetuserrole
     [Column("aspnetuserroleid")]
     public int Aspnetuserroleid { get; set; }
 
-    [Column("roleid", TypeName = "character varying")]
-    public string? Roleid { get; set; }
+    [Column("roleid")]
+    public int? Roleid { get; set; }
+
+    [ForeignKey("Roleid")]
+    [InverseProperty("Aspnetuserroles")]
+    public virtual Aspnetrole? Role { get; set; }
 
     [ForeignKey("Userid")]
     [InverseProperty("Aspnetuserroles")]

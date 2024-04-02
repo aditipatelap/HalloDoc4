@@ -3,8 +3,10 @@
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
+using System.Web.WebPages;
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -52,9 +54,9 @@ namespace BusinessLogic.Service
             }
             _db.SaveChanges();
         }
-        public AdminDashboard GetProviderAcccountData(int physicianid)
+        public AdminDashboard GetProviderAcccountData(string aspnetuserid)
         {
-            var result = _db.Physicians.Include(x=>x.Aspnetuser).Where(x => x.Physicianid == physicianid).Select(x => new Profile
+            var result = _db.Physicians.Include(x=>x.Aspnetuser).Where(x => x.Aspnetuserid == aspnetuserid).Select(x => new Profile
             {
                 UserName=x.Aspnetuser.Name,
                 FirstName=x.Firstname,
@@ -67,13 +69,13 @@ namespace BusinessLogic.Service
                 Zipcode=x.Zip,  
                 Businessname=x.Businessname,
                 BusinessWebsite=x.Businesswebsite,
-                status=(PhysicianStatus)x.Status
-
+                status=(PhysicianStatus)x.Status,
+                physicianid=x.Physicianid
 
             }).FirstOrDefault();
             AdminDashboard adminDashboard= new AdminDashboard();
-            adminDashboard.myProfile = result;
-            adminDashboard.physicianid=physicianid;
+            adminDashboard.myProfile = result;  
+            adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
         public void PostProviderProfile(AdminDashboard adminDashboard)
@@ -185,24 +187,63 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard UserAccessDataGet(string SearchUsers)
         {
-           AdminDashboard model = new AdminDashboard();
-           
-        //    var data = _db.Aspnetusers.Where(x => SearchUsers == null || x.Name.ToLower().Contains(SearchUsers.ToString()) ||
-        //                     x.Name.ToUpper().Contains(SearchUsers.ToString()))
-        //                    .Include(x => x.Aspnetuserroles).Select(x => new UserAccessModel
-        //                    {
-        //                        AccountPOC = x.Name,
-        //                        AccountType = _db.Roles.Where(y => y.Roleid == x.Aspnetuserroles.FirstOrDefault().Roleid).FirstOrDefault().Name,
-        //                        PhoneNumber = x.Phonenumber,
-        //                        status = (UserStatus)db.Users.Where(y => y.Aspnetuserid == x.Id).FirstOrDefault().Status,
-        //                        //OpenRequests=
-        //                    }).ToList();
 
-        //    model.userAccessModels = data;
+
+            //var data1 = _db.Aspnetusers
+            //     .Include(x => x.Aspnetuserroles).Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid == roleid).Select(x => new UserAccessModel
+            //     {
+            //         AccountPOC = x.Name,
+            //         AccountType = _db.Roles.Where(y => y.Roleid == x.Aspnetuserroles.FirstOrDefault().Roleid).FirstOrDefault().Name,
+            //         PhoneNumber = x.Phonenumber,
+            //         accounttypeid=x.Aspnetuserroles.FirstOrDefault().Roleid,
+            //         //status = (RoleEnum)_dbContext.Users.Where(y => y.Aspnetuserid == x.Id).FirstOrDefault().Status,
+            //         //OpenRequests=
+            //         if (x.Aspnetuserroles.FirstOrDefault().Roleid == 1) {
+            //    AdminStatus = (PhysicianStatus)_db.Admins.FirstOrDefault(y => y.Aspnetuserid == x.Id).Status
+            //        }
+            //// Get status for Admin
+            //PhysicianStatus = GetPhysicianStatus(x), // Get status for Physician
+            //         PatientStatus = GetPatientStatus(x), // Get status for Patient
+            //         accounttypeid = _db.Roles.Where(y => y.Roleid == x.Aspnetuserroles.FirstOrDefault().Roleid).FirstOrDefault().Roleid,
+
+            //     }).ToList();
+            AdminDashboard model = new AdminDashboard();
+            //model.userAccessModels = data1;
             return model;
+
         }
+        // Method to get status based on account type
+        // Method to get status for Admin
+        //private PhysicianStatus GetAdminStatus(Aspnetuser user)
+        //{
+        //    return 
+        //}
 
+        //// Method to get status for Physician
+        //private PhysicianStatus GetPhysicianStatus(Aspnetuser user)
+        //{
 
+        //        return _db.Physicians.FirstOrDefault(p => p.Aspnetuserid == user.Id).Status;
+
+        //}
+
+        //// Method to get status for Patient
+        //private status GetPatientStatus(Aspnetuser user)
+        //{
+        //    if (user.Aspnetuserroles.FirstOrDefault().Roleid == PatientRoleId)
+        //    {
+        //        return _db.Patients.FirstOrDefault(p => p.UserId == user.Id)?.Status ?? PatientStatusEnum.Unknown;
+        //    }
+        //    return PatientStatusEnum.Unknown;
+        //}
+
+        //}
+
+        public List<Physicianlocation> GetPhysicianlocations()
+        {
+            var phyLocation = _db.Physicianlocations.ToList();
+            return phyLocation;
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Service;
+using DataAccess.Models;
 using DataAccess.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace BusinessLogic.Interface
     public  interface IProviderService
     {
         public AdminDashboard GetProviderData(int regionid);
-        public AdminDashboard GetProviderAcccountData(int physicianid);
+        public AdminDashboard GetProviderAcccountData(string aspnetuserid);
         //public void PostProviderData(AdminDashboard model);
 
         public void PostProviderData(List<checkboxmodel> model);
@@ -23,5 +24,6 @@ namespace BusinessLogic.Interface
         public void EditRolePost(string rolename, List<int> MenuIds);
         public void DeleteRolePost(int roleid);
         public AdminDashboard UserAccessDataGet(string SearchUsers);
+        public List<Physicianlocation> GetPhysicianlocations();
     }
 }

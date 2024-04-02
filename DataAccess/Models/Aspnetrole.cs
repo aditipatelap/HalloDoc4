@@ -11,10 +11,11 @@ public partial class Aspnetrole
 {
     [Key]
     [Column("id")]
-    [StringLength(128)]
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
 
-    [Column("name")]
-    [StringLength(256)]
+    [Column("name", TypeName = "character varying")]
     public string Name { get; set; } = null!;
+
+    [InverseProperty("Role")]
+    public virtual ICollection<Aspnetuserrole> Aspnetuserroles { get; set; } = new List<Aspnetuserrole>();
 }

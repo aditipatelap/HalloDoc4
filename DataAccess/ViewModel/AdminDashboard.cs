@@ -168,7 +168,7 @@ namespace DataAccess.ViewModel
         public string? LastName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-
+        public int physicianid { get;set; }
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
@@ -273,8 +273,13 @@ namespace DataAccess.ViewModel
     {
         public string AccountPOC { get; set; }
         public string AccountType { get; set; }
-        public int PhoneNumber { get; set; }
-        public string status { get; set; }
+        public string PhoneNumber { get; set; }
+        public PhysicianStatus status { get; set; }
+
+        public int? accounttypeid { get; set; }
+        public string aspnetuserid { get;set; }
+        public int physicianid { get; set; }
+        public PhysicianStatus AdminStatus { get;set; }
     }
 
     public class AdminDashboard
@@ -326,6 +331,7 @@ namespace DataAccess.ViewModel
         public string btnname { get;set; }
         public int accounttype { get; set; }
         public int roleid { get;set; }  
+        public string aspnetuserid { get;set; }
         public string searchuseraccess { get;set; }
         public IEnumerable<AdminDash> adminDashes { get; set; }
         

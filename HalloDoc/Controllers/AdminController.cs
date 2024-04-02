@@ -65,11 +65,12 @@ namespace HalloDoc.Controllers
             }
             if(model.tabid == "MyProfile")
             {
-                var req = _AdminDash.MyProfileDataGet("19");
+                var req = _AdminDash.MyProfileDataGet(aspnetuserid);
                 return PartialView(result,req);
             }
             if (model.tabid == "ProviderLocation")
             {
+                
                 return PartialView(result);
             }
             if (model.tabid == "Providers")
@@ -79,7 +80,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "PhysicianAccountEdit")
             {
-                var data = _providerService.GetProviderAcccountData(model.physicianid);
+                var data = _providerService.GetProviderAcccountData(aspnetuserid);
                 return PartialView(result,data);
             }
             if (model.tabid == "Records")
@@ -105,6 +106,11 @@ namespace HalloDoc.Controllers
             {
                 var data = _providerService.UserAccessDataGet(model.searchuseraccess);
                 return PartialView(result, data);
+            }
+            if (model.tabid == "CreateAdmin")
+            {
+                
+                return PartialView(result);
             }
             if (model.tabid == "Partners")
             {
@@ -543,6 +549,33 @@ namespace HalloDoc.Controllers
             admin.tabid = "Access";
             return GetTabs(admin, default, default, default, default, default, default);
         }
+        public IActionResult OpenEditAccess(int accounttypeid,string aspnetuserid)
+        {
+            if(accounttypeid==1)
+            {
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.tabid = "MyProfile";
+               return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+            }
+            if (accounttypeid == 2)
+            {
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.tabid = "PhysicianAccountEdit";
 
+               return  GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+            }
+            if (accounttypeid == 3)
+            {
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.tabid = "MyProfile";
+               return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+            }
+            return Ok();
+        }
+        public IActionResult GetLocation()
+        {
+            List<Physicianlocation> getLocation = _providerService.GetPhysicianlocations();
+            return Ok(getLocation);
+        }
     }
 }

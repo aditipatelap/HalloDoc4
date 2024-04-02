@@ -1,0 +1,248 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="row justify-content-center mb-5 pb-5">
+    <div class="row m-4 col-xl-8 col-md-9 col-11">
+        <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Create Admin Account</p>
+        <div class="col mb-0 text-end">
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Dashboard", "Admin")'">
+                <i class="bi bi-chevron-left i-info"></i>Back
+            </button>
+        </div>
+    </div>
+
+    <div class="shadow p-5 col-xl-8 col-md-9 col-11">
+        <form id="CreateAdminform">
+            <!-- Account Information -->
+            <p class="fs-5 fw-bold">Account Information</p>
+            <div class="row g-2">
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" placeholder="User Name" asp-for="myProfile.UserName" disabled>
+                        <label for="username" class="floatingLabel">User Name</label>
+                    </div>
+                    <span id="Username" asp-validation-for="myProfile.UserName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="password" placeholder="Password" asp-for="myProfile.Password" required>
+                        <label for="password" class="floatingLabel">Password</label>
+                    </div>
+                    <span id="Password" asp-validation-for="myProfile.Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating mb-3">
+                        <select class="form-select form-control" id="AdminRole" style="height: 58px;" asp-for="myProfile.roleid">
+                            @*@foreach (var i in Model.RoleModel)
+                            {
+                                if (i.Accounttype == 1)
+                                {
+                                    <option value="@i.Roleid"> @i.Name </option>
+                                }
+                            }*@
+                        </select>
+                        <label for="PhysicianRole" class="floatingLabel">Role</label>
+                    </div>
+                    <span id="AdminRole" asp-validation-for="myProfile.roleid" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Administrator Information -->
+            <p class="fs-5 fw-bold">Administrator Information</p>
+            <div class="row g-2">
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="AdminFirstname" placeholder="First Name" asp-for="myProfile.FirstName">
+                        <label for="AdminFirstname" class="floatingLabel">First Name</label>
+                    </div>
+                    <span id="FirstName" asp-validation-for="myProfile.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="AdminLastname" placeholder="Last Name" asp-for="myProfile.LastName">
+                        <label for="AdminLastname" class="floatingLabel">Last Name</label>
+                    </div>
+                    <span id="LastName" asp-validation-for="myProfile.LastName" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="AdminEmail" placeholder="Email" asp-for="myProfile.Email" required>
+                        <label class="floatingLabel">Email</label>
+                    </div>
+                    <span id="Email" asp-validation-for="myProfile.Email" class="text-danger"></span>
+                    <div id="Emailverify" class="d-none text-danger">Email is Already Exist! Please try Another</div>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="AdminConfirmEmail" placeholder="Email" asp-for="myProfile.ConfirmEmail" required>
+                        <label for="AdminConfirmEmail" class="floatingLabel">Confirm Email</label>
+                    </div>
+                    <span id="ConfirmEmail" asp-validation-for="myProfile.ConfirmEmail" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 mb-3 z-3">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control p-3 ps-5" placeholder="(201) 555-0123" asp-for="myProfile.Mobile">
+                    </div>
+                    <span id="Phone" asp-validation-for="myProfile.Mobile" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-12 d-flex flex-wrap mb-3 align-items-baseline mt-1">
+                   @* @foreach (var i in Model.Regions)
+                    {
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2" type="checkbox" value="@i.Regionid" name="adminChecked">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                @i.Name
+                            </label>
+                        </div>
+                    }*@
+                    <span id="selectedRegions" asp-validation-for="myProfile.regionid" class="text-danger"></span>
+                </div>
+                <input type="hidden" asp-for="myProfile.regionid" id="SelectedRegionIds" />
+
+            </div>
+
+            <!-- Mailing & Billing Information -->
+            <p class="fs-5 fw-bold">Mailing & Billing Information</p>
+            <div class="row g-2">
+                <div class="col-md-6 col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="MailingAddress1" placeholder="Address1" asp-for="myProfile.Address1">
+                        <label for="MailingAddress1" class="floatingLabel">Address1</label>
+                    </div>
+                    <span id="Address1" asp-validation-for="myProfile.Address1" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="MailingAddress2" placeholder="Address2" asp-for="myProfile.Address2">
+                        <label for="MailingAddress2" class="floatingLabel">Address2</label>
+                    </div>
+                    <span id="Address2" asp-validation-for="myProfile.Address2" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="MailingCity" placeholder="City" asp-for="myProfile.City">
+                        <label for="MailingCity" class="floatingLabel">City</label>
+                    </div>
+                    <span id="City" asp-validation-for="myProfile.City" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="Physicianstate" style="height: 58px;" asp-for="myProfile.State">
+                           @* @foreach (var i in Model.Regions)
+                            {
+                                <option value="@i.Regionid"> @i.Name] </option>
+                            }*@
+                        </select>
+                        <label for="Physicianstate" class="floatingLabel">State</label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="MailingZipcode" placeholder="Zip" asp-for="myProfile.Zipcode">
+                        <label for="MailingZipcode" class="floatingLabel">Zip</label>
+                    </div>
+                    <span id="Zip" asp-validation-for="myProfile.Zipcode" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control p-3 ps-5" id="MailingMobile" asp-for="myProfile.PhoneNumber" placeholder="(201) 555-0123">
+                    </div>
+                    <span id="Phone1" asp-validation-for="myProfile.PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end my-3">
+                <button type="submit" class="btn btn-success text-light formsubmit">Create Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // function updateHiddenInput() {
+    //     var selectedRegions = [];
+    //     $("input[name='adminChecked']").each(function () {
+    //         var isChecked = $(this).is(":checked");
+    //         if (isChecked) {
+    //             selectedRegions.push($(this).val());
+    //         }
+    //     });
+    //     $("#SelectedRegionIds").val(selectedRegions.join(","));
+    // }
+
+    // $("input[name='adminChecked']").change(function () {
+    //     updateHiddenInput();
+    // });
+
+    $('#CreateAdminform').on('submit', function (e) {
+        e.preventDefault();
+
+        var data = new FormData(this);
+
+        $.ajax({
+            url: "/Admin/CreateAdminDataPost",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.success) {
+                    var TabId = "CreateAdmin";
+                    $.ajax({
+                        url: '/Admin/GetTabs',
+                        data: { Tabid: TabId },
+                        method: 'GET',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+                    toastr.success("Admin Created successfully!");
+                }
+                else {
+                    toastr.error("Please Enter valid details!");
+                }
+            }
+        });
+    });
+
+</script>
+
+<script>
+    $('#AdminEmail').blur(function () {
+        var email = $(this).val();
+        $.ajax({
+            url: '/Admin/checkEmail',
+            method: "GET",
+            data: { email: email },
+            success: function (CheckEmail) {
+                if (CheckEmail) {
+                    $('#AdminEmail').addClass('is-invalid');
+                    $('#Emailverify').removeClass('d-none');
+                    $('#Emailverify').addClass('d-block');
+                } else {
+                    $('#AdminEmail').removeClass('is-invalid');
+                    $('#Emailverify').removeClass('d-block');
+                    $('#Emailverify').addClass('d-none');
+                }
+            },
+            error: function () {
+                alert("An error while checking email");
+            }
+        });
+    });
+
+</script>

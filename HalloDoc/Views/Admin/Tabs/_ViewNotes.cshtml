@@ -2,7 +2,7 @@
 @model AdminDashboard<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>    .container {        width: 950px;    }</style>
-       <div class="container">        <div class="d-flex justify-content-between mt-4">            <div class="d-flex  ">                <h4 class="m-0 pt-2 fs-5 ">Notes  </h4>            </div>            <button class=" btn btn-outline-info  bi bi-chevron-left" onclick="location.href='@Url.Action("Index", "Admin")'">                Back            </button>        </div>
+       <div class="container">        <div class="d-flex justify-content-between mt-4">            <div class="d-flex  ">                <h4 class="m-0 pt-2 fs-5 ">Notes  </h4>            </div>            <button class="btn btn-outline-info  bi bi-chevron-left backbtn">                Back            </button>        </div>
     <form method="post" id="notesForm" class="needs-validation" novalidate>
         <input type="hidden" asp-for="@Model.requestid" />
         <div class="row g-2 my-4">            <div class="col-md me-4 d-flex shadow rounded">                <div class="m-auto text-secondary col-1"><i class="bi bi-arrow-left-right text-secondary"></i></div>                <div class="ps-2 col-11">                    <div class="fw-bold">Transfer Notes</div>                    <select class="w-100 py-2 px-1  border-0 " id="Region">                        @foreach (var item in Model.viewnotes)
@@ -25,6 +25,11 @@
 </div>
 
 <script>
+    $('.backbtn').on('click', function () {
+        debugger;
+        backbtn();
+        
+    });
     $('#notesForm').on('submit', function (e) {
 
         e.preventDefault();
@@ -69,6 +74,9 @@
             }
         });
     });
+   
+
+   
 </script>
 
 

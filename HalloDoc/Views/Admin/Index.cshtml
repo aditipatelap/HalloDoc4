@@ -66,6 +66,7 @@
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item  tablink" href="#" id="Access">Account Access</a>
                         <a class="dropdown-item tablink" id="UserAccess" href="#">User Access</a>
+                        <a class="dropdown-item tablink" id="CreateAdmin" href="#">Create Admin</a>
 
                     </div>
                 </li>
@@ -92,6 +93,7 @@
     var tabidglobal;
     var statusidglobal;
     var btnnameglobal;
+    var ans=true;
     document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll(".nav-link");
 
@@ -124,8 +126,29 @@
     ////********************dashboard********************* */
     //load dashboard and tabs
     $(document).ready(function () {
+
         $("#Dashboard")[0].click();
     });
+    function backbtn()
+    {
+        //console.log(tabidglobal);
+         $.ajax({
+                url: '/Admin/GetTabs',
+                data: {tabid:"Dashboard"},
+               
+                method: 'GET',
+                success: function (data) {
+                    // Replace the content of the btnContent div with the retrieved partial view
+                    $("#TabContent").html(data);
+                   
+                },
+                error: function () {
+                    console.error('Error fetching partial view.');
+                }
+            });
+
+
+    }
     function TabLoad() {
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
@@ -133,8 +156,10 @@
         var regionid = $('.filterphysician').val();
         var accounttype = $('#AccountType').val();
         var RoleName = $('#RoleName').val();
+       
         //var roleid = checkbox.getAttribute('data-roleid');
         var roleid = $('#EditAccess').data('btn');
+        
         if (typeof requestid === 'undefined') {
             requestid = 0;
         }
@@ -311,7 +336,8 @@
             });
         }
         $(document).on('click', '.showmodal', ModalDisplay);
-
+   
+    
         $(document).on('click', '.partialbtn', PartialDisplay);
         $(document).on('change', '#filteradmin', PartialDisplay);
         $(document).on('click', '.searchrequest', PartialDisplay);

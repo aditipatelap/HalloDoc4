@@ -126,7 +126,9 @@ public partial class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Aspnetrole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("pk_aspnetrole");
+            entity.HasKey(e => e.Id).HasName("aspnetroles_pkey");
+
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn();
         });
 
         modelBuilder.Entity<Aspnetuser>(entity =>
@@ -137,6 +139,8 @@ public partial class ApplicationDbContext : DbContext
         modelBuilder.Entity<Aspnetuserrole>(entity =>
         {
             entity.HasKey(e => e.Aspnetuserroleid).HasName("aspnetuserroles_pkey");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Aspnetuserroles).HasConstraintName("fk_aspnetuserrole");
 
             entity.HasOne(d => d.User).WithMany(p => p.Aspnetuserroles)
                 .OnDelete(DeleteBehavior.ClientSetNull)

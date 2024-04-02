@@ -158,20 +158,26 @@
     
     
    
-    $(document).ready(function () {
-        $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
+    //$(document).ready(function () {
+    //    $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
 
        
-    });
+    //});
     //$(document).ready(function () {
     //    $('.active-link').click(function () {
     //        $('.active-link').removeClass('active');
     //        $(this).addClass('active');
     //    });
     //});
-    
+
+
     $(document).ready(function () {
-        $("[data-btn='NewPartial'][data-id='1']").click();
+        var hasClicked = false;
+
+        if (!hasClicked) {
+            $("[data-btn='NewPartial'][data-id='1']").click();
+            hasClicked = true;
+        }
     });
 
    

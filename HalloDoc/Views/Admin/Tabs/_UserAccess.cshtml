@@ -70,7 +70,10 @@
                         </td>
                         <td>
                            
-                            <button class="btn btn-outline-info tablink" >Edit</button>
+                        </td>
+                        <td>
+                           
+                            <button class="btn btn-outline-info openEditAccess" data-accountypeid="@items.accounttypeid" data-aspnetuserid="@items.aspnetuserid">Edit</button>
                         </td>
                     </tr>
 
@@ -82,68 +85,29 @@
     </table>
 </div>
 <script>
-
-    //function showchanges()
-    //{
-
-    //    var saveBtn = document.getElementById("savechangesbtn");
-    //    saveBtn.style.display = "block";
-
-
-    //}
-    function saveChanges() {
-        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        var dataToSend = [];
-
-        checkboxes.forEach(function (checkbox) {
-            var physicianid = checkbox.getAttribute('data-physician-id');
-            var checkbox = checkbox.checked;
-            dataToSend.push({ physicianid: physicianid, checkbox: checkbox });
-        });
-
-
-        console.log(dataToSend);
+    $('.openEditAccess').click(function ()
+    {
+        var accounttypeid = $(this).data('accountypeid');
+        var aspnetuserid=$(this).data('aspnetuserid');
+        console.log(accounttypeid);
         $.ajax({
-            type: 'POST',
-            url: 'Admin/PostMyProfile',
-            data: { dataToSend: dataToSend },
-
-            success: function (data) {
-                console.log("Data saved successfully.");
-
-                console.log(data);
+            url: "/Admin/OpenEditAccess",
+            method: "POST",
+            data: { accounttypeid: accounttypeid, aspnetuserid: aspnetuserid },
+            success: function (result) {
+                $("#TabContent").html(result);
+                // $('#accounttype').val(0);
+                // $('#rolename').val('');
+                // $('.check_menu:checked').prop('checked', false);
+                // form.classlist.remove('was-validated');
+                toastr.success("Role Edited successfully!");
             },
-            error: function (xhr, status, error) {
-                console.log("Error saving data: " + error + ". Status: " + status);
-                console.log(xhr.responseText);
+            error: function () {
+                toastr.error("Error while Create Role");
             }
         });
-    }
 
-
-        //function saveChanges() {
-        //    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
-        //    const dataToSend = checkboxes.map(checkbox => {
-        //        return {
-        //            //Id: checkbox.getAttribute('data-id'),
-        //            IsChecked: checkbox.checked
-        //        }
-        //    });
-
-        //    $.ajax({
-        //        type: "POST",
-        //        url: 'Admin/PostProviderData',
-        //        data: JSON.stringify(dataToSend), // Convert the data to a JSON string
-        //        contentType: "application/json",
-        //        dataType: "json",
-        //        success: function (response) {
-        //            console.log(response);
-        //        },
-        //        error: function (xhr, textStatus, error) {
-        //            console.log(error.toString());
-        //        }
-        //    });
-        //}
-
+    });
+    
 </script>
 

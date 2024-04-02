@@ -26,7 +26,7 @@ namespace BusinessLogic.Service
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Aspnetuserroles.FirstOrDefault().Roleid),
+                new Claim(ClaimTypes.Role, user.Aspnetuserroles.FirstOrDefault().Roleid.ToString()),
                 new Claim("UserID", user.Id),
                 new Claim("Username", user.Name)
             };
