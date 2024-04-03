@@ -577,5 +577,71 @@ namespace HalloDoc.Controllers
             List<Physicianlocation> getLocation = _providerService.GetPhysicianlocations();
             return Ok(getLocation);
         }
+        //public void CreateAdminDataPost(AdminDashboard model)
+        //{
+        //    Aspnetuser aspuser = new Aspnetuser();
+        //    if (_db.Aspnetusers.Any(x => x.Email != model.myProfile.Email))
+        //    {
+        //        aspuser.Id = Guid.NewGuid().ToString();
+        //        aspuser.Name = "ADMIN." + model.myProfile.FirstName + "." + model.myProfile.LastName;
+        //        aspuser.Email = model.myProfile.email;
+        //        aspuser.Phonenumber = model.myProfile.phone;
+        //        aspuser.Createddate = DateTime.Now;
+
+        //        // Hash the password
+        //        var passwordHasher = new PasswordHasher<Aspnetuser>();
+        //        aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.myProfile.Password);
+
+        //        _db.Aspnetusers.Add(aspuser);
+        //        _dbContext.SaveChanges();
+
+        //        Aspnetuserrole aspnetrole = new Aspnetuserrole();
+
+        //        aspnetrole.Userid = aspuser.Id;
+        //        aspnetrole.Roleid = model.MyProfileModel.roleid.ToString();
+
+        //        _dbContext.Aspnetuserroles.Add(aspnetrole);
+        //        _dbContext.SaveChanges();
+
+        //        Admin admin = new Admin();
+
+        //        admin.Aspnetuserid = aspuser.Id;
+        //        admin.Firstname = model.MyProfileModel.firstName;
+        //        admin.Lastname = model.MyProfileModel.lastName;
+        //        admin.Email = model.MyProfileModel.email;
+        //        admin.Mobile = model.MyProfileModel.phone;
+        //        admin.Address1 = model.MyProfileModel.Address1;
+        //        admin.Address2 = model.MyProfileModel.Address2;
+        //        admin.City = model.MyProfileModel.city;
+        //        admin.Status = 1;
+        //        admin.Roleid = model.MyProfileModel.roleid;
+        //        admin.Regionid = model.MyProfileModel.Regionid;
+        //        admin.Zip = model.MyProfileModel.Zip;
+        //        admin.Altphone = model.MyProfileModel.phone;
+        //        admin.Createdby = aspuser.Id;
+        //        admin.Createddate = DateTime.Now;
+        //        admin.Isdeleted = new BitArray(new bool[1] { false });
+
+        //        _dbContext.Admins.Add(admin);
+        //        _dbContext.SaveChanges();
+        //    }
+
+
+            /*var list = model.AdministratorModel.selectedRegions.Split(",").Select(int.Parse).ToList();
+
+            foreach (var i in list)
+            {
+                var a = new Adminregion
+                {
+                    Adminid = data.Adminid,
+                    Regionid = i
+                };
+                _context.Adminregions.Add(a);
+            }
+            _context.SaveChanges();
+
+            return true;
+        }*/
+        
     }
 }

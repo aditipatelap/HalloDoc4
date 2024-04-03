@@ -154,15 +154,34 @@
         var statusid = $(this).data('id');
         $("#hidden").val(statusid);
     });
-    
-    
-    
-   
-    //$(document).ready(function () {
-    //    $('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
 
+    
+    $(document).ready(function () {
+        
+
+        // Variable to keep track of whether the event has been triggered initially
+      
        
-    //});
+
+        // Function to trigger the event initially and subsequently
+        function triggerEvent() {
+            if ( dashboardclick==1) {
+                //$('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
+                // Trigger the event with fixed data-btn and data-id values
+                $("[data-btn='NewPartial'][data-id='1']").click();
+               
+                dashboardclick=2;
+            } else {
+                // Trigger the event using the values of btnnameglobal and statusidglobal
+                $("[data-btn='" + btnnameglobal + "'][data-id='" + statusidglobal + "']").click();
+            }
+        }
+
+        // Call the triggerEvent function
+        triggerEvent();
+    });
+
+
     //$(document).ready(function () {
     //    $('.active-link').click(function () {
     //        $('.active-link').removeClass('active');
@@ -171,14 +190,11 @@
     //});
 
 
-    $(document).ready(function () {
-        var hasClicked = false;
-
-        if (!hasClicked) {
-            $("[data-btn='NewPartial'][data-id='1']").click();
-            hasClicked = true;
-        }
-    });
+    //$(document).ready(function () {
+        
+    //        $("[data-btn='NewPartial'][data-id='1']").click();
+       
+    //});
 
    
        

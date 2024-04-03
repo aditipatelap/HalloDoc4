@@ -91,9 +91,10 @@
 
 <script>
     var tabidglobal;
-    var statusidglobal;
+    var statusidglobal=1;
     var btnnameglobal;
     var ans=true;
+    var dashboardclick = 1;
     document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll(".nav-link");
 
@@ -128,27 +129,9 @@
     $(document).ready(function () {
 
         $("#Dashboard")[0].click();
+
     });
-    function backbtn()
-    {
-        //console.log(tabidglobal);
-         $.ajax({
-                url: '/Admin/GetTabs',
-                data: {tabid:"Dashboard"},
-               
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#TabContent").html(data);
-                   
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-
-
-    }
+   
     function TabLoad() {
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
@@ -219,8 +202,9 @@
             });
 
         }
+   
 
-        function PartialDisplay() {
+    function PartialDisplay() {
 
             /*******traingle******* */
             $('.partialbtn').removeClass('active');
@@ -228,35 +212,7 @@
             $('.triangle-down').hide();
             $(this).parent().find('.triangle-down').show();
             /********new pending nd all*****/
-            var tabId = $(this).data('id');
-            console.log(tabId);
-            if (tabId == 1) {
-                var tabId = "(NEW)";
-                $('#status').css('font-weight', 'bold').css('color', 'darkblue');
-            }
-            else if (tabId == 2) {
-                var tabId = "(PENDING)";
-                $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
-            }
-            else if (tabId == 3) {
-                var tabId = "(ACTIVE)";
-                $('#status').css('font-weight', 'bold').css('color', 'green');
-            }
-            else if (tabId == 6) {
-                var tabId = "(CONCLUDE)";
-                $('#status').css('font-weight', 'bold').css('color', '#912261');
-
-            }
-            else if (tabId == 5) {
-                var tabId = "(TO CLOSE)";
-                $('#status').css('font-weight', 'bold').css('color', '#0181f8');
-            }
-            else if (tabId == 9) {
-                var tabId = "(UNPAID)";
-                $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
-
-            }
-            $('#status').text(tabId);
+           
 
             /******search and all */
             var dropdown = document.getElementById('filteradmin').value;
@@ -283,6 +239,7 @@
                 $("#hidden").val(statusidglobal);
 
             }
+
 
             console.log("Button clicked: " + btnnameglobal);
 
@@ -311,6 +268,35 @@
                     console.error('Error fetching partial view.');
                 }
             });
+        console.log("fewa");
+        console.log(statusidglobal);
+        if (statusidglobal == 1) {
+            var tabId = "(NEW)";
+            $('#status').css('font-weight', 'bold').css('color', 'darkblue');
+        }
+        else if (statusidglobal == 2) {
+            var tabId = "(PENDING)";
+            $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
+        }
+        else if (statusidglobal == 3) {
+            var tabId = "(ACTIVE)";
+            $('#status').css('font-weight', 'bold').css('color', 'green');
+        }
+        else if (statusidglobal == 6) {
+            var tabId = "(CONCLUDE)";
+            $('#status').css('font-weight', 'bold').css('color', '#912261');
+
+        }
+        else if (statusidglobal == 5) {
+            var tabId = "(TO CLOSE)";
+            $('#status').css('font-weight', 'bold').css('color', '#0181f8');
+        }
+        else if (statusidglobal == 9) {
+            var tabId = "(UNPAID)";
+            $('#status').css('font-weight', 'bold').css('color', 'mediumslateblue');
+
+        }
+        $('#status').text(tabId);
         }
         $(document).on('click', '.tablink', TabLoad);
 

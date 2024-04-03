@@ -7,7 +7,7 @@
         <div class="d-flex">
             <h3 class="m-0 pt-2 fs-5">Send Order</h3>
         </div>
-        <button class="btn-back btn btn-outline-info bi bi-chevron-left" onclick="location.href='@Url.Action("Index", "Admin")'">
+        <button class="btn-back btn btn-outline-info bi bi-chevron-left backbtn" >
             Back
         </button>
     </div>
@@ -17,7 +17,7 @@
                 <div class="row g-2 mt-2">
                     <div class="col-md dropdown my-2 m-auto">
                         <div class="  form-floating">
-                            <select class="form-select h-100 w-100" id="Profession" aria-label="Floating label select example" required>
+                            <select class="form-select h-100 w-100" id="Profession"  aria-label="Floating label select example" required>
                                 <option selected disabled>Select Profession</option>
                                @foreach (var items in Model.healthprofessionaltypes)
                                 {
@@ -97,6 +97,7 @@
         </div>
     </div>
 </div>
+
 @*<script>
     // JavaScript for form validation
     (function () {
@@ -131,6 +132,11 @@
 
 </script>*@
 <script>
+    $('.backbtn').on('click', function () {
+
+        $("#Dashboard")[0].click();
+
+    });
     $('#Profession').on('change', function () {
       
         var selectedvalue = $('option:selected', this).val();
