@@ -1,4 +1,5 @@
 ﻿using DataAccess.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using System;
 using System.Collections;
@@ -159,7 +160,7 @@ namespace DataAccess.ViewModel
     }
     public class Profile
     {
-        public int? Aspnetid { get; set; }
+        public string? Aspnetid { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
         [Required(ErrorMessage = "fname is required")]
@@ -174,10 +175,10 @@ namespace DataAccess.ViewModel
         public string? State { get; set; }
         public string? Zipcode { get; set; }
         public string Mobile { get; set; }
-        public string? Address1 { get; set; }
-        public string? Address2 { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
 
-        public Status Status { get; set; }
+        public PhysicianStatus Status { get; set; }
         public string? Role { get; set; }
         public int? regionid { get; set; }
         public int? roleid { get; set; }
@@ -272,23 +273,65 @@ namespace DataAccess.ViewModel
     public class UserAccessModel
     {
         public string AccountPOC { get; set; }
-        public string AccountType { get; set; }
+        public Roles ? AccountType { get; set; }
         public string PhoneNumber { get; set; }
-        public PhysicianStatus status { get; set; }
+        public PhysicianStatus ? status { get; set; }
 
         public int? accounttypeid { get; set; }
         public string aspnetuserid { get;set; }
         public int physicianid { get; set; }
         public PhysicianStatus AdminStatus { get;set; }
     }
+    public class PhysicianProfile
+    {
+        public string? UserName { get; set; }
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter and one digit")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 20 characters long")]
+        public string? Password { get; set; }
+        public short? status { get; set; }
+        public string? role { get; set; }
+        public string? firstName { get; set; }
+        public string? lastName { get; set; }
+        public string? email { get; set; }
+        public string? phone { get; set; }
+        public string LicenseNo { get; set; }
+        public string? NIPNo { get; set; }
+        public string? SynchronizationEmailAddress { get; set; }
+        public string? Address1 { get; set; }
+        public string? Address2 { get; set; }
+        public string? city { get; set; }
+        public string? state { get; set; }
+        public string? Zip { get; set; }
+        public int? Regionid { get; set; }
+        public string? phonenumber { get; set; }
+        public string? BusinessName { get; set; }
+        public string? BusinessWebsite { get; set; }
+        public IFormFile Photo { get; set; }
+        public IFormFile signature { get; set; }
+        public string? notes { get; set; }
+        public int? roleid { get; set; }
+        public int physicianid { get; set; }
+        public BitArray Isagreementdoc { get; set; }
+        public IFormFile? AgreementDocument { get; set; }
+        public BitArray Isbackgrounddoc { get; set; }
+        public IFormFile? BackgroundDocument { get; set; }
+        public BitArray Istrainingdoc { get; set; }
+        public IFormFile? TraningDocument { get; set; }
+        public BitArray Isnondisclosuredoc { get; set; }
+        public IFormFile? NonDisclosureDocument { get; set; }
+        public BitArray Islicensedoc { get; set; }
+        public IFormFile? LicenseDocument { get; set; }
+        public BitArray Iscredentialdoc { get; set; }
+        public IFormFile? CredentialDocument { get; set; }
 
+    }
     public class AdminDashboard
     {
-        public string UserName { get;set; }
+        public string UserName { get; set; }
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
         [Required(ErrorMessage = "fname is required")]
-        public IEnumerable<Healthprofessional> Healthprofessionals  { get; set; }
+        public IEnumerable<Healthprofessional> Healthprofessionals { get; set; }
         public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
         public Profile myProfile { get; set; }
@@ -299,42 +342,43 @@ namespace DataAccess.ViewModel
         public int TotalPages { get; set; }
 
         public List<ViewUpload> ViewUpload { get; set; }
-        public BlockReq blockreq { get; set;}
-        public CancelReq cancelreq { get; set; }    
+        public BlockReq blockreq { get; set; }
+        public CancelReq cancelreq { get; set; }
         public AssignReq assignreq { get; set; }
         public TranserReq transferreq { get; set; }
         public SendOrders sendorder { get; set; }
         public AgreementReq agreementReq { get; set; }
         [Required(ErrorMessage = "This is a required field")]
-        public IEnumerable<Region> Regions {get; set;}
+        public IEnumerable<Region> Regions { get; set; }
         public ViewCase viewcase { get; set; }
         public List<ViewNotesModel> viewnotes { get; set; }
         public string AdminNoes { get; set; }
         public string PhysicianNotes { get; set; }
-      
+
         public string AdditionalNotes { get; set; }
         public EncounterForm encounterform { get; set; }
-        public SendLink sendLink { get; set; }  
+        public SendLink sendLink { get; set; }
         public int newcount { get; set; }
         public int pendingcount { get; set; }
         public int activecount { get; set; }
         public int toclosecount { get; set; }
         public int concludecount { get; set; }
         public int unpaidcount { get; set; }
-       public status Status { get; set; }
+        public status Status { get; set; }
         public int requestid { get; set; }
-        public string patientname { get;set; }
-        public string Adminname  { get; set; }
+        public string patientname { get; set; }
+        public string Adminname { get; set; }
         public string ConfirmationNo { get; set; }
         public string Email { get; set; }
-        public int statusid { get;set; }
-        public string btnname { get;set; }
+        public int statusid { get; set; }
+        public string btnname { get; set; }
         public int accounttype { get; set; }
-        public int roleid { get;set; }  
-        public string aspnetuserid { get;set; }
-        public string searchuseraccess { get;set; }
+        public int roleid { get; set; }
+        public string aspnetuserid { get; set; }
+
+        public int adminaccountfilter { get; set; }
         public IEnumerable<AdminDash> adminDashes { get; set; }
-        
+        public IEnumerable<Role> RoleModel { get; set; }
 
         //public PayLoad payLoad { get; set; }
         public string tabid { get; set; }
@@ -344,10 +388,11 @@ namespace DataAccess.ViewModel
         public List<BitArray> checkbox { get; set; }
 
         public List<RegionCheckbox> regionCheckbox { get; set; }
-        public GetTabParameter GetTabParameter { get; set; }    
+        public GetTabParameter GetTabParameter { get; set; }
 
-       
+
         /*******providers********/
+        public List<int> RegionArray{get;set;}
         public IEnumerable<Rolemenu> rolemenus { get; set; }
         public List<AccountAccess> accountAccess { get; set; }
         public List<MenuCheckbox> menuCheckboxes { get; set; }
@@ -355,6 +400,7 @@ namespace DataAccess.ViewModel
         public List<ProviderInfo> ProviderInfo { get; set; }
         public IEnumerable<Menu> ? menu { get; set; }
        public  List<UserAccessModel> userAccessModels { get; set; } 
+        public PhysicianProfile PhysicianProfile { get; set; }  
         //public List<checkboxmodel> checkboxmodel { get; set; }
         //public List<PhysicancheckboxModel> physicancheckboxModels { get; set; }
 

@@ -19,7 +19,7 @@
                 <div class="col-md-4 col-12 mb-3">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="username" placeholder="User Name" asp-for="myProfile.UserName" disabled>
-                        <label for="username" class="floatingLabel">User Name</label>
+                        <label for="username" class="floatingLabel">User Name </label>
                     </div>
                     <span id="Username" asp-validation-for="myProfile.UserName" class="text-danger"></span>
                 </div>
@@ -27,7 +27,7 @@
                 <div class="col-md-4 col-12 mb-3">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="password" placeholder="Password" asp-for="myProfile.Password" required>
-                        <label for="password" class="floatingLabel">Password</label>
+                        <label for="password" class="floatingLabel">Password <span class="text-danger">*</span></label>
                     </div>
                     <span id="Password" asp-validation-for="myProfile.Password" class="text-danger"></span>
                 </div>
@@ -35,13 +35,13 @@
                 <div class="col-md-4 col-12 mb-3">
                     <div class="form-floating mb-3">
                         <select class="form-select form-control" id="AdminRole" style="height: 58px;" asp-for="myProfile.roleid">
-                            @*@foreach (var i in Model.RoleModel)
+                            @foreach (var i in Model.RoleModel)
                             {
                                 if (i.Accounttype == 1)
                                 {
                                     <option value="@i.Roleid"> @i.Name </option>
                                 }
-                            }*@
+                            }
                         </select>
                         <label for="PhysicianRole" class="floatingLabel">Role</label>
                     </div>
@@ -54,16 +54,16 @@
             <div class="row g-2">
                 <div class="col-md-6 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="AdminFirstname" placeholder="First Name" asp-for="myProfile.FirstName">
-                        <label for="AdminFirstname" class="floatingLabel">First Name</label>
+                        <input type="text" class="form-control" id="AdminFirstname" placeholder="First Name" asp-for="myProfile.FirstName" required>
+                        <label for="AdminFirstname" class="floatingLabel">First Name <span class="text-danger">*</span></label>
                     </div>
                     <span id="FirstName" asp-validation-for="myProfile.FirstName" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="AdminLastname" placeholder="Last Name" asp-for="myProfile.LastName">
-                        <label for="AdminLastname" class="floatingLabel">Last Name</label>
+                        <input type="text" class="form-control" id="AdminLastname" placeholder="Last Name" asp-for="myProfile.LastName" required>
+                        <label for="AdminLastname" class="floatingLabel">Last Name <span class="text-danger">*</span></label>
                     </div>
                     <span id="LastName" asp-validation-for="myProfile.LastName" class="text-danger"></span>
                 </div>
@@ -71,7 +71,7 @@
                 <div class="col-12 col-md-6 mb-3">
                     <div class="form-floating">
                         <input type="email" class="form-control" id="AdminEmail" placeholder="Email" asp-for="myProfile.Email" required>
-                        <label class="floatingLabel">Email</label>
+                        <label class="floatingLabel">Email<span class="text-danger">*</span></label>
                     </div>
                     <span id="Email" asp-validation-for="myProfile.Email" class="text-danger"></span>
                     <div id="Emailverify" class="d-none text-danger">Email is Already Exist! Please try Another</div>
@@ -92,7 +92,7 @@
                     <span id="Phone" asp-validation-for="myProfile.Mobile" class="text-danger"></span>
                 </div>
                 <div class="col-lg-6 col-12 d-flex flex-wrap mb-3 align-items-baseline mt-1">
-                   @* @foreach (var i in Model.Regions)
+                    @foreach (var i in Model.Regions)
                     {
                         <div class="form-check d-flex d-inline-block">
                             <input class="PhysicianInput border border-dark mt-1 me-2" type="checkbox" value="@i.Regionid" name="adminChecked">
@@ -100,7 +100,7 @@
                                 @i.Name
                             </label>
                         </div>
-                    }*@
+                    }
                     <span id="selectedRegions" asp-validation-for="myProfile.regionid" class="text-danger"></span>
                 </div>
                 <input type="hidden" asp-for="myProfile.regionid" id="SelectedRegionIds" />
@@ -113,7 +113,7 @@
                 <div class="col-md-6 col-12">
                     <div class="form-floating">
                         <input type="text" class="form-control" id="MailingAddress1" placeholder="Address1" asp-for="myProfile.Address1">
-                        <label for="MailingAddress1" class="floatingLabel">Address1</label>
+                        <label for="MailingAddress1" class="floatingLabel">Address1 </label>
                     </div>
                     <span id="Address1" asp-validation-for="myProfile.Address1" class="text-danger"></span>
                 </div>
@@ -137,10 +137,11 @@
                 <div class="col-md-6 col-12">
                     <div class="form-floating mb-3">
                         <select class="form-select" id="Physicianstate" style="height: 58px;" asp-for="myProfile.State">
-                           @* @foreach (var i in Model.Regions)
+                            <option value="">All Regions</option>
+                            @foreach (var i in Model.Regions)
                             {
-                                <option value="@i.Regionid"> @i.Name] </option>
-                            }*@
+                                <option value="@i.Regionid"> @i.Name</option>
+                            }
                         </select>
                         <label for="Physicianstate" class="floatingLabel">State</label>
                     </div>
@@ -187,9 +188,15 @@
 
     $('#CreateAdminform').on('submit', function (e) {
         e.preventDefault();
-
+        var selectedRegions = [];
         var data = new FormData(this);
-
+        $("input[name='adminChecked']").each(function () {
+                     var isChecked = $(this).is(":checked");
+                     if (isChecked) {
+                         selectedRegions.push($(this).val());
+                     }
+                 });
+                 data.append(selectedRegions);
         $.ajax({
             url: "/Admin/CreateAdminDataPost",
             type: "Post",
@@ -197,28 +204,24 @@
             processData: false,
             contentType: false,
             success: function (result) {
-                if (result.success) {
-                    var TabId = "CreateAdmin";
-                    $.ajax({
-                        url: '/Admin/GetTabs',
-                        data: { Tabid: TabId },
-                        method: 'GET',
-                        success: function (data) {
-                            $("#TabContent").html(data);
-                        },
-                        error: function () {
-                            console.error('Error fetching partial view.');
-                        }
-                    });
-                    toastr.success("Admin Created successfully!");
-                }
-                else {
-                    toastr.error("Please Enter valid details!");
-                }
+                console.log("success")
             }
         });
     });
 
+</script>
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+
+    $(window).on('load', function () {
+        $('#myModal').modal('show');
+    });
 </script>
 
 <script>

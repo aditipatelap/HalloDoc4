@@ -1,0 +1,393 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class= "row justify-content-center mb-5 pb-5">
+    <div class="d-flex justify-content-between mt-5">
+        <div class="d-flex">
+            <h4 class="m-0 pt-2 "> Provider Location </h4>
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info tablink" id="home">
+                <i class="bi bi-chevron-left i-info"></i>Back
+            </button>
+        </div>
+    </div>
+    
+    <div class="m-4 shadow col-xl-8 col-md-9 col-11 p-5">
+        <form id="CreateProvider" class="pb-3">
+            <!-- Account Information -->
+            <p class="fs-5 fw-bold">Account Information</p>
+            <div class="row g-2 mt-2">
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="username" placeholder="User Name" asp-for="PhysicianProfile.UserName" disabled>
+                        <label for="username" class="floatingLabel">User Name</label>
+                    </div>
+                    <span id="Username" asp-validation-for="PhysicianProfile.UserName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="password" placeholder="Password" asp-for="PhysicianProfile.Password">
+                        <label for="password" class="floatingLabel">Password</label>
+                    </div>
+                    <span id="Password" asp-validation-for="PhysicianProfile.Password" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 col-12 mb-3">
+                    <div class="form-floating mb-3">
+                        <select class="form-select form-control" id="PhysicianRole" style="height: 58px;" asp-for="PhysicianProfile.roleid">
+                            @foreach(var i in Model.RoleModel)
+                            {
+                                if(i.Accounttype == 2)
+                                {
+                                    <option value="@i.Roleid"> @i.Name </option>   
+                                }
+                            }
+                        </select>
+                        <label for="PhysicianRole" class="floatingLabel">Role</label>
+                    </div>                    
+                    <span id="Roleid" asp-validation-for="PhysicianProfile.roleid" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Administrator Information -->
+            <p class="fs-5 fw-bold">Physician Information</p>
+            <div class="row g-2 mt-2">
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianFirstname" placeholder="First Name" asp-for="PhysicianProfile.firstName">
+                        <label for="PhysicianFirstname" class="floatingLabel">First Name</label>
+                    </div>
+                    <span id="Firstname" asp-validation-for="PhysicianProfile.firstName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianLastname" placeholder="Last Name" asp-for="PhysicianProfile.lastName">
+                        <label for="PhysicianLastname" class="floatingLabel">Last Name</label>
+                    </div>
+                    <span id="Lastname" asp-validation-for="PhysicianProfile.lastName" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="email" class="form-control PhysicianInput" id="ProviderEmail" placeholder="Email" asp-for="PhysicianProfile.email">
+                        <label for="PhysicianEmail" class="floatingLabel">Email</label>
+                    </div>
+                    <span id="Email" asp-validation-for="PhysicianProfile.email" class="text-danger"></span>
+                    <div id="Emailverify" class="d-none text-danger">Email is Already Exist! Please try Another</div>
+                </div>
+                <div class="col-12 col-md-6 mb-3 z-3">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control p-3 ps-5 PhysicianInput" id="PhysicianMobile" placeholder="(201) 555-0123" asp-for="PhysicianProfile.phone">
+                    </div>
+                    <span id="Mobile" asp-validation-for="PhysicianProfile.phone" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianMedicalLicense" placeholder="Confirm Email" asp-for="PhysicianProfile.LicenseNo">
+                        <label for="PhysicianMedicalLicense" class="floatingLabel">Medical Liccense#</label>
+                    </div>
+                    <span id="Medicallicense" asp-validation-for="PhysicianProfile.LicenseNo" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianNPI" placeholder="Email" asp-for="PhysicianProfile.NIPNo">
+                        <label for="PhysicianNPI" class="floatingLabel">NPI Number</label>
+                    </div>
+                    <span id="Npinumber" asp-validation-for="PhysicianProfile.NIPNo" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-12 d-flex flex-wrap mb-3">
+                    @foreach (var i in Model.Regions)
+                    {
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2" type="checkbox" value="@i.Regionid" name="physicianChecked">
+                            <label class="form-check-label" for="flexCheckDefault">
+                                @i.Name
+                            </label>
+                        </div>
+                    }
+                </div>
+                <input type="hidden" asp-for="PhysicianProfile.Regionid" id="SelectedRegionIds" />
+            </div>
+
+            <!-- Mailing & Billing Information -->
+            <p class="fs-5 fw-bold">Mailing & Billing Information</p>
+            <div class="row g-1 mt-2">
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="MailingAddress1" placeholder="Address1" asp-for="PhysicianProfile.Address1">
+                        <label for="MailingAddress1" class="floatingLabel">Address1</label>
+                    </div>
+                    <span id="Address1" asp-validation-for="PhysicianProfile.Address1" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="MailingAddress2" placeholder="Address2" asp-for="PhysicianProfile.Address2">
+                        <label for="MailingAddress2" class="floatingLabel">Address2</label>
+                    </div>
+                    <span id="Address2" asp-validation-for="PhysicianProfile.Address2" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="MailingCity" placeholder="City" asp-for="PhysicianProfile.city">
+                        <label for="MailingCity" class="floatingLabel">City</label>
+                    </div>
+                    <span id="City" asp-validation-for="PhysicianProfile.city" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="Physicianstate" style="height: 58px;" asp-for="PhysicianProfile.state">
+                            @foreach(var i in Model.Regions)
+                            {
+                                <option value="@i.Regionid"> @i.Name </option>
+                            }
+                        </select>
+                        <label for="Physicianstate" class="floatingLabel">State</label>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="MailingZipcode" placeholder="Zip" asp-for="PhysicianProfile.Zip">
+                        <label for="MailingZipcode" class="floatingLabel">Zip</label>
+                    </div>
+                    <span id="Zip" asp-validation-for="PhysicianProfile.Zip" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-md-6 mb-4 z-3">
+                    <div class="form-floating">
+                        <input type="tel" class="form-control p-3 ps-5 mailingInput" id="MailingMobile" asp-for="PhysicianProfile.phonenumber" placeholder="(201) 555-0123">
+                    </div>
+                    <span id="Altphone" asp-validation-for="PhysicianProfile.phonenumber" class="text-danger"></span>
+                </div>
+            </div>
+
+         
+            <p class="fs-5 fw-bold">Provider Profile</p>
+            <div class="row g-2">
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="ProfileBusinessName" placeholder="Business Name" asp-for="PhysicianProfile.BusinessName">
+                        <label for="ProfileBusinessName" class="floatingLabel">Business Name</label>
+                    </div>
+                    <span id="Businessname" asp-validation-for="PhysicianProfile.BusinessName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                    <div class="form-floating">
+                        <input type="text" class="form-control mailingInput" id="ProfileBusinesswebsite" placeholder="Business Website" asp-for="PhysicianProfile.BusinessWebsite">
+                        <label for="ProfileBusinesswebsite" class="floatingLabel">Business Website</label>
+                    </div>
+                    <span id="Businesswebsite" asp-validation-for="PhysicianProfile.BusinessWebsite" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 col-12 mb-3">
+                     <div class="input-group">
+                        <input type="file" class="form-control d-none" id="formFile" asp-for="@Model.PhysicianProfile.Photo">
+                        <label class="col-12 input-group-text border-0 p-0 w-100 rounded" for="formFile">
+                            <div class="border rounded p-3 text-start col-9" id="Document">
+                                <span>Select Photo</span>
+                            </div>
+                            <div  class="btn border  bg-info text-light p-3 col-3 inputform3" id="FileInput" disabled>
+                                <div>
+                                    <i class="bi bi-cloud-arrow-up pe-1 text-white"></i>
+                                    <span class="d-none d-xl-inline d-lg-inline ">Upload</span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4 form-floating">
+                <textarea class="form-control" placeholder="Admin Notes" id="symptoms" asp-for="PhysicianProfile.notes" style="height: 100px"></textarea>
+                <label for="symptoms" class="floatingLabel"> Admin Notes </label>
+            </div>
+            <span id="Adminnotes" asp-validation-for="PhysicianProfile.notes" class="text-danger"></span>
+
+            <div class="border border-bottom border-2 my-3"></div>
+
+         
+            <p class="fs-5 fw-bold">Onboarding</p>
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <th scope="row" class="bg-transparent"> 
+                            <input type="checkbox" id="Isagreementdoc" />
+                        </th>
+                        <td class="bg-transparent">
+                            <p class="d-inline">Independent Contractor Agreement</p>
+                        </td class="bg-transparent">
+                        <td class="bg-transparent">
+                            <div class="file btn btn-info position-relative overflow-hidden">
+                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
+							    <span class="d-none d-xl-inline d-lg-inline text-light">Upload</span>
+							    <input type="file" class="position-absolute opacity-0 start-0 end-0" onchange="checkbox(1)" asp-for="PhysicianProfile.AgreementDocument"/>
+						    </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row" class="bg-transparent">
+                            <input type="checkbox" id="Isbackgrounddoc"/>
+                        </th>
+                        <td class="bg-transparent">
+                            <p class="d-inline">Background Check</p>
+                        </td>
+                        <td class="bg-transparent">
+                            <div class="file btn btn-info position-relative overflow-hidden">
+                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
+							    <span class="d-none d-xl-inline d-lg-inline text-light">Upload</span>
+							    <input type="file" class="position-absolute opacity-0 start-0 end-0" onchange="checkbox(2)" asp-for="PhysicianProfile.BackgroundDocument"/>
+						    </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row" class="bg-transparent">
+                            <input type="checkbox" id="Iscredentialdoc"/>
+                        </th>
+                        <td class="bg-transparent">
+                            <p class="d-inline">HIPPA Compliance</p>
+                        </td>
+                        <td class="bg-transparent">
+                            <div class="file btn btn-info position-relative overflow-hidden">
+                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
+							    <span class="d-none d-xl-inline d-lg-inline text-light">Upload</span>
+							    <input type="file" class="position-absolute opacity-0 start-0 end-0" onchange="checkbox(3)" asp-for="PhysicianProfile.CredentialDocument"/>
+						    </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th scope="row" class="bg-transparent">
+                            <input type="checkbox" id="Isnondisclosuredoc"/>
+                        </th>
+                        <td class="bg-transparent">
+                            <p class="d-inline">Non disclosure Agreement</p>
+                        </td>
+                        <td class="bg-transparent">
+                            <div class="file btn btn-info position-relative overflow-hidden">
+                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
+							    <span class="d-none d-xl-inline d-lg-inline text-light">Upload</span>
+							    <input type="file" class="position-absolute opacity-0 start-0 end-0" onchange="checkbox(4)" asp-for="PhysicianProfile.NonDisclosureDocument"/>
+						    </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success text-light">Create Account</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+     // cancel & Back button 
+     $(".tablink").click(TabLink);
+
+    // function updateHiddenInput() {
+    //     var selectedRegions = [];
+    //     $("input[name='physicianChecked']").each(function () {
+    //         var isChecked = $(this).is(":checked");
+    //         if (isChecked) {
+    //             selectedRegions.push($(this).val());
+    //         }
+    //     });
+    //     $("#SelectedRegionIds").val(selectedRegions.join(","));
+    // }
+
+    // $("input[name='physicianChecked']").change(function () {
+    //     updateHiddenInput();
+    // });
+
+    // for file upload
+     document.getElementById('formFile').addEventListener('change', function () {
+        var fileName = this.files[0].name;
+        document.getElementById('Document').textContent = fileName;
+    });
+
+    $('#CreateProvider').on('submit', function (e) {
+        e.preventDefault();
+
+        var data = new FormData(this);
+
+        $.ajax({
+            url: "/Admin/CreateProviderDataPost",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+               if (result.success) {
+                    var TabId = "CreateProvider";
+                        $.ajax({
+                            url: '/Admin/GetTabs',
+                            data: { Tabid: TabId},
+                            method: 'GET',
+                            success: function (data) {
+                                $("#TabContent").html(data);
+                            },
+                            error: function () {
+                                console.error('Error fetching partial view.');
+                            }
+                        });
+                    toastr.success("Provider Created successfully!");
+                }
+                else {
+                    toastr.error("Please Enter valid details!.");
+                }
+            }
+        });
+    });
+
+    function checkbox(number)
+    {
+        if (number == 1) { 
+            document.getElementById("Isagreementdoc").checked = true;
+        }
+        if (number == 2) { 
+            document.getElementById("Isbackgrounddoc").checked = true;
+        }
+        if (number == 3) { 
+            document.getElementById("Iscredentialdoc").checked = true;
+        }
+        if (number == 4) { 
+            document.getElementById("Isnondisclosuredoc").checked = true;
+        }
+    }
+
+    // script for phone number
+    phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+</script>
+
+
+<script>
+    $('#ProviderEmail').blur(function () {
+        var email = $(this).val();
+        $.ajax({
+            url: '/Admin/checkEmail',
+            method: "GET",
+            data: { email: email },
+            success: function (CheckEmail) {
+                if (CheckEmail) {
+                    $('#AdminEmail').addClass('is-invalid');
+                    $('#Emailverify').removeClass('d-none');
+                    $('#Emailverify').addClass('d-block');
+                } else {
+                    $('#AdminEmail').removeClass('is-invalid');
+                    $('#Emailverify').removeClass('d-block');
+                    $('#Emailverify').addClass('d-none');
+                }
+            },
+            error: function () {
+                alert("An error while checking email");
+            }
+        });
+    });
+       
+</script>

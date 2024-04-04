@@ -65,7 +65,7 @@ namespace HalloDoc.Controllers
             }
             if(model.tabid == "MyProfile")
             {
-                var req = _AdminDash.MyProfileDataGet(aspnetuserid);
+                var req = _providerService.MyProfileDataGet(aspnetuserid);
                 return PartialView(result,req);
             }
             if (model.tabid == "ProviderLocation")
@@ -82,6 +82,11 @@ namespace HalloDoc.Controllers
             {
                 var data = _providerService.GetProviderAcccountData(aspnetuserid);
                 return PartialView(result,data);
+            }
+            if (model.tabid == "CreateProviderAccount")
+            {
+                var data = _providerService.CreateProviderAdminDataGet();
+                return PartialView(result, data);
             }
             if (model.tabid == "Records")
             {
@@ -104,13 +109,13 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "UserAccess")
             {
-                var data = _providerService.UserAccessDataGet(model.searchuseraccess);
+                var data = _providerService.UserAccessDataGet(model.adminaccountfilter);
                 return PartialView(result, data);
             }
             if (model.tabid == "CreateAdmin")
             {
-                
-                return PartialView(result);
+                var data = _providerService.CreaeAdminDataGet();
+                return PartialView(result,data);
             }
             if (model.tabid == "Partners")
             {
@@ -193,6 +198,7 @@ namespace HalloDoc.Controllers
                 return PartialView(partialname, result);
 
             }
+
             if (modalName == "BlockCase")
             {
                 var result = _AdminDash.BlockCase(requestid, patientname);
@@ -229,6 +235,12 @@ namespace HalloDoc.Controllers
             {
 
                 return PartialView(partialname);
+            }
+            if (modalName == "ContactProvider")
+            {
+                //var result = _AdminDash.AssignRequest(requestid);
+                return PartialView(partialname);
+
             }
 
             return PartialView(partialname);
@@ -355,15 +367,15 @@ namespace HalloDoc.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
-        [HttpPost]
-        public IActionResult PostMyProfile( AdminDashboard adminDashboard,int adminid)
-        {
-            if (ModelState.IsValid)
-            {
-                _AdminDash.PostMyProfile( adminDashboard,adminid);
-            }
-            return View();
-        }
+        //[HttpPost]
+        //public IActionResult PostMyProfile( AdminDashboard adminDashboard,int adminid)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        _AdminDash.PostMyProfile( adminDashboard,adminid);
+        //    }
+        //    return View();
+        //}
         [HttpPost]
         public JsonResult PostViewNotes( AdminDashboard model)
         
@@ -577,71 +589,70 @@ namespace HalloDoc.Controllers
             List<Physicianlocation> getLocation = _providerService.GetPhysicianlocations();
             return Ok(getLocation);
         }
-        //public void CreateAdminDataPost(AdminDashboard model)
-        //{
-        //    Aspnetuser aspuser = new Aspnetuser();
-        //    if (_db.Aspnetusers.Any(x => x.Email != model.myProfile.Email))
-        //    {
-        //        aspuser.Id = Guid.NewGuid().ToString();
-        //        aspuser.Name = "ADMIN." + model.myProfile.FirstName + "." + model.myProfile.LastName;
-        //        aspuser.Email = model.myProfile.email;
-        //        aspuser.Phonenumber = model.myProfile.phone;
-        //        aspuser.Createddate = DateTime.Now;
+        /** create admin**/
+        [HttpPost]
+        public IActionResult CreateAdminDataPost(AdminDashboard model)
+        {
+            _providerService.CreateAdminDataPost(model);
+            _notyf.Information("Admin Created Successfully ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "CreateAdmin";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
+        /**verify email**/
+       //public IActionResult checkEmail(string email)
+       // {
+           
+       // }
 
-        //        // Hash the password
-        //        var passwordHasher = new PasswordHasher<Aspnetuser>();
-        //        aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.myProfile.Password);
+        /**create provider**/
+        public IActionResult CreateProviderDataPost(AdminDashboard model)
+        {
+            _providerService.CreateProviderDataPost(model);
+            _notyf.Information("Provider Created Successfully ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "CreateProviderAccount";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
 
-        //        _db.Aspnetusers.Add(aspuser);
-        //        _dbContext.SaveChanges();
-
-        //        Aspnetuserrole aspnetrole = new Aspnetuserrole();
-
-        //        aspnetrole.Userid = aspuser.Id;
-        //        aspnetrole.Roleid = model.MyProfileModel.roleid.ToString();
-
-        //        _dbContext.Aspnetuserroles.Add(aspnetrole);
-        //        _dbContext.SaveChanges();
-
-        //        Admin admin = new Admin();
-
-        //        admin.Aspnetuserid = aspuser.Id;
-        //        admin.Firstname = model.MyProfileModel.firstName;
-        //        admin.Lastname = model.MyProfileModel.lastName;
-        //        admin.Email = model.MyProfileModel.email;
-        //        admin.Mobile = model.MyProfileModel.phone;
-        //        admin.Address1 = model.MyProfileModel.Address1;
-        //        admin.Address2 = model.MyProfileModel.Address2;
-        //        admin.City = model.MyProfileModel.city;
-        //        admin.Status = 1;
-        //        admin.Roleid = model.MyProfileModel.roleid;
-        //        admin.Regionid = model.MyProfileModel.Regionid;
-        //        admin.Zip = model.MyProfileModel.Zip;
-        //        admin.Altphone = model.MyProfileModel.phone;
-        //        admin.Createdby = aspuser.Id;
-        //        admin.Createddate = DateTime.Now;
-        //        admin.Isdeleted = new BitArray(new bool[1] { false });
-
-        //        _dbContext.Admins.Add(admin);
-        //        _dbContext.SaveChanges();
-        //    }
-
-
-            /*var list = model.AdministratorModel.selectedRegions.Split(",").Select(int.Parse).ToList();
-
-            foreach (var i in list)
-            {
-                var a = new Adminregion
-                {
-                    Adminid = data.Adminid,
-                    Regionid = i
-                };
-                _context.Adminregions.Add(a);
-            }
-            _context.SaveChanges();
-
-            return true;
-        }*/
+        /***my profile**/
         
+[HttpPost]
+        public IActionResult MyProfileResetPassDataUpdate(AdminDashboard model)
+        {
+            if (model.myProfile.Password != null)
+            {
+                _providerService.MyProfileResetPassDataUpdate(model);
+                _notyf.Information("INfo Updated Successfully ...");
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.tabid = "MyProfile";
+                return GetTabs(adminDashboard, default, default, default, default, default, default);
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+
+        }
+        [HttpPost]
+        public IActionResult MyProfileDetailsDataUpdate(AdminDashboard model)
+        {
+            _providerService.MyProfileDetailsDataUpdate(model);
+            _notyf.Information("INfo Updated Successfully ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "MyProfile";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+
+        }
+        [HttpPost]
+        public IActionResult MyProfileAddressDataUpdate(AdminDashboard model)
+        {
+            _providerService.MyProfileAddressDataUpdate(model);
+            _notyf.Information("INfo Updated Successfully  ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "MyProfile";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
+    
     }
 }

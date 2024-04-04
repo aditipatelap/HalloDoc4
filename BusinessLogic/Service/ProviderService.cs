@@ -4,6 +4,9 @@ using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Web.WebPages;
@@ -70,12 +73,14 @@ namespace BusinessLogic.Service
                 Businessname=x.Businessname,
                 BusinessWebsite=x.Businesswebsite,
                 status=(PhysicianStatus)x.Status,
-                physicianid=x.Physicianid
+                physicianid=x.Physicianid,
+                
+               
 
             }).FirstOrDefault();
             AdminDashboard adminDashboard= new AdminDashboard();
             adminDashboard.myProfile = result;  
-            adminDashboard.physicianid = result.physicianid;
+            //adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
         public void PostProviderProfile(AdminDashboard adminDashboard)
@@ -185,65 +190,385 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
-        public AdminDashboard UserAccessDataGet(string SearchUsers)
+        public AdminDashboard UserAccessDataGet(int adminaccountfilter)
+
+
         {
-
-
-            //var data1 = _db.Aspnetusers
-            //     .Include(x => x.Aspnetuserroles).Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid == roleid).Select(x => new UserAccessModel
-            //     {
-            //         AccountPOC = x.Name,
-            //         AccountType = _db.Roles.Where(y => y.Roleid == x.Aspnetuserroles.FirstOrDefault().Roleid).FirstOrDefault().Name,
-            //         PhoneNumber = x.Phonenumber,
-            //         accounttypeid=x.Aspnetuserroles.FirstOrDefault().Roleid,
-            //         //status = (RoleEnum)_dbContext.Users.Where(y => y.Aspnetuserid == x.Id).FirstOrDefault().Status,
-            //         //OpenRequests=
-            //         if (x.Aspnetuserroles.FirstOrDefault().Roleid == 1) {
-            //    AdminStatus = (PhysicianStatus)_db.Admins.FirstOrDefault(y => y.Aspnetuserid == x.Id).Status
-            //        }
-            //// Get status for Admin
-            //PhysicianStatus = GetPhysicianStatus(x), // Get status for Physician
-            //         PatientStatus = GetPatientStatus(x), // Get status for Patient
-            //         accounttypeid = _db.Roles.Where(y => y.Roleid == x.Aspnetuserroles.FirstOrDefault().Roleid).FirstOrDefault().Roleid,
-
-            //     }).ToList();
             AdminDashboard model = new AdminDashboard();
-            //model.userAccessModels = data1;
+            UserAccessModel userAccessModel = new UserAccessModel();
+            var data = _db.Aspnetusers
+                            .Include(x => x.Aspnetuserroles).Where(x=>x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter==0).Select(x => new UserAccessModel
+                            {
+                                AccountPOC = x.Name,
+                                AccountType=(Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
+                                PhoneNumber = x.Phonenumber,
+                                status = (PhysicianStatus)_db.Admins.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status) .Union(_db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
+                               .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status))).FirstOrDefault(),
+                               // UserId = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
+                   // .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault().union,
+                                //OpenRequests=
+                            }).ToList();
+                
+            model.userAccessModels = data;
             return model;
 
         }
-        // Method to get status based on account type
-        // Method to get status for Admin
-        //private PhysicianStatus GetAdminStatus(Aspnetuser user)
-        //{
-        //    return 
-        //}
-
-        //// Method to get status for Physician
-        //private PhysicianStatus GetPhysicianStatus(Aspnetuser user)
-        //{
-
-        //        return _db.Physicians.FirstOrDefault(p => p.Aspnetuserid == user.Id).Status;
-
-        //}
-
-        //// Method to get status for Patient
-        //private status GetPatientStatus(Aspnetuser user)
-        //{
-        //    if (user.Aspnetuserroles.FirstOrDefault().Roleid == PatientRoleId)
-        //    {
-        //        return _db.Patients.FirstOrDefault(p => p.UserId == user.Id)?.Status ?? PatientStatusEnum.Unknown;
-        //    }
-        //    return PatientStatusEnum.Unknown;
-        //}
-
-        //}
 
         public List<Physicianlocation> GetPhysicianlocations()
         {
             var phyLocation = _db.Physicianlocations.ToList();
             return phyLocation;
         }
+
+        /*********create admin**********/
+        public AdminDashboard CreaeAdminDataGet()
+
+        {
+            var regions=_db.Regions.ToList();
+            var roles = _db.Roles.ToList();
+            AdminDashboard model = new AdminDashboard();    
+            model.Regions = regions;
+            model.RoleModel= roles;
+            return model;
+        }
+        public void CreateAdminDataPost(AdminDashboard model)
+        {
+            Aspnetuser aspuser = new Aspnetuser();
+            if (_db.Aspnetusers.Any(x => x.Email != model.myProfile.Email))
+            {
+                aspuser.Id = Guid.NewGuid().ToString();
+                aspuser.Name = "ADMIN." + model.myProfile.FirstName + "." + model.myProfile.LastName;
+                aspuser.Email = model.myProfile.Email;
+                aspuser.Phonenumber = model.myProfile.PhoneNumber;
+                aspuser.Createddate = DateTime.Now;
+
+                // Hash the password
+                var passwordHasher = new PasswordHasher<Aspnetuser>();
+                aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.myProfile.Password);
+
+                _db.Aspnetusers.Add(aspuser);
+                _db.SaveChanges();
+
+                Aspnetuserrole aspnetrole = new Aspnetuserrole();
+
+                aspnetrole.Userid = aspuser.Id;
+                aspnetrole.Roleid = model.myProfile.roleid;
+
+                _db.Aspnetuserroles.Add(aspnetrole);
+                _db.SaveChanges();
+
+                Admin admin = new Admin();
+
+                admin.Aspnetuserid = aspuser.Id;
+                admin.Firstname = model.myProfile.FirstName;
+                admin.Lastname = model.myProfile.LastName;
+                admin.Email = model.myProfile.Email;
+                admin.Mobile = model.myProfile.PhoneNumber;
+                admin.Address1 = model.myProfile.Address1;
+                admin.Address2 = model.myProfile.Address2;
+
+                admin.Status = (short)PhysicianStatus.Active;
+                admin.Roleid = model.myProfile.roleid;
+                admin.Regionid = model.myProfile.regionid;
+                admin.Zip = model.myProfile.Zipcode;
+                admin.Altphone = model.myProfile.Mobile;
+                admin.Createdby = aspuser.Id;
+                admin.Createddate = DateTime.Now;
+                admin.Isdeleted = new BitArray(new bool[1] { false });
+
+                _db.Admins.Add(admin);
+                _db.SaveChanges();
+            }
+
+
+            //var list = model.AdministratorModel.selectedRegions.Split(",").Select(int.Parse).ToList();
+
+            //foreach (var i in list)
+            //{
+            //    var a = new Adminregion
+            //    {
+            //        Adminid = data.Adminid,
+            //        Regionid = i
+            //    };
+            //    _context.Adminregions.Add(a);
+            //}
+            //_context.SaveChanges();
+
+            //return true;
+        }
+
+        /*** create provider**/
+       
+
+public AdminDashboard CreateProviderAdminDataGet()
+        {
+
+            var role = _db.Roles.ToList();
+            var region = _db.Regions.ToList();
+
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.RoleModel = role;
+            adminDashboardModel.Regions = region;
+
+            return adminDashboardModel;
+        }
+
+        public void CreateProviderDataPost(AdminDashboard model)
+        {
+            Aspnetuser aspuser = new Aspnetuser();
+
+            aspuser.Id = Guid.NewGuid().ToString();
+            aspuser.Name = "MD." + model.PhysicianProfile.firstName + "." + model.PhysicianProfile.lastName;
+            aspuser.Email = model.PhysicianProfile.email;
+            aspuser.Phonenumber = model.PhysicianProfile.phone;
+            aspuser.Createddate = DateTime.Now;
+
+            // Hash the password
+            var passwordHasher = new PasswordHasher<Aspnetuser>();
+            aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.PhysicianProfile.Password);
+
+            _db.Aspnetusers.Add(aspuser);
+            _db.SaveChanges();
+
+            Aspnetuserrole aspnetrole = new Aspnetuserrole();
+
+            aspnetrole.Userid = aspuser.Id;
+            aspnetrole.Roleid = (int)model.PhysicianProfile.roleid;
+
+            _db.Aspnetuserroles.Add(aspnetrole);
+            _db.SaveChanges();
+
+            Physician physician = new Physician();
+
+            physician.Aspnetuserid = aspuser.Id;
+            physician.Firstname = model.PhysicianProfile.firstName;
+            physician.Lastname = model.PhysicianProfile.lastName;
+            physician.Email = model.PhysicianProfile.email;
+            physician.Mobile = model.PhysicianProfile.phone;
+            physician.Medicallicense = model.PhysicianProfile.LicenseNo;
+            physician.Address1 = model.PhysicianProfile.Address1;
+            physician.Address2 = model.PhysicianProfile.Address2;
+            physician.City = model.PhysicianProfile.city;
+            physician.Createdby = "Admin";
+            physician.Businessname = model.PhysicianProfile.BusinessName;
+            physician.Businesswebsite = model.PhysicianProfile.BusinessWebsite;
+            physician.Roleid = model.PhysicianProfile.roleid;
+            physician.Regionid = model.PhysicianProfile.status;
+            physician.Status = 1;
+            physician.Altphone = model.PhysicianProfile.phonenumber;
+            physician.Isdeleted = new BitArray(new bool[1] { false });
+            physician.Npinumber = model.PhysicianProfile.NIPNo;
+            physician.Zip = model.PhysicianProfile.Zip;
+            physician.Syncemailaddress = model.PhysicianProfile.SynchronizationEmailAddress;
+            physician.Medicallicense = model.PhysicianProfile.LicenseNo;
+            physician.Adminnotes = model.PhysicianProfile.notes;
+            physician.Createddate = DateTime.Now;
+            if (model.PhysicianProfile.Photo != null)
+            {
+                physician.Photo = FileUpload(model.PhysicianProfile.Photo, physician.Physicianid);
+                physician.Photo = model.PhysicianProfile.Photo.FileName;
+            }
+            if (model.PhysicianProfile.AgreementDocument != null)
+            {
+                SaveDocument(model.PhysicianProfile.AgreementDocument, model.PhysicianProfile.physicianid, "agreementdoc", "Isagreementdoc", physician);
+            }
+            else
+            {
+                physician.Isagreementdoc = new BitArray(new bool[1] { false });
+            }
+            if (model.PhysicianProfile.BackgroundDocument != null)
+            {
+                SaveDocument(model.PhysicianProfile.BackgroundDocument, model.PhysicianProfile.physicianid, "backgrounddoc", "Isbackgrounddoc", physician);
+            }
+            else
+            {
+                physician.Isbackgrounddoc = new BitArray(new bool[1] { false });
+            }
+            if (model.PhysicianProfile.Iscredentialdoc != null)
+            {
+                SaveDocument(model.PhysicianProfile.CredentialDocument, model.PhysicianProfile.physicianid, "credentialdoc", "Iscredentialdoc", physician);
+            }
+            else
+            {
+                physician.Iscredentialdoc = new BitArray(new bool[1] { false });
+            }
+            if (model.PhysicianProfile.NonDisclosureDocument != null)
+            {
+                SaveDocument(model.PhysicianProfile.NonDisclosureDocument, model.PhysicianProfile.physicianid, "nondisclosuredoc", "Isnondisclosuredoc", physician);
+            }
+            else
+            {
+                physician.Isnondisclosuredoc = new BitArray(new bool[1] { false });
+            }
+            if (model.PhysicianProfile.LicenseDocument != null)
+            {
+                SaveDocument(model.PhysicianProfile.LicenseDocument, model.PhysicianProfile.physicianid, "licenseedoc", "Islicensedoc", physician);
+            }
+            else
+            {
+                physician.Islicensedoc = new BitArray(new bool[1] { false });
+            }
+
+            _db.Physicians.Add(physician);
+            _db.SaveChanges();
+
+            Physiciannotification physiciannotification = new Physiciannotification();
+            physiciannotification.Pysicianid = physician.Physicianid;
+            physiciannotification.Isnotificationstopped = new BitArray(new bool[1] { false });
+
+            _db.Physiciannotifications.Add(physiciannotification);
+            _db.SaveChanges();
+        }
+        string FileUpload(IFormFile file, int physicianId)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var fileName = Path.GetFileName(file.FileName);
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/PhysicianDocuments/" + physicianId);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                string filePath = Path.Combine(folderPath, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                return filePath;
+            }
+            return null;
+        }
+        private void SaveDocument(IFormFile document, int physicianId, string subfolder, string propertyName, Physician physician)
+        {
+            var propertyInfo = typeof(Physician).GetProperty(propertyName);
+            if (document != null)
+            {
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/PhysicianDocument/{physicianId}");
+                string filePath = Path.Combine(folderPath, subfolder);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    document.CopyTo(stream);
+                }
+                propertyInfo.SetValue(physician, new BitArray(new bool[1] { true }));
+
+            }
+        }
+        
+     /***my profile**/
+        public AdminDashboard MyProfileDataGet(string aspnetuserid)
+        {
+            aspnetuserid = "19";
+            var data = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuser.Id == aspnetuserid).Select(x => new Profile
+            {
+                UserName = x.Aspnetuser.Name,
+                Password = x.Aspnetuser.Passwordhash,
+                status = (PhysicianStatus)x.Status,
+                FirstName = x.Firstname,
+                LastName = x.Lastname,
+                Email = x.Email,
+                ConfirmEmail = x.Email,
+                PhoneNumber = x.Mobile,
+                Mobile = x.Altphone,
+                Address1 = x.Address1,
+                Address2 = x.Address2,
+               
+                Zipcode = x.Zip,
+                regionid = x.Regionid,
+                roleid = x.Roleid,
+                adminid = x.Adminid,
+                //city = x.city,
+
+            }).FirstOrDefault();
+
+            var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
+            {
+                RegionId = x.Regionid,
+                Regionname = x.Region.Name,
+            }).ToList();
+
+            var role = _db.Roles.ToList();
+            var region = _db.Regions.ToList();
+
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            //adminDashboardModel.myProfile.adminid = data.adminid;
+            adminDashboardModel.myProfile = data;
+            adminDashboardModel.myProfile.Aspnetid = aspnetuserid;
+            adminDashboardModel.RoleModel = role;
+            adminDashboardModel.Regions = region;
+            adminDashboardModel.regionCheckbox = RegionCheckbox;
+            return adminDashboardModel;
+        }
+
+        public void MyProfileResetPassDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Aspnetusers.FirstOrDefault(x => x.Id == model.myProfile.Aspnetid);
+            // Hash the password
+            var passwordHasher = new PasswordHasher<Aspnetuser>();
+            if (data != null)
+            {
+                data.Passwordhash = passwordHasher.HashPassword(data, model.myProfile.Password);
+                _db.SaveChanges();
+            }
+        }
+
+        public void MyProfileDetailsDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Admins.FirstOrDefault(x => x.Aspnetuserid == model.myProfile.Aspnetid);
+            if (data != null)
+            {
+                data.Firstname = model.myProfile.FirstName;
+                data.Lastname = model.myProfile.LastName;
+                data.Email = model.myProfile.Email;
+                data.Email = model.myProfile.ConfirmEmail;
+                data.Mobile = model.myProfile.PhoneNumber;
+                data.Modifiedby = "Admin";
+                data.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+            var aspnetuser = _db.Aspnetusers.FirstOrDefault(x => x.Id == model.myProfile.Aspnetid);
+            if (aspnetuser != null)
+            {
+                aspnetuser.Name = model.myProfile.FirstName + " " + model.myProfile.LastName;
+                aspnetuser.Email = model.myProfile.Email;
+                aspnetuser.Phonenumber = model.myProfile.PhoneNumber;
+                aspnetuser.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+
+            var region = _db.Adminregions.Where(x => x.Adminid == model.myProfile.adminid).ToList();
+            _db.Adminregions.RemoveRange(region);
+            _db.SaveChanges();
+
+            foreach (var i in model.RegionArray)
+            {
+                Adminregion adminregion = new Adminregion();
+                adminregion.Adminid = model.myProfile.adminid;
+                adminregion.Regionid = i;
+                _db.Add(adminregion);
+                _db.SaveChanges();
+            }
+        }
+        public void MyProfileAddressDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Admins.FirstOrDefault(x => x.Aspnetuserid == model.myProfile.Aspnetid);
+            if (data != null)
+            {
+                data.Address1 = model.myProfile.Address1;
+                data.Address2 = model.myProfile.Address2;
+                //data.City = model.myProfile.city;
+                data.Zip = model.myProfile.Zipcode;
+                data.Mobile = model.myProfile.Mobile;
+                data.Regionid = model.myProfile.regionid;
+                _db.SaveChanges();
+            }
+        }
+
 
     }
 }

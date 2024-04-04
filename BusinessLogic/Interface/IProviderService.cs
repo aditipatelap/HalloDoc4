@@ -23,7 +23,20 @@ namespace BusinessLogic.Interface
         public AdminDashboard GetEditRoleData(int roleid);
         public void EditRolePost(string rolename, List<int> MenuIds);
         public void DeleteRolePost(int roleid);
-        public AdminDashboard UserAccessDataGet(string SearchUsers);
+        public AdminDashboard UserAccessDataGet(int adminaccountfilter);
+
         public List<Physicianlocation> GetPhysicianlocations();
+        /*** create admin***/
+        public AdminDashboard CreaeAdminDataGet();
+        public void CreateAdminDataPost(AdminDashboard model);
+        /**create provider**/
+        public AdminDashboard CreateProviderAdminDataGet();
+        public void CreateProviderDataPost(AdminDashboard model);
+        /**myprofile**/
+        public AdminDashboard MyProfileDataGet(string aspnetuserid);
+        public void MyProfileResetPassDataUpdate(AdminDashboard model);
+        public void MyProfileDetailsDataUpdate(AdminDashboard model);
+        public void MyProfileAddressDataUpdate(AdminDashboard model);
+
     }
 }

@@ -33,8 +33,8 @@ namespace DataAccess.ViewModel
         }
         public enum PhysicianStatus
         {
-            Pending=1,
-            Active=2,
+            Active=1,
+            Pending=2,
             NotActive=3
         }
         public enum Requeststatus

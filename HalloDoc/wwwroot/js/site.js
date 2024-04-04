@@ -46,18 +46,18 @@ btn1.addEventListener("click", function () {
     }
     localStorage.setItem("theme", theme);
 });
-//<script>
-//    const phoneInputField = document.querySelectorAll("input[type='tel']");
-//    for (var i = 0; i < phoneInputField.length; i++) {
-//        const phoneInput = window.intlTelInput(phoneInputField[i], {
-//        utilsScript:
-//    "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-//        });
-//    }
-//    $(window).on('load', function () {
-//        $('#myModal').modal('show');
-//    });
-//</script>
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+        utilsScript:
+    "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+    $(window).on('load', function () {
+        $('#myModal').modal('show');
+    });
+</script>
 //<script>
 
 //    (function () {

@@ -71,7 +71,16 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="Records"> Records</a>
+                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Records
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item  tablink" href="#" id="Access">Account Access</a>
+                        <a class="dropdown-item tablink" id="UserAccess" href="#">User Access</a>
+                        <a class="dropdown-item tablink" id="BlockHistory" href="#">Block History</a>
+
+                    </div>
+
                 </li>
 
             </ul>
@@ -139,12 +148,16 @@
         var regionid = $('.filterphysician').val();
         var accounttype = $('#AccountType').val();
         var RoleName = $('#RoleName').val();
-       
+        var adminaccountfilter = $('#adminaccountfilter').val();
+        console.log(adminaccountfilter);
         //var roleid = checkbox.getAttribute('data-roleid');
-        var roleid = $('#EditAccess').data('btn');
+        var roleid = $(this).data('roleid');
         
         if (typeof requestid === 'undefined') {
             requestid = 0;
+        }
+        if (typeof adminaccountfilter === 'undefined') {
+            adminaccountfilter = 0;
         }
         if (typeof roleid === 'undefined') {
             requestid = 0;
@@ -180,8 +193,8 @@
                 physicianid: physicianid,
                 regionid: regionid,
             accounttype: accounttype,
-            roleid:roleid
-
+            roleid:roleid,
+            adminaccountfilter:adminaccountfilter
 
             };
             $.ajax({
@@ -194,6 +207,7 @@
                     $("#TabContent").html(data);
                     $('.filterphysician').val(regionid);
                 $('#AccountType').val(accounttype);
+                $('#adminaccountfilter').val(adminaccountfilter);
                 $('#RoleName').val(RoleName);
                 },
                 error: function () {
@@ -231,6 +245,11 @@
             }
             if ($(this).hasClass('partialbtn')) {
                 btnnameglobal = btnName;
+            //$('#filteradmin').val('0').change();
+
+            //$(".searchrequest").removeClass("border");
+            //$(".allbtn").addClass("border");
+            //$('#searchInput').val('');
 
             }
             if ($(this).hasClass('partialbtn')) {
@@ -331,6 +350,7 @@
         $(document).on('click', '.custompagination', Pagination);
         $(document).on('change', '.filterphysician', TabLoad);
         $(document).on('change', '#AccountType', TabLoad);
+    $(document).on('change', '#adminaccountfilter', TabLoad);
 
         function ModalDisplay() {
             console.log("vidihiiiiiiiiiiiiii")

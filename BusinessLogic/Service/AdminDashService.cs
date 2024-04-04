@@ -655,45 +655,45 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
 
-        public AdminDashboard MyProfileDataGet(string aspnetuserid)
-        {
-            var data = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuser.Id == "19").Select(x => new Profile
-            {
-                UserName = x.Aspnetuser.Name,
-                Password = x.Aspnetuser.Passwordhash,
-                //status = x.Status,
-                FirstName = x.Firstname,
-                LastName = x.Lastname,
-                Email = x.Email,
-                ConfirmEmail = x.Email,
-                PhoneNumber = x.Aspnetuser.Phonenumber,
-                Mobile = x.Altphone,
-                Address1 = x.Address1,
-                Address2 = x.Address2,
-                //City = x.ci,
-                //Zipcode =x.Zipcode,
-                regionid = x.Regionid,
-                roleid = x.Roleid,
-                adminid = x.Adminid,
-            }).FirstOrDefault();
+        //public AdminDashboard MyProfileDataGet(string aspnetuserid)
+        //{
+        //    var data = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuser.Id == "19").Select(x => new Profile
+        //    {
+        //        UserName = x.Aspnetuser.Name,
+        //        Password = x.Aspnetuser.Passwordhash,
+        //        //status = x.Status,
+        //        FirstName = x.Firstname,
+        //        LastName = x.Lastname,
+        //        Email = x.Email,
+        //        ConfirmEmail = x.Email,
+        //        PhoneNumber = x.Aspnetuser.Phonenumber,
+        //        Mobile = x.Altphone,
+        //        Address1 = x.Address1,
+        //        Address2 = x.Address2,
+        //        //City = x.ci,
+        //        //Zipcode =x.Zipcode,
+        //        regionid = x.Regionid,
+        //        roleid = x.Roleid,
+        //        adminid = x.Adminid,
+        //    }).FirstOrDefault();
 
-            var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
-            {
-                RegionId = x.Regionid,
-                Regionname = x.Region.Name,
-            }).ToList();
+        //    var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
+        //    {
+        //        RegionId = x.Regionid,
+        //        Regionname = x.Region.Name,
+        //    }).ToList();
 
-            var role = _db.Roles.ToList();
-            var region = _db.Regions.ToList();
+        //    var role = _db.Roles.ToList();
+        //    var region = _db.Regions.ToList();
 
-            AdminDashboard adminDashboardModel = new AdminDashboard();
-            adminDashboardModel.myProfile = data;
-            //adminDashboardModel. = aspnetuserid;
-            //adminDashboardModel.role = role;
-            adminDashboardModel.Regions = region;
-            adminDashboardModel.regionCheckbox= RegionCheckbox;
-            return adminDashboardModel;
-        }
+        //    AdminDashboard adminDashboardModel = new AdminDashboard();
+        //    adminDashboardModel.myProfile = data;
+        //    //adminDashboardModel. = aspnetuserid;
+        //    //adminDashboardModel.role = role;
+        //    adminDashboardModel.Regions = region;
+        //    adminDashboardModel.regionCheckbox= RegionCheckbox;
+        //    return adminDashboardModel;
+        //}
 
         //public void PostMyProfile(string adminid,AdminDashboard adminDashboard)
         //{
@@ -711,23 +711,23 @@ namespace BusinessLogic.Service
         //    _db.SaveChanges();
 
         //}
-        public void PostMyProfile(AdminDashboard model,int adminid)
-        {
-            var data = _db.Admins.Include(x=>x.Adminregions).FirstOrDefault(x => x.Adminid == adminid);
-            if (data != null)
-            {
-                data.Firstname = model.myProfile.FirstName;
-                data.Lastname = model.myProfile.LastName;
-                // = model.PhysicianProfile.roleid;
+        //public void PostMyProfile(AdminDashboard model,int adminid)
+        //{
+        //    var data = _db.Admins.Include(x=>x.Adminregions).FirstOrDefault(x => x.Adminid == adminid);
+        //    if (data != null)
+        //    {
+        //        data.Firstname = model.myProfile.FirstName;
+        //        data.Lastname = model.myProfile.LastName;
+        //        // = model.PhysicianProfile.roleid;
               
-                //data.Adminregions.
-                _db.SaveChanges();
-            }
-            if(model.regionCheckbox!=null)
-            {
+        //        //data.Adminregions.
+        //        _db.SaveChanges();
+        //    }
+        //    if(model.regionCheckbox!=null)
+        //    {
 
-            }
-        }
+        //    }
+        //}
         /**************view uploads**********/
         /*View Uploads*/
 
