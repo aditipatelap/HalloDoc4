@@ -1,0 +1,156 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="container mt-3">
+    <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex  ">
+            <h4 class="m-0 pt-2 fs-5 fw-bold ">Update Business</h4>
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info tablink" id="Partners">
+                <i class="bi bi-chevron-left i-info"></i>Back
+            </button>
+        </div>
+    </div>
+    <form class="mt-3 shadow p-5" id="EditFormDataUpdate">
+        <div class="row g-2 mb-3 ">
+            <div class="col-md">
+                <div class="form-floating">
+                    <input type="text" class="form-control inputf" id="businessName" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.BusinessName" disabled />
+                    <label for="businessName" class="floatingLabel text-secondary">Business Name</label>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="form-floating">
+                    <select class="form-select inputf" id="role" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.ProfessionID" disabled>
+                        <option value="0" class="text-secondary">Select A Profession</option>
+                        @foreach (var item in Model.healthprofessionaltypes)
+                        {
+                            <option value="@item.Healthprofessionalid">@item.Professionname</option>
+                        }
+                    </select>
+                    <label for="role" class="floatingLabel text-secondary">Select A Profession</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control inputf" id="businessName" placeholder="FaxNumber" asp-for="@Model.AddBusinessModel.FAXNumber" disabled />
+                    <label for="businessName" class="floatingLabel text-secondary">FaxNumber</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="tel" class="form-control inputf" id="PhoneNumber" placeholder="Phone Number" asp-for="@Model.AddBusinessModel.PHoneNumber" disabled>
+                    <label for="PhoneNumber" class="floatingLabel text-secondary">Phone Number</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="email" class="form-control inputf" id="Email" placeholder="Email" asp-for="@Model.AddBusinessModel.Email" disabled>
+                    <label for="Email" class="floatingLabel text-secondary">Email</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="tel" class="form-control inputf" id="BusinessContact" placeholder="Business Contact" asp-for="@Model.AddBusinessModel.BusinessContanct" disabled>
+                    <label for="BusinessContact" class="floatingLabel text-secondary">Business Contact</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control inputf" id="Street" placeholder="Street" asp-for="@Model.AddBusinessModel.street" disabled>
+                    <label for="Street" class="floatingLabel text-secondary">Street</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control inputf" id="City" placeholder="City" asp-for="@Model.AddBusinessModel.city" disabled>
+                    <label for="City" class="floatingLabel text-secondary">City</label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 mb-3">
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control inputf" id="State" placeholder="State" asp-for="@Model.AddBusinessModel.state" disabled>
+                    <label for="State" class="floatingLabel text-secondary">State</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating" id="Zip">
+                    <input type="text" class="form-control inputf" placeholder="Zip/Postal" asp-for="@Model.AddBusinessModel.zip" disabled>
+                    <label for="Zip" class="floatingLabel text-secondary">Zip/Postal</label>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end my-2 mb-3">
+            <button type="button" id="edit1" class="btn btn-info  info-button text-white" onclick="inputClass1()">Edit</button>
+            <div id="btnz1" style="display: none">
+                <button type="submit" id="SaveBtn" class="btn btn-info me-2  info-button text-white">Save</button>
+                <button type="reset" id="cancel" class="btn btn-info button-info text-white tablink" id="Partners" onclick="disableInputClass1()">Cancel</button>
+            </div>
+        </div>
+        <input asp-for="@Model.AddBusinessModel.vendorID" hidden />
+    </form>
+</div>
+<script>
+    // cancel & Back button
+    //$(".tablink").click(TabLink);
+
+    $('#EditFormDataUpdate').on('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(this);
+        debugger;
+        $.ajax({
+            url: '/Admin/EditBusinessDataUpdate',
+            type: 'post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                $('#TabContent').html(result);
+                toastr.success("Edit Vendor successfully!");
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Please provide valid Data!");
+            }
+        });
+    });
+    $("#City").blur(VerifyCity);
+
+</script>
+
+<script>
+    function inputClass1() {
+        let input = document.getElementsByClassName('inputf');
+        for (var i = 0; i < input.length; i++) {
+            input[i].disabled = false;
+        }
+
+        var editBtn = document.getElementById("edit1");
+        editBtn.style.display = "none";
+
+        var saveBtn = document.getElementById("btnz1");
+        saveBtn.style.display = "block";
+    }
+
+    function disableInputClass1() {
+        let input = document.getElementsByClassName('inputf1');
+        for (var i = 0; i < input.length; i++) {
+            input[i].disabled = true;
+        }
+
+        var editBtn = document.getElementById("edit1");
+        editBtn.style.display = "block";
+
+        var saveBtn = document.getElementById("btnz1");
+        saveBtn.style.display = "none";
+    }
+</script>

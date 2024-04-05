@@ -20,6 +20,7 @@ using OfficeOpenXml;
 using Microsoft.AspNetCore.Http.HttpResults;
 using DataAccess.Models;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Drawing;
 
 
 namespace HalloDoc.Controllers
@@ -80,13 +81,18 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "PhysicianAccountEdit")
             {
-                var data = _providerService.GetProviderAcccountData(aspnetuserid);
+                var data = _providerService.GetProviderAcccountData(model.physicianid);
                 return PartialView(result,data);
             }
             if (model.tabid == "CreateProviderAccount")
             {
                 var data = _providerService.CreateProviderAdminDataGet();
                 return PartialView(result, data);
+            }
+            if (model.tabid == "Scheduling")
+            {
+                var data = _providerService.SchedulingDataGet(1);
+                return PartialView(result,data);
             }
             if (model.tabid == "Records")
             {
@@ -119,7 +125,18 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Partners")
             {
-                return PartialView(result);
+               var data=_providerService.AddBusinessDataGet();
+                return PartialView(result,data);
+            }
+            if (model.tabid == "UpdateBusiness")
+            {
+                var data = _providerService.EditBusinessDataGet(model.VendorId);
+                return PartialView(result,data);
+            }
+            if (model.tabid == "AddBusiness")
+            {
+                var data = _providerService.AddBusinessDataGet();
+                return PartialView(result,data);
             }
             if (model.tabid == "ViewCase")
             {
@@ -653,6 +670,45 @@ namespace HalloDoc.Controllers
             adminDashboard.tabid = "MyProfile";
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
-    
+        /*** partner**/
+
+        //Partner
+
+        [HttpGet]
+        public IActionResult GetPartnerTable(int ProfessionId)
+        {
+            var data = _providerService.PartnerDataGet(ProfessionId);
+            return PartialView("Tabs/_PartnersTable", data);
+        }
+        [HttpPost]
+        public IActionResult AddBusinessDataPost(AdminDashboard data)
+        {
+            _providerService.AddBusinessDataPost(data);
+            _notyf.Information("INfo Updated Successfully  ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "Partners";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
+
+        [HttpPost]
+        public IActionResult EditBusinessDataUpdate(AdminDashboard data)
+        {
+            _providerService.EditBusinessDataUpdate(data);
+            _notyf.Information("Info Updated Successfully  ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "Partners";
+
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
+        [HttpPost]
+        public IActionResult DeleteVendorDataPost(int VendorID)
+        {
+            _providerService.DeleteBusinessMethod(VendorID);
+            _notyf.Information("INfo Updated Successfully  ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "Partners";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+        }
+
     }
 }

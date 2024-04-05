@@ -51,7 +51,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item  tablink" href="#" id="Providers">Provider</a>
-                        <a class="dropdown-item" href="#">Scheduling</a>
+                        <a class="dropdown-item tablink" id="Scheduling" href="#">Scheduling</a>
                         <a class="dropdown-item" href="#">Invoicing</a>
                     </div>
                 </li>
@@ -149,8 +149,10 @@
         var accounttype = $('#AccountType').val();
         var RoleName = $('#RoleName').val();
         var adminaccountfilter = $('#adminaccountfilter').val();
-        console.log(adminaccountfilter);
+        var businessid = $(this).data('businessid');
+        //console.log(adminaccountfilter);
         //var roleid = checkbox.getAttribute('data-roleid');
+        //console.log(businessid);
         var roleid = $(this).data('roleid');
         
         if (typeof requestid === 'undefined') {
@@ -158,6 +160,9 @@
         }
         if (typeof adminaccountfilter === 'undefined') {
             adminaccountfilter = 0;
+        }
+        if (typeof businessid === 'undefined') {
+            businessid = 0;
         }
         if (typeof roleid === 'undefined') {
             requestid = 0;
@@ -194,7 +199,8 @@
                 regionid: regionid,
             accounttype: accounttype,
             roleid:roleid,
-            adminaccountfilter:adminaccountfilter
+            adminaccountfilter:adminaccountfilter,
+            VendorId: businessid
 
             };
             $.ajax({

@@ -1,1 +1,15 @@
-﻿<h1>Partner</h1>
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard<div class="mx-5 mt-3">    <div class="justify-content-start d-flex">        <h4 class="py-3">            Vendor(s)        </h4>    </div>    <div class="shadow-lg pt-3 p-5">        <div class="border-0 py-1 m-auto rounded d-flex justify-content-between">            <div class="d-flex">                <div class="d-flex ms-3 border  rounded p-0 my-2 w-100">                    <button class="my-2 bg-white border-0"><i class="bi bi-search text-secondary"></i></button>                    <input class="form-control shadow-none border-0 p-0 me-2" type="search" placeholder="Search Vendors" aria-label="Search">                </div>                <div class="d-flex border rounded p-0 my-2 ms-2 w-100">                    <i class="bi bi-search text-secondary bg-transparent m-2"></i>                    <select class="me-2 py-2 text-secondary border-0 w-100" id="RegionProfessions">                        <option value="0">All Profesions</option>                        @foreach (var item in Model.healthprofessionaltypes)
+                        {                            <option value="@item.Healthprofessionalid">@item.Professionname</option>                        }                    </select>                </div>            </div>            <div class="mx-2 mt-2">                <button class="btn-back btn btn-outline-info button-info bi bi-plus tablink" id="AddBusiness">Add Business</button>            </div>        </div>        <div class="PartnerDataTable mt-3"></div>    </div></div>
+   <script>    $(document).ready(GetPartnerTable);    function GetPartnerTable() {        var ProfessionId = $('#RegionProfessions').val();        if (typeof ProfessionId == 'undefined') {            ProfessionId = 0;        }
+        console.log(ProfessionId);        $.ajax({            url: "/Admin/GetPartnerTable",            type: 'GET',            data: { ProfessionId: ProfessionId },            success: function (result) {                $('.PartnerDataTable').html(result);            },            error: function (error) {                console.log(error);                alert('error fetching details')            },        });    }    $('#RegionProfessions').change(GetPartnerTable);
+    $('#modeldiv').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var roleid = button.data('roleid'); // Extract roleid from data-* attributes
+        var modal = $(this);
+        modal.find('#confirmDeleteBtn').attr('data-roleid', roleid); // Pass roleid to the delete button
+    });
+
+    
+
+        //for open add bussiness   // $(".tablink").click(TabLink);</script>

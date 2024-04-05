@@ -12,7 +12,7 @@ namespace BusinessLogic.Interface
     public  interface IProviderService
     {
         public AdminDashboard GetProviderData(int regionid);
-        public AdminDashboard GetProviderAcccountData(string aspnetuserid);
+        public AdminDashboard GetProviderAcccountData(int physicianid);
         //public void PostProviderData(AdminDashboard model);
 
         public void PostProviderData(List<checkboxmodel> model);
@@ -37,6 +37,15 @@ namespace BusinessLogic.Interface
         public void MyProfileResetPassDataUpdate(AdminDashboard model);
         public void MyProfileDetailsDataUpdate(AdminDashboard model);
         public void MyProfileAddressDataUpdate(AdminDashboard model);
+        /**partner**/
+        public AdminDashboard PartnerDataGet(int ProfessionId);
+        public AdminDashboard AddBusinessDataGet();
+        public void AddBusinessDataPost(AdminDashboard model);
+        public AdminDashboard EditBusinessDataGet(int VendorID);
+        public void EditBusinessDataUpdate(AdminDashboard model);
+        public AdminDashboard DeleteVendorDataGet(int VendorId);
+        public void DeleteBusinessMethod(int vendorID);
+        public AdminDashboard SchedulingDataGet(int RegionId);
 
     }
 }

@@ -111,7 +111,9 @@ namespace BusinessLogic.Service
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
                              where id.Contains(Request.Status) /*&& Request.Isdeleted == false*/ &&
                              (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
-                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || Requestclient.Lastname.Contains(searchValue) || Request.Firstname.Contains(searchValue) || Request.Lastname.Contains(searchValue)) &&
+                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || 
+                          Requestclient.Lastname.Contains(searchValue) || Request.Firstname.Contains(searchValue) ||
+                          Request.Lastname.Contains(searchValue)) &&
                           (reqtype == 0 || Request.Requesttypeid == reqtype)
                              select new AdminDash
                              {

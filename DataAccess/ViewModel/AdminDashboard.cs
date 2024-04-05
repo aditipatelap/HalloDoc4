@@ -325,6 +325,34 @@ namespace DataAccess.ViewModel
         public IFormFile? CredentialDocument { get; set; }
 
     }
+    /**partner**/
+    public class AddBusiness
+    {
+        public string? BusinessName { get; set; }
+        public string? FAXNumber { get; set; }
+        public int? ProfessionID { get; set; }
+        public string? PHoneNumber { get; set; }
+        public string? Email { get; set; }
+        public string? BusinessContanct { get; set; }
+        public string? street { get; set; }
+        public string? city { get; set; }
+        public string? state { get; set; }
+        public int? regionID { get; set; }
+        public string? zip { get; set; }
+        public int? vendorID { get; set; }
+
+    }
+    public class PartnerModel
+    {
+        public string? Profession { get; set; }
+        public string? BusinessName { get; set; }
+        public string? email { get; set; }
+        public string? faxnumber { get; set; }
+        public string? phonenumber { get; set; }
+        public string? businessContact { get; set; }
+        public int? businessId { get; set; }
+    }
+
     public class AdminDashboard
     {
         public string UserName { get; set; }
@@ -401,6 +429,9 @@ namespace DataAccess.ViewModel
         public IEnumerable<Menu> ? menu { get; set; }
        public  List<UserAccessModel> userAccessModels { get; set; } 
         public PhysicianProfile PhysicianProfile { get; set; }  
+        public AddBusiness AddBusinessModel { get;set; }
+        public List<PartnerModel> PartnerModel { get; set; }
+        public int VendorId { get;set; }
         //public List<checkboxmodel> checkboxmodel { get; set; }
         //public List<PhysicancheckboxModel> physicancheckboxModels { get; set; }
 

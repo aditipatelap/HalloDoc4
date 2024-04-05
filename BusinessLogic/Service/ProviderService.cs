@@ -57,9 +57,9 @@ namespace BusinessLogic.Service
             }
             _db.SaveChanges();
         }
-        public AdminDashboard GetProviderAcccountData(string aspnetuserid)
+        public AdminDashboard GetProviderAcccountData(int physicianid)
         {
-            var result = _db.Physicians.Include(x=>x.Aspnetuser).Where(x => x.Aspnetuserid == aspnetuserid).Select(x => new Profile
+            var result = _db.Physicians.Include(x=>x.Aspnetuser).Where(x => x.Physicianid == physicianid).Select(x => new Profile
             {
                 UserName=x.Aspnetuser.Name,
                 FirstName=x.Firstname,
@@ -568,7 +568,125 @@ public AdminDashboard CreateProviderAdminDataGet()
                 _db.SaveChanges();
             }
         }
+        /*** partner**/
+        //partner
+        public AdminDashboard PartnerDataGet(int ProfessionId)
+        {
+            var data = _db.Healthprofessionals.Where(x => (ProfessionId == 0 || x.Profession == ProfessionId) && x.Isdeleted == new BitArray(new bool[1] { false })).Select(x => new PartnerModel
+            {
+                BusinessName = x.Vendorname,
+                Profession = _db.Healthprofessionaltypes.Where(y => y.Healthprofessionalid == x.Profession).FirstOrDefault().Professionname,
+                email = x.Email,
+                phonenumber = x.Phonenumber,
+                businessContact = x.Businesscontact,
+                faxnumber = x.Faxnumber,
+                businessId = x.Vendorid,
+            }).ToList();
+            AdminDashboard model = new AdminDashboard();
+            model.PartnerModel = data;
+            return model;
+        }
 
+        public AdminDashboard AddBusinessDataGet()
+        {
+            var data = _db.Healthprofessionaltypes.ToList();
+            AdminDashboard adminModel = new AdminDashboard();
+            adminModel.healthprofessionaltypes = data;
+
+            return adminModel;
+        }
+        public void AddBusinessDataPost(AdminDashboard model)
+        {
+            Healthprofessional healthprofessional = new Healthprofessional();
+            healthprofessional.Vendorname = model.AddBusinessModel.BusinessName;
+            healthprofessional.Profession = model.AddBusinessModel.ProfessionID;
+            healthprofessional.Faxnumber = model.AddBusinessModel.FAXNumber;
+            healthprofessional.Address = model.AddBusinessModel.street + " " + model.AddBusinessModel.city + " " + model.AddBusinessModel.state + " " + model.AddBusinessModel.zip;
+            healthprofessional.City = model.AddBusinessModel.city;
+            healthprofessional.State = model.AddBusinessModel.state;
+            healthprofessional.Zip = model.AddBusinessModel.zip;
+            healthprofessional.Createddate = DateTime.Now;
+            healthprofessional.Email = model.AddBusinessModel.Email;
+            healthprofessional.Phonenumber = model.AddBusinessModel.PHoneNumber;
+            healthprofessional.Businesscontact = model.AddBusinessModel.BusinessContanct;
+            healthprofessional.Regionid = _db.Regions.Where(x => x.Name == model.AddBusinessModel.city).FirstOrDefault().Regionid;
+            healthprofessional.Isdeleted = new BitArray(new bool[1] { false });
+            _db.Add(healthprofessional);
+            _db.SaveChanges();
+        }
+
+        public AdminDashboard EditBusinessDataGet(int VendorID)
+        {
+            AdminDashboard model = new AdminDashboard();
+
+            var data1 = _db.Healthprofessionaltypes.ToList();
+            var data = _db.Healthprofessionals.Where(x => x.Vendorid == VendorID).Select(x => new AddBusiness
+            {
+                BusinessName = x.Vendorname,
+                FAXNumber = x.Faxnumber,
+                PHoneNumber = x.Phonenumber,
+                Email = x.Email,
+                BusinessContanct = x.Businesscontact,
+                city = x.City,
+                state = x.State,
+                zip = x.Zip,
+                ProfessionID = x.Profession,
+                vendorID = x.Vendorid,
+
+            }).FirstOrDefault();
+            model.AddBusinessModel = data;
+            model.healthprofessionaltypes = data1;
+            return model;
+        }
+        public void EditBusinessDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Healthprofessionals.Where(x => x.Vendorid == model.AddBusinessModel.vendorID).FirstOrDefault();
+            if (data != null)
+            {
+                data.Vendorname = model.AddBusinessModel.BusinessName;
+                data.Faxnumber = model.AddBusinessModel.FAXNumber;
+                data.Phonenumber = model.AddBusinessModel.PHoneNumber;
+                data.Businesscontact = model.AddBusinessModel.BusinessContanct;
+                data.Address = model.AddBusinessModel.street + " " + model.AddBusinessModel.city + " " + model.AddBusinessModel.state + " " + model.AddBusinessModel.zip;
+                data.City = model.AddBusinessModel.city;
+                data.State = model.AddBusinessModel.state;
+                data.Zip = model.AddBusinessModel.zip;
+                data.Profession = model.AddBusinessModel.ProfessionID;
+                data.Email = model.AddBusinessModel.Email;
+                data.Modifieddate = DateTime.Now;
+
+                _db.SaveChanges();
+            }
+        }
+
+        public AdminDashboard DeleteVendorDataGet(int VendorId)
+        {
+            AdminDashboard model = new AdminDashboard();
+            model.VendorId = VendorId;
+
+            return model;
+        }
+        public void DeleteBusinessMethod(int vendorID)
+        {
+            var data = _db.Healthprofessionals.Where(x => x.Vendorid == vendorID).FirstOrDefault();
+            if (data != null)
+            {
+                data.Isdeleted = new BitArray(new bool[1] { true });
+                data.Modifieddate = DateTime.Now;
+
+                _db.SaveChanges();
+            }
+        }
+        /***scheduling***/
+        public AdminDashboard SchedulingDataGet(int RegionId)
+        {
+            var data = _db.Regions.ToList();
+            var data1 = _db.Physicians.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Regions = data;
+            adminDashboard.Physicians = data1;
+            return adminDashboard;
+        }
 
     }
 }

@@ -1,0 +1,225 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<style>
+    thead {
+        text-decoration: none;
+        background-color: #343a40;
+        color: white;
+    }
+
+    th a {
+        text-decoration: none;
+        color: white;
+    }
+
+    td a {
+        text-decoration: none;
+        color: black;
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+
+<body class="bg-light" id="tableContent">
+
+    <div class="container mt-5">
+        <div class="flex-row d-flex mt-5 mb-3 justify-content-between">
+            <h4 style="font-weight:bold;">Scheduling</h4>
+
+            <a class="btn btn-outline-info m-2 text-decoration-none float-end tablink" id="Providers">
+                Back
+            </a>
+
+        </div>
+        <div class="flex-row d-flex mt-3 mb-3 justify-content-between">
+            <div class="form-group col-lg-4 col-md-6 col-sm-12">
+
+                <select class="form-select form-control ms-3" id="SelectedRegion" aria-label=" Default select example">
+                    @if (Model.Regions != null)
+                    {
+                        <option value="0" selected>All</option>
+                        @foreach (var item in Model.Regions)
+                        {
+
+                            <option value="@item.Regionid">@item.Name</option>
+
+                        }
+                    }
+
+                </select>
+            </div>
+            <ul>
+                <li class="d-inline">
+                    <a class="btn btn-info text-white" asp-action="MDOnCall" asp-controller="Admin">
+                        <span class="dash-btn">Providers On Call</span>
+                    </a>
+                </li>
+                <li class="d-inline">
+                    <a class="btn btn-info text-white" asp-action="RequestedShift" asp-controller="Admin">
+                        <span class="dash-btn">Shift For Review</span>
+                    </a>
+                </li>
+                <li class="d-inline">
+                    <button type="button" class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#createShiftModel">
+                        <span class="dash-btn">Add New Shift</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="flex-row d-flex mt-3 mb-3">
+            <h5 id="caldate"></h5>
+        </div>
+        <div class="g-2" style="display:flex; justify-content:flex-end;">
+            <button type="button" class="me-2 bg-light border-0" style="display:flex; align-items:center">
+                <i class="bi bi-square-fill" style="color: #ff80ff;"></i>
+                <span style="margin-left:5px"> Panding Shifts</span>
+            </button>
+            <button type="button" class="me-2 bg-light border-0" style="display:flex; align-items:center">
+                <i class="bi bi-square-fill" style="color: #00cc00;"></i>
+                <span style="margin-left:5px"> Approved Shifts</span>
+            </button>
+        </div>
+        <div class="flex-row d-flex mt-3 mb-3 justify-content-between">
+            <ul>
+                <li class="d-inline">
+                    <button type="button" id="prev" class="btn btn-info text-white" style="border-radius:50%"><i class="fa fa-angle-left" aria-hidden="true"></i></button>
+                </li>
+                <li class="d-inline">
+                    <button class="btn" id="calendarIconBtn" onclick="picker.show(); return false;">
+                        <i class="fa fa-calendar" id="calendar-icon" style="color:gray"></i>
+                    </button>
+                </li>
+                <li class="d-inline">
+                    <button type="button" id="nxt" class="btn btn-info text-white" style="border-radius:50%"><i class="fa fa-angle-right" aria-hidden="true"></i></button>
+                </li>
+            </ul>
+            <ul>
+                <li class="d-inline">
+                    <button type="button" class="btn btn-mode btn-outline-info" id="dateview">Day</button>
+                </li>
+                <li class="d-inline">
+                    <button type="button" class="btn btn-mode btn-outline-info" id="weekview"> Week </button>
+                </li>
+                <li class="d-inline">
+                    <button type="button" class="btn btn-mode btn-outline-info" id="monthview">Month</button>
+                </li>
+            </ul>
+        </div>
+        <div id="calendar"></div>
+    </div>
+   
+</body>
+
+
+<script src="~/js/index.global.js"></script>
+<script>
+    $(document).ready(function () {
+       var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            themeSystem: 'bootstrap5',
+            initialView: 'resourceTimelineDay',
+            aspectRatio: 1.8,
+            scrollTime: '00:00',
+            headerToolbar: false,
+            editable: true,
+            selectable: true,
+            resourceAreaHeaderContent: 'Physicians',
+            views: {
+                resourceTimelineWeek: {
+                    slotDuration: { days: 1 },
+                    slotLabelFormat: { weekday: 'short', day: 'numeric', week: 'long' },
+                },
+            },
+            displayEventTime: true,
+            eventDisplay: 'block',
+            dayMaxEvents: 1,
+            eventClick: function (event, jsEvent, view) {
+                ViewShift(event.event.id);
+                //ViewShift();
+            }
+        });
+        calendar.render();
+        showDate();
+        document.getElementById('prev').addEventListener('click', function () {
+            calendar.prev();
+            showDate();
+        });
+        document.getElementById('nxt').addEventListener('click', function () {
+            calendar.next();
+            showDate();
+        });
+        document.getElementById('dateview').addEventListener('click', function () {
+            calendar.changeView('resourceTimelineDay');
+            showDate();
+        });
+        document.getElementById('weekview').addEventListener('click', function () {
+            calendar.changeView('resourceTimelineWeek');
+            showDate();
+        });
+        document.getElementById('monthview').addEventListener('click', function () {
+            calendar.changeView('dayGridMonth');
+            showDate();
+        });
+        function showDate() {
+            var view = calendar.view;
+            document.getElementById('caldate').innerHTML = view.title;
+            ProviderData();
+            // EventData();
+        }
+        function ProviderData() {
+            region = $("#SelectedRegion").val();
+            //console.log(region);
+            var response;
+            $.ajax({
+                type: "GET",
+                url: "/Admin/SchedulingDataGet",
+                data: {
+                    RegionId: region
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    calendar.getResources().forEach(function (resource) {
+                        resource.remove();
+                    });
+                    response.forEach(function (physician) {
+                        var fullName = physician.firstName + ' ' + physician.lastName;
+                        calendar.addResource({
+                            id: physician.physicianId,
+                            title: fullName
+                        });
+                    });
+                },
+            });
+        }
+        // function EventData() {
+        //     regionName = $("#SelectedRegion").val();
+        //     $.ajax({
+        //         type: "GET",
+        //         url: "ProviderEventData",
+        //         data: {
+        //             region: regionName
+        //         },
+        //         dataType: 'json',
+        //         success: function (response) {
+        //             calendar.removeAllEvents();
+        //             response.forEach(function (event) {
+        //                 calendar.addEvent(event);
+        //             })
+        //         },
+        //     });
+        // }
+    });
+</script>
+
+@* <script src="/js/daypilot-all.min.js"></script>
+<script type="text/javascript">
+    var picker = new DayPilot.DatePicker({
+        target: 'start',
+        pattern: 'yyyy-MM-dd',
+        onTimeRangeSelected: function (args) {
+            document.getElementById('selectedDate').innerText = args.start.toString("dddd, MMMM dd, yyyy");
+        }
+    });
+</script>*@
