@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using DataAccess.Models;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Drawing;
-
+using System.Web.Helpers;
 
 namespace HalloDoc.Controllers
 {
@@ -36,18 +36,18 @@ namespace HalloDoc.Controllers
         private readonly ILoginInterface _loginInterface;
         private readonly IProviderService _providerService;
         public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,
-            IRequestInterface requestInterface,ILoginInterface loginInterface,IProviderService providerService)
+            IRequestInterface requestInterface, ILoginInterface loginInterface, IProviderService providerService)
         {
             _db = db;
             _AdminDash = adminDash;
             _httpContextAccessor = httpContextAccessor;
             _notyf = notyf;
-            _requestInterface= requestInterface;
+            _requestInterface = requestInterface;
             _loginInterface = loginInterface;
-           _providerService = providerService;
+            _providerService = providerService;
         }
-       
-       
+
+
         public IActionResult Index(AdminDashboard model)
         {
             return View(model);
@@ -56,22 +56,22 @@ namespace HalloDoc.Controllers
         public IActionResult GetTabs(AdminDashboard model, int statusid, string btnname, string patientname,
             string confirmationno, string email, string aspnetuserid)
         {
-            var result ="Tabs/"+ "_" + model.tabid;
-           string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
+            var result = "Tabs/" + "_" + model.tabid;
+            string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
             if (model.tabid == "Dashboard")
             {
                 var req = _AdminDash.RequestCount();
 
-                return PartialView(result,req);
+                return PartialView(result, req);
             }
-            if(model.tabid == "MyProfile")
+            if (model.tabid == "MyProfile")
             {
                 var req = _providerService.MyProfileDataGet(aspnetuserid);
-                return PartialView(result,req);
+                return PartialView(result, req);
             }
             if (model.tabid == "ProviderLocation")
             {
-                
+
                 return PartialView(result);
             }
             if (model.tabid == "Providers")
@@ -82,7 +82,7 @@ namespace HalloDoc.Controllers
             if (model.tabid == "PhysicianAccountEdit")
             {
                 var data = _providerService.GetProviderAcccountData(model.physicianid);
-                return PartialView(result,data);
+                return PartialView(result, data);
             }
             if (model.tabid == "CreateProviderAccount")
             {
@@ -91,8 +91,8 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Scheduling")
             {
-                var data = _providerService.SchedulingDataGet(1);
-                return PartialView(result,data);
+                //var data = _providerService.SchedulingDataGet(1);
+                return PartialView(result);
             }
             if (model.tabid == "Records")
             {
@@ -101,7 +101,7 @@ namespace HalloDoc.Controllers
             if (model.tabid == "Access")
             {
                 var data = _providerService.GetAccessData();
-                return PartialView(result,data);
+                return PartialView(result, data);
             }
             if (model.tabid == "CreateRole")
             {
@@ -121,38 +121,38 @@ namespace HalloDoc.Controllers
             if (model.tabid == "CreateAdmin")
             {
                 var data = _providerService.CreaeAdminDataGet();
-                return PartialView(result,data);
+                return PartialView(result, data);
             }
             if (model.tabid == "Partners")
             {
-               var data=_providerService.AddBusinessDataGet();
-                return PartialView(result,data);
+                var data = _providerService.AddBusinessDataGet();
+                return PartialView(result, data);
             }
             if (model.tabid == "UpdateBusiness")
             {
                 var data = _providerService.EditBusinessDataGet(model.VendorId);
-                return PartialView(result,data);
+                return PartialView(result, data);
             }
             if (model.tabid == "AddBusiness")
             {
                 var data = _providerService.AddBusinessDataGet();
-                return PartialView(result,data);
+                return PartialView(result, data);
             }
             if (model.tabid == "ViewCase")
             {
-               var data = _AdminDash.GetViewCase(model.requestid);
+                var data = _AdminDash.GetViewCase(model.requestid);
                 return PartialView(result, data);
             }
             if (model.tabid == "ViewUpload")
             {
-                var data = _AdminDash.ViewUploadData(model.requestid,patientname, confirmationno,  email);
+                var data = _AdminDash.ViewUploadData(model.requestid, patientname, confirmationno, email);
                 return PartialView(result, data);
-            }   
+            }
             if (model.tabid == "SendOrder")
             {
-                var orderdetail= _AdminDash.SendOrder(model.requestid);
+                var orderdetail = _AdminDash.SendOrder(model.requestid);
 
-                return PartialView(result,orderdetail);
+                return PartialView(result, orderdetail);
             }
             if (model.tabid == "EncounterForm")
             {
@@ -168,7 +168,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "CreateNewReq")
             {
-             
+
 
                 return PartialView(result);
             }
@@ -197,17 +197,18 @@ namespace HalloDoc.Controllers
 
         //}
 
-        public IActionResult GetPartialView(string btnName, int statusid, string searchValue,int currentpage ,  string dropdown,int reqtype)
+        public IActionResult GetPartialView(string btnName, int statusid, string searchValue, int currentpage, string dropdown, int reqtype)
         {
 
-            var partialview = "Partials/" + "_" + btnName; 
+            var partialview = "Partials/" + "_" + btnName;
 
-            var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue,currentpage,dropdown,reqtype);
+            var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue, currentpage, dropdown, reqtype);
 
             return PartialView(partialview, result);
         }
-        public IActionResult GetModalPartialView(string modalName,int requestid, string patientname)
+        public IActionResult GetModalPartialView(string modalName, int requestid, string patientname)
         {
+
             var partialname = "Partials/" + "_" + modalName;
             if (modalName == "AssignRequest")
             {
@@ -222,9 +223,9 @@ namespace HalloDoc.Controllers
                 return PartialView(partialname, result);
 
             }
-            if (modalName=="CancelCase")
+            if (modalName == "CancelCase")
             {
-               var result = _AdminDash.CancelCase(requestid,patientname);
+                var result = _AdminDash.CancelCase(requestid, patientname);
                 return PartialView(partialname, result);
             }
             if (modalName == "TransferRequest")
@@ -235,19 +236,19 @@ namespace HalloDoc.Controllers
             if (modalName == "ClearCase")
             {
                 var result = _AdminDash.ClearCase(requestid);
-                return PartialView(partialname,result);
+                return PartialView(partialname, result);
             }
-            if (modalName == "SendAgreement")   
+            if (modalName == "SendAgreement")
             {
                 var result = _AdminDash.SendAgreeement(requestid);
-                    return PartialView(partialname, result);
+                return PartialView(partialname, result);
             }
             if (modalName == "SendLink")
             {
-               
+
                 return PartialView(partialname);
             }
-            
+
             if (modalName == "RequestDTY")
             {
 
@@ -259,7 +260,11 @@ namespace HalloDoc.Controllers
                 return PartialView(partialname);
 
             }
-
+            if (modalName == "CreateShift")
+            {
+                var data = _providerService.CreateShiftGet();
+                return PartialView("Tabs/Scheduling/_CreateShift", data);
+            }
             return PartialView(partialname);
 
         }
@@ -273,7 +278,7 @@ namespace HalloDoc.Controllers
         {
             byte[] excelBytes;
             IEnumerable<AdminDash> data = _AdminDash.GetPatientInfoByStatus((int)model.statusid).adminDashes;
-            
+
             excelBytes = fileToExcel(data);
             _notyf.Custom("Document Downloaded Successfully!", 3, "green", "bi bi-check-circle-fill");
             return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "sheet.xlsx");
@@ -309,8 +314,8 @@ namespace HalloDoc.Controllers
             _notyf.Custom("Case Assign Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
-       
-        public IActionResult CancelCaseReq(AdminDashboard model,int requestid)
+
+        public IActionResult CancelCaseReq(AdminDashboard model, int requestid)
 
         {
             _AdminDash.submitCancelCase(model, requestid);
@@ -318,10 +323,10 @@ namespace HalloDoc.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
-        
+
         public IActionResult BlockReq(AdminDashboard model, int requestid)
 
-        {   
+        {
             _AdminDash.SubmitBlockCase(model, requestid);
 
             _notyf.Custom("Case Blocked Successfully!", 3, "green", "bi bi-check-circle-fill");
@@ -334,9 +339,9 @@ namespace HalloDoc.Controllers
             return RedirectToAction("Index", "Admin");
         }
         [HttpPost]
-        public IActionResult SendOrder(AdminDashboard model, int requestid,string adminname)
+        public IActionResult SendOrder(AdminDashboard model, int requestid, string adminname)
         {
-            _AdminDash.SendOrderReq(model, requestid,adminname);
+            _AdminDash.SendOrderReq(model, requestid, adminname);
             _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
@@ -348,12 +353,12 @@ namespace HalloDoc.Controllers
         public IActionResult GetBusinessDetails(int selectedvalue)
         {
             var model = _AdminDash.GetBusinessDetails(selectedvalue);
-                return Json(model);
+            return Json(model);
         }
         [HttpPost]
-        public IActionResult SubmitClearCase(AdminDashboard model, int requestid,int adminid)
+        public IActionResult SubmitClearCase(AdminDashboard model, int requestid, int adminid)
         {
-            _AdminDash.SubmitClearCase(model, requestid,adminid);
+            _AdminDash.SubmitClearCase(model, requestid, adminid);
             _notyf.Custom("Case Cleared Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
         }
@@ -363,7 +368,7 @@ namespace HalloDoc.Controllers
             return View();
         }
         public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
-            {
+        {
             _AdminDash.EditViewCaseData(model, requestid);
             _notyf.Custom("Data Saved Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Index", "Admin");
@@ -373,13 +378,13 @@ namespace HalloDoc.Controllers
         public IActionResult GetDropDown(int selectedvalue)
         {
 
-            var physicians = _db.Physicians.Where(x => x.Regionid == selectedvalue).Select(x =>  x.Firstname).ToList();
+            var physicians = _db.Physicians.Where(x => x.Regionid == selectedvalue).Select(x => x.Firstname).ToList();
             return Json(physicians);
         }
         [HttpPost]
         public IActionResult SendAgreement(string email, int requestid)
         {
-            _requestInterface.SendMailService(email,requestid);
+            _requestInterface.SendMailService(email, requestid);
             _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
 
             return RedirectToAction("Index", "Admin");
@@ -394,8 +399,8 @@ namespace HalloDoc.Controllers
         //    return View();
         //}
         [HttpPost]
-        public JsonResult PostViewNotes( AdminDashboard model)
-        
+        public JsonResult PostViewNotes(AdminDashboard model)
+
         {
             _AdminDash.PostViewNotes(model);
             //_notyf.Custom("Notes Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
@@ -457,8 +462,8 @@ namespace HalloDoc.Controllers
             _notyf.Custom("Email Sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
             return ViewUploadsList(requestid);
         }
-       /*******create req*/
- [HttpPost]
+        /*******create req*/
+        [HttpPost]
         public IActionResult CreateRequestDatapost(AdminDashboard model)
         {
             _AdminDash.CreateRequestDatapost(model);
@@ -532,11 +537,11 @@ namespace HalloDoc.Controllers
         /////////**********provider*********/
         ///[
         [HttpPost]
-        public IActionResult PostProviderData( List<checkboxmodel> dataToSend)
+        public IActionResult PostProviderData(List<checkboxmodel> dataToSend)
         {
 
             _providerService.PostProviderData(dataToSend);
-           
+
             _notyf.Information("Information updtaed ...");
             return Ok(new { message = "Data saved successfully." });
         }
@@ -546,13 +551,13 @@ namespace HalloDoc.Controllers
             _notyf.Information("Information updtaed ...");
             AdminDashboard admin = new AdminDashboard();
             admin.tabid = "PhysicianAccountEdit";
-            admin.physicianid= adminDashboard.physicianid;
+            admin.physicianid = adminDashboard.physicianid;
 
-            
 
-            return GetTabs(admin,default,default,default,default,default,default);
+
+            return GetTabs(admin, default, default, default, default, default, default);
         }
-        public IActionResult CreateRolesPost(short AccountTypeId,string RoleName,List<int> MenuIds)
+        public IActionResult CreateRolesPost(short AccountTypeId, string RoleName, List<int> MenuIds)
         {
             _providerService.CreateRolePost(AccountTypeId, RoleName, MenuIds);
             _notyf.Information("Role Created Successfully ...");
@@ -561,7 +566,7 @@ namespace HalloDoc.Controllers
             return GetTabs(admin, default, default, default, default, default, default);
 
         }
-        public IActionResult EditRolePost(string rolename,List<int> MenuIds)
+        public IActionResult EditRolePost(string rolename, List<int> MenuIds)
         {
             _providerService.EditRolePost(rolename, MenuIds);
 
@@ -570,7 +575,7 @@ namespace HalloDoc.Controllers
             admin.tabid = "Access";
             return GetTabs(admin, default, default, default, default, default, default);
         }
-        public IActionResult DeleteRolePost (int roleid)
+        public IActionResult DeleteRolePost(int roleid)
         {
             _providerService.DeleteRolePost(roleid);
             _notyf.Information("Role Deleted Successfully ...");
@@ -578,26 +583,26 @@ namespace HalloDoc.Controllers
             admin.tabid = "Access";
             return GetTabs(admin, default, default, default, default, default, default);
         }
-        public IActionResult OpenEditAccess(int accounttypeid,string aspnetuserid)
+        public IActionResult OpenEditAccess(int accounttypeid, string aspnetuserid)
         {
-            if(accounttypeid==1)
+            if (accounttypeid == 1)
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "MyProfile";
-               return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+                return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
             if (accounttypeid == 2)
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "PhysicianAccountEdit";
 
-               return  GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+                return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
             if (accounttypeid == 3)
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "MyProfile";
-               return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
+                return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
             return Ok();
         }
@@ -617,10 +622,10 @@ namespace HalloDoc.Controllers
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
         /**verify email**/
-       //public IActionResult checkEmail(string email)
-       // {
-           
-       // }
+        //public IActionResult checkEmail(string email)
+        // {
+
+        // }
 
         /**create provider**/
         public IActionResult CreateProviderDataPost(AdminDashboard model)
@@ -633,8 +638,8 @@ namespace HalloDoc.Controllers
         }
 
         /***my profile**/
-        
-[HttpPost]
+
+        [HttpPost]
         public IActionResult MyProfileResetPassDataUpdate(AdminDashboard model)
         {
             if (model.myProfile.Password != null)
@@ -709,6 +714,49 @@ namespace HalloDoc.Controllers
             adminDashboard.tabid = "Partners";
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
+        /***scheduling**/
 
+
+        [HttpGet]
+
+        public async Task<IActionResult> SchedulingDataGet(int RegionId)
+        {
+
+
+            var physician = _db.Physicians
+                .Where(p => p.Regionid == RegionId || RegionId == 0)
+                .Select(p => new
+                {
+                    physicianId = p.Physicianid,
+                    firstName = p.Firstname,
+                    lastName = p.Lastname
+                })
+                .ToList();
+
+            return Json(physician);
+        }
+        public IActionResult AddShift(AdminDashboard model)
+        {
+            //string adminId = Crredntials.AspNetUserId();
+            var chk = Request.Form["repeatdays"].ToList();
+            _providerService.AddShift(model.ScheduleModel, chk, "2");
+            _notyf.Information("Shift Created  Successfully  ...");
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "Scheduling";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
+
+        }
+        public JsonResult GetEvents()
+        {
+            var shiftDetails = _db.Shiftdetails
+                .Select(sd => new
+                {
+                    //id = sd.Shiftdetailid,
+                    //title = sd.phy,
+                    start = sd.Starttime,
+                    end = sd.Endtime
+                });
+            return Json(shiftDetails);
+        }
     }
 }

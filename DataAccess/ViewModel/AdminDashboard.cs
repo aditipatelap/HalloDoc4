@@ -169,7 +169,7 @@ namespace DataAccess.ViewModel
         public string? LastName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        public int physicianid { get;set; }
+        public int physicianid { get; set; }
         public string? Street { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
@@ -193,9 +193,9 @@ namespace DataAccess.ViewModel
     }
     public class RegionCheckbox {
         public int RegionId
-        { get; set;}
-        public string? Regionname { get; set;}
-}
+        { get; set; }
+        public string? Regionname { get; set; }
+    }
     public class CreateReqquestModel
     {
         [Required(ErrorMessage = "this field is required")]
@@ -213,7 +213,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "this field is required")]
         public string? State { get; set; }
         public string? ZipCode { get; set; }
-        public string? Notes { get; set;}
+        public string? Notes { get; set; }
 
 
     }
@@ -226,7 +226,7 @@ namespace DataAccess.ViewModel
         public string? Email { get; set; }
         public string ConfirmationNo { get; set; }
         public DateTime Dob { get; set; }
-        public List<Requestwisefile> documents{get;set;}
+        public List<Requestwisefile> documents { get; set; }
     }
 
 
@@ -240,27 +240,27 @@ namespace DataAccess.ViewModel
         public PhysicianStatus ProviderStatus { get; set; }
         public int physicianid { get; set; }
         public string Username { get; set; }
-        public BitArray notification { get;set; }
-       
+        public BitArray notification { get; set; }
+
         public BitArray checkbox { get; set; }
 
 
     }
-   // public class checkbox { }
+    // public class checkbox { }
     public class checkboxmodel
     {
-        public int physicianid { get;set; }
-        public bool checkbox { get;set; }
+        public int physicianid { get; set; }
+        public bool checkbox { get; set; }
     }
     public class AccountAccess
     {
-        public string Name { get; set; }    
-        public Roles AccountType { get;set; }
+        public string Name { get; set; }
+        public Roles AccountType { get; set; }
         public int roleid { get; set; }
     }
     public class EditAccountAccess
     {
-        public string? rolename { get; set;}
+        public string? rolename { get; set; }
         public short AccountType { get; set; }
 
     }
@@ -273,14 +273,14 @@ namespace DataAccess.ViewModel
     public class UserAccessModel
     {
         public string AccountPOC { get; set; }
-        public Roles ? AccountType { get; set; }
+        public Roles? AccountType { get; set; }
         public string PhoneNumber { get; set; }
-        public PhysicianStatus ? status { get; set; }
+        public PhysicianStatus? status { get; set; }
 
         public int? accounttypeid { get; set; }
-        public string aspnetuserid { get;set; }
+        public string aspnetuserid { get; set; }
         public int physicianid { get; set; }
-        public PhysicianStatus AdminStatus { get;set; }
+        public PhysicianStatus AdminStatus { get; set; }
     }
     public class PhysicianProfile
     {
@@ -351,6 +351,22 @@ namespace DataAccess.ViewModel
         public string? phonenumber { get; set; }
         public string? businessContact { get; set; }
         public int? businessId { get; set; }
+    }
+    public class ScheduleModel
+    {
+        public int? checkWeekday { get; set; }
+        public DateTime Endtime { get; set; }
+        public DateTime Starttime { get; set; }
+        public DateTime? Startdate { get; set; }
+        public DateTime Shiftdate { get; set; }
+        public int? repeatcount { get; set; }
+
+        public int? Isrepeat { get; set; }
+        public int Regionid { get; set; }
+        public int Shiftid { get; set; }
+        public int Physicianid { get; set; }
+        public int? Repeatupto { get; set; }
+
     }
 
     public class AdminDashboard
@@ -442,6 +458,7 @@ namespace DataAccess.ViewModel
         //    public int requestid { get; set; }
         //    public string physicianid { get; set; }
         //}
+        public ScheduleModel ScheduleModel { get;set; } 
 
     }
     public class GetTabParameter

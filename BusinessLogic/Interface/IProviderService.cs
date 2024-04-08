@@ -45,7 +45,10 @@ namespace BusinessLogic.Interface
         public void EditBusinessDataUpdate(AdminDashboard model);
         public AdminDashboard DeleteVendorDataGet(int VendorId);
         public void DeleteBusinessMethod(int vendorID);
-        public AdminDashboard SchedulingDataGet(int RegionId);
+        //public AdminDashboard SchedulingDataGet(int RegionId);
+        /*** scheduling**/
+        public AdminDashboard CreateShiftGet();
+        public void AddShift(ScheduleModel model, List<string?>? chk, string adminId);
 
     }
 }

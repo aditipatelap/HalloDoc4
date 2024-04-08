@@ -3,10 +3,12 @@
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Web.WebPages;
@@ -678,7 +680,16 @@ public AdminDashboard CreateProviderAdminDataGet()
             }
         }
         /***scheduling***/
-        public AdminDashboard SchedulingDataGet(int RegionId)
+        //public AdminDashboard SchedulingDataGet(int RegionId)
+        //        {
+        //    var data = _db.Regions.ToList();
+        //    //var data1 = _db.Physicians.ToList();
+        //    AdminDashboard adminDashboard = new AdminDashboard();
+        //    adminDashboard.Regions = data;
+        //    //adminDashboard.Physicians = data1;
+        //    return adminDashboard;
+        //}
+        public AdminDashboard CreateShiftGet()
         {
             var data = _db.Regions.ToList();
             var data1 = _db.Physicians.ToList();
@@ -686,6 +697,152 @@ public AdminDashboard CreateProviderAdminDataGet()
             adminDashboard.Regions = data;
             adminDashboard.Physicians = data1;
             return adminDashboard;
+
+        }
+        public void AddShift(ScheduleModel model, List<string?>? chk, string adminId)
+        {
+            //AdminDashboard data = new AdminDashboard();
+            //var model = data.ScheduleModel;
+
+            var shiftid = _db.Shifts.Where(u => u.Physicianid == model.Physicianid).Select(u => u.Shiftid).ToList();
+            if (shiftid.Count() > 0)
+            {
+                foreach (var obj in shiftid)
+                {
+                    var shiftdetailchk = _db.Shiftdetails.Where(u => u.Shiftid == obj && u.Shiftdate == DateOnly.FromDateTime( model.Shiftdate)).ToList();
+                    if (shiftdetailchk.Count() > 0)
+                    {
+                        foreach (var item in shiftdetailchk)
+                        {
+                            if ((model.Starttime >= item.Starttime && model.Starttime <= item.Endtime) || (model.Endtime >= item.Starttime && model.Endtime <= item.Endtime))
+                            {
+                                //TempData["error"] = "Shift is already assigned in this time";
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            Shift shift = new Shift
+            {
+                Physicianid = model.Physicianid,
+                Startdate = DateOnly.FromDateTime(model.Shiftdate),
+                Repeatupto = model.repeatcount,
+                Createddate = DateTime.Now,
+                Createdby = adminId,
+            };
+            foreach (var obj in chk)
+            {
+                shift.Weekdays += obj;
+            }
+            if (model.repeatcount > 0)
+            {
+                shift.Isrepeat = new BitArray(new[] { true });
+            }
+            else
+            {
+                shift.Isrepeat = new BitArray(new[] { false });
+            }
+            _db.Shifts.Add(shift);
+            _db.SaveChanges();
+
+            DateTime curdate = model.Shiftdate;
+           Shiftdetail shiftdetail = new Shiftdetail();
+            shiftdetail.Shiftid = shift.Shiftid;
+            shiftdetail.Shiftdate = DateOnly.FromDateTime( model.Shiftdate);
+            shiftdetail.Regionid = model.Regionid;
+            shiftdetail.Starttime = model.Starttime;
+            shiftdetail.Endtime = model.Endtime;
+            shiftdetail.Isdeleted = new BitArray(new[] { false });
+            _db.Shiftdetails.Add(shiftdetail);
+            _db.SaveChanges();
+            Shiftdetailregion shiftregionnews = new Shiftdetailregion
+            {
+                Shiftdetailid = shiftdetail.Shiftdetailid,
+                Regionid = model.Regionid,
+                Isdeleted = new BitArray(new[] { false })
+            };
+            _db.Shiftdetailregions.Add(shiftregionnews);
+            _db.SaveChanges();
+            var dayofweek = model.Shiftdate.DayOfWeek.ToString();
+            int valueforweek;
+            if (dayofweek == "Sunday")
+            {
+                valueforweek = 0;
+            }
+            else if (dayofweek == "Monday")
+            {
+                valueforweek = 1;
+            }
+            else if (dayofweek == "Tuesday")
+            {
+                valueforweek = 2;
+            }
+            else if (dayofweek == "Wednesday")
+            {
+                valueforweek = 3;
+            }
+            else if (dayofweek == "Thursday")
+            {
+                valueforweek = 4;
+            }
+            else if (dayofweek == "Friday")
+            {
+                valueforweek = 5;
+            }
+            else
+            {
+                valueforweek = 6;
+            }
+
+            if (shift.Isrepeat[0] == true)
+            {
+                for (int j = 0; j < shift.Weekdays.Count(); j++)
+                {
+                    var z = shift.Weekdays;
+                    var p = shift.Weekdays.ElementAt(j).ToString();
+                    int ele = Int32.Parse(p);
+                    int x;
+                    if (valueforweek > ele)
+                    {
+                        x = 6 - valueforweek + 1 + ele;
+                    }
+                    else
+                    {
+                        x = ele - valueforweek;
+                    }
+                    if (x == 0)
+                    {
+                        x = 7;
+                    }
+                    DateTime newcurdate = model.Shiftdate.AddDays(x);
+                    for (int i = 0; i < model.repeatcount; i++)
+                    {
+                        Shiftdetail shiftdetailnew = new Shiftdetail
+                        {
+                            Shiftid = shift.Shiftid,
+                            Shiftdate = DateOnly.FromDateTime( newcurdate),
+                            Regionid = model.Regionid,
+                            Starttime = model.Starttime,
+                            Endtime = model.Endtime,
+
+                            Isdeleted = new BitArray(new[] { false })
+                        };
+                        _db.Shiftdetails.Add(shiftdetailnew);
+                        _db.SaveChanges();
+                        Shiftdetailregion shiftregionnew = new Shiftdetailregion
+                        {
+                            Shiftdetailid = shiftdetailnew.Shiftdetailid,
+                            Regionid = model.Regionid,
+                            Isdeleted = new BitArray(new[] { false })
+                        };
+                        _db.Shiftdetailregions.Add(shiftregionnew);
+                        _db.SaveChanges();
+                        newcurdate = newcurdate.AddDays(7);
+                    }
+                }
+
+            }
         }
 
     }
