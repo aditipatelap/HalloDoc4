@@ -1,0 +1,53 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+<style>
+    tr td {
+        text-align: center;
+    }
+
+    tr th {
+        text-align: center;
+    }
+</style>
+
+<div class="table-responsive mt-3 d-md-block">
+    <table class="table table-hover">
+
+        <thead class="table-head align-middle">
+
+            <tr>
+                <th>Receipient</th>
+                <th>Action</th>
+                <th>Role Name</th>
+                <th>Mobile Number</th>
+                <th>Create Date</th>
+                <th>Sent Date</th>
+                <th>Sent</th>
+                <th>Sent Tries</th>
+                <th>Confirmation Number</th>
+            </tr>
+
+        </thead>
+
+        <tbody class="align-middle" id="sms-log-table">
+            @foreach (var items in Model.SMSLogModel)
+            {
+                <tr>
+                    <td>@items.Receipient</td>
+                    <td>@items.Action</td>
+                    <td>@items.RoleName</td>
+                    <td>@items.number</td>
+                    <td>@items.CreatedDate</td>
+                    <td>@items.SentDate</td>
+                    <td>@items.Sent</td>
+                    <td>@items.SentTries</td>
+                    <td>@items.ConfirmationNumber</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+

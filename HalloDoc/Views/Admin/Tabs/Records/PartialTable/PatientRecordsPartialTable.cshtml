@@ -1,0 +1,73 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<div class="container-fluid">
+    <div>
+        <div class=" d-flex justify-content-between mt-5 mb-5">
+            <h4>Patient History</h4>
+
+            <button type="button" class=" hoverbtn btn btn-outline-info p-2 pe-3 bi bi-chevron-left tablink" id="PatientHistory" href="#" data-value="PatientHistory">
+                Back
+            </button>
+
+        </div>
+<div class="table-responsive mt-6 d-md-block">
+            <table class="table table-hover table-responsive rounded">
+                <thead class="table-head align-middle table-secondary">
+            <tr>
+                <th>Client/Member</th>
+                <th>Created Date</th>
+                <th>Confirmation Number</th>
+                <th>Provider Name</th>
+                <th>Concluded Date</th>
+                <th>Status</th>
+                <th>Final Report</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="align-middle" id="email-log-table">
+            @foreach (var item in Model.PatientsRecord)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.CreatedDate.ToString("D")</td>
+                    <td>@item.ConfirmationNumber</td>
+                    <td>@item.ProviderName</td>
+                    <td>@item.ConcludedDate.ToString("D")</td>
+                    <td>@item.Status</td>
+                    <td>
+                        <button class="btn btn-outline-info">View</button>
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-info rounded dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li>
+                                <a class="btn dropdown-item returnview" data-btn="viewCase" id="@item.RequestId">View Case</a>
+                            </li>
+                            <li>
+                                <a class="btn dropdown-item returnview" data-btn="viewDocument" id="@item.RequestId">
+                                    (@(item.DocumentCount)) Documents 
+                                </a>
+                            </li>
+
+                        </ul>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+
+</div>
+</div>
+<script>
+    $(".returnview").click(DashPartialView);
+    $('.HeaderPartialViewRecords').click(HeaderPartialViewRecords);
+</script>

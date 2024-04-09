@@ -1,0 +1,55 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+<div class="table-responsive mt-6 d-md-block">
+    <table class="table table-hover">
+        <thead class="table-head align-middle">
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="align-middle" id="email-log-table">
+            @foreach (var item in Model.PatientHistory)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.Email</td>
+                    <td>@item.Phone</td>
+                    <td>@item.Address</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-info explore" data-value="@item.UserId">
+                            Explore
+                        </button>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $(".explore").click(explore);
+     
+     function explore(){
+        var reqId = $(this).data('value');
+        $.ajax({
+            url: '@Url.Action("PatientRecordsPartialTable", "Admin")',
+            type: 'Post',
+            data: { reqId: reqId },
+            success: function (result) {
+                $('#TabContent').html(result);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+    }
+</script>

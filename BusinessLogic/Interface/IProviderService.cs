@@ -49,6 +49,22 @@ namespace BusinessLogic.Interface
         /*** scheduling**/
         public AdminDashboard CreateShiftGet();
         public void AddShift(ScheduleModel model, List<string?>? chk, string adminId);
+        /********************records********/
+        public AdminDashboard GetSearchRecordInfo();
+        public AdminDashboard GetRecordTableInfo(searchstream model);
+        public AdminDashboard GetBlockHistoryData(searchstream model);
+        bool unblockreq(int blockreqid);
+        // Emaillog
+        public AdminDashboard GetEmailLogTableInfo(EmailLogList model);
+        AdminDashboard GetEmailLogInfo();
+        // SMSlog
+        public AdminDashboard GetSMSLogTableInfo(SMSLogList model);
+        AdminDashboard GetSMSLogInfo();
+
+        //Patient Records
+        public AdminDashboard PatientHistory(searchstream obj);
+        public AdminDashboard PatientRecords(int id);
 
     }
+    
 }

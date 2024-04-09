@@ -1,0 +1,68 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<style>
+    tr td{
+        text-align: center;
+    }
+    tr th{
+        text-align: center;
+    }
+</style>
+
+<div class="table-responsive mt-3 d-md-block">
+    <table class="table table-hover table-responsive rounded">
+
+        <thead class="table-head align-middle table-secondary">
+
+            <tr>
+                <th>Patient Name</th>
+                <th>Requestor</th>
+                <th>Date Of Service</th>
+                <th>Close Case Date</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Address</th>
+                <th>Zip</th>
+                <th>Request Status</th>
+                <th>Physician</th>
+                <th>Physician Note</th>
+                <th>Cancelled By Provider Note</th>
+                <th>Admin Note</th>
+                <th>Patient Note</th>
+                <th>Delete Permanently</th>
+            </tr>
+
+        </thead>
+
+        <tbody class="align-middle" id="dashboard-table-body">
+
+             @foreach (var items in Model.RecordsList)
+            {
+            <tr>
+            <td>@(items.PatientFirstName + " " + items.PatientLastName)</td>
+            <td>@items.Requestor</td>
+            <td>@items.DateOfService</td>
+            <td>@items.CloseCaseDate</td>
+            <td>@items.Email</td>
+            <td>@items.PhoneNumber </td>
+            <td>@items.Address</td>
+            <td>@items.Zip</td>
+            <td>@items.RequestStatus</td>
+            <td>@items.Physician</td>
+            <td>@items.PhysicianNote</td>
+            <td>@items.CancelledByPhysicianNote</td>
+            <td>@items.AdminNote</td>
+            <td>@items.PatientNote</td>
+            <td>
+            <button type="button" class="btn btn-outline-info align-middle">
+            Delete
+            </button>
+            </td>
+            </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+

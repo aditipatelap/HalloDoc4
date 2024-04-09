@@ -361,13 +361,138 @@ namespace DataAccess.ViewModel
         public DateTime Shiftdate { get; set; }
         public int? repeatcount { get; set; }
 
-        public int? Isrepeat { get; set; }
+        public bool? Isrepeat { get; set; }
         public int Regionid { get; set; }
         public int Shiftid { get; set; }
         public int Physicianid { get; set; }
         public int? Repeatupto { get; set; }
 
     }
+    /***********records****************/
+    public class Records
+    {
+        public IEnumerable<Requeststatus> requeststatuses { get; set; }
+        public IEnumerable<Requesttype> requesttypes { get; set; }
+        public int RequestId { get; set; }
+        public string PatientFirstName { get; set; }
+        public string PatientLastName { get; set; }
+        public string Requestor { get; set; }
+        public DateTime DateOfService { get; set; }
+        public DateTime CloseCaseDate { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Address { get; set; }
+        public string Zip { get; set; }
+        public string RequestStatus { get; set; }
+        public string Physician { get; set; }
+        public string PhysicianNote { get; set; }
+        public string CancelledByPhysicianNote { get; set; }
+        public string AdminNote { get; set; }
+        public string PatientNote { get; set; }
+
+    }
+    public class searchstream
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Name { get; set; }
+
+        public int Status { get; set; }
+        public int reqType { get; set; }
+        public string number { get; set; }
+        public DateTime dateofservice { get; set; }
+        public DateTime lastdateofservice { get; set; }
+        public string providername { get; set; }
+        public string email { get; set; }
+        public DateTime sentdate { get; set; }
+        public DateTime createdDate { get; set; }
+
+    }
+
+    //EmailLog
+    public class EmailLogModel
+    {
+        public string Receipient { get; set; }
+        public string Action { get; set; }
+        public Role RoleName { get; set; }
+        public string Email { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? SentDate { get; set; }
+        public string Sent { get; set; }
+        public int? SentTries { get; set; }
+        public string ConfirmationNumber { get; set; }
+    }
+
+    public class EmailLogList
+    {
+        public List<Aspnetrole> Roles { get; set; }
+        public int RoleId { get; set; }
+        public string ReceiverName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? SentDate { get; set; }
+    }
+    //SMSLogList
+    public class SMSLogModel
+    {
+        public string Receipient { get; set; }
+        public string Action { get; set; }
+        public Role RoleName { get; set; }
+        public string number { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? SentDate { get; set; }
+        public string Sent { get; set; }
+        public int? SentTries { get; set; }
+        public string ConfirmationNumber { get; set; }
+    }
+    public class SMSLogList
+    {
+        public List<Aspnetrole> Roles { get; set; }
+        public int RoleId { get; set; }
+        public string ReceiverName { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? SentDate { get; set; }
+    }
+    //BlockedHistory
+
+    public class BlockedHistory
+    {
+        public int BlockedRequestID { get; set; }
+        public int RequestId { get; set; }
+        public string PatientName { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string Notes { get; set; }
+        public BitArray IsActive { get; set; }
+
+    }
+    //Patient history
+    public class PatientHistoryModel
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public int? UserId { get; set; }
+    }
+    //patient RecordsModel
+    public class PatientRecordModel
+    {
+        public int RequestId { get; set; }
+        public int RequestClientId { get; set; }
+        public string Name { get; set; }
+        public string ConfirmationNumber { get; set; }
+        public string ProviderName { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime ConcludedDate { get; set; }
+        public string Status { get; set; }
+        public string FinalReport { get; set; }
+        public int DocumentCount { get; set; }
+    }   
 
     public class AdminDashboard
     {
@@ -458,7 +583,28 @@ namespace DataAccess.ViewModel
         //    public int requestid { get; set; }
         //    public string physicianid { get; set; }
         //}
-        public ScheduleModel ScheduleModel { get;set; } 
+        public ScheduleModel ScheduleModel { get;set; }
+        /***********************records**************/
+        //search records
+    
+        public Records Records { get; set; }
+        public List<Records> RecordsList { get; set; }
+        public searchstream searchstream { get; set; }
+        //EmailLog
+        public EmailLogList EmailLog { get; set; }
+        public List<EmailLogModel> emailLogModel { get; set; }
+
+        //SMSLog
+        public SMSLogList SMSLog { get; set; }
+        public List<SMSLogModel> SMSLogModel { get; set; }
+
+        //BlockHistory
+        public List<BlockedHistory> BlockedHistory { get; set; }
+
+        //PatientHistory
+        public List<PatientHistoryModel>? PatientHistory { get; set; }
+
+        public List<PatientRecordModel>? PatientsRecord { get; set; }
 
     }
     public class GetTabParameter

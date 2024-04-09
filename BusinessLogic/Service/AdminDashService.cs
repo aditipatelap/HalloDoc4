@@ -31,12 +31,12 @@ namespace BusinessLogic.Service
 
             AdminDashboard dash = new AdminDashboard();
             var req = _db.Requests.Include(x =>x.Requestclients).Where(x =>x.Requestid==x.Requestclients.FirstOrDefault().Requestid).ToList();
-            dash.newcount = req.Count(x => x.Status == (short)Requeststatus.Unassigned);
-            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatus.Accepted);
-            dash.activecount = req.Count(x => x.Status == (short)Requeststatus.MDEnRoute || x.Status == (short)Requeststatus.MDonSite);
-            dash.toclosecount = req.Count(x => x.Status == (short)Requeststatus.Cancelled || x.Status == (short)Requeststatus.Cancelledbypatient || x.Status == (short)Requeststatus.Closed);
-            dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatus.Unpaid);
-            dash.concludecount = req.Count(x => x.Status == (short)Requeststatus.Conclude);
+            dash.newcount = req.Count(x => x.Status == (short)Requeststatuses.Unassigned);
+            dash.pendingcount = req.Count(x => x.Status == (short)Requeststatuses.Accepted);
+            dash.activecount = req.Count(x => x.Status == (short)Requeststatuses.MDEnRoute || x.Status == (short)Requeststatuses.MDonSite);
+            dash.toclosecount = req.Count(x => x.Status == (short)Requeststatuses.Cancelled || x.Status == (short)Requeststatuses.Cancelledbypatient || x.Status == (short)Requeststatuses.Closed);
+            dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatuses.Unpaid);
+            dash.concludecount = req.Count(x => x.Status == (short)Requeststatuses.Conclude);
 
             
             return dash;
@@ -93,15 +93,15 @@ namespace BusinessLogic.Service
             }
             else if (statusid == (short)Status.Active)
             {
-                id.Add((short)Requeststatus.MDEnRoute);
-                id.Add((short)Requeststatus.MDonSite);
+                id.Add((short)Requeststatuses.MDEnRoute);
+                id.Add((short)Requeststatuses.MDonSite);
 
             }
             else
             {
-                id.Add((short)Requeststatus.Cancelled);
-                id.Add((short)Requeststatus.Cancelledbypatient);
-                id.Add((short)Requeststatus.Closed);
+                id.Add((short)Requeststatuses.Cancelled);
+                id.Add((short)Requeststatuses.Cancelledbypatient);
+                id.Add((short)Requeststatuses.Closed);
 
             }
             // List<AdminDash> list = new List<AdminDash>();
@@ -110,10 +110,10 @@ namespace BusinessLogic.Service
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
                              where id.Contains(Request.Status) /*&& Request.Isdeleted == false*/ &&
-                             (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
-                          (searchValue == null || Requestclient.Firstname.Contains(searchValue) || 
-                          Requestclient.Lastname.Contains(searchValue) || Request.Firstname.Contains(searchValue) ||
-                          Request.Lastname.Contains(searchValue)) &&
+                             (dropdown == null || Requestclient.Address.ToLower().Contains(dropdown)) &&
+                          (searchValue == null || Requestclient.Firstname.ToLower().Contains(searchValue) || 
+                          Requestclient.Lastname.ToLower().Contains(searchValue) || Request.Firstname.ToLower().Contains(searchValue) ||
+                          Request.Lastname.ToLower().Contains(searchValue)) &&
                           (reqtype == 0 || Request.Requesttypeid == reqtype)
                              select new AdminDash
                              {
@@ -253,15 +253,15 @@ namespace BusinessLogic.Service
             }
             else if (statusid == (short)Status.Active)
             {
-                id.Add((short)Requeststatus.MDEnRoute);
-                id.Add((short)Requeststatus.MDonSite);
+                id.Add((short)Requeststatuses.MDEnRoute);
+                id.Add((short)Requeststatuses.MDonSite);
 
             }
             else
             {
-                id.Add((short)Requeststatus.Cancelled);
-                id.Add((short)Requeststatus.Cancelledbypatient);
-                id.Add((short)Requeststatus.Closed);
+                id.Add((short)Requeststatuses.Cancelled);
+                id.Add((short)Requeststatuses.Cancelledbypatient);
+                id.Add((short)Requeststatuses.Closed);
 
             }
             var query = (from Request in _db.Requests
@@ -354,7 +354,7 @@ namespace BusinessLogic.Service
 
 
             request.Physicianid = id.Physicianid;
-            request.Status = (short)Requeststatus.Accepted;
+            request.Status = (short)Requeststatuses.Accepted;
 
             _db.SaveChanges();
 
@@ -374,7 +374,7 @@ namespace BusinessLogic.Service
         {
             Blockrequest blockrequest = new Blockrequest();
             var request = _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
-            request.Status = (short)Requeststatus.Clear;
+            request.Status = (short)Requeststatuses.Clear;
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
             blockrequest.Email = request.Email;
@@ -397,7 +397,7 @@ namespace BusinessLogic.Service
         public void submitCancelCase(AdminDashboard model, int requestid)
         {
             var result = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
-            result.Status = (short)Requeststatus.Cancelled;
+            result.Status = (short)Requeststatuses.Cancelled;
 
             _db.SaveChanges();
 
@@ -518,7 +518,7 @@ namespace BusinessLogic.Service
             if (req != null)
             {
                 req.Isdeleted = true;
-                req.Status = (short)Requeststatus.Clear;
+                req.Status = (short)Requeststatuses.Clear;
                 Requeststatuslog reqlog = new Requeststatuslog();
                 reqlog.Requestid = requestid;
                 reqlog.Status = req.Status;
@@ -879,7 +879,7 @@ namespace BusinessLogic.Service
 
 
             request.Requesttypeid = (int)DataAccess.ViewModel.Constant.RequestType.Business;
-            request.Status = (int)Requeststatus.Unassigned;
+            request.Status = (int)Requeststatuses.Unassigned;
             request.Createddate = DateTime.Now;
             request.Isurgentemailsent = new BitArray(new bool[1] { true });
             request.Firstname = model.CreateReqquestModel.FirstName;

@@ -81,7 +81,7 @@ namespace BusinessLogic.Service
             }
 
             req.Requesttypeid = 1;
-            req.Status = (short)Requeststatus.Unassigned;
+            req.Status = (short)Requeststatuses.Unassigned;
 
             req.Createddate = DateTime.Now;
             
@@ -155,7 +155,7 @@ namespace BusinessLogic.Service
             req.Phonenumber = familyReq.F_Phonenumber;
             req.Email = familyReq.Email;
             req.Requesttypeid = 2;
-            req.Status = (short)Requeststatus.Unassigned;
+            req.Status = (short)Requeststatuses.Unassigned;
             _db.Requests.Add(req);
             _db.SaveChanges();
             var date = familyReq.DOB.Day;
@@ -700,7 +700,7 @@ namespace BusinessLogic.Service
             if (req != null)
             {
                 
-                    req.Status = (short)Requeststatus.MDonSite;
+                    req.Status = (short)Requeststatuses.MDonSite;
                     req.Modifieddate = DateTime.Now;
                     req.Casetag = "Review Agrement";
 
@@ -710,7 +710,7 @@ namespace BusinessLogic.Service
                 var requestStatusLog = new Requeststatuslog
                 {
                     Requestid = requestid,
-                    Status = (int)Requeststatus.MDEnRoute,
+                    Status = (int)Requeststatuses.MDEnRoute,
                     Notes = "Review Agreement",
                     Createddate = DateTime.Now
                 };
@@ -720,7 +720,7 @@ namespace BusinessLogic.Service
         }
         public bool CheckStatus(int reqid)
         {
-            var request = _db.Requests.Any(x => x.Requestid == reqid && x.Status == (int)Requeststatus.Accepted);
+            var request = _db.Requests.Any(x => x.Requestid == reqid && x.Status == (int)Requeststatuses.Accepted);
             if (request)
             {
                 return true;
@@ -733,7 +733,7 @@ namespace BusinessLogic.Service
 
 
 
-            req.Status = (short)Requeststatus.Cancelledbypatient;
+            req.Status = (short)Requeststatuses.Cancelledbypatient;
                 req.Modifieddate = DateTime.Now;
                 req.Casetag = "Review Agrement";
 
@@ -741,7 +741,7 @@ namespace BusinessLogic.Service
 
                 Requeststatuslog requeststatuslog = new Requeststatuslog();
             requeststatuslog.Requestid = reqid;
-            requeststatuslog.Status = (int)Requeststatus.Cancelledbypatient;
+            requeststatuslog.Status = (int)Requeststatuses.Cancelledbypatient;
             requeststatuslog.Notes = model.agreementReq.Notes;
             requeststatuslog.Createddate = DateTime.Now;
 

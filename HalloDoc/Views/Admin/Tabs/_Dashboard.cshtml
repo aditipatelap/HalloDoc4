@@ -98,12 +98,10 @@
 
 <div class="d-flex justify-content-between m-3 p-3 bg-white">
     <div class="d-flex">
-
-
-        <div class="d-flex ms-3 border rounded  ">
-            <i class="bi bi-search m-2 bg-transparent"></i>
-            <input class=" border-0  p-0 shadow-none" id="searchInput" type="search" placeholder="Search" aria-label="Search">
-
+  
+        <div class="d-flex ms-3 border rounded w-100">
+            <i class="bi bi-search text-secondary bg-transparent m-2"></i>
+            <input class="form-control border-0 p-0  shadow-none" id="searchInput" type="text" placeholder="Search Patients" aria-label="Search">
         </div>
 
         <select id="filteradmin" class="form-select form-control ms-3 " aria-label="Default select example">
@@ -116,11 +114,11 @@
         </select>
     </div>
     <div>
-        <button type="button" class="btn btn-outline-secondary shadow-none searchrequest  active-link allbtn" data-btn1="0">All</button>
-        <button type="button" class=" btn btn-outline-secondary shadow-none searchrequest active-link" data-btn1="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
-        <button class=" btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
-        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
-        <button class="btn btn-outline-secondary searchrequest shadow-none active-link" data-btn1="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
+        <button type="button" class="btn border shadow-none searchrequest allbtn" data-btn1="0">All</button>
+        <button type="button" class=" btn  shadow-none searchrequest " data-btn1="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
+        <button class=" btn  searchrequest shadow-none " data-btn1="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
+        <button class="btn searchrequest shadow-none " data-btn1="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
+        <button class="btn  searchrequest shadow-none" data-btn1="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
 
     </div>
 </div>

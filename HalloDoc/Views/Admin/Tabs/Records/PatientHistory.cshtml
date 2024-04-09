@@ -1,0 +1,123 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+<div class="container-fluid">
+    <div>
+        <div class=" d-flex justify-content-between mt-5 ms-3">
+            <h4>Patient History</h4>
+
+           @* <button type="button" class="hoverbtn btn btn-outline-info p-2 pe-3 bi bi-chevron-left backbtn">
+                Back
+            </button>*@
+
+        </div>
+
+        <div class=" shadow dashboard-card container-fluid mt-4 pb-5 ">
+
+            <form id="formdata" class="pb-2">
+
+                <div class="row align-items-center">
+                    <div class="col-3 mt-3">
+                        <div class="form-floating">
+                            <input  type="text" class="form-control" placeholder="Enter receiver name"
+                                   id="floatingTextarea2" asp-for="searchstream.Name">
+                            <label for="floatingTextarea2">FirstName</label>
+                        </div>
+                    </div>
+                    <div class="col-3 mt-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" placeholder="Enter receiver name"
+                                   id="floatingTextarea2" asp-for="searchstream.LastName" >
+                            <label for="floatingTextarea2">LastName</label>
+                        </div>
+                    </div>
+
+                    <div class="col-3 mt-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" placeholder="Enter receiver name"
+                                   id="floatingTextarea2"  asp-for="searchstream.email">
+                            <label for="floatingTextarea2">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-3 mt-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" placeholder="Enter receiver name"
+                                   id="floatingTextarea2" asp-for="searchstream.number">
+                            <label for="floatingTextarea2">PhoneNumber</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between float-end">
+                    <button type="submit" class="btn btn-info align-middle m-2" id="search-record-search-btn">
+                        Search
+                    </button>
+                    <button type="button" class="btn btn-outline-info align-middle m-2" onclick="clearSearch()">
+                        Clear
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div id="patient-records-partial-table" class="shadow"></div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "/Admin/PatientHistoryPartialTable",
+            type: 'POST',
+            success: function (result) {
+                $('#patient-records-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
+    });
+</script>
+
+    <script>
+        $('#formdata').submit(formsubmit);
+    $('.reset').click(formsubmit);
+    function formsubmit(e) {
+        e.preventDefault();
+        if (!$(this).valid()) {
+            return; 
+        }
+        var data = new FormData(this);
+        console.log(data);
+        debugger;
+        $.ajax({
+            url: '@Url.Action("PatientHistoryPartialTable", "Admin")',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $('#patient-records-partial-table').html(data);
+            },
+            error: function () {
+
+                console.error("Error occurred while fetching data.");
+            }
+        });
+    }
+    function clearSearch() {
+        document.getElementById("formdata").reset();
+        $.ajax({
+            url: "/Admin/PatientHistoryPartialTable",
+            type: 'POST',
+            success: function (result) {
+                $('#patient-records-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
+    }
+</script>
+
+

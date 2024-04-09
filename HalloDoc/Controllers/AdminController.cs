@@ -168,8 +168,6 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "CreateNewReq")
             {
-
-
                 return PartialView(result);
             }
             if (model.tabid == "CloseCase")
@@ -177,6 +175,31 @@ namespace HalloDoc.Controllers
                 var data = _AdminDash.CloseCaseData(model.requestid);
 
                 return PartialView(result, data);
+            }
+            /*******************records*******************/
+            if (model.tabid == "BlockHistory")
+            {
+                var data = _providerService.GetBlockHistoryData(model.searchstream);
+                return PartialView("Tabs/Records/BlockHistory",data);
+            }
+            if (model.tabid == "EmailLogs")
+            {
+                var data = _providerService.GetEmailLogInfo();
+                return PartialView("Tabs/Records/EmailLog",data);
+            }
+            if (model.tabid == "SmsLogs")
+            {
+                var data = model = _providerService.GetSMSLogInfo();
+                return PartialView("Tabs/Records/SMSLog");
+            }
+            if (model.tabid == "PatientRecord")
+            {
+                return PartialView("Tabs/Records/PatientHistory");
+            }
+            if (model.tabid == "SearchRecords")
+            {
+                var data = _providerService.GetSearchRecordInfo();
+                return PartialView("Tabs/Records/SearchRecords",data);
             }
 
             return View();
@@ -758,5 +781,56 @@ namespace HalloDoc.Controllers
                 });
             return Json(shiftDetails);
         }
+        /********************records**********************/
+
+        [HttpPost]
+        public IActionResult SearchRecordPartialTable(AdminDashboard model)
+        {
+            var info = _providerService.GetRecordTableInfo(model.searchstream);
+            return PartialView("Tabs/Records/PartialTable/SearchRecordsPartialTable", info);
+        }
+
+       /******** BlockHostory Data Get***/
+        [HttpPost]
+        public IActionResult BlockedHistoryPartialTable(AdminDashboard model)
+        {
+            var info = _providerService.GetBlockHistoryData(model.searchstream);
+            return PartialView("Tabs/Records/PartialTable/BlockHistoryPartialTable", info);
+        }
+        //Unblock
+        [HttpPost]
+        public IActionResult UnblockRequest(int blockreqId)
+        {
+            _providerService.unblockreq(blockreqId);
+
+            AdminDashboard model = new AdminDashboard();
+            return BlockedHistoryPartialTable(model);
+
+        }
+        [HttpPost]
+        public IActionResult EmailLogPartialTable(AdminDashboard model)
+        {
+            var info = _providerService.GetEmailLogTableInfo(model.EmailLog);
+            return PartialView("Tabs/Records/PartialTable/EmailLogPartialTable", info);
+        }
+        [HttpPost]
+        public IActionResult SMSLogPartialTable(AdminDashboard model)
+        {
+            var Info = _providerService.GetSMSLogTableInfo(model.SMSLog);
+            return PartialView("Tabs/Records/PartialTable/SMSLogPartialTable", Info);
+        }
+        [HttpPost]
+        public IActionResult PatientHistoryPartialTable(AdminDashboard model)
+        {
+            var Info = _providerService.PatientHistory(model.searchstream);
+            return PartialView("Tabs/Records/PartialTable/PatientHistoryPartialTable", Info);
+        }
+        [HttpPost]
+        public IActionResult PatientRecordsPartialTable(int reqId)
+        {
+            var Info = _providerService.PatientRecords(reqId);
+            return PartialView("Tabs/Records/PartialTable/PatientRecordsPartialTable", Info);
+        }
+
     }
 }

@@ -1,0 +1,142 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="container-fluid">
+    <div>
+        <div class=" d-flex justify-content-between mt-5">
+            <h4>SMS Logs (Twilio)</h4>
+
+            <button type="button" class="hoverbtn btn btn-outline-info p-2 pe-3 bi bi-chevron-left backbtn">
+                Back
+            </button>
+
+        </div>
+
+        <div class="shadow dashboard-card container-fluid mt-4 pb-3 px-3">
+
+            <form id="SMSLogFilter">
+
+               <div class="row align-items-center">
+
+                    <div class="col-2 mt-3">
+
+                        <div class="form-floating">
+                            <select class="form-select" id="patient-state" asp-for="SMSLog.RoleId">
+                                <option selected value="0"> All</option>
+                                @foreach (var role in Model.SMSLog.Roles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            </select>
+                            <label for="patient-state">Search By Role</label>
+                        </div>
+
+                    </div>
+
+                    <div class="col-2 mt-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" placeholder="Enter receiver name"
+                                   id="floatingTextarea2" asp-for="SMSLog.ReceiverName">
+                            <label for="floatingTextarea2">Receiver Name</label>
+                        </div>
+                    </div>
+                    <div class="col-2 mt-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" placeholder="Enter Email ID"
+                                   id="floatingTextarea2" asp-for="SMSLog.PhoneNumber">
+                            <label for="floatingTextarea2">Mobile Number</label>
+                        </div>
+                    </div>
+
+                    <div class="col-2 mt-3">
+                        <div class="form-floating">
+                            <input type="date" class="form-control" placeholder="Created Date"
+                                   id="floatingTextarea2" asp-for="SMSLog.CreatedDate">
+                            <label for="floatingTextarea2">Created Date</label>
+                        </div>
+                    </div>
+                    <div class="col-2 mt-3">
+                        <div class="form-floating">
+                            <input type="date" class="form-control" placeholder="Sent Date"
+                                   id="floatingTextarea2" asp-for="SMSLog.SentDate">
+                            <label for="floatingTextarea2">Sent Date</label>
+                        </div>
+                    </div>
+                    <div class="col-1 d-flex justify-content-between">
+
+                        <button type="submit" class="btn btn-info align-middle m-2" id="search-record-search-btn">
+                            Search
+                        </button>
+                        <button type="button" class="btn btn-outline-info align-middle m-2" onclick="clearSearch()">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="sms-log-partial-table"></div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "/Admin/SMSLogPartialTable",
+            type: 'POST',
+            success: function (result) {
+                $('#sms-log-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
+    });
+</script>
+<script>
+    $('#SMSLogFilter').submit(
+        function (e) {
+            e.preventDefault();
+            if (!$(this).valid()) {
+                return; // If the form is not valid, don't proceed
+            }
+            var data = new FormData(this);
+            console.log(data);
+            debugger;
+            $.ajax({
+                url: '@Url.Action("SMSLogPartialTable", "Admin")',
+                type: 'Post',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#sms-log-partial-table').html(data);
+                },
+                error: function () {
+                    console.error("Error occurred while fetching data.");
+                }
+            });
+        });
+
+    function clearSearch() {
+        document.getElementById("SMSLogFilter").reset();
+        $.ajax({
+            url: "/Admin/SMSLogPartialTable",
+            type: 'POST',
+            success: function (result) {
+                $('#sms-log-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
+    }
+</script>
+<script>
+    $('.backbtn').on('click', function () {
+        $("#home")[0].click();
+    });
+</script>
+    
+  

@@ -37,7 +37,7 @@ namespace DataAccess.ViewModel
             Pending=2,
             NotActive=3
         }
-        public enum Requeststatus
+        public enum Requeststatuses
         {
             Unassigned=1,
             Accepted=2,

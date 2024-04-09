@@ -7,6 +7,11 @@
     a {
         cursor: pointer;
     }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: deepskyblue;
+        color: white;
+    }
 </style>
 <nav class="position-sticky">
     <div class="d-flex justify-content-between">
@@ -45,8 +50,8 @@
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>
                 </li>
-                <li class="dropdown show">
-                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <li class="nav-item">
+                    <a class="nav-link  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Providers
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -60,7 +65,7 @@
                     <a class="nav-link px-4 tablink" id="Partners"> Partners</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Access
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -71,13 +76,15 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-muted dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Records
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item  tablink" href="#" id="Access">Account Access</a>
-                        <a class="dropdown-item tablink" id="UserAccess" href="#">User Access</a>
-                        <a class="dropdown-item tablink" id="BlockHistory" href="#">Block History</a>
+                        <a class="dropdown-item  tablink" href="#" id="SearchRecords">Search Records</a>
+                        <a class="dropdown-item tablink" id="EmailLogs" href="#">Email Logs</a>
+                        <a class="dropdown-item tablink" id="SmsLogs" href="#">Sms Logs</a>
+                        <a class="dropdown-item tablink" id="PatientRecord" href="#">Patient Records</a>
+                        <a class="dropdown-item tablink" id="BlockHistory" href="#">Blocked History</a>
 
                     </div>
 
@@ -104,6 +111,8 @@
     var btnnameglobal;
     var ans=true;
     var dashboardclick = 1;
+    var dropdown;
+    var reqtype;
     document.addEventListener("DOMContentLoaded", function () {
         const navLinks = document.querySelectorAll(".nav-link");
 
@@ -145,7 +154,7 @@
         var TabId = $(this).attr("id");
         var requestid = $(this).data('btn');
         var physicianid = $(this).data('id');
-        var regionid = $('.filterphysician').val();
+        var regionid = $('.filterphysician').val(); 
         var accounttype = $('#AccountType').val();
         var RoleName = $('#RoleName').val();
         var adminaccountfilter = $('#adminaccountfilter').val();
@@ -227,25 +236,33 @@
     function PartialDisplay() {
 
             /*******traingle******* */
+        if ($(this).hasClass('partialbtn')){
             $('.partialbtn').removeClass('active');
             $(this).addClass('active');
             $('.triangle-down').hide();
             $(this).parent().find('.triangle-down').show();
+        }
+
+      
             /********new pending nd all*****/
            
 
             /******search and all */
-            var dropdown = document.getElementById('filteradmin').value;
+         dropdown = document.getElementById('filteradmin').value.toLowerCase();
             var btnName = $(this).data("btn");
             var statusid = $(this).data("id");
-            var reqtype = $(this).data('btn1');
-            var searchValue = $('#searchInput').val();
+             reqtype = $(this).data('btn1');
+            var searchValue = $('#searchInput').val().toLowerCase();
+        var currentpage = $(this).data('page');
             if (typeof reqtype === 'undefined') {
                 reqtype = 0;
             }
             if (!searchValue) {
                 searchValue = null;
             }
+        if (typeof currentpage=== 'undefined') {
+            currentpage = 1;
+        }
             if (!dropdown) {
                 dropdown = null;
             }
@@ -264,6 +281,17 @@
                 $("#hidden").val(statusidglobal);
 
             }
+        if ($(this).is(":has(#filteradmin)")) {
+            dropdown = dropdown;
+           
+        }
+        if ($(this).hasClass('.searchrequest')) {
+            reqtype= reqtype;
+            $(".searchrequest").removeClass("border");
+            $(this).addClass("border");
+
+        }
+
 
 
             console.log("Button clicked: " + btnnameglobal);
@@ -281,7 +309,7 @@
                 url: '@Url.Action("GetPartialView", "Admin")',
                 //url: '/Admin/GetPartialView?btn=' + btnName,
                 method: 'GET',
-                data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: 1, dropdown: dropdown, reqtype: reqtype },
+                data: { btnName: btnnameglobal, statusid: statusidglobal, searchValue: searchValue, currentpage: currentpage, dropdown: dropdown, reqtype: reqtype },
                 success: function (data) {
                     console.log("AJAX success");
                     // Replace the content of the btnContent div with the retrieved partial view
@@ -325,27 +353,27 @@
         }
         $(document).on('click', '.tablink', TabLoad);
 
-        function Pagination() {
-            var currentpage = $(this).data('page');
-            var btnName = "NewPartial";
-            var statusid = 1;
-            var searchvalue = $("#searchInput").val();
-            //console.log(requestid);
+        //function Pagination() {
+        //    var currentpage = $(this).data('page');
+        //    var btnName = "NewPartial";
+        //    var statusid = 1;
+        //    var searchvalue = $("#searchInput").val();
+        //    //console.log(requestid);
 
 
-            $.ajax({
-                url: '/Admin/GetPartialView',
-                data: { btnName: btnName, statusid: statusid, currentpage: currentpage, dropdown: dropdown, searchvalue: searchvalue },
-                method: 'GET',
-                success: function (data) {
-                    // Replace the content of the btnContent div with the retrieved partial view
-                    $("#btnContent").html(data);
-                },
-                error: function () {
-                    console.error('Error fetching partial view.');
-                }
-            });
-        }
+        //    $.ajax({
+        //        url: '/Admin/GetPartialView',
+        //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, dropdown: dropdown, searchvalue: searchvalue },
+        //        method: 'GET',
+        //        success: function (data) {
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //}
         $(document).on('click', '.showmodal', ModalDisplay);
    
     
@@ -353,7 +381,7 @@
         $(document).on('change', '#filteradmin', PartialDisplay);
         $(document).on('click', '.searchrequest', PartialDisplay);
         $(document).on('keyup', '#searchInput', PartialDisplay);
-        $(document).on('click', '.custompagination', Pagination);
+    $(document).on('click', '.custompagination', PartialDisplay);
         $(document).on('change', '.filterphysician', TabLoad);
         $(document).on('change', '#AccountType', TabLoad);
     $(document).on('change', '#adminaccountfilter', TabLoad);
