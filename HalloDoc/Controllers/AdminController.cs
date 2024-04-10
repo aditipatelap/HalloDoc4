@@ -22,6 +22,8 @@ using DataAccess.Models;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Drawing;
 using System.Web.Helpers;
+using System.IdentityModel.Tokens.Jwt;
+using DocumentFormat.OpenXml.Office.CustomUI;
 
 namespace HalloDoc.Controllers
 {
@@ -35,8 +37,9 @@ namespace HalloDoc.Controllers
         private readonly IRequestInterface _requestInterface;
         private readonly ILoginInterface _loginInterface;
         private readonly IProviderService _providerService;
+        private readonly IJwtService _jwtService;
         public AdminController(ApplicationDbContext db, IAdminDash adminDash, IHttpContextAccessor httpContextAccessor, INotyfService notyf,
-            IRequestInterface requestInterface, ILoginInterface loginInterface, IProviderService providerService)
+            IRequestInterface requestInterface, ILoginInterface loginInterface, IProviderService providerService, IJwtService jwtService)
         {
             _db = db;
             _AdminDash = adminDash;
@@ -45,6 +48,7 @@ namespace HalloDoc.Controllers
             _requestInterface = requestInterface;
             _loginInterface = loginInterface;
             _providerService = providerService;
+            _jwtService = jwtService;
         }
 
 
@@ -92,7 +96,7 @@ namespace HalloDoc.Controllers
             if (model.tabid == "Scheduling")
             {
                 //var data = _providerService.SchedulingDataGet(1);
-                return PartialView(result);
+                return PartialView("Tabs/LoadSchedulingCalendar/_Scheduling");
             }
             if (model.tabid == "Records")
             {
@@ -223,11 +227,11 @@ namespace HalloDoc.Controllers
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue, int currentpage, string dropdown, int reqtype)
         {
 
-            var partialview = "Partials/" + "_" + btnName;
+            //var partialview = "Partials/" + "_" + "NewPartial";
 
             var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue, currentpage, dropdown, reqtype);
 
-            return PartialView(partialview, result);
+            return PartialView("Partials/_StatusView", result);
         }
         public IActionResult GetModalPartialView(string modalName, int requestid, string patientname)
         {
@@ -283,11 +287,11 @@ namespace HalloDoc.Controllers
                 return PartialView(partialname);
 
             }
-            if (modalName == "CreateShift")
-            {
-                var data = _providerService.CreateShiftGet();
-                return PartialView("Tabs/Scheduling/_CreateShift", data);
-            }
+            //if (modalName == "CreateShift")
+            //{
+            //    var data = _providerService.CreateShiftGet();
+            //    return PartialView("Tabs/Scheduling/_CreateShift", data);
+            //}
             return PartialView(partialname);
 
         }
@@ -740,46 +744,166 @@ namespace HalloDoc.Controllers
         /***scheduling**/
 
 
-        [HttpGet]
+        //[HttpGet]
 
-        public async Task<IActionResult> SchedulingDataGet(int RegionId)
+        //public async Task<IActionResult> SchedulingDataGet(int RegionId)
+        //{
+
+
+        //    var physician = _db.Physicians
+        //        .Where(p => p.Regionid == RegionId || RegionId == 0)
+        //        .Select(p => new
+        //        {
+        //            physicianId = p.Physicianid,
+        //            firstName = p.Firstname,
+        //            lastName = p.Lastname
+        //        })
+        //        .ToList();
+
+        //    return Json(physician);
+        //}
+        //public IActionResult AddShift(AdminDashboard model)
+        //{
+        //    //string adminId = Crredntials.AspNetUserId();
+        //    var chk = Request.Form["repeatdays"].ToList();
+        //    _providerService.AddShift(model.ScheduleModel, chk, "2");
+        //    _notyf.Information("Shift Created  Successfully  ...");
+        //    AdminDashboard adminDashboard = new AdminDashboard();
+        //    adminDashboard.tabid = "Scheduling";
+        //    return GetTabs(adminDashboard, default, default, default, default, default, default);
+
+        //}
+        //public JsonResult GetEvents()
+        //{
+        //    var shiftDetails = _db.Shiftdetails
+        //        .Select(sd => new
+        //        {
+        //            //id = sd.Shiftdetailid,
+        //            //title = sd.phy,
+        //            start = sd.Starttime,
+        //            end = sd.Endtime
+        //        });
+        //    return Json(shiftDetails);
+        //}
+                /// Scheduling /
+
+        [CustomAuthorize("1")]
+        /*public IActionResult LoadSchedulingTab()
         {
-
-
-            var physician = _db.Physicians
-                .Where(p => p.Regionid == RegionId || RegionId == 0)
-                .Select(p => new
-                {
-                    physicianId = p.Physicianid,
-                    firstName = p.Firstname,
-                    lastName = p.Lastname
-                })
-                .ToList();
-
-            return Json(physician);
+            int reqid = 0;
+            var model = _adminDashboard.GetRegion(reqid);
+            return PartialView("Tabs/Provider/_Scheduling", model);
         }
-        public IActionResult AddShift(AdminDashboard model)
+*/
+        public IActionResult LoadSchedulingCalendar(int RegionId, string currentView = "")
         {
-            //string adminId = Crredntials.AspNetUserId();
-            var chk = Request.Form["repeatdays"].ToList();
-            _providerService.AddShift(model.ScheduleModel, chk, "2");
-            _notyf.Information("Shift Created  Successfully  ...");
-            AdminDashboard adminDashboard = new AdminDashboard();
-            adminDashboard.tabid = "Scheduling";
-            return GetTabs(adminDashboard, default, default, default, default, default, default);
+            AdminDashboard model = new AdminDashboard();
+            model.PhysicianProfilList = _providerService.GetProvider(RegionId);
+            model.eventModel = _providerService.GetEvents(RegionId);
+            model.currentView = currentView;
 
+            return PartialView("Tabs/Scheduling/_SchedulingCalender", model);
         }
-        public JsonResult GetEvents()
+
+        public JsonResult CreateShift(scheduleModel scheduleModel)
         {
-            var shiftDetails = _db.Shiftdetails
-                .Select(sd => new
-                {
-                    //id = sd.Shiftdetailid,
-                    //title = sd.phy,
-                    start = sd.Starttime,
-                    end = sd.Endtime
-                });
-            return Json(shiftDetails);
+            var token = Request.Cookies["jwt"];
+            var adminId = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            if (_providerService.CreateShift(scheduleModel, adminId))
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        public JsonResult EditShift(int shiftDetailId, DateTime Shiftdate, TimeOnly startTime, TimeOnly endTime)
+        {
+            var token = Request.Cookies["jwt"];
+            var adminId = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            if (_providerService.EditShift(shiftDetailId, Shiftdate, startTime, endTime, adminId))
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        public JsonResult DeleteShift(int shiftDetailId)
+        {
+            var token = Request.Cookies["jwt"];
+            var adminId = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            if (_providerService.DeleteShift(shiftDetailId, adminId))
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+
+        public JsonResult ReturnShift(int shiftDetailId)
+        {
+            var token = Request.Cookies["jwt"];
+            var adminId = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            if (_providerService.ReturnShift(shiftDetailId, adminId))
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
+        }
+        public List<Physician> GetPhysicians(int Regionid)
+        {
+            return _db.Physicians.Where(p => p.Regionid == Regionid).ToList();
+        }
+
+        // MD or ProviderOnCall
+        public IActionResult LoadMDOnCall()
+        {
+            AdminDashboard model = new AdminDashboard();
+           // _providerService.GetRegion(0);
+            model.PhysicianProfilList = _providerService.GetProvider(0);
+
+            return PartialView("_MDsOnCall", model);
+        }
+
+        public IActionResult LoadMDOnCallData(int RegionId)
+        {
+            AdminDashboard model = new AdminDashboard();
+            model.PhysicianProfilList = _providerService.GetProvider(0);
+
+            return PartialView("Tabs/Provider/Scheduling/_MDsOnCallData", model);
+        }
+
+        public IActionResult LoadRequestedShift()
+        {
+            //_providerService.GetRegion(0);
+
+            return PartialView("_requestedShift");
+        }
+
+        public IActionResult LoadRequestedShiftTable(int RegionId = 0, bool currentMonthShift = false)
+        {
+            AdminDashboard model = new AdminDashboard();
+            model.eventModel = _providerService.GetEvents(RegionId, currentMonthShift);
+
+            return PartialView("Tabs/Provider/Scheduling/_RequestedShiftTable", model);
         }
         /********************records**********************/
 

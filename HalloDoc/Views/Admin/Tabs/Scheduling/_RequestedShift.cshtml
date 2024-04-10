@@ -1,0 +1,74 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="row justify-content-center mb-5 pb-5">
+    <div class="row m-4 col-xl-6 col-md-8 col-11">
+        <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Requested Shifts</p>
+        <div class="col mb-0 text-end">
+            <a class="text-decoration-none text-info rounded border border-info p-2 i-info scheduling-tab">
+                <i class="bi bi-chevron-left i-info"></i>
+                Back
+            </a>
+        </div>
+    </div>
+
+    <div class="m-4 shadow col-xl-6 col-md-8 col-11">
+        <div class="d-flex flex-wrap align-items-center justify-content-between m-1 m-md-3">
+            <div class="d-flex form-group normal-input rounded align-items-center ms-2 position-relative mb-1">
+                <i class="bi bi-search position-absolute" style="left:10px"></i>
+                <select class="form-select ps-5 form-control z-3 bg-transparent" id="SearchRegion" aria-label="Default select example">
+                    <option value="0" selected>All Regions</option>
+                    @foreach (var i in Model.Regions)
+                    {
+                        <option value="@i.Regionid">@i.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <input type="hidden" id="viewAllOrCurrent" value="false"/>
+                <button type="button" class="btn btn-success text-white me-1" id="data" onclick="viewCurrentMonthShift()">
+                    View Current Month Shifts
+                </button>
+                
+                <button type="button" id="approvedSelected" class="btn btn-success text-white me-1">
+                    Approved Selected
+                </button>
+
+                <button type="button" id="deleteSelected" class="btn btn-danger text-white me-1">
+                    Delete Selected
+                </button>
+            </div>
+        </div>
+
+        <div id="TableData"></div>
+
+        <div class="mb-4 pb-4"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")');
+    });
+
+    $(document).on('change', '#SearchRegion', function () {
+        var regionId = $(this).val();
+        var viewAllOrCurrent = $('#viewAllOrCurrent').val();
+        $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
+    });
+
+    function viewCurrentMonthShift() { 
+        var regionId = $('#SearchRegion').val();
+        if ($('#viewAllOrCurrent').val() == "true") {
+            $('#viewAllOrCurrent').val("false");
+            $('#data').text("View All Shift");
+        }
+        else {
+            $('#viewAllOrCurrent').val("true");
+            $('#data').text("View Current Month Shifts");
+        }
+        var viewAllOrCurrent = $('#viewAllOrCurrent').val();
+        $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
+    }
+</script>

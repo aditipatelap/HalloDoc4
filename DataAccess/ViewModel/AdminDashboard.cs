@@ -323,6 +323,8 @@ namespace DataAccess.ViewModel
         public IFormFile? LicenseDocument { get; set; }
         public BitArray Iscredentialdoc { get; set; }
         public IFormFile? CredentialDocument { get; set; }
+        public BitArray IsPhoto { get; set ;}
+            public string PhotoName { get; set; }
 
     }
     /**partner**/
@@ -352,24 +354,75 @@ namespace DataAccess.ViewModel
         public string? businessContact { get; set; }
         public int? businessId { get; set; }
     }
-    public class ScheduleModel
+    //public class ScheduleModel
+    //{
+    //    public int? checkWeekday { get; set; }
+    //    public DateTime Endtime { get; set; }
+    //    public DateTime Starttime { get; set; }
+    //    public DateTime? Startdate { get; set; }
+    //    public DateTime Shiftdate { get; set; }
+    //    public int? repeatcount { get; set; }
+
+    //    public bool? Isrepeat { get; set; }
+    //    public int Regionid { get; set; }
+    //    public int Shiftid { get; set; }
+    //    public int Physicianid { get; set; }
+    //    public int? Repeatupto { get; set; }
+
+    //}
+   
+       
+    ///************* Scheduling************************* /
+
+    public class scheduleModel
     {
-        public int? checkWeekday { get; set; }
-        public DateTime Endtime { get; set; }
-        public DateTime Starttime { get; set; }
-        public DateTime? Startdate { get; set; }
-        public DateTime Shiftdate { get; set; }
-        public int? repeatcount { get; set; }
-
-        public bool? Isrepeat { get; set; }
         public int Regionid { get; set; }
-        public int Shiftid { get; set; }
-        public int Physicianid { get; set; }
-        public int? Repeatupto { get; set; }
 
+        public int Physicianid { get; set; }
+
+        public DateTime ShiftDate { get; set; }
+
+        public TimeOnly StartTime { get; set; }
+
+        public TimeOnly EndTime { get; set; }
+
+        public bool isRepeat { get; set; }
+
+        public string SelectedDayIds { get; set; }
+
+        public int RepeatEnd { get; set; }
     }
-    /***********records****************/
-    public class Records
+
+    public class EventModel
+    {
+        public int Shiftdetailid { get; set; }
+
+        public int Shiftid { get; set; }
+
+        public int Physicianid { get; set; }
+
+        public string? PhysicianName { get; set; }
+
+        public DateTime Shiftdate { get; set; }
+
+        public int? Regionid { get; set; }
+
+        public string? Regionname { get; set; }
+
+        public string Starttime { get; set; }
+
+        public string Endtime { get; set; }
+
+        public short Status { get; set; }
+
+        public BitArray Isdeleted { get; set; }
+
+        public string color { get; set; }
+    }
+
+
+/***********records****************/
+public class Records
     {
         public IEnumerable<Requeststatus> requeststatuses { get; set; }
         public IEnumerable<Requesttype> requesttypes { get; set; }
@@ -583,10 +636,15 @@ namespace DataAccess.ViewModel
         //    public int requestid { get; set; }
         //    public string physicianid { get; set; }
         //}
-        public ScheduleModel ScheduleModel { get;set; }
+        //public ScheduleModel ScheduleModel { get;set; }
+        /************scheduling********/
+        public scheduleModel scheduleModel { get; set; }
+        public List<EventModel> eventModel { get; set; }
+        public List<PhysicianProfile> PhysicianProfilList { get; set; }
+        public string currentView { get; set; }
         /***********************records**************/
         //search records
-    
+
         public Records Records { get; set; }
         public List<Records> RecordsList { get; set; }
         public searchstream searchstream { get; set; }

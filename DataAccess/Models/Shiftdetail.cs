@@ -17,17 +17,17 @@ public partial class Shiftdetail
     [Column("shiftid")]
     public int Shiftid { get; set; }
 
-    [Column("shiftdate")]
-    public DateOnly Shiftdate { get; set; }
+    [Column("shiftdate", TypeName = "timestamp without time zone")]
+    public DateTime Shiftdate { get; set; }
 
     [Column("regionid")]
     public int? Regionid { get; set; }
 
-    [Column("starttime", TypeName = "timestamp without time zone")]
-    public DateTime Starttime { get; set; }
+    [Column("starttime")]
+    public TimeOnly Starttime { get; set; }
 
-    [Column("endtime", TypeName = "timestamp without time zone")]
-    public DateTime Endtime { get; set; }
+    [Column("endtime")]
+    public TimeOnly Endtime { get; set; }
 
     [Column("status")]
     public short Status { get; set; }

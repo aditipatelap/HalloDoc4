@@ -110,7 +110,7 @@ namespace BusinessLogic.Service
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                              // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
                              where id.Contains(Request.Status) /*&& Request.Isdeleted == false*/ &&
-                             (dropdown == null || Requestclient.Address.ToLower().Contains(dropdown)) &&
+                             (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
                           (searchValue == null || Requestclient.Firstname.ToLower().Contains(searchValue) || 
                           Requestclient.Lastname.ToLower().Contains(searchValue) || Request.Firstname.ToLower().Contains(searchValue) ||
                           Request.Lastname.ToLower().Contains(searchValue)) &&

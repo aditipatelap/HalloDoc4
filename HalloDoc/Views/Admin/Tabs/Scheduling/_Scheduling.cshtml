@@ -1,0 +1,291 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+
+<div class="row justify-content-center">
+    <div class="row m-4 col-xl-8 col-md-9 col-11">
+        <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Scheduling</p>
+        <div class="col mb-0 text-end">
+            <div>
+                <button type="button" class="btn btn-outline-info p-2 pe-3 button-info">
+                    <i class="bi bi-chevron-left i-info"></i>Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-4 mt-0 shadow col-xl-8 col-md-9 col-11">
+        <div class="d-flex flex-wrap align-items-center justify-content-between m-1 m-md-3">
+            <div class="d-flex form-group normal-input rounded align-items-center ms-2 mt-3 position-relative mb-1">
+                <i class="bi bi-search position-absolute" style="left:10px"></i>
+                <select class="form-select ps-5 z-3 bg-transparent w-100" id="SearchRegion" aria-label="Default select example">
+                    <option value="0"> All Regions </option>
+                    @foreach (var i in Model.Regions)
+                    {
+                        <option value="@i.Regionid">@i.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center">
+                <button type="button" class="btn btn-info text-white me-1 mb-1 tablink" id="MDsOnCall">
+                    Provider On Call
+                </button>
+
+                <button type="button" class="btn btn-info text-white me-1 mb-1 tablink" id="RequestedShift">
+                    Shifts For Review
+                </button>
+
+                <button type="button" class="btn btn-info text-white me-1 mb-1 addNewShift">
+                    Add New Shift
+                </button>
+            </div>
+        </div>
+
+        <div id="schedulingCalendar"></div>
+
+        <div class="mb-4 pb-4"></div>
+    </div>
+</div>
+
+@* Modal for Add New Shift *@
+<div class="modal fade" id="addNewShift" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLongTitle">Create Shift </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" id="CreateShift">
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="createShiftregion" asp-for="scheduleModel.Regionid">
+                            <option hidden selected value="">Region</option>
+                            @foreach (var i in Model.Regions)
+                            {
+                                <option value="@i.Regionid">@i.Name</option>
+                            }
+                        </select>
+                        <label for="createShiftregion" class="floatingLabel">Region</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select form-select" id="createShiftPhysician" asp-for="scheduleModel.Physicianid">
+                            <option hidden selected value="">Select Physician</option>
+                        </select>
+                        <label for="createShiftPhysician" class="floatingLabel">Physician</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="createShiftDate" asp-for="scheduleModel.ShiftDate">
+                        <label for="createShiftDate" class="floatingLabel">Shift Date</label>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-md-6 form-floating mb-3">
+                            <input id="StartTime" class="form-control" type="time" asp-for="scheduleModel.StartTime">
+                            <label for="StartTime">Start Time</label>
+                        </div>
+
+                        <div class="col-md-6 form-floating mb-3">
+                            <input id="EndTime" class="form-control" type="time" asp-for="scheduleModel.EndTime">
+                            <label for="EndTime">End Time</label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex">
+                        <p class="d-inline me-3">Repeat</p>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="isRepeat" asp-for="scheduleModel.isRepeat">
+                            <label class="form-check-label" for="isRepeat"></label>
+                        </div>
+                    </div>
+
+                    <label class="my-2">Repeat Days</label>
+
+                    <div class="d-flex flex-wrap">
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Sunday" type="checkbox" name="dayChecked" disabled value="0">
+                            <label class="form-check-label" for="Sunday">
+                                Every Sunday
+                            </label>
+                        </div>
+
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Monday" type="checkbox" name="dayChecked" disabled value="1">
+                            <label class="form-check-label" for="Monday">
+                                Every Monday
+                            </label>
+                        </div>
+                        
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Tuesday" type="checkbox" name="dayChecked" disabled value="2">
+                            <label class="form-check-label" for="Tuesday">
+                                Every Tuesday
+                            </label>
+                        </div>
+
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Wednesday" type="checkbox" name="dayChecked" disabled value="3">
+                            <label class="form-check-label" for="Wednesday">
+                                Every Wednesday
+                            </label>
+                        </div>
+                        
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Thursday" type="checkbox" name="dayChecked" disabled value="4">
+                            <label class="form-check-label" for="Thursday">
+                                Every Thursday
+                            </label>
+                        </div>
+                        
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Friday" type="checkbox" name="dayChecked" disabled value="5">
+                            <label class="form-check-label" for="Friday">
+                                Every Friday
+                            </label>
+                        </div>
+                        
+                        <div class="form-check d-flex d-inline-block">
+                            <input class="PhysicianInput border border-dark mt-1 me-2 checkbox-button" id="Saturday" type="checkbox" name="dayChecked" disabled value="6">
+                            <label class="form-check-label" for="Saturday">
+                                Every Saturday
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="SelectedDayIds" asp-for="scheduleModel.SelectedDayIds" />
+                    <div class="col-md-12 form-floating my-2">
+                        <select class="form-select form-select-sm mt-3 p-2" id="RepeatEnd" disabled data-allow-clear="true" tabindex="-1" asp-for="scheduleModel.RepeatEnd" data-control="select2">
+                            <option selected hidden>Reapet End</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-info me-2 text-white" data-bs-dismiss="modal">Save</button>
+                            <button type="button" class="btn border border-info text-info" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#schedulingCalendar").load('@Url.Action("LoadSchedulingCalendar", "Admin")');
+    });
+
+    $(document).on('change', '#SearchRegion', function () {
+        var regionId = $(this).val();
+        $("#schedulingCalendar").load('@Url.Action("LoadSchedulingCalendar", "Admin")?RegionId=' + regionId);
+    });
+
+    $('.addNewShift').on('click', function () {
+        $('#addNewShift').modal("show");
+    });
+
+    $(document).on('change', '#createShiftregion', function () {
+        var selectedRegion = $(this).val();
+
+        $.ajax({
+            url: '/Admin/GetPhysicians',
+            type: 'POST',
+            data: { Regionid: selectedRegion },
+            success: function (data) {
+                var createShiftPhysician = $('#createShiftPhysician');
+                createShiftPhysician.empty();
+
+                createShiftPhysician.append('<option hidden selected value="">Select Physician</option>');
+
+                data.forEach(function (item) {
+                    createShiftPhysician.append('<option value=' + item.physicianid + '>' + item.firstname + '</option>');
+                });
+            },
+            error: function () {
+                console.error('Error fetching physicians.');
+            }
+        });
+    });
+
+    $('#isRepeat').on('click', function () {
+        var repeatCheckbox = document.getElementById('isRepeat');
+        var repeatEnd = document.getElementById('RepeatEnd');
+        var checkboxes = document.querySelectorAll('.checkbox-button');
+
+        if (!repeatCheckbox.checked) 
+        {
+            checkboxes.forEach(function (checkbox) 
+            {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+                repeatEnd.disabled = true;
+            });
+        } 
+        else 
+        {
+            checkboxes.forEach(function (checkbox) 
+            {
+                checkbox.disabled = false;
+                repeatEnd.disabled = false;
+            });
+        }
+    });
+
+    function updateHiddenInput() {
+        var selectedDays = [];
+        $("input[name='dayChecked']:checked").each(function () {
+            selectedDays.push($(this).val());
+        });
+        $("#SelectedDayIds").val(selectedDays.join(","));
+    }
+
+    $("input[name=' ']").change(function () {
+        updateHiddenInput();
+    });
+
+    $('#CreateShift').on('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(this);
+
+        $.ajax({
+            url: "/Admin/CreateShift",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.success) {
+                    var TabId = "Scheduling";
+                    
+                    $.ajax({
+                        url: '/Admin/GetTabs',
+                        data: { Tabid: TabId},
+                        method: 'GET',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+                    toastr.success("Shift Created!");
+                }
+                else {
+                    toastr.error("Shift already exists in this time");
+                }
+            }
+        });
+    }); 
+    
+    // view Notes
+    $(".tablink").click(TabLink);
+</script>

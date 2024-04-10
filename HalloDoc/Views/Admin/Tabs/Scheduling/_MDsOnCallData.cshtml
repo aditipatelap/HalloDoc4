@@ -1,0 +1,44 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<p class="fs-5 fw-bold"> MDs On Call </p>
+@foreach (var i in Model.PhysicianProfilList)
+{
+    if (i.status == 3)
+    {
+        <div class="d-inline-flex mb-3">
+            <div class="d-inline me-2">
+                @if (i.IsPhoto[0])
+                {
+                    <img src="~/PhysicianDocuments/@i.physicianid/@i.PhotoName" style="height: 50px; width: 50px;" />
+                }
+                else
+                {
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 50px; width: 50px;" />
+                }
+            </div>
+            <p>@i.firstName</p>
+        </div>
+    }
+}
+
+<p class="fs-5 fw-bold"> Physicians Off Duty </p>
+@foreach (var i in Model.PhysicianProfilList)
+{
+    if (i.status != 3)
+    {
+        <div class="d-inline-flex mb-3">
+            <div class="d-inline me-2">
+                @if (i.IsPhoto[0])
+                {
+                    <img src="~/images/photo.jpg" style="height: 50px; width: 50px;" />
+                }
+                else
+                {
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 50px; width: 50px;" />
+                }
+            </div>
+            <p>@i.firstName</p>
+        </div>
+    }
+}

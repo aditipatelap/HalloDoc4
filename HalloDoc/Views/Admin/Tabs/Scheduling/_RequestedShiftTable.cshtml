@@ -1,0 +1,102 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr class="bg-secondary-subtle">
+                <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <input type="checkbox" id="selectAll" /> </th>
+                <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p>Staff <span><i id="sort" class="bi bi-arrow-down"></i></span> </p> </th>
+                <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p>Day</p> </th>
+                <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p>Time</p> </th>
+                <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p>Region</p> </th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+            @foreach (var item in Model.eventModel)
+            {
+                var s = item.Starttime;
+                DateTime dt = DateTime.Parse(s);
+                var startTime = dt.ToString("HH:mm:ss");
+                
+                var e = item.Endtime;
+                DateTime edt = DateTime.Parse(e);
+                var endTime = edt.ToString("HH:mm:ss");
+
+                if (item.Status == 1)
+                {
+                    <tr>
+                        <td> <input type="checkbox" class="checkbox" name="checkbox" value="@item.Shiftdetailid" /> </td>
+                        <td> <p>@item.PhysicianName</p> </td>
+                        <td> <p>@item.Shiftdate</p> </td>
+                        <td> <p>@startTime - @endTime</p> </td>
+                        <td> <p>@item.Regionname</p> </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $("#selectAll").change(function () {
+        $(".checkbox").prop('checked', $(this).prop("checked"));
+    });
+
+    $("#approvedSelected").click(function () {
+        var selectedPhysicians = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedPhysicians.length > 0) {
+            alert(selectedPhysicians);
+
+            $.ajax({
+                url: "/Admin/RequestedShiftUpdate",
+                type: "POST",
+                data: { ids: selectedPhysicians, type: 1 },
+                success: function (result) {
+                    if (result.success) {                        
+                        $("#dashboard").load('@Url.Action("LoadRequestedShift", "Admin")');   
+                        toastr.success("Selected Shifts are approved!");
+                    }
+                    else {
+                        toastr.error("Error");
+                    }
+                }
+            });
+        }
+        else {
+            toastr.error("Please select at least one shift.");
+        }
+    });
+    
+    $("#deleteSelected").click(function () {
+        var selectedPhysicians = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedPhysicians.length > 0) {
+            alert(selectedPhysicians);
+
+            $.ajax({
+                url: "/Admin/RequestedShiftUpdate",
+                type: "POST",
+                data: { ids: selectedPhysicians, type: 2 },
+                success: function (result) {
+                    if (result.success) {                        
+                        $("#dashboard").load('@Url.Action("LoadRequestedShift", "Admin")');                        
+                        toastr.success("Selected Shifts are deleted!");
+                    }
+                    else {
+                        toastr.error("Error");
+                    }
+                }
+            });
+        }
+        else {
+            toastr.error("Please select at least one shift.");
+        }
+    });
+</script>
