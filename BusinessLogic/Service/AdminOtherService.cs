@@ -1318,7 +1318,15 @@ public AdminDashboard CreateProviderAdminDataGet()
             };
             return result;
         }
-        
+        public AdminDashboard GetRegion(int reqid)
+        {
+            var regions = _db.Regions.ToList();
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.Regions = regions;
+            adminDashboardModel.requestid = reqid;
+            return adminDashboardModel;
+        }
+
     }
    
 }

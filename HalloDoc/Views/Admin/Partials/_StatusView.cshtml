@@ -1,0 +1,387 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+{
+
+    <table class="table table-responsive  m-4 p-3 overflow-scroll">
+        <thead class="table-secondary">
+            <tr>
+                <th scope="col">Name <i class="bi bi-arrow-down"></i></th>
+                @if (Model.statusid != 9)
+                {
+                    <th scope="col">Date Of Birth</th>
+                }
+                @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                {
+                    <th scope="col">Region</th>
+                }
+                @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 4 || Model.statusid == 5)
+                {
+                    <th scope="col">Requestor</th>
+                }
+
+                @if (Model.statusid == 1)
+                {
+                    <th scope="col">Requested Date<i class="bi bi-arrow-down"></i></th>
+                }
+                @if (Model.statusid != 1)
+                {
+                    <th scope="col">Physician Name</th>
+                    <th scope="col">Date Of Service</th>
+                }
+                @if (Model.statusid != 3 && Model.statusid != 7 && Model.statusid != 8)
+                {
+                    <th scope="col">Phone</th>
+                }
+
+                <th scope="col">Address</th>
+                @if (Model.statusid != 6 && Model.statusid != 9)
+                {
+                    <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
+                }
+               
+
+                <th scope="col">Actions</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                @foreach (var items in Model.Dashboards)
+                {
+                    var bgcolor = "red";
+                    if (items.RequestTypeid == 1)
+                    {
+                        bgcolor = "green";
+
+                    }
+                    if (items.RequestTypeid == 2)
+                    {
+                        bgcolor = "#f59b42";
+
+                    }
+                    if (items.RequestTypeid == 3)
+                    {
+                        bgcolor = "purple";
+
+                    }
+
+                    if (items.RequestTypeid == 4)
+                    {
+                        bgcolor = "#0181f8";
+
+                    }
+                      <tr style="background: @bgcolor" class="text-white">
+                        <td>@items.Name</td>
+                        @if (Model.statusid != 9)
+                        {
+                            <td>@items.StrMonth @items.IntDate, @items.IntYear</td>
+                        }
+                        @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                        {
+                            <td style="background:@bgcolor">Region</td>
+                        }
+                        @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 4 || Model.statusid == 5)
+                        {
+                            <td>@items.Requestor</td>
+                        }
+                        @if (Model.statusid == 1)
+                        {
+                            <td>@items.RequestedDate</td>
+                           @*<td>@items.month &nbsp;@items.CreatedDate.Day, @items.CreatedDate.Year</td>*@
+                        }
+                     
+                        @if (Model.statusid != 1)
+                        {
+                            <td>@items.PhysicianName</td>
+                            <td>dos</td>
+                        }
+                        @if (Model.statusid != 3 && Model.statusid != 7 && Model.statusid != 8)
+                        {
+                        @if (items.PatientPhone != null)
+                        {
+                            <td>
+                                @if (@items.RequestTypeid == 1)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
+                                    <br />
+                                    <span>(Patient)</span>
+                                }
+                                else if (@items.RequestTypeid == 2)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Family/Freind)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 4)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Business)</span> <br />
+                                }
+                                else if (@items.RequestTypeid == 3)
+                                {
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                    <br />
+
+                                    <span>(Ptient)</span> <br />
+
+                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                    <br />
+
+                                    <span>(Concierge)</span> <br />
+                                }
+                            </td>
+                        }
+                      }
+                        else
+                        {
+                            <td>-</td>
+                        }
+                        <td>@items.Address</td>
+                        @if (Model.statusid != 6 && Model.statusid != 9)
+                        {
+                            <td>@items.Notes</td>
+                        }
+                        
+                
+                   @* <tr style="background: @bgcolor" class="text-white">
+                        <td>@items.Name</td>
+                        <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
+                        <td>@items.Requestor</td>
+                        <td>@items.RequestedDate</td>
+
+                        <td>@items.Address</td>
+                        <td>@items.Notes</td>
+                        <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+*@
+
+                        <td class="action">
+                            
+                            <div class="btn-group">
+                                <button type="button" class="btn  border border-white text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Action
+                                </button>
+                                <div class="dropdown-menu">
+                                    @if (Model.statusid == 1)
+                                    {
+                                        <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest" data-btn="@items.requestid">
+                                            <i class="bi bi-journals"></i>
+                                            Assign Case
+                                        </a>
+                                    @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
+                                    <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                        <i class="bi bi-journal-text"></i>
+                                        Cancel Case
+                                    </a>
+                                    }
+                                    <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" data-value1="@Model.ConfirmationNo"> <i class="fa fa-list"></i>View Case</a>
+                                    @if (Model.statusid != 1)
+                                    {
+                                        <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"> <i class="fa fa-list"></i>View Notes</a>
+                                    }
+                                    @if (Model.statusid == 1)
+                                    {
+                                    <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                        <i class="bi bi-ban"></i>
+                                        Block Case
+                                    </button>
+                                    }
+                                    @if (Model.statusid == 2)
+                                    {
+                                        <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@items.requestid">
+                                            <i class="bi bi-journals"></i>
+                                            Transfer Request
+                                        </a>
+                                    }
+                                    @if (Model.statusid != 1 && Model.statusid != 2 && Model.statusid != 9)
+                                    {
+                                              <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid"> <i class="fa fa-shopping-cart"></i> Send Order</a>
+                                    }
+                                    @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                                    {
+                                        <a class="dropdown-item tablink" id="CloseCase" data-btn="@items.requestid">
+                                            <i class="bi bi-ban"></i>
+                                    Close Case
+                                </a>}
+                                    @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8 || Model.statusid == 2)
+                                    {
+                                        <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="ClearCase" data-btn="@items.requestid">
+                                            <i class="fa-regular fa-circle-xmark"></i>
+                                    Clear Case
+                                </a>}
+                                    @if (Model.statusid != 1 && Model.statusid != 2 && Model.statusid != 9)
+                                    {                                <a class="dropdown-item tablink" id="EncounterForm" data-btn="@items.requestid"><i class="fa-regular fa-rectangle-list"></i> Encounter</a>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+
+                   </tr> 
+                }
+            }
+        </tbody>
+
+    </table>
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+    </div>
+}
+
+<div id="my-pagination" class="d-flex justify-content-between">
+    @if (Model.CurrentPage <= Model.TotalPages)
+    {
+        @if (Model.TotalPages != 0)
+        {
+            <div class="page-item disabled m-4 border border-light rounded">
+                <span class="page-link"> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center align-items-center pt-5">
+                <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+            </div>
+        }
+
+        <div class="mb-0 float-right m-4">
+            <ul class="pagination align-items-center">
+                @if (Model.CurrentPage > 1)
+                {
+                <li class="page-item"><a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a></li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
+                }
+
+
+                <li class="page-item custompagination active">
+                    <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                </li>
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                <li class="page-item"><a class="page-link custompagination" href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a></li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link custompagination " href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+<div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+<script>
+    
+   
+   
+        //$(".tablink").click(function () {
+        //    var TabId = $(this).attr("id");
+        //    var requestid = $(this).data('btn');
+        //if (typeof requestid === 'undefined') {
+        //    requestid = 0;
+        //}
+        //    //var statusid=$(this).data('value1');
+        //    //console.log(requestid);
+        //    $.ajax({
+        //        url: '/Admin/GetTabs',
+        //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+        //        method: 'GET',
+        //        success: function (data) {
+
+        //            $("#TabContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
+       
+   
+
+   
+   
+       
+        //$(".custompagination").click(function () {
+
+        //    var currentpage = $(this).data('page');
+        //    var btnName = "NewPartial";
+        //    var statusid = 1;
+        //    var searchvalue = $("#searchInput").val();
+        //    //console.log(requestid);
+
+
+        //    $.ajax({
+        //        url: '/Admin/GetPartialView',
+        //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
+        //        method: 'GET',
+        //        success: function (data) {
+        //            // Replace the content of the btnContent div with the retrieved partial view
+        //            $("#btnContent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('Error fetching partial view.');
+        //        }
+        //    });
+        //});
+       
+   
+
+
+
+   
+        //$(".tablink").click(function () {
+        //    var tabid = $(this).attr("id");
+        //    var requestid = $(this).data('btn');
+        //    console.log(requestid);
+        //    $.ajax({
+        //        url: '/admin/gettabs',
+        //        data: { tabid: tabid, requestid: requestid },
+        //        method: 'get',
+        //        success: function (data) {
+        //            // replace the content of the btncontent div with the retrieved partial view
+        //            $("#tabcontent").html(data);
+        //        },
+        //        error: function () {
+        //            console.error('error fetching partial view.');
+        //        }
+        //    });
+        //});
+       
+   
+</script>

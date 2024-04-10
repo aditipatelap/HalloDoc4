@@ -47,9 +47,10 @@ namespace BusinessLogic.Interface
         public void DeleteBusinessMethod(int vendorID);
         //public AdminDashboard SchedulingDataGet(int RegionId);
         /*** scheduling**/
-       // public AdminDashboard CreateShiftGet();
+        // public AdminDashboard CreateShiftGet();
         //public void AddShift(ScheduleModel model, List<string?>? chk, string adminId);
-         /// Scheduling /
+        /*** Scheduling *******/
+        public AdminDashboard GetRegion(int reqid);
  public List<PhysicianProfile> GetProvider(int Regionid);
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift = false);
         public bool CreateShift(scheduleModel scheduleModel, string adminId);

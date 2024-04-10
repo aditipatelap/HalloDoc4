@@ -95,8 +95,8 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Scheduling")
             {
-                //var data = _providerService.SchedulingDataGet(1);
-                return PartialView("Tabs/LoadSchedulingCalendar/_Scheduling");
+                var data = _providerService.GetRegion(0);
+                return PartialView("Tabs/Scheduling/_Scheduling",data);
             }
             if (model.tabid == "Records")
             {
@@ -227,11 +227,11 @@ namespace HalloDoc.Controllers
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue, int currentpage, string dropdown, int reqtype)
         {
 
-            //var partialview = "Partials/" + "_" + "NewPartial";
+            var partialview = "Partials/" + "_" + "NewPartial";
 
             var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue, currentpage, dropdown, reqtype);
-
-            return PartialView("Partials/_StatusView", result);
+            return PartialView(partialview, result);
+            //return PartialView("Partials/_StatusView", result);
         }
         public IActionResult GetModalPartialView(string modalName, int requestid, string patientname)
         {
@@ -877,7 +877,7 @@ namespace HalloDoc.Controllers
         public IActionResult LoadMDOnCall()
         {
             AdminDashboard model = new AdminDashboard();
-           // _providerService.GetRegion(0);
+            _providerService.GetRegion(0);
             model.PhysicianProfilList = _providerService.GetProvider(0);
 
             return PartialView("_MDsOnCall", model);
@@ -888,7 +888,7 @@ namespace HalloDoc.Controllers
             AdminDashboard model = new AdminDashboard();
             model.PhysicianProfilList = _providerService.GetProvider(0);
 
-            return PartialView("Tabs/Provider/Scheduling/_MDsOnCallData", model);
+            return PartialView("Tabs/Scheduling/_MDsOnCallData", model);
         }
 
         public IActionResult LoadRequestedShift()
@@ -903,7 +903,7 @@ namespace HalloDoc.Controllers
             AdminDashboard model = new AdminDashboard();
             model.eventModel = _providerService.GetEvents(RegionId, currentMonthShift);
 
-            return PartialView("Tabs/Provider/Scheduling/_RequestedShiftTable", model);
+            return PartialView("Tabs/Scheduling/_RequestedShiftTable", model);
         }
         /********************records**********************/
 
