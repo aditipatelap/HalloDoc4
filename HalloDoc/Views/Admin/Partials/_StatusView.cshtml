@@ -13,11 +13,11 @@
                 {
                     <th scope="col">Date Of Birth</th>
                 }
-                @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                @if (Model.statusid == 5)
                 {
                     <th scope="col">Region</th>
                 }
-                @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 4 || Model.statusid == 5)
+                @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 3)
                 {
                     <th scope="col">Requestor</th>
                 }
@@ -31,7 +31,7 @@
                     <th scope="col">Physician Name</th>
                     <th scope="col">Date Of Service</th>
                 }
-                @if (Model.statusid != 3 && Model.statusid != 7 && Model.statusid != 8)
+                @if (Model.statusid != 5)
                 {
                     <th scope="col">Phone</th>
                 }
@@ -41,7 +41,7 @@
                 {
                     <th scope="col">Notes <i class="bi bi-arrow-down"></i></th>
                 }
-               
+
 
                 <th scope="col">Actions</th>
 
@@ -74,105 +74,106 @@
                         bgcolor = "#0181f8";
 
                     }
-                      <tr style="background: @bgcolor" class="text-white">
+                    <tr style="background: @bgcolor" class="text-white">
                         <td>@items.Name</td>
                         @if (Model.statusid != 9)
                         {
                             <td>@items.StrMonth @items.IntDate, @items.IntYear</td>
                         }
-                        @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                        @if (Model.statusid==5)
                         {
                             <td style="background:@bgcolor">Region</td>
                         }
-                        @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 4 || Model.statusid == 5)
+                        @if (Model.statusid == 1 || Model.statusid == 2 || Model.statusid == 3)
                         {
                             <td>@items.Requestor</td>
                         }
                         @if (Model.statusid == 1)
                         {
-                            <td>@items.RequestedDate</td>
-                           @*<td>@items.month &nbsp;@items.CreatedDate.Day, @items.CreatedDate.Year</td>*@
+                          @*  <td>@items.RequestedDate</td>*@
+                            <td>@items.month &nbsp;@items.RequestedDate.Day, @items.RequestedDate.Year</td>
                         }
-                     
+
                         @if (Model.statusid != 1)
                         {
                             <td>@items.PhysicianName</td>
                             <td>dos</td>
                         }
-                        @if (Model.statusid != 3 && Model.statusid != 7 && Model.statusid != 8)
+                        @if (Model.statusid != 5)
                         {
-                        @if (items.PatientPhone != null)
-                        {
-                            <td>
-                                @if (@items.RequestTypeid == 1)
-                                {
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
-                                    <br />
-                                    <span>(Patient)</span>
-                                }
-                                else if (@items.RequestTypeid == 2)
-                                {
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
-                                    <br />
+                            @if (items.PatientPhone != null)
+                            {
+                                <td>
+                                    @if (@items.RequestTypeid == 1)
+                                    {
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone </button>
+                                        <br />
+                                        <span>(Patient)</span>
+                                    }
+                                    else if (@items.RequestTypeid == 2)
+                                    {
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                        <br />
 
-                                    <span>(Ptient)</span> <br />
+                                        <span>(Ptient)</span> <br />
 
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
-                                    <br />
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.RequestorPhone</button>
+                                        <br />
 
-                                    <span>(Family/Freind)</span> <br />
-                                }
-                                else if (@items.RequestTypeid == 4)
-                                {
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
-                                    <br />
+                                        <span>(Family/Freind)</span> <br />
+                                    }
+                                    else if (@items.RequestTypeid == 4)
+                                    {
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                        <br />
 
-                                    <span>(Ptient)</span> <br />
+                                        <span>(Ptient)</span> <br />
 
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
-                                    <br />
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                        <br />
 
-                                    <span>(Business)</span> <br />
-                                }
-                                else if (@items.RequestTypeid == 3)
-                                {
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
-                                    <br />
+                                        <span>(Business)</span> <br />
+                                    }
+                                    else if (@items.RequestTypeid == 3)
+                                    {
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i> @items.PatientPhone</button>
+                                        <br />
 
-                                    <span>(Ptient)</span> <br />
+                                        <span>(Ptient)</span> <br />
 
-                                    <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
-                                    <br />
+                                        <button class="btn border text-white"><i class="bi bi-telephone"></i>  @items.RequestorPhone</button>
+                                        <br />
 
-                                    <span>(Concierge)</span> <br />
-                                }
-                            </td>
+                                        <span>(Concierge)</span> <br />
+                                    }
+                                </td>
+                            }
+                            else
+                            {
+                                <td>-</td>
+                            }
                         }
-                      }
-                        else
-                        {
-                            <td>-</td>
-                        }
+                       
                         <td>@items.Address</td>
                         @if (Model.statusid != 6 && Model.statusid != 9)
                         {
                             <td>@items.Notes</td>
                         }
-                        
-                
-                   @* <tr style="background: @bgcolor" class="text-white">
-                        <td>@items.Name</td>
-                        <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
-                        <td>@items.Requestor</td>
-                        <td>@items.RequestedDate</td>
 
-                        <td>@items.Address</td>
-                        <td>@items.Notes</td>
-                        <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
-*@
+
+                        @* <tr style="background: @bgcolor" class="text-white">
+            <td>@items.Name</td>
+            <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
+            <td>@items.Requestor</td>
+            <td>@items.RequestedDate</td>
+
+            <td>@items.Address</td>
+            <td>@items.Notes</td>
+            <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
+            *@
 
                         <td class="action">
-                            
+
                             <div class="btn-group">
                                 <button type="button" class="btn  border border-white text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Action
@@ -184,23 +185,27 @@
                                             <i class="bi bi-journals"></i>
                                             Assign Case
                                         </a>
-                                    @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
-                                    <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid" data-value1="@items.Name">
-                                        <i class="bi bi-journal-text"></i>
-                                        Cancel Case
-                                    </a>
+                                        @*<button class="dropdown-item showmodal" data-modal="CancelCase"  id="CancelCase">Cancel Case</button>*@
+                                        <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="CancelCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                            <i class="bi bi-journal-text"></i>
+                                            Cancel Case
+                                        </a>
                                     }
                                     <a class="dropdown-item tablink " id="ViewCase" data-btn="@items.requestid" data-value1="@Model.ConfirmationNo"> <i class="fa fa-list"></i>View Case</a>
+                                   
                                     @if (Model.statusid != 1)
                                     {
-                                        <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"> <i class="fa fa-list"></i>View Notes</a>
+                                        <a class="dropdown-item tablink tabBtn " id="ViewUpload" data-btn="@items.requestid"><i class="fa-solid fa-upload"></i>View Uplaods</a>
                                     }
+                                 
+                                        <a class="dropdown-item tablink " id="ViewNotes" data-btn="@items.requestid"> <i class="fa fa-list"></i>View Notes</a>
+                                    
                                     @if (Model.statusid == 1)
                                     {
-                                    <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
-                                        <i class="bi bi-ban"></i>
-                                        Block Case
-                                    </button>
+                                        <button class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="BlockCase" data-btn="@items.requestid" data-value1="@items.Name">
+                                            <i class="bi bi-ban"></i>
+                                            Block Case
+                                        </button>
                                     }
                                     @if (Model.statusid == 2)
                                     {
@@ -211,28 +216,38 @@
                                     }
                                     @if (Model.statusid != 1 && Model.statusid != 2 && Model.statusid != 9)
                                     {
-                                              <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid"> <i class="fa fa-shopping-cart"></i> Send Order</a>
+                                        <a class="dropdown-item tablink " id="SendOrder" data-btn="@items.requestid"> <i class="fa fa-shopping-cart"></i> Send Order</a>
                                     }
-                                    @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8)
+                                    @if (Model.statusid==5)
                                     {
                                         <a class="dropdown-item tablink" id="CloseCase" data-btn="@items.requestid">
                                             <i class="bi bi-ban"></i>
-                                    Close Case
-                                </a>}
-                                    @if (Model.statusid == 3 || Model.statusid == 7 || Model.statusid == 8 || Model.statusid == 2)
+                                            Close Case
+                                        </a>
+                                    }
+                                    @if (  Model.statusid == 2 || Model.statusid==5)
                                     {
                                         <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="ClearCase" data-btn="@items.requestid">
                                             <i class="fa-regular fa-circle-xmark"></i>
-                                    Clear Case
-                                </a>}
+                                            Clear Case
+                                        </a>
+                                    }
                                     @if (Model.statusid != 1 && Model.statusid != 2 && Model.statusid != 9)
-                                    {                                <a class="dropdown-item tablink" id="EncounterForm" data-btn="@items.requestid"><i class="fa-regular fa-rectangle-list"></i> Encounter</a>
+                                    {
+                                                                        <a class="dropdown-item tablink" id="EncounterForm" data-btn="@items.requestid"><i class="fa-regular fa-rectangle-list"></i> Encounter</a>
+                                    }
+                                    @if (Model.statusid == 2)
+                                    {
+                                        <a class="case dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" id="SendAgreement" data-btn="@items.requestid">
+                                            <i class="fa fa-paper-plane"></i>
+                                            Send Agreement
+                                        </a>
                                     }
                                 </div>
                             </div>
                         </td>
 
-                   </tr> 
+                    </tr>
                 }
             }
         </tbody>
@@ -251,8 +266,8 @@ else
     {
         @if (Model.TotalPages != 0)
         {
-            <div class="page-item disabled m-4 border border-light rounded">
-                <span class="page-link"> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
+            <div class="page-item disabled m-4 border-0 ">
+                <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
             </div>
         }
         else
@@ -266,9 +281,11 @@ else
             <ul class="pagination align-items-center">
                 @if (Model.CurrentPage > 1)
                 {
-                <li class="page-item"><a class="page-link custompagination" data-page="@(
+                    <li class="page-item">
+                        <a class="page-link custompagination" data-page="@(
                 Model.CurrentPage - 1
-                )"><i class="fa-solid fa-chevron-left"></i></a></li>
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
                 }
                 else
                 {
@@ -285,9 +302,11 @@ else
                 </li>
                 @if (Model.CurrentPage < Model.TotalPages)
                 {
-                <li class="page-item"><a class="page-link custompagination" href="#" data-page="@(
+                    <li class="page-item">
+                        <a class="page-link custompagination" href="#" data-page="@(
                 Model.CurrentPage + 1
-                )"><i class="fa-solid fa-chevron-right"></i></a></li>
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
                 }
                 else
                 {
@@ -307,81 +326,95 @@ else
     </div>
 </div>
 <script>
-    
-   
-   
-        //$(".tablink").click(function () {
-        //    var TabId = $(this).attr("id");
-        //    var requestid = $(this).data('btn');
-        //if (typeof requestid === 'undefined') {
-        //    requestid = 0;
-        //}
-        //    //var statusid=$(this).data('value1');
-        //    //console.log(requestid);
-        //    $.ajax({
-        //        url: '/Admin/GetTabs',
-        //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
-        //        method: 'GET',
-        //        success: function (data) {
-
-        //            $("#TabContent").html(data);
-        //        },
-        //        error: function () {
-        //            console.error('Error fetching partial view.');
-        //        }
-        //    });
-        //});
-       
-   
-
-   
-   
-       
-        //$(".custompagination").click(function () {
-
-        //    var currentpage = $(this).data('page');
-        //    var btnName = "NewPartial";
-        //    var statusid = 1;
-        //    var searchvalue = $("#searchInput").val();
-        //    //console.log(requestid);
-
-
-        //    $.ajax({
-        //        url: '/Admin/GetPartialView',
-        //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
-        //        method: 'GET',
-        //        success: function (data) {
-        //            // Replace the content of the btnContent div with the retrieved partial view
-        //            $("#btnContent").html(data);
-        //        },
-        //        error: function () {
-        //            console.error('Error fetching partial view.');
-        //        }
-        //    });
-        //});
-       
-   
 
 
 
-   
-        //$(".tablink").click(function () {
-        //    var tabid = $(this).attr("id");
-        //    var requestid = $(this).data('btn');
-        //    console.log(requestid);
-        //    $.ajax({
-        //        url: '/admin/gettabs',
-        //        data: { tabid: tabid, requestid: requestid },
-        //        method: 'get',
-        //        success: function (data) {
-        //            // replace the content of the btncontent div with the retrieved partial view
-        //            $("#tabcontent").html(data);
-        //        },
-        //        error: function () {
-        //            console.error('error fetching partial view.');
-        //        }
-        //    });
-        //});
-       
-   
+    //$(".tablink").click(function () {
+    //    var TabId = $(this).attr("id");
+    //    var requestid = $(this).data('btn');
+    //if (typeof requestid === 'undefined') {
+    //    requestid = 0;
+    //}
+    //    //var statusid=$(this).data('value1');
+    //    //console.log(requestid);
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
+    //        method: 'GET',
+    //        success: function (data) {
+
+    //            $("#TabContent").html(data);
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
+
+
+
+
+
+
+    //$(".custompagination").click(function () {
+
+    //    var currentpage = $(this).data('page');
+    //    var btnName = "NewPartial";
+    //    var statusid = 1;
+    //    var searchvalue = $("#searchInput").val();
+    //    //console.log(requestid);
+
+
+    //    $.ajax({
+    //        url: '/Admin/GetPartialView',
+    //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
+    //        method: 'GET',
+    //        success: function (data) {
+    //            // Replace the content of the btnContent div with the retrieved partial view
+    //            $("#btnContent").html(data);
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
+
+
+
+
+
+
+    //$(".tablink").click(function () {
+    //    var tabid = $(this).attr("id");
+    //    var requestid = $(this).data('btn');
+    //    console.log(requestid);
+    //    $.ajax({
+    //        url: '/admin/gettabs',
+    //        data: { tabid: tabid, requestid: requestid },
+    //        method: 'get',
+    //        success: function (data) {
+    //            // replace the content of the btncontent div with the retrieved partial view
+    //            $("#tabcontent").html(data);
+    //        },
+    //        error: function () {
+    //            console.error('error fetching partial view.');
+    //        }
+    //    });
+    //});
+
+
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

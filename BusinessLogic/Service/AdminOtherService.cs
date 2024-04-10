@@ -199,7 +199,7 @@ namespace BusinessLogic.Service
             AdminDashboard model = new AdminDashboard();
             UserAccessModel userAccessModel = new UserAccessModel();
             var data = _db.Aspnetusers
-                            .Include(x => x.Aspnetuserroles).Where(x=>x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter==0).Select(x => new UserAccessModel
+                            .Include(x => x.Aspnetuserroles).Include(x=>x.Physicians).Include(x=>x.AdminAspnetusers).Where(x=>x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter==0).Select(x => new UserAccessModel
                             {
                                 AccountPOC = x.Name,
                                 AccountType=(Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,

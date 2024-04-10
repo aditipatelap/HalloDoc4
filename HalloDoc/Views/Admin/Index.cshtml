@@ -248,10 +248,10 @@
            
 
             /******search and all */
-         dropdown = document.getElementById('filteradmin').value.toLowerCase();
+        var dropdownval = $('.filteradmin').val();
             var btnName = $(this).data("btn");
             var statusid = $(this).data("id");
-             reqtype = $(this).data('btn1');
+           var  reqtypestatus = $(this).data('btn1');
             var searchValue = $('#searchInput').val().toLowerCase();
         var currentpage = $(this).data('page');
             if (typeof reqtype === 'undefined') {
@@ -263,16 +263,22 @@
         if (typeof currentpage=== 'undefined') {
             currentpage = 1;
         }
-            if (!dropdown) {
-                dropdown = null;
+        if (!dropdownval) {
+            dropdownval = null;
             }
+
+
             if ($(this).hasClass('partialbtn')) {
                 btnnameglobal = btnName;
-            //$('#filteradmin').val('0').change();
-
-            //$(".searchrequest").removeClass("border");
-            //$(".allbtn").addClass("border");
-            //$('#searchInput').val('');
+         
+             $('.filteradmin').val('');
+            $(".searchrequest").removeClass("border");
+            $(".allbtn").addClass("border");
+            $('#searchInput').val('');
+            dropdown = null;
+                  searchValue = null;
+                  reqtype = 0;
+            
 
             }
             if ($(this).hasClass('partialbtn')) {
@@ -281,12 +287,13 @@
                 $("#hidden").val(statusidglobal);
 
             }
-        if ($(this).is(":has(#filteradmin)")) {
-            dropdown = dropdown;
+        if ($(this).hasClass('filteradmin')) {
+            dropdown = dropdownval;
+
            
         }
-        if ($(this).hasClass('.searchrequest')) {
-            reqtype= reqtype;
+        if ($(this).hasClass('searchrequest')) {
+            reqtype = reqtypestatus;
             $(".searchrequest").removeClass("border");
             $(this).addClass("border");
 
@@ -378,7 +385,7 @@
    
     
         $(document).on('click', '.partialbtn', PartialDisplay);
-        $(document).on('change', '#filteradmin', PartialDisplay);
+        $(document).on('change', '.filteradmin', PartialDisplay);
         $(document).on('click', '.searchrequest', PartialDisplay);
         $(document).on('keyup', '#searchInput', PartialDisplay);
     $(document).on('click', '.custompagination', PartialDisplay);

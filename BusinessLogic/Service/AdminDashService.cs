@@ -84,7 +84,7 @@ namespace BusinessLogic.Service
         
 
         public AdminDashboard GetDashboardData(string btnname,int statusid, string searchValue,int currentpage,string dropdown,int reqtype )
-            {
+          {
 
             List<int> id = new List<int>();
             if (statusid != (short)Status.Active && statusid != (short)Status.ToClose)
@@ -108,7 +108,7 @@ namespace BusinessLogic.Service
 
             var dashboard = (from Request in _db.Requests
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                             // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+                             
                              where id.Contains(Request.Status) /*&& Request.Isdeleted == false*/ &&
                              (dropdown == null || Requestclient.Address.Contains(dropdown)) &&
                           (searchValue == null || Requestclient.Firstname.ToLower().Contains(searchValue) || 
@@ -125,10 +125,16 @@ namespace BusinessLogic.Service
                                  RequestedDate = Request.Createddate,
                                  PatientPhone = Requestclient.Phonenumber,
                                  RequestorPhone = Request.Phonenumber,
-
+                                  month= (Month)Request.Createddate.Month,
+                                 status = Request.Status,
                                  Address = Requestclient.Address,
                                  Notes = Requestclient.Notes,
                                  requestid = Request.Requestid,
+                                 RequestClientid = Request.Requestclients.FirstOrDefault().Requestclientid,
+                                 ConfirmationNo = Request.Confirmationnumber,
+                                 Email = Request.Requestclients.FirstOrDefault().Email,
+                                 PhysicianName = _db.Physicians.Where(p => p.Physicianid == Request.Physicianid).Select(p => p.Firstname).FirstOrDefault(),
+                                 regionid = Request.Requestclients.FirstOrDefault().Regionid,
                                  //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
                                  // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                                  RequestTypeid = Request.Requesttypeid
@@ -136,7 +142,7 @@ namespace BusinessLogic.Service
 
                
             int totalrecords = dashboard.Count();
-            int pagesize = 5;
+            int pagesize = 1;
             int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 

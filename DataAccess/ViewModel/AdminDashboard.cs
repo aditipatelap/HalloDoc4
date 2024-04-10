@@ -18,9 +18,14 @@ namespace DataAccess.ViewModel
         public int? IntDate { get; set; }
         public int? IntYear { get; set; }
         public string? StrMonth { get; set; }
+        public Month month { get; set; }
+        public int RequestClientid { get; set; }
+        public string ConfirmationNo { get; set; }
+        public string Email { get; set; }
+        public int regionid { get; set; }
         public string? Requestor { get; set; }
         public string? PhysicianName { get; set; }
-        public DateTime? RequestedDate { get; set; }
+        public DateTime RequestedDate { get; set; }
         public DateTime? DateofService { get; set; }
         public string? PatientPhone { get; set; }
         public string? RequestorPhone { get; set; }
@@ -30,6 +35,7 @@ namespace DataAccess.ViewModel
         public string Region { get; set; }
         public int requestid { get; set; }
         public RequestType Status { get; set; }
+        public int status { get; set; }
         public int PageSize { get; set; }
 
 

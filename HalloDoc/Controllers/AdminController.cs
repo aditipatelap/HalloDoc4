@@ -98,6 +98,16 @@ namespace HalloDoc.Controllers
                 var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_Scheduling",data);
             }
+            if (model.tabid == "MDsOnCall")
+            {
+                var data = _providerService.GetRegion(0);
+                return PartialView("Tabs/Scheduling/_MDsOnCall", data);
+            }
+            if (model.tabid == "CreatedShift")
+            {
+                var data = _providerService.GetRegion(0);
+                return PartialView("Tabs/Scheduling/_CreatedShift", data);
+            }
             if (model.tabid == "Records")
             {
                 return PartialView(result);
@@ -227,11 +237,11 @@ namespace HalloDoc.Controllers
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue, int currentpage, string dropdown, int reqtype)
         {
 
-            var partialview = "Partials/" + "_" + "NewPartial";
+            //var partialview = "Partials/" + "_" + "NewPartial";
 
             var result = _AdminDash.GetDashboardData(btnName, statusid, searchValue, currentpage, dropdown, reqtype);
-            return PartialView(partialview, result);
-            //return PartialView("Partials/_StatusView", result);
+            //return PartialView(partialview, result);
+            return PartialView("Partials/_StatusView", result);
         }
         public IActionResult GetModalPartialView(string modalName, int requestid, string patientname)
         {
