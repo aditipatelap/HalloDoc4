@@ -5,7 +5,7 @@
     <div class="mb-3 mt-5 d-flex justify-content-between">
         <h4 class="">Documents</h4>
         <div>
-            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info " onclick="location.href='@Url.Action("Index", "Admin")'">
+            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info backbtn" >
                 <i class="bi bi-chevron-left me-1 "></i>Back
             </button>
         </div>
@@ -108,7 +108,9 @@
 <script>
     document.getElementById('formFile').addEventListener('change', function () {
         var fileName = this.files[0].name;
+       
         document.getElementById('Document').textContent = fileName;
+        
          
     });
 </script>
@@ -121,7 +123,7 @@
             var id = $(this).data("btn");
             var formData = new FormData();
             var fileInput = document.getElementById('formFile').files[0];
-         
+        $('#formFile').val('');
             if(fileInput!=null)
             {
               
@@ -140,7 +142,7 @@
                 contentType: false,
                 success: function (result) {
                     $('#ViewUploadsTable').html(result);
-                    $('#formFile').val('');
+                   
                     
                 },
                 error: function (xhr, status, error) {
@@ -188,6 +190,16 @@
         else {
             alert("Please select at least one file.");
         }
+    });
+    $(document).ready(function () {
+        var requestid=@Model.requestid;
+        $("#ViewUploadsTable").load('@Url.Action("ViewUploadsList", "Admin")?requestid=' + requestid);
+    });
+
+    $('.backbtn').on('click', function () {
+
+        $("#Dashboard")[0].click();
+
     });
 
 </script>  

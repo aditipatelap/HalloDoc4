@@ -560,6 +560,9 @@ h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content
     color: inherit !important;
 }
 */
+::-webkit-scrollbar {
+    display: none;
+}
 .fc-icon {
     color: white !important;
 }

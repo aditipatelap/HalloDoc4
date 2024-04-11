@@ -17,7 +17,7 @@
        
         <div class="form-floating my-4">
             <textarea class="form-control" asp-for="blockreq.Blockreason" placeholder="Reason for block request" id="floatingTextarea2" style="height: 100px"></textarea>
-            <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description</label>
+            <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description <span class="text-danger"> *</span></label>
             @Html.ValidationMessageFor(Model=>Model.blockreq.Blockreason,"",new{@class="text-danger"})
 
         </div>

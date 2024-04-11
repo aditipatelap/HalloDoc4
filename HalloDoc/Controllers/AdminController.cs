@@ -164,7 +164,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "SendOrder")
             {
-                var orderdetail = _AdminDash.SendOrder(model.requestid);
+                    var orderdetail = _AdminDash.SendOrder(model.requestid);
 
                 return PartialView(result, orderdetail);
             }
@@ -193,8 +193,8 @@ namespace HalloDoc.Controllers
             /*******************records*******************/
             if (model.tabid == "BlockHistory")
             {
-                var data = _providerService.GetBlockHistoryData(model.searchstream);
-                return PartialView("Tabs/Records/BlockHistory",data);
+                //var data = _providerService.GetBlockHistoryData(model.searchstream);
+                return PartialView("Tabs/Records/BlockHistory");
             }
             if (model.tabid == "EmailLogs")
             {
@@ -487,9 +487,10 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
         public IActionResult DeleteDocument(string filename, int requestid)
-        {
+                {
             _AdminDash.deleteDocument(filename);
-            _notyf.Custom("Document Deleted Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            _notyf.Information("dOCUMENT dELETED sUCCESSFULLY ...");
+
             return ViewUploadsList(requestid);
 
         }
@@ -927,7 +928,7 @@ namespace HalloDoc.Controllers
        /******** BlockHostory Data Get***/
         [HttpPost]
         public IActionResult BlockedHistoryPartialTable(AdminDashboard model)
-        {
+            {
             var info = _providerService.GetBlockHistoryData(model.searchstream);
             return PartialView("Tabs/Records/PartialTable/BlockHistoryPartialTable", info);
         }

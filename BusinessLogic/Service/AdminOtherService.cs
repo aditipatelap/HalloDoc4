@@ -1143,12 +1143,12 @@ public AdminDashboard CreateProviderAdminDataGet()
             var data1 = (from req in _db.Requests
                          join reqclient in _db.Requestclients on req.Requestid equals reqclient.Requestid
                          join blockreq in _db.Blockrequests on req.Requestid equals blockreq.Requestid
-                         where (model == null || ((model.Name == null
+                         where ((model == null) || ((model.Name == null
                            || reqclient.Firstname.ToLower().Contains(model.Name.ToLower())
                            || reqclient.Lastname.ToLower().Contains(model.Name.ToLower()))
                            && (model.createdDate == default || blockreq.Createddate == model.createdDate)
-                           && (model.number == null || blockreq.Phonenumber == model.number)
-                           && (model.email == null || blockreq.Email == model.email)))
+                                       && (string.IsNullOrEmpty(model.number) || blockreq.Phonenumber.Equals(model.number))
+                                 && (string.IsNullOrEmpty(model.email) || blockreq.Email.Equals(model.email))))
                          select new BlockedHistory
                          {
                              PatientName = reqclient.Firstname + reqclient.Lastname,
@@ -1269,7 +1269,7 @@ public AdminDashboard CreateProviderAdminDataGet()
         }
         //PatientHistory
         public AdminDashboard PatientHistory(searchstream obj)
-        {
+         {
             var list = (from user in _db.Users
                         join req in _db.Requests on user.Userid equals req.Userid
                         where (obj == null || (obj.FirstName == null || user.Firstname.ToLower().Contains(obj.FirstName.ToLower()))

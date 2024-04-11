@@ -13,7 +13,7 @@
     <div class="mb-3 text-secondary">
         To assign this request, search and select  another Physician.
     </div>
-    <form method="post" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
+    <form method="post" id="physicianForm" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
     @* <div class="dropdown my-3  ">
             <select class="form-select" id="regionName"  aria-label="Floating label select example" required>
                 
@@ -33,8 +33,9 @@
           
     </div> *@
         <div class="dropdown my-3">
+            <div class="form-floating">
             <select class="form-select" id="regionName" asp-for="@Model.assignreq.RegionItems" aria-label="Floating label select example" required>
-                <option value="" selected disabled hidden>Narrow Down Region Name <span class="text-danger">*</span></option>
+                <option value="" selected disabled >Narrow Down Region Name <span class="text-danger">*</span></option>
                 @if (Model.Regions != null)
                 {
                     foreach (var item in Model.Regions)
@@ -43,17 +44,22 @@
                     }
                 }
             </select>
+            <label for="floatingSelect">Narrow Down Region Name</label>
+            </div>
             @Html.ValidationMessageFor(Model => Model.assignreq.RegionItems, "", new { @class = "text-danger" })
            @* <span class="invalid-feedback">
                 Please choose a Region.
             </span>*@
         </div>
     <div class="dropdown my-3  ">
+        <div class="form-floating">
         <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>
 
-                <option disabled selected style="display:none">Select Physician  <span class="text-danger"> *</span></option>
+                <option value="" disabled selected >Select Physician  <span class="text-danger"> *</span></option>
             
         </select>
+            <label for="floatingSelect">Select Physician </label>
+            </div>
             @Html.ValidationMessageFor(Model=>Model.assignreq.physicianname,"",new{@class="text-danger"})
     </div>
 
@@ -65,12 +71,13 @@
             @Html.ValidationMessageFor(Model=>Model.assignreq.Description,"",new{@class="text-danger"})
     </div>
     <div class="d-flex justify-content-end">
-        <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
+        <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 " >Submit</button>
         <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
     </div>
     </form>
 </div>
 <script>
+    
     $(document).on('change', '#regionName', function () {
         var selectedvalue = $(this).val();  
 
@@ -86,15 +93,18 @@
                 //secondDropdown += '<option disabled selected style="display:none">Select Physician</option></select>';
                 //$('#secondDropdownContainer').html(secondDropdown);
                 console.log("AJAX success");
-                var physician = '';
-                $.each(data, function (index, physicians) {
-                   
-                    physician += '<option>' + physicians + '<option>'
-
-                //    $("#Physician").append('<option value="' + Physician + '">' + Physician + '</option>');
-                });
-
-                $('#Physician').html(physician);     
+                if (data.length === 0) {
+                    // Clear the current options and add a "No physician available" option
+                    $('#Physician').empty();
+                    $('#Physician').append('<option disabled selected style="display:none">No physician available</option>');
+                  
+                } else {
+                    var physician = '';
+                    $.each(data, function (index, physicians) {
+                        physician += '<option>' + physicians + '<option>';
+                    });
+                    $('#Physician').html(physician);
+                }
                 
             },
             error: function () {
@@ -105,6 +115,20 @@
 
     });
 </script>
+@*<script>
+    const physicianForm = document.getElementById("physicianForm");
+
+    physicianForm.addEventListener("submit", function (event) {
+        const selectedPhysician = physicianForm.querySelector("#Physician").value;
+        console.log("aaaaccc");
+        console.log(selectedPhysician);
+        if (selectedPhysician == "No physician available") {
+            event.preventDefault();
+            alert("Please select a physician.");
+        }
+    });
+
+</script>*@
 @* <script>
     $(document).ready(function () {
         $('#regionName').on('change', function () {

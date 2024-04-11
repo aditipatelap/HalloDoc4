@@ -15,13 +15,13 @@
 
         <div class=" shadow dashboard-card container-fluid mt-4 pb-5 ">
 
-            <form id="formdata" class="pb-2">
+            <form id="patienthistoryform" class="pb-2">
 
                 <div class="row align-items-center">
                     <div class="col-3 mt-3">
                         <div class="form-floating">
                             <input  type="text" class="form-control" placeholder="Enter receiver name"
-                                   id="floatingTextarea2" asp-for="searchstream.Name">
+                                   id="floatingTextarea2" asp-for="searchstream.FirstName">
                             <label for="floatingTextarea2">FirstName</label>
                         </div>
                     </div>
@@ -79,16 +79,16 @@
 </script>
 
     <script>
-        $('#formdata').submit(formsubmit);
-    $('.reset').click(formsubmit);
-    function formsubmit(e) {
+    $('#patienthistoryform').submit(PatientRecordSubmit);
+    $('.reset').click(PatientRecordSubmit);
+    function PatientRecordSubmit(e) {
         e.preventDefault();
         if (!$(this).valid()) {
             return; 
         }
         var data = new FormData(this);
         console.log(data);
-        debugger;
+        
         $.ajax({
             url: '@Url.Action("PatientHistoryPartialTable", "Admin")',
             type: 'Post',
@@ -105,7 +105,7 @@
         });
     }
     function clearSearch() {
-        document.getElementById("formdata").reset();
+        document.getElementById("patienthistoryform").reset();
         $.ajax({
             url: "/Admin/PatientHistoryPartialTable",
             type: 'POST',

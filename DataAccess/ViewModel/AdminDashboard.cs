@@ -71,10 +71,10 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "The field is required")]
 
         public string Description { get; set; }
-        [Required(ErrorMessage = "Enter physician name")]
+        [Required(ErrorMessage = "Please Select Another Region")]
         public string physicianname { get; set; }
-        [Required(ErrorMessage = "The field is required")]
-        public string RegionItems { get; set; }
+            [Required(ErrorMessage = "The field is required")]
+            public string RegionItems { get; set; }
 
     }
     public class CancelReq
@@ -93,7 +93,7 @@ namespace DataAccess.ViewModel
     {
         [Required(ErrorMessage = "required field ")]
         public string Description { get; set; }
-        [Required(ErrorMessage = "Please select a physician")]
+        [Required(ErrorMessage = "Please Select Another Region")]
         public string physicianname { get; set; }
         [Required(ErrorMessage = "This is a required field")]
         public string Region { get; set; }
@@ -102,14 +102,22 @@ namespace DataAccess.ViewModel
     public class SendOrders
     {
         public string Description { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public string Business { get; set; }
         [Required(ErrorMessage = "This is a required field")]
         public string Email { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public string BusinessContact { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public string FaxNumber { get; set; }
         public string Prescription { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public string Profession { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public int NUmberofrefill { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
+        public int Healthprofessionalid { get; set; }
+        [Required(ErrorMessage = "This is a required field")]
         public int VendorId { get; set; }
 
     }
@@ -558,8 +566,11 @@ public class Records
         public string UserName { get; set; }
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
-        [Required(ErrorMessage = "fname is required")]
+        [Required(ErrorMessage = "the field is required")]
+        public string SendYourOrderBusiness { get; set; }
+        [Required(ErrorMessage = "the field is required")]
         public IEnumerable<Healthprofessional> Healthprofessionals { get; set; }
+        [Required(ErrorMessage = "the field is required")]
         public IEnumerable<Healthprofessionaltype> healthprofessionaltypes { get; set; }
         public List<AdminDash> Dashboards { get; set; }
         public Profile myProfile { get; set; }

@@ -6,34 +6,34 @@
         <div class=" d-flex justify-content-between mt-5">
             <h4>Blocked History</h4>
 
-            <button type="button" class="hoverbtn btn btn-outline-info p-2 pe-3 bi bi-chevron-left backbtn">
-                Back
-            </button>
+            @*  <button type="button" class="hoverbtn btn btn-outline-info p-2 pe-3 bi bi-chevron-left backbtn">
+            Back
+            </button>*@
 
         </div>
 
         <div class="shadow dashboard-card container-fluid mt-4 pb-3 px-3">
 
-            <form id="BlockHistory">
+            <form id="BlockData">
 
                 <div class="row align-items-center">
                     <div class="col-2 mt-3">
                         <div class="form-floating">
-                            <input type="text" class="form-control" placeholder="Enter receiver name"
-                                   id="floatingTextarea2" asp-for="searchstream.Name"/>
+                            <input type="text" class="form-control searchname" placeholder="Enter receiver name"
+                                   id="floatingTextarea2" asp-for="searchstream.Name" />
                             <label for="floatingTextarea2">Name</label>
                         </div>
                     </div>
                     <div class="col-2 mt-3">
                         <div class="form-floating">
-                            <input type="date" class="form-control" placeholder="Created Date"
-                                   id="floatingTextarea2"  asp-for="searchstream.number">
+                            <input type="date" class="form-control searchdate" placeholder="Created Date"
+                                   id="floatingTextarea2" asp-for="searchstream.createdDate">
                             <label for="floatingTextarea2">Date</label>
                         </div>
                     </div>
                     <div class="col-2 mt-3">
                         <div class="form-floating">
-                            <input  type="text" class="form-control" placeholder="Enter Email ID"
+                            <input type="text" class="form-control searchemail" placeholder="Enter Email ID"
                                    id="floatingTextarea2" asp-for="searchstream.email">
                             <label for="floatingTextarea2">Email</label>
                         </div>
@@ -41,14 +41,14 @@
 
                     <div class="col-2 mt-3">
                         <div class="form-floating">
-                            <input type="tel" class="form-control" placeholder="Sent Date"
-                                   id="floatingTextarea2" asp-for="searchstream.createdDate">
+                            <input type="tel" class="form-control searchnumber" placeholder="Sent Date"
+                                   id="floatingTextarea2" asp-for="searchstream.number">
                             <label for="floatingTextarea2">Phone Number</label>
                         </div>
                     </div>
                     <div class="col-1 d-flex justify-content-between">
 
-                        <button type="submit" class="btn btn-info align-middle m-2" id="search-record-search-btn">
+                        <button type="submit" class="btn btn-info align-middle m-2">
                             Search
                         </button>
                         <button type="button" class="btn btn-outline-info align-middle m-2" onclick="clearSearch()">
@@ -57,17 +57,17 @@
                     </div>
                 </div>
             </form>
-            <div class="row">
-                <label>Select Page Size</label><br />
-                <div class="col-10">
-                    <select class="form-select" id="pageSize" style="width:fit-content">
-                        <option value="3">3</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                    </select>
-                </div>
+            @* <div class="row">
+            <label>Select Page Size</label><br />
+            <div class="col-10">
+            <select class="form-select" id="pageSize" style="width:fit-content">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            </select>
             </div>
+            </div>*@
             <div id="block-history-partial-table"></div>
         </div>
     </div>
@@ -78,6 +78,7 @@
             url: "/Admin/BlockedHistoryPartialTable",
             type: 'POST',
             success: function (result) {
+                console.log("Fve");
                 $('#block-history-partial-table').html(result);
             },
             error: function (error) {
@@ -86,12 +87,15 @@
             },
         });
     });
-</script>
-<script>
+
+
+
     function unblockreq() {
         debugger;
         var blockreqId = $(".unblockreq").data("btn");
         //var ViewId = $(this).data('btn');
+
+
         $.ajax({
             url: '@Url.Action("UnblockRequest", "Admin")',
             type: 'Post',
@@ -99,39 +103,18 @@
             success: function (result) {
                 $('#block-history-partial-table').html(result);
                 swal("Done!", "Request Successfully Unblocked!", "success");
+                toastr.success("Request Blocked Successfully");
             },
             error: function (xhr, status, error) {
                 swal("Failed!", "Request Failed To Unblock!", "Error");
             }
         });
     }
-</script>
-<script>
-    $('#BlockHistory').submit(
-        function (e) {
-            e.preventDefault();
-            if (!$(this).valid()) {
-                return; // If the form is not valid, don't proceed
-            }
-            var data = new FormData(this);
-            console.log(data);
-            debugger;
-            $.ajax({
-                url: '@Url.Action("BlockedHistoryPartialTable", "Admin")',
-                type: 'Post',
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    $('#block-history-partial-table').html(data);
-                },
-                error: function () {
-                    console.error("Error occurred while fetching data.");
-                }
-            });
-        });
-    function clearSearch(){
-        document.getElementById("BlockHistory").reset();
+
+    function clearSearch() {
+        
+        $("#BlockData")[0].reset();
+
         $.ajax({
             url: "/Admin/BlockedHistoryPartialTable",
             type: 'POST',
@@ -144,11 +127,28 @@
             },
         });
     }
-    
+
 </script>
 <script>
-    $('.backbtn').on('click', function () {
-        $("#home")[0].click();
+
+    $('#BlockData').on('submit', function (e) {
+        e.preventDefault();
+
+        var data = new FormData($("#BlockData")[0]);
+        $.ajax({
+            url: '/Admin/BlockedHistoryPartialTable',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {  
+                $('#block-history-partial-table').html(data);
+            },
+            error: function () {
+                console.error("Error occurred while fetching data.");
+            }
+        });
     });
 </script>
+
 

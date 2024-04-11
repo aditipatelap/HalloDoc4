@@ -142,7 +142,7 @@ namespace BusinessLogic.Service
 
                
             int totalrecords = dashboard.Count();
-            int pagesize = 1;
+            int pagesize = 2;
             int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
 
@@ -311,7 +311,7 @@ namespace BusinessLogic.Service
                             {
                                 RequestId = requestid,
                                 //RequestTypeId = Requesttypeid,
-                                // ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + (Month)req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
+                                 //ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + (Month)req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
                                 Symptoms = req.Notes,
                                 FirstName = req.Firstname,
                                 LastName = req.Lastname,
@@ -384,8 +384,10 @@ namespace BusinessLogic.Service
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
             blockrequest.Email = request.Email;
+            blockrequest.Isactive = new BitArray(new bool[1] { false });
             //reqid must be not null
-            //blockrequest.Requestid =reqid;
+            blockrequest.Requestid =reqid;
+            blockrequest.Createddate=DateTime.Now;
             _db.Blockrequests.Add(blockrequest);
             _db.SaveChanges();
             _db.SaveChanges();
@@ -419,11 +421,12 @@ namespace BusinessLogic.Service
         }
         public void SubmitTransferReq(AdminDashboard model, int requestid)
         {
-            var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
+            var id = _db.Physicians.Where(x => x.Firstname == model.transferreq.physicianname).FirstOrDefault();
             var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             request.Physicianid = id.Physicianid;
             _db.SaveChanges();
         }
+        
         public JsonArray GetBusiness(int selectedvalue)
         {
             AdminDashboard model = new AdminDashboard();

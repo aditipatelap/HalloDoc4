@@ -123,7 +123,12 @@ Delete doc*@
             data: { filename: id, requestid: requestid },
             success: function (result) {
                 $("#ViewUploadsTable").html(result);
-                app.UseNotyf();
+                toastr.info("Document Deleted Successfully", {
+                    positionClass: "toast-top-center",
+                    timeOut: 5000,
+                   
+                    progressBar: true
+                });
             }
         });
     });

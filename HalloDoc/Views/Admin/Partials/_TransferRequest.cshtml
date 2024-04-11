@@ -1,8 +1,9 @@
 ﻿@section Scripts{
-    <partial name="_ValidationScriptsPartial"/>}
+    <partial name="_ValidationScriptsPartial" />
+}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    @using DataAccess.ViewModel
+@using DataAccess.ViewModel
 @model AdminDashboard
 <style>
     .required {
@@ -25,50 +26,53 @@
     <div class="mb-3 text-secondary">
         To transfer this request, search and select  another Physician.
     </div>
-    <form method="post" id="submittransfer"  action='@Url.Action("TransferReq", "Admin",new {requestid=Model.requestid})'>
+    <form method="post" id="submittransfer" action='@Url.Action("TransferReq", "Admin",new {requestid=Model.requestid})'>
         <div class="dropdown my-3  ">
-            <select class="form-select" id="regionName" aria-label="Floating label select example">
-                @if (Model.Regions != null)
-                {
-                    <option id="regionName" value="" disabled selected style="display:none">Narrow Down Region Name<span class="required" style="color:red">*</span></option>
-                    
-                    @foreach (var item in Model.Regions)
+            <div class="form-floating">
+                <select class="form-select" id="regionName" asp-for="@Model.transferreq.Region" aria-label="Floating label select example">
+                    <option value="" selected disabled>Narrow Down Region Name <span class="text-danger">*</span></option>
+                    @if (Model.Regions != null)
                     {
-                        <option id="regionName" value="@item.Regionid">@item.Name</option>
-                        
-                       
+
+                        @foreach (var item in Model.Regions)
+                        {
+                            <option id="regionName" value="@item.Regionid">@item.Name</option>
+
+
+                        }
+
                     }
-                  
-                }   
-            </select>
-            <div class="text-danger" id="regionNameError">
-              
+                </select>
+                <label for="floatingSelect">Narrow Down Region Name</label>
             </div>
-        </div>
-        <div class="dropdown my-3  ">
-            <select class="form-select" id="Physician" asp-for="@Model.transferreq.physicianname" aria-label="Floating label select example" required ><span class="required">*</span>
-               
+            @Html.ValidationMessageFor(Model => Model.transferreq.Region, "", new { @class = "text-danger" })
 
-                <option disabled selected style="display:none">Select Physician <span class="required">*</span></option>
+            <div class="dropdown my-3  ">
+                <div class="form-floating">
+                    <select class="form-select" id="Physician" asp-for="@Model.transferreq.physicianname" aria-label="Floating label select example" required>
 
-            </select>
-            @Html.ValidationMessageFor(Model=>Model.transferreq.physicianname,"",new{@class="text-danger"})
-        </div>
+                        <option value="" disabled selected>Select Physician  <span class="text-danger"> *</span></option>
 
-        <div class="form-floating my-4">
-            <textarea class="form-control" asp-for="transferreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-            
-            <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description </label>
-            @Html.ValidationMessageFor(Model=>Model.transferreq.Description,"",new{@class="text-danger"})
-           
-        </div>
-        <div class="d-flex justify-content-end">
-            <button type="submit"  class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
-            <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
-        </div>
-        <p aria-hidden="true" id="required-description">
-            <span class="required">*</span>Required field
-        </p>
+                    </select>
+                    <label for="floatingSelect">Select Physician </label>
+                </div>
+                @Html.ValidationMessageFor(Model=>Model.transferreq.physicianname,"",new{@class="text-danger"})
+            </div>
+
+            <div class="form-floating my-4">
+                <textarea class="form-control" asp-for="transferreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+
+                <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description </label>
+                @Html.ValidationMessageFor(Model=>Model.transferreq.Description,"",new{@class="text-danger"})
+
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
+                <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+            </div>
+            <p aria-hidden="true" id="required-description">
+                <span class="required">*</span>Required field
+            </p>
     </form>
 </div>
 <script>
@@ -87,6 +91,13 @@
                 //secondDropdown += '<option disabled selected style="display:none">Select Physician</option></select>';
                 //$('#secondDropdownContainer').html(secondDropdown);
                 console.log("AJAX success");
+                if (data.length === 0) {
+                    // Clear the current options and add a "No physician available" option
+                    $('#Physician').empty();
+                    $('#Physician').append('<option disabled selected style="display:none">No physician available</option>');
+
+                }
+                else{
                 var physician = '';
                 $.each(data, function (index, physicians) {
 
@@ -96,6 +107,7 @@
                 });
 
                 $('#Physician').html(physician);
+                }
 
             },
             error: function () {
@@ -106,32 +118,32 @@
 
     });
 
-    $(document).ready(function () {
-        console.log("dewWE");
-        $('#submittransfer ').submit(function (event) {
-            console.log("hdjks")
-            var selectedValue = $('#regionName').val();
-            console.log("region");
-            if (selectedValue === '') {
-                console.log("hrejej");
-                $('#regionNameError').html('Please select a region.');
-                event.preventDefault(); // Prevent form submission
-            }
-        });
-    });
-    $(document).ready(function () {
-        console.log("dewWE");
-        $('#submittransfer ').submit(function (event) {
-            console.log("hdjks")
-            var selectedValue = $('#regionName').val();
-            console.log(selectedValue)
-            console.log("region");
-            if (selectedValue === '') {
-                console.log("hrejej");
-                $('#regionNameError').html('Please select a region.');
-                event.preventDefault(); // Prevent form submission
-            }
-        });
-    });
+    //$(document).ready(function () {
+    //    console.log("dewWE");
+    //    $('#submittransfer ').submit(function (event) {
+    //        console.log("hdjks")
+    //        var selectedValue = $('#regionName').val();
+    //        console.log("region");
+    //        if (selectedValue === '') {
+    //            console.log("hrejej");
+    //            $('#regionNameError').html('Please select a region.');
+    //            event.preventDefault(); // Prevent form submission
+    //        }
+    //    });
+    //});
+    //$(document).ready(function () {
+    //    console.log("dewWE");
+    //    $('#submittransfer ').submit(function (event) {
+    //        console.log("hdjks")
+    //        var selectedValue = $('#regionName').val();
+    //        console.log(selectedValue)
+    //        console.log("region");
+    //        if (selectedValue === '') {
+    //            console.log("hrejej");
+    //            $('#regionNameError').html('Please select a region.');
+    //            event.preventDefault(); // Prevent form submission
+    //        }
+    //    });
+    //});
 </script>
 

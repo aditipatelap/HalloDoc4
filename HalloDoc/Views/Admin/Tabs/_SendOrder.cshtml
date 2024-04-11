@@ -14,47 +14,52 @@
     <div class="shadow rounded mt-3 py-3">
         <div class="px-3">
             <form method="post" action='@Url.Action("SendOrder", "Admin",new {requestid=Model.requestid})' id="orderForm">
+
                 <div class="row g-2 mt-2">
                     <div class="col-md dropdown my-2 m-auto">
                         <div class="  form-floating">
-                            <select class="form-select h-100 w-100" id="Profession"  aria-label="Floating label select example" required>
+                            <select class="form-select h-100 w-100" id="Profession" aria-label="Floating label select example">
                                 <option selected disabled>Select Profession</option>
-                               @foreach (var items in Model.healthprofessionaltypes)
+                                @foreach (var items in Model.healthprofessionaltypes)
                                 {
                                     <option value="@items.Healthprofessionalid">@items.Professionname </option>
                                 }
                             </select>
                             <label for="floatingSelect">Profession</label>
-                            @Html.ValidationMessageFor(Model=>Model.healthprofessionaltypes,"",new{@class="text-danger"})
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.Healthprofessionalid,"",new{@class="text-danger"})
+
                         </div>
                     </div>
                     <div class="col-md dropdown my-2 m-auto">
                         <div class=" form-floating">
-                            <select asp-for="@Model.sendorder.VendorId"class="form-select h-100 w-100" id="Business" aria-label="Floating label select example" required>
+                            <select class="form-select h-100 w-100" id="Business" aria-label="Floating label select example" asp-for="sendorder.VendorId">
                                 <option selected disabled>Select Business</option>
-                               @foreach (var items in Model.Healthprofessionals)
+                                @foreach (var items in Model.Healthprofessionals)
                                 {
-                                    <option  value="@items.Vendorid">@items.Vendorname</option>
+                                    <option value="@items.Vendorid">@items.Vendorname </option>
                                 }
                             </select>
                             <label for="floatingSelect">Business</label>
-                           
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.VendorId,"",new{@class="text-danger"})
+
                         </div>
                     </div>
                 </div>
                 <div class="row g-2 mt-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="Contact" placeholder="Business Contact" asp-for="@Model.sendorder.BusinessContact"required disabled>
-                            <label for="businessContact" class="text-secondary">Business Contact</label>
-                            <div class="invalid-feedback">Please enter the business contact.</div>
+                            <input type="text" class="form-control" id="Contact" placeholder="Business Contact" asp-for="@Model.sendorder.BusinessContact"required >
+                            <label for="businessContact" class="text-secondary">Business Contact <span class="text-danger"> *</span></label>
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.BusinessContact,"",new{@class="text-danger"})
+
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating">
                             <input type="email" class="form-control" id="Email" placeholder="Email" asp-for="@Model.sendorder.Email" required>
-                            <label for="email" class="text-secondary">Email</label>
-                           
+                            <label for="email" class="text-secondary">Email <span class="text-danger"> *</span></label>
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.Email,"",new{@class="text-danger"})
+
                         </div>
                     </div>
                 </div>
@@ -62,8 +67,9 @@
                     <div class="col-md">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="FaxNumber" placeholder="Fax Number" asp-for="@Model.sendorder.FaxNumber" required>
-                            <label for="faxNumber" class="text-secondary">Fax Number</label>
-                          
+                            <label for="faxNumber" class="text-secondary">Fax Number <span class="text-danger"> *</span></label>
+                            @Html.ValidationMessageFor(Model=>Model.sendorder.FaxNumber,"",new{@class="text-danger"})
+
                         </div>
                     </div>
                     <div class="col-md">
