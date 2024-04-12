@@ -38,7 +38,7 @@ namespace BusinessLogic.Interface
         public void MyProfileDetailsDataUpdate(AdminDashboard model);
         public void MyProfileAddressDataUpdate(AdminDashboard model);
         /**partner**/
-        public AdminDashboard PartnerDataGet(int ProfessionId);
+        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch);
         public AdminDashboard AddBusinessDataGet();
         public void AddBusinessDataPost(AdminDashboard model);
         public AdminDashboard EditBusinessDataGet(int VendorID);

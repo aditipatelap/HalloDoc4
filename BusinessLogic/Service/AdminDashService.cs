@@ -353,10 +353,10 @@ namespace BusinessLogic.Service
             return adminDashboard;
         }
 
-        public void SubmitAssignReq(AdminDashboard model, int requestid)
+        public void SubmitAssignReq(AdminDashboard model)
         {
             var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
-            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == model.requestid).FirstOrDefault();
 
 
             request.Physicianid = id.Physicianid;

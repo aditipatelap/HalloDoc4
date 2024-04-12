@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Interface;
-
+using Microsoft.AspNetCore.Http;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
+using System.Net.Http;
 using System.Web.WebPages;
 using static DataAccess.ViewModel.Constant;
 
@@ -254,7 +255,7 @@ namespace BusinessLogic.Service
                 Aspnetuserrole aspnetrole = new Aspnetuserrole();
 
                 aspnetrole.Userid = aspuser.Id;
-                aspnetrole.Roleid = model.myProfile.roleid;
+                aspnetrole.Roleid = (short)Roles.Admin;
 
                 _db.Aspnetuserroles.Add(aspnetrole);
                 _db.SaveChanges();
@@ -571,10 +572,13 @@ public AdminDashboard CreateProviderAdminDataGet()
             }
         }
         /*** partner**/
-        //partner
-        public AdminDashboard PartnerDataGet(int ProfessionId)
-        {
-            var data = _db.Healthprofessionals.Where(x => (ProfessionId == 0 || x.Profession == ProfessionId) && x.Isdeleted == new BitArray(new bool[1] { false })).Select(x => new PartnerModel
+      
+        public AdminDashboard PartnerDataGet(int ProfessionId,string vendorsearch)
+       {
+            var data = _db.Healthprofessionals.Where(x => (ProfessionId == 0 || x.Profession == ProfessionId)
+                                                     &&(vendorsearch==null || x.Vendorname.ToLower().Contains(vendorsearch.ToLower()))
+
+                                                     && x.Isdeleted == new BitArray(new bool[1] { false })).Select(x => new PartnerModel
             {
                 BusinessName = x.Vendorname,
                 Profession = _db.Healthprofessionaltypes.Where(y => y.Healthprofessionalid == x.Profession).FirstOrDefault().Professionname,
@@ -583,6 +587,7 @@ public AdminDashboard CreateProviderAdminDataGet()
                 businessContact = x.Businesscontact,
                 faxnumber = x.Faxnumber,
                 businessId = x.Vendorid,
+                
             }).ToList();
             AdminDashboard model = new AdminDashboard();
             model.PartnerModel = data;
@@ -599,11 +604,12 @@ public AdminDashboard CreateProviderAdminDataGet()
         }
         public void AddBusinessDataPost(AdminDashboard model)
         {
+            //string ipAddress = GetUserIpAddress(HttpContext httpContext);
             Healthprofessional healthprofessional = new Healthprofessional();
             healthprofessional.Vendorname = model.AddBusinessModel.BusinessName;
             healthprofessional.Profession = model.AddBusinessModel.ProfessionID;
             healthprofessional.Faxnumber = model.AddBusinessModel.FAXNumber;
-            healthprofessional.Address = model.AddBusinessModel.street + " " + model.AddBusinessModel.city + " " + model.AddBusinessModel.state + " " + model.AddBusinessModel.zip;
+            healthprofessional.Address = model.AddBusinessModel.street;
             healthprofessional.City = model.AddBusinessModel.city;
             healthprofessional.State = model.AddBusinessModel.state;
             healthprofessional.Zip = model.AddBusinessModel.zip;
@@ -613,11 +619,25 @@ public AdminDashboard CreateProviderAdminDataGet()
             healthprofessional.Businesscontact = model.AddBusinessModel.BusinessContanct;
             healthprofessional.Regionid = _db.Regions.Where(x => x.Name == model.AddBusinessModel.city).FirstOrDefault().Regionid;
             healthprofessional.Isdeleted = new BitArray(new bool[1] { false });
+            //healthprofessional.Ip=ipAddress;
             _db.Add(healthprofessional);
             _db.SaveChanges();
         }
+       
+     private string GetUserIpAddress(HttpContext httpContext)
+    {
+        string ipAddress = httpContext.Connection.RemoteIpAddress.ToString();
 
-        public AdminDashboard EditBusinessDataGet(int VendorID)
+        if (string.IsNullOrEmpty(ipAddress))
+        {
+            ipAddress = httpContext.Request.Headers["X-Forwarded-For"];
+        }
+
+        return ipAddress;
+    }
+
+
+    public AdminDashboard EditBusinessDataGet(int VendorID)
         {
             AdminDashboard model = new AdminDashboard();
 
@@ -634,6 +654,8 @@ public AdminDashboard CreateProviderAdminDataGet()
                 zip = x.Zip,
                 ProfessionID = x.Profession,
                 vendorID = x.Vendorid,
+                street=x.Address,
+                ModifiedDate=DateTime.Now,
 
             }).FirstOrDefault();
             model.AddBusinessModel = data;

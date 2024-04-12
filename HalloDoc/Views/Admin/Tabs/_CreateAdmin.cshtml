@@ -136,7 +136,7 @@
 
                 <div class="col-md-6 col-12">
                     <div class="form-floating mb-3">
-                        <select class="form-select" id="Physicianstate" style="height: 58px;" asp-for="myProfile.State">
+                        <select class="form-select" id="Physicianstate" style="height: 58px;" asp-for="myProfile.regionid">
                             <option value="">All Regions</option>
                             @foreach (var i in Model.Regions)
                             {
@@ -196,7 +196,7 @@
                          selectedRegions.push($(this).val());
                      }
                  });
-                 data.append(selectedRegions);
+        data.append('RegionCheckbox[]',selectedRegions);
         $.ajax({
             url: "/Admin/CreateAdminDataPost",
             type: "Post",

@@ -1,9 +1,7 @@
 ﻿@using DataAccess.ViewModel
 @model AdminDashboard
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <div class="modal-header bg-info ">
     <h5 class="modal-title text-white" id="exampleModalLabel"> Assign Request  </h5>
@@ -13,73 +11,73 @@
     <div class="mb-3 text-secondary">
         To assign this request, search and select  another Physician.
     </div>
-    <form method="post" id="physicianForm" action='@Url.Action("AssignReq", "Admin",new {requestid=Model.requestid})'>
-    @* <div class="dropdown my-3  ">
-            <select class="form-select" id="regionName"  aria-label="Floating label select example" required>
-                
-            @if (Model.Regions != null)
-            {
-                    <option  selected style="display:none">Narrow Down Region Name  <span class="text-danger"> *</span></option>
-                   
-                   
-                @foreach (var item in Model.Regions)
-                {
-                        <span class="text-danger"> *</span>
-                    <option value="@item.Regionid">@item.Name</option>
+    <form id="AssignRequestform">
+        @* <div class="dropdown my-3  ">
+        <select class="form-select" id="regionName"  aria-label="Floating label select example" required>
 
-                }
-            }
+        @if (Model.Regions != null)
+        {
+        <option  selected style="display:none">Narrow Down Region Name  <span class="text-danger"> *</span></option>
+
+
+        @foreach (var item in Model.Regions)
+        {
+        <span class="text-danger"> *</span>
+        <option value="@item.Regionid">@item.Name</option>
+
+        }
+        }
         </select>
-          
-    </div> *@
+
+        </div> *@
         <div class="dropdown my-3">
             <div class="form-floating">
-            <select class="form-select" id="regionName" asp-for="@Model.assignreq.RegionItems" aria-label="Floating label select example" required>
-                <option value="" selected disabled >Narrow Down Region Name <span class="text-danger">*</span></option>
-                @if (Model.Regions != null)
-                {
-                    foreach (var item in Model.Regions)
+                <select class="form-select" id="regionName" asp-for="@Model.assignreq.RegionItems" aria-label="Floating label select example" required>
+                    <option value="" selected disabled>Narrow Down Region Name <span class="text-danger">*</span></option>
+                    @if (Model.Regions != null)
                     {
-                        <option value="@item.Regionid">@item.Name</option>
+                        foreach (var item in Model.Regions)
+                        {
+                            <option value="@item.Regionid">@item.Name</option>
+                        }
                     }
-                }
-            </select>
-            <label for="floatingSelect">Narrow Down Region Name</label>
+                </select>
+                <label for="floatingSelect">Narrow Down Region Name</label>
             </div>
             @Html.ValidationMessageFor(Model => Model.assignreq.RegionItems, "", new { @class = "text-danger" })
-           @* <span class="invalid-feedback">
-                Please choose a Region.
+            @* <span class="invalid-feedback">
+            Please choose a Region.
             </span>*@
         </div>
-    <div class="dropdown my-3  ">
-        <div class="form-floating">
-        <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>
+        <div class="dropdown my-3  ">
+            <div class="form-floating">
+                <select class="form-select" id="Physician" asp-for="@Model.assignreq.physicianname" aria-label="Floating label select example" required>
 
-                <option value="" disabled selected >Select Physician  <span class="text-danger"> *</span></option>
-            
-        </select>
-            <label for="floatingSelect">Select Physician </label>
+                    <option value="" disabled selected>Select Physician  <span class="text-danger"> *</span></option>
+
+                </select>
+                <label for="floatingSelect">Select Physician </label>
             </div>
             @Html.ValidationMessageFor(Model=>Model.assignreq.physicianname,"",new{@class="text-danger"})
-    </div>
-
-    <div class="form-floating my-4">
-        <textarea class="form-control" asp-for="assignreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
+        </div>
+        <input type="hidden" name="requestid" value="@Model.requestid" />
+        <div class="form-floating my-4">
+            <textarea class="form-control" asp-for="assignreq.Description" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" required></textarea>
 
             <label for="floatingTextarea2" class="text-secondary" id="label-floating">Description  <span class="text-danger"> *</span></label>
-           
+
             @Html.ValidationMessageFor(Model=>Model.assignreq.Description,"",new{@class="text-danger"})
-    </div>
-    <div class="d-flex justify-content-end">
-        <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 " >Submit</button>
-        <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
-    </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
+            <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+        </div>
     </form>
 </div>
 <script>
-    
+
     $(document).on('change', '#regionName', function () {
-        var selectedvalue = $(this).val();  
+        var selectedvalue = $(this).val();
 
         $.ajax({
             url: '@Url.Action("GetDropDown", "Admin")',
@@ -97,7 +95,7 @@
                     // Clear the current options and add a "No physician available" option
                     $('#Physician').empty();
                     $('#Physician').append('<option disabled selected style="display:none">No physician available</option>');
-                  
+
                 } else {
                     var physician = '';
                     $.each(data, function (index, physicians) {
@@ -105,13 +103,39 @@
                     });
                     $('#Physician').html(physician);
                 }
-                
+
             },
             error: function () {
                 console.error('Error fetching partial view.');
             }
         });
 
+
+    });
+</script>
+<script>
+    $('#AssignRequestform').submit(function (event) {
+        event.preventDefault();
+        console.log("Fweaf");
+        
+        var data = new FormData(this);
+        debugger;
+        $.ajax({
+            url: '/Admin/AssignReq',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                //$('#block-history-partial-table').html(data);
+                console.log("sucess");
+
+                $('#Dashboard').click();
+            },
+            error: function () {
+                console.error("Error occurred while fetching data.");
+            }
+        });
 
     });
 </script>

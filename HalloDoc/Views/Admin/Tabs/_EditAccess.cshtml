@@ -80,8 +80,8 @@
             </div>
             <div class="mt-4 d-flex justify-content-end mb-3 ">
                 <button type="button" class="btn btn-info btn-lg me-2 info-button d-none" id="savebtn">Save</button>
-                @*<button type="button" class="btn btn-info btn-lg me-2 info-button d-block" id="editbtn" onclick="Editbtn()">Edit</button>*@
-                <button type="button" class="btn btn-outline-info btn-lg  button-info tablink" id="Access">Cancel</button>
+                <button type="button" class="btn btn-info btn-lg me-2 info-button d-block" id="editbtn" onclick="Editbtn()">Edit</button>
+                <button type="reset" class="btn btn-outline-info btn-lg  button-info">Cancel</button>
             </div>
         </form>
     </div>
@@ -141,7 +141,7 @@
                 // $('#rolename').val('');
                 // $('.check_menu:checked').prop('checked', false);
                 // form.classlist.remove('was-validated');
-                toastr.success("Role Edited successfully!");
+                
             },
             error: function () {
                 toastr.error("Error while Create Role");

@@ -344,18 +344,28 @@ namespace DataAccess.ViewModel
     /**partner**/
     public class AddBusiness
     {
+        [Required(ErrorMessage = "The field is required")]
         public string? BusinessName { get; set; }
         public string? FAXNumber { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public int? ProfessionID { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? PHoneNumber { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? Email { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? BusinessContanct { get; set; }
         public string? street { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? city { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? state { get; set; }
+
         public int? regionID { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? zip { get; set; }
         public int? vendorID { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
     }
     public class PartnerModel

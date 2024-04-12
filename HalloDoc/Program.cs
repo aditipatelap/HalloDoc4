@@ -19,6 +19,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ILoginInterface, LoginService>();
 builder.Services.AddScoped<IAdminDash, AdminDashService>();
 builder.Services.AddScoped<IProviderService, ProviderService>();
+builder.Services.AddScoped<IProviderInterface, ProviderDataService>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
 builder.Services.AddSession(options =>
 {

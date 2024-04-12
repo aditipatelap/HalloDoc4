@@ -94,7 +94,7 @@
             <button type="button" id="edit1" class="btn btn-info  info-button text-white" onclick="inputClass1()">Edit</button>
             <div id="btnz1" style="display: none">
                 <button type="submit" id="SaveBtn" class="btn btn-info me-2  info-button text-white">Save</button>
-                <button type="reset" id="cancel" class="btn btn-info button-info text-white tablink" id="Partners" onclick="disableInputClass1()">Cancel</button>
+                <button type="reset"  class="btn btn-info button-info text-white tablink" id="UpdateBusiness" onclick="disableInputClass1()">Cancel</button>
             </div>
         </div>
         <input asp-for="@Model.AddBusinessModel.vendorID" hidden />
@@ -116,15 +116,50 @@
             contentType: false,
             success: function (result) {
                 $('#TabContent').html(result);
-                toastr.success("Edit Vendor successfully!");
+                
             },
             error: function (xhr, status, error) {
-                toastr.error("Please provide valid Data!");
+                
             }
         });
     });
     $("#City").blur(VerifyCity);
+    function VerifyCity() {
+        var city = $(this).val();
+        $.ajax({
+            url: "/Admin/VerifyAddress",
+            type: 'get',
+            data: { city: city },
+            success: function (data) {
+                if (data.success) {
+                    toastr.success(data.message);
+                }
+                else {
+                    toastr.error(data.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+    }
 
+    function cancelupdatebusiness() {
+
+        $("#BlockData")[0].reset();
+
+        $.ajax({
+            url: "/Admin/BlockedHistoryPartialTable",
+            type: 'POST',
+            success: function (result) {
+                $('#block-history-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
+    }
 </script>
 
 <script>

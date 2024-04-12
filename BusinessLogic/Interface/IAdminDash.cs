@@ -23,7 +23,7 @@ namespace BusinessLogic.Interface
         public AdminDashboard AssignRequest(int requestid);
 
         public AdminDashboard CancelCase(int requestid, string patientname);
-        public void SubmitAssignReq (AdminDashboard model, int requestid);
+        public void SubmitAssignReq (AdminDashboard model);
         public void submitCancelCase(AdminDashboard model, int requestid);
         public AdminDashboard BlockCase(int reqid, string patientname);
         public void SubmitBlockCase(AdminDashboard model, int reqid);

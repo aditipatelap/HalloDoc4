@@ -264,12 +264,12 @@ else
     </div>
 }
 
-<div id="my-pagination" class="d-flex justify-content-between">
+<div id="my-pagination" class="d-flex justify-content-between fixed-bottom">
     @if (Model.CurrentPage <= Model.TotalPages)
     {
         @if (Model.TotalPages != 0)
         {
-            <div class="page-item disabled m-4 p-3 border-0 ">
+            <div class="page-item disabled m-4 border-0 ">
                 <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
             </div>
         }

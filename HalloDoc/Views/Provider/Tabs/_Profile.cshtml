@@ -1,0 +1,282 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+
+@if (Model.ProviderInfo != null)
+{
+    <div class=" mb-5">
+        <div class="container-fluid d-flex justify-content-between mt-4" style="max-width:1000px">
+            <h4>
+                My Profile
+            </h4>
+            <div class="d-inline-flex">
+                <a class="btn btn-outline-info m-2 text-decoration-none float-end ProviderPartialViews" data-value="ProviderInformation">
+                    Back
+                </a>
+            </div>
+        </div>
+        <div class="container-fluid d-flex justify-content-center mt-4" style="max-width:1000px">
+            <div class="viewCaseForm form-floating shadow patient-request-form p-3">
+
+                <form class="form">
+                    <h5>Account Information</h5>
+                    <div class="row g-2 m-1">
+                        <div class="col-md">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" asp-for="ProviderInfo.UserName" id="userName" disabled>
+                                <label for="">User Name</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md">
+                            <div class="form-floating">
+                                <input type="text" class="form-control " asp-for="ProviderInfo.Password" id="password">
+                                <label for="floatingSelectGrid">Password</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-info float-end m-1">Reset Password</button><br />
+                    <input asp-for="ProviderInfo.formid" value="1" hidden />
+                    <input asp-for="ProviderInfo.PhysicianId" value="@Model.ProviderInfo.PhysicianId" hidden />
+                    <input asp-for="ProviderInfo.viewid" value="PhysicianAccountEdit" hidden />
+                </form>
+                <h5>Physician Information</h5>
+                <fieldset id="fieldset2" disabled>
+
+                    <div class="row g-2 m-1">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" asp-for="ProviderInfo.FirstName" disabled>
+                                <label for="">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" asp-for="ProviderInfo.LastName" disabled />
+                                <label for="floatingSelectGrid">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" asp-for="ProviderInfo.Email" disabled>
+                                <label for="">Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating phone-div w-100 h-100">
+                                <input type="tel" class="patientPhone form-control w-100 h-100" asp-for="ProviderInfo.Phone" disabled>
+                                <label for="">Phone</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" asp-for="ProviderInfo.MedicalLicenseNumber" disabled>
+                                <label for="">Medical License Number</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" asp-for="ProviderInfo.NPINumber" disabled>
+                                <label for="">NPI Number</label>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex justify-content-start flex-wrap mt-4">
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <h5>Mailing & Billing Information</h5>
+                <fieldset disabled id="fieldset3">
+
+                    <div class="row g-2 m-1">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Address1">
+                                <label for="">Address1</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Address2">
+                                <label for="floatingSelectGrid">Address2</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.City">
+                                <label for="">City</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-floating">
+                            <select class="form-select regionDropDown dark-background-div" id="floatingSelect" aria-label="Floating label select example" asp-for="ProviderInfo.regionId">
+                                <option selected disabled>Select Region</option>
+                                @foreach (var item in Model.regions)
+                                {
+                                    @if (Model.ProviderInfo.regionId == item.Regionid)
+                                    {
+                                        <option value="@item.Regionid">@item.Name</option>
+                                    }
+
+                                    {
+                                        <option value="@item.Regionid">@item.Name</option>
+                                    }
+                                }
+                            </select>
+                            <label for="floatingSelect">All Regions</label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Zip">
+                                <label for="">Zip</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating phone-div w-100 h-100 ">
+                                <input type="tel" class="patientPhone form-control w-100 h-100" placeholder="" asp-for="ProviderInfo.PhoneNumber">
+                                <label for="">Phone</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <div class="my-3"></div>
+                <h5>Provider Profile</h5>
+                <fieldset id="fieldset4" disabled>
+
+                    <div class="row g-2 m-1">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.BusinessName">
+                                <label for="">Business name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.BusinessWebsite">
+                                <label for="floatingSelectGrid">Business Website</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-group m-1 mb-3">
+                                <input id="actualFileBtn1" class="form-control" asp-for="ProviderInfo.Photo" hidden>
+                                <span id="fileChoosen1" class="form-control">Select Photo</span>
+                                <label class="input-group-text btn btn-info" id="uploadFileLabel1" for="actualFileBtn1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                        <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+                                    </svg>
+                                    Upload
+                                </label>
+                            </div>
+                            <br />
+                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfo.PhysicianId/@Model.ProviderInfo.Photo1" alt="Photo" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group m-1 mb-3">
+                                <input type="file" id="actualFileBtn2" class="form-control" asp-for="ProviderInfo.Signature" hidden>
+                                <span id="fileChoosen2" class="form-control">Select Signature</span>
+                                <label class="input-group-text btn btn-info" id="uploadFileLabel2" for="actualFileBtn2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z" />
+                                        <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z" />
+                                    </svg>
+                                    Upload
+                                </label>
+                            </div>
+                            <br />
+                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfo.PhysicianId/@Model.ProviderInfo.Signature1" alt="Signature" />
+                        </div>
+                        <div class="col-md-1">
+                            <div class="input-group m-1 mb-3">
+
+                                <button type="button" class="btn btn-info" style="height:fit-content">Create</button>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col sm-12 col-12 ">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Admin Notes" asp-for="ProviderInfo.AdminNote"></textarea>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <div class="my-4"></div>
+
+                <div class="border-bottom border-5"></div>
+                <hr/>
+                <div class="row my-1">
+                    <div class="wrapper d-flex">
+                        <div class="col-1 m-1">
+                            <input type="checkbox" style="height:20px;width:20px" class="btn-outline-info" />
+                        </div>
+                        <div class="col-4">
+                            <span>Provider Agreement</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-info">View</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-1">
+                    <div class="wrapper d-flex">
+                        <div class="col-1 m-1">
+                            <input type="checkbox" style="height:20px;width:20px" class="btn-outline-info" />
+                        </div>
+                        <div class="col-4">
+                            <span>HIPAA Compliance</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-info">View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous">
+</script>
+<script>
+
+    // file upload
+    const actualBtn1 = document.getElementById('actualFileBtn1');
+
+    const fileChosen1 = document.getElementById('fileChoosen1');
+
+    actualBtn1.addEventListener('change', function () {
+        fileChosen1.textContent = this.files[0].name
+    })
+    const actualBtn2 = document.getElementById('actualFileBtn2');
+
+    const fileChosen2 = document.getElementById('fileChoosen2');
+
+    actualBtn2.addEventListener('change', function () {
+        fileChosen2.textContent = this.files[0].name
+    })
+</script>
+<script>
+    $('.ProviderPartialViews').click(HeaderPartialView);
+</script>
+<script>
+    $('.form').submit(function (e) {
+        e.preventDefault();
+        debugger;
+        var data = new FormData(this);
+
+        $.ajax({
+            url: '@Url.Action("EditPhysicianAccount", "Admin")',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $(".tab-content").html(data);
+            },
+            error: function () {
+
+                console.error("Error occurred while fetching data.");
+            }
+        });
+    });
+</script>

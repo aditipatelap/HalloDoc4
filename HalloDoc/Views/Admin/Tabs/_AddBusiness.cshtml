@@ -1,5 +1,11 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class="container mt-3">
     <div class="d-flex justify-content-between mt-3">
@@ -16,20 +22,24 @@
         <div class="row g-2 mb-3 ">
             <div class="col-md">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="businessName" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.BusinessName" />
-                    <label for="businessName" class="floatingLabel text-secondary">Business Name</label>
+                    <input type="text" class="form-control" id="businessName" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.BusinessName" required>
+                    <label for="businessName" class="floatingLabel text-secondary">Business Name<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.BusinessName, "", new { @class = "text-danger" })
+
                 </div>
             </div>
             <div class="col-md">
                 <div class="form-floating">
-                    <select class="form-select" id="role" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.ProfessionID">
+                    <select class="form-select" id="role" placeholder="Select A Profession" asp-for="@Model.AddBusinessModel.ProfessionID" required>
                         <option value="0" class="text-secondary">Select A Profession</option>
                         @foreach (var item in Model.healthprofessionaltypes)
                         {
                             <option value="@item.Healthprofessionalid">@item.Professionname</option>
                         }
                     </select>
-                    <label for="role" class="floatingLabel text-secondary">Select A Profession</label>
+                    <label for="role" class="floatingLabel text-secondary">Select A Profession<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.ProfessionID, "", new { @class = "text-danger" })
+
                 </div>
             </div>
 
@@ -43,22 +53,28 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="tel" class="form-control" id="PhoneNumber" placeholder="Phone Number" asp-for="@Model.AddBusinessModel.PHoneNumber">
-                    <label for="PhoneNumber" class="floatingLabel text-secondary">Phone Number</label>
+                    <input type="tel" class="form-control" id="PhoneNumber" placeholder="Phone Number" asp-for="@Model.AddBusinessModel.PHoneNumber" required>
+                    <label for="PhoneNumber" class="floatingLabel text-secondary">Phone Number<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.PHoneNumber, "", new { @class = "text-danger" })
+
                 </div>
             </div>
         </div>
         <div class="row g-2 mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="Email" placeholder="Email" asp-for="@Model.AddBusinessModel.Email">
-                    <label for="Email" class="floatingLabel text-secondary">Email</label>
+                    <input type="email" class="form-control" id="Email" placeholder="Email" asp-for="@Model.AddBusinessModel.Email" required>
+                    <label for="Email" class="floatingLabel text-secondary">Email<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.Email, "", new { @class = "text-danger" })
+
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="tel" class="form-control" id="BusinessContact" placeholder="Business Contact" asp-for="@Model.AddBusinessModel.BusinessContanct">
-                    <label for="BusinessContact" class="floatingLabel text-secondary">Business Contact</label>
+                    <input type="tel" class="form-control" id="BusinessContact" placeholder="Business Contact" asp-for="@Model.AddBusinessModel.BusinessContanct" required>
+                    <label for="BusinessContact" class="floatingLabel text-secondary">Business Contact<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.BusinessContanct, "", new { @class = "text-danger" })
+
                 </div>
             </div>
         </div>
@@ -71,22 +87,28 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="City" placeholder="City" asp-for="@Model.AddBusinessModel.city">
-                    <label for="City" class="floatingLabel text-secondary">City</label>
+                    <input type="text" class="form-control" id="City" placeholder="City" asp-for="@Model.AddBusinessModel.city" required>
+                    <label for="City" class="floatingLabel text-secondary">City<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.city, "", new { @class = "text-danger" })
+
                 </div>
             </div>
         </div>
         <div class="row g-2 mb-3">
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="text" class="form-control" id="State" placeholder="State" asp-for="@Model.AddBusinessModel.state">
-                    <label for="State" class="floatingLabel text-secondary">State</label>
+                    <input type="text" class="form-control" id="State" placeholder="State" asp-for="@Model.AddBusinessModel.state" required>
+                    <label for="State" class="floatingLabel text-secondary">State<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.state, "", new { @class = "text-danger" })
+
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-floating" id="Zip">
-                    <input type="text" class="form-control" placeholder="Zip/Postal" asp-for="@Model.AddBusinessModel.zip">
-                    <label for="Zip" class="floatingLabel text-secondary">Zip/Postal</label>
+                    <input type="text" class="form-control" placeholder="Zip/Postal" asp-for="@Model.AddBusinessModel.zip" required>
+                    <label for="Zip" class="floatingLabel text-secondary">Zip/Postal<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.zip, "", new { @class = "text-danger" })
+
                 </div>
             </div>
         </div>
@@ -98,7 +120,7 @@
     //$(".tablink").click(TabLink);
 
     $('#AddBusinessForm').on('submit', function (e) {
-        debugger;
+       
         e.preventDefault();
         var data = new FormData(this);
         $.ajax({

@@ -1,0 +1,284 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+@inject IHttpContextAccessor _httpContextAccessor;
+
+@Html.ValidationSummary(true)
+<style>
+    a {
+        cursor: pointer;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: deepskyblue;
+        color: white;
+    }
+</style>
+<nav class="position-sticky">
+    <div class="d-flex justify-content-between">
+        <a class="navbar-brand" href="#">
+            <img src="/images/Login_Page_Title.png" id="nav-icon" alt="">
+        </a>
+
+        <div class="d-flex justify-content-end m-3">
+            <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
+            <h4 class=" ms-2 d-lg-block d-none"> @_httpContextAccessor.HttpContext.Session.GetString("Username")</h4>
+            <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
+
+            <div>
+                <button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
+                    <i class="fa fa-moon i-info"></i>
+                </button>
+            </div>
+        </div>  
+    </div>
+
+</nav>
+<hr>
+<div class="d-none d-md-block navbar-expand-sm navbar-light shadow">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink  active" aria-current="page" id="Dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="Invoicing">Invoicing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="MySchedule">My Schedule </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>                      
+                   
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<div id="TabContent">
+</div>
+@*<footer class="bg-dark text-white mt-2 fixed-bottom" id="footerMain" style="border:1px solid white">
+    <div class=" d-flex justify-content-end p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <a class="text-white text-decoration-none">Term of Condition</a>&nbsp|&nbsp
+        <a class="text-white text-decoration-none">Privacy Policy</a>
+    </div>
+</footer>*@
+<script>
+    var tabidglobal;
+    var statusidglobal = 1;
+    var btnnameglobal;
+    var ans = true;
+    var dashboardclick = 1;
+    var dropdown;
+    var reqtype;
+    document.addEventListener("DOMContentLoaded", function () {
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach(function (navLink) {
+            navLinks[0].style.borderBottom = "2px solid deepskyblue";
+            navLinks[0].style.color = "deepskyblue";
+            navLink.addEventListener("click", function () {
+                // Remove active class from all nav links
+                navLinks.forEach(function (link) {
+                    link.classList.remove("active");
+                    link.style.color = ""; // Reset text color
+                    link.style.borderBottom = "none"; // Reset bottom border
+                });
+
+                // Add active class to the clicked nav link
+                this.classList.add("active");
+
+                // Add bottom border and change text color to "deepskyblue"
+                this.style.borderBottom = "2px solid deepskyblue";
+                this.style.color = "deepskyblue";
+            });
+        });
+        navLinks[0].classList.add("active");
+
+        // Add bottom border and change text color to "deepskyblue"
+        navLinks[0].style.borderBottom = "2px solid deepskyblue";
+        navLinks[0].style.color = "deepskyblue";
+    });
+ $(document).ready(function () {
+
+        $("#Dashboard")[0].click();
+        $.ajax({
+            url: '/Provider/GetTabs',
+        
+
+            method: 'GET',
+            success: function (data) {
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#TabContent").html(data);
+
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    });
+    function TabLoad() {
+        var TabId = $(this).attr("id");
+       
+
+        if ($(this).hasClass('tablink')) {
+            tabidglobal = TabId;
+
+        }
+        var payload = {
+
+            "tabid": tabidglobal,
+           
+
+        };
+
+        $.ajax({
+            url: '/Provider/GetTabs',
+            data: payload,
+
+            method: 'GET',
+            success: function (data) {
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#TabContent").html(data);
+               
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    }
+    function PartialDisplay() {
+
+        /*******traingle******* */
+        if ($(this).hasClass('partialbtn')) {
+            $('.partialbtn').removeClass('active');
+            $(this).addClass('active');
+            $('.triangle-down').hide();
+            $(this).parent().find('.triangle-down').show();
+        }
+
+
+        /********new pending nd all*****/
+
+
+        /******search and all */
+        var dropdownval = $('.filteradmin').val();
+        var btnName = $(this).data("btn");
+        var statusid = $(this).data("id");
+        var reqtypestatus = $(this).data('btn1');
+        var searchValue = $('#searchInput').val().toLowerCase();
+        var currentpage = $(this).data('page');
+        if (typeof reqtype === 'undefined') {
+            reqtype = 0;
+        }
+        if (!searchValue) {
+            searchValue = null;
+        }
+        if (typeof currentpage === 'undefined') {
+            currentpage = 1;
+        }
+        if (!dropdownval) {
+            dropdownval = null;
+        }
+
+
+        if ($(this).hasClass('partialbtn')) {
+            btnnameglobal = btnName;
+
+            $('.filteradmin').val('');
+            $(".searchrequest").removeClass("border");
+            $(".allbtn").addClass("border");
+            $('#searchInput').val('');
+            dropdown = null;
+            searchValue = null;
+            reqtype = 0;
+
+
+        }
+        if ($(this).hasClass('partialbtn')) {
+
+            statusidglobal = statusid;
+            $("#hidden").val(statusidglobal);
+
+        }
+        if ($(this).hasClass('filteradmin')) {
+            dropdown = dropdownval;
+
+
+        }
+        if ($(this).hasClass('searchrequest')) {
+            reqtype = reqtypestatus;
+            $(".searchrequest").removeClass("border");
+            $(this).addClass("border");
+
+        }
+
+
+
+        console.log("Button clicked: " + btnnameglobal);
+
+
+        console.log("Button clicked: " + statusidglobal);
+        console.log(searchValue);
+        console.log(reqtype);
+        console.log(dropdown);
+
+        var physicianid;
+        // Make an AJAX request to get the partial view content
+
+        $.ajax({
+            url: '@Url.Action("GetPartialView", "Provider")',
+            //url: '/Admin/GetPartialView?btn=' + btnName,
+            method: 'GET',
+       
+            data: { statusid: statusidglobal, reqtype: reqtype, currentpage: currentpage,searchValue: searchValue,  dropdown: dropdown, physicianid: physicianid },
+            success: function (data) {
+                console.log("AJAX success");
+                // Replace the content of the btnContent div with the retrieved partial view
+                $("#btnContent").html(data);
+                //$(document).off("click", ".partialbtn", PartialDisplay);
+
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+        console.log("fewa");
+        console.log(statusidglobal);
+        if (statusidglobal == 1) {
+            var tabId = "(NEW)";
+            $('#status').css('font-weight', 'bold').css('color', 'darkblue');
+        }
+        else if (statusidglobal == 2) {
+            var tabId = "(PENDING)";
+            $('#status').css('font-weight', 'bold').css('color', 'deepskyblue');
+        }
+        else if (statusidglobal == 3) {
+            var tabId = "(ACTIVE)";
+            $('#status').css('font-weight', 'bold').css('color', 'green');
+        }
+        else if (statusidglobal == 6) {
+            var tabId = "(CONCLUDE)";
+            $('#status').css('font-weight', 'bold').css('color', '#912261');
+
+        }
+      
+        $('#status').text(tabId);
+    }
+
+    $(document).on('click', '.partialbtn', PartialDisplay);
+    //$("[data-btn='NewPartial'][data-id='1']").click();
+</script>
+
+
+
+
+

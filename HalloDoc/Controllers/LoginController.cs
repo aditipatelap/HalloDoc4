@@ -42,6 +42,7 @@ namespace HalloDoc.Controllers
             }
             else
             {
+                
                 var jwtToken = _JwtService.GenerateToken(user);
                
                 Response.Cookies.Append("jwt", jwtToken);

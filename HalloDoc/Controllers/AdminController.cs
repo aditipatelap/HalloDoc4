@@ -56,6 +56,7 @@ namespace HalloDoc.Controllers
         {
             return View(model);
         }
+        [HttpPost]
 
         public IActionResult GetTabs(AdminDashboard model, int statusid, string btnname, string patientname,
             string confirmationno, string email, string aspnetuserid)
@@ -345,11 +346,13 @@ namespace HalloDoc.Controllers
                 return excelBytes;
             }
         }
-        public IActionResult AssignReq(AdminDashboard model, int requestid)
+        [HttpPost]
+        public IActionResult AssignReq(AdminDashboard model)
         {
-            _AdminDash.SubmitAssignReq(model, requestid);
+            _AdminDash.SubmitAssignReq(model);
             _notyf.Custom("Case Assign Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return RedirectToAction("Index", "Admin");
+            return Ok(new { message = "Data saved successfully." });
+
         }
 
         public IActionResult CancelCaseReq(AdminDashboard model, int requestid)
@@ -598,7 +601,7 @@ namespace HalloDoc.Controllers
         public IActionResult CreateRolesPost(short AccountTypeId, string RoleName, List<int> MenuIds)
         {
             _providerService.CreateRolePost(AccountTypeId, RoleName, MenuIds);
-            _notyf.Information("Role Created Successfully ...");
+            _notyf.Success("Role Created Successfully");
             AdminDashboard admin = new AdminDashboard();
             admin.tabid = "CreateRole";
             return GetTabs(admin, default, default, default, default, default, default);
@@ -608,7 +611,7 @@ namespace HalloDoc.Controllers
         {
             _providerService.EditRolePost(rolename, MenuIds);
 
-            _notyf.Information("Role Updated Successfully ...");
+            _notyf.Success("Role Updated Successfully");
             AdminDashboard admin = new AdminDashboard();
             admin.tabid = "Access";
             return GetTabs(admin, default, default, default, default, default, default);
@@ -616,7 +619,7 @@ namespace HalloDoc.Controllers
         public IActionResult DeleteRolePost(int roleid)
         {
             _providerService.DeleteRolePost(roleid);
-            _notyf.Information("Role Deleted Successfully ...");
+            _notyf.Success("Role Deleted Successfully");
             AdminDashboard admin = new AdminDashboard();
             admin.tabid = "Access";
             return GetTabs(admin, default, default, default, default, default, default);
@@ -718,16 +721,16 @@ namespace HalloDoc.Controllers
         //Partner
 
         [HttpGet]
-        public IActionResult GetPartnerTable(int ProfessionId)
+        public IActionResult GetPartnerTable(int ProfessionId,string vendorsearch)
         {
-            var data = _providerService.PartnerDataGet(ProfessionId);
+            var data = _providerService.PartnerDataGet(ProfessionId, vendorsearch);
             return PartialView("Tabs/_PartnersTable", data);
         }
         [HttpPost]
         public IActionResult AddBusinessDataPost(AdminDashboard data)
         {
             _providerService.AddBusinessDataPost(data);
-            _notyf.Information("INfo Updated Successfully  ...");
+            _notyf.Success("Vendor Created Successfully");
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "Partners";
             return GetTabs(adminDashboard, default, default, default, default, default, default);
@@ -747,7 +750,7 @@ namespace HalloDoc.Controllers
         public IActionResult DeleteVendorDataPost(int VendorID)
         {
             _providerService.DeleteBusinessMethod(VendorID);
-            _notyf.Information("INfo Updated Successfully  ...");
+            _notyf.Success("Vendor Deleted Successfully");
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "Partners";
             return GetTabs(adminDashboard, default, default, default, default, default, default);

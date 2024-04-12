@@ -1,0 +1,170 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+<style>
+    input[type="search"] {
+        border: none;
+        outline: none;
+    }
+</style>
+<div class="row gx-4 m-4 p-3">
+    <div class="col-lg-2 ">
+        <button type="button" class="w-100 btn partialbtn newbtn text-start status" data-btn="NewPartial" data-id="1">
+
+            <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
+            <p class="fw-bold fs-3">@*@ViewBag.Request[0]*@ @Model.newcount</p>
+
+        </button>
+        <div class=" d-flex justify-content-center">
+            <div class="darkbluetri triangle-down"></div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <button type="button" class="w-100 btn  partialbtn  pendingbtn text-start status " data-btn="PendingPartial" data-id="2">
+            <i class="fa-solid fa-user"></i> <span class="fw-bolder">Pending</span>
+            <p class="fw-bold fs-3"> @Model.pendingcount</p>
+
+        </button>
+        <div class=" d-flex justify-content-center">
+            <div class="lightbluetri triangle-down"></div>
+        </div>
+    </div>
+    <div class="col-lg-2 ">
+        <button type="button" class=" w-100 btn partialbtn activebtn text-start border border-success status " data-btn="ActivePartial" data-id="3">
+            <i class="far fa-check-circle"></i> <span class="fw-bolder">ACTIVE</span>
+            <p class="fw-bold fs-3">@Model.activecount</p>
+
+        </button>
+        <div class=" d-flex justify-content-center">
+            <div class="greentri triangle-down"></div>
+        </div>
+    </div>
+    <div class="col-lg-2 ">
+        <button type="button" class="w-100 btn partialbtn concludebtn text-start status" data-btn="ConcludePartial" data-id="6">
+            <i class="bi bi-arrow-clockwise"></i> <span class="fw-bolder">CONCLUDE</span>
+            <p class="fw-bold fs-3">@Model.conclude</p>
+
+        </button>
+        <div class=" d-flex justify-content-center">
+            <div class="pinktri triangle-down"></div>
+        </div>
+    </div>
+    
+   
+</div>
+<div class="d-flex d-flex justify-content-between m-3 p-3 ">
+    <div>
+        <span class="fw-bolder fs-4 status ">Patients</span>
+        <span id="status"></span>
+
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" id="SendLink" class="btn btn-info text-white showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv"><i class="bi bi-send"></i><span class="ms-2">Send Link</span></button>
+        <button type="button" id="CreateNewReq" class="btn btn-info text-white tablink"><i class="bi bi-journal-text"></i><span class="ms-2">Create Requests</span></button>
+       
+    </div>
+</div>
+
+
+
+<div class="d-flex justify-content-between m-3 p-3 bg-white">
+    <div class="d-flex">
+
+        <div class="d-flex ms-3 border rounded w-100">
+            <i class="bi bi-search text-secondary bg-transparent m-2"></i>
+            <input class="form-control border-0 p-0  shadow-none" id="searchInput" type="text" placeholder="Search Patients" aria-label="Search">
+        </div>
+
+        <select id="selectId" class="form-select form-control ms-3 filteradmin " aria-label="Default select example">
+            <option value="" selected>All Regions</option>
+            <option value="District of Columbia">District of Columbia</option>
+            <option value="MaryLand">MaryLand</option>
+            <option value="New York">New York</option>
+            <option value="Virginia">Virginia</option>
+
+        </select>
+    </div>
+    <div>
+        <button type="button" class="btn border shadow-none searchrequest allbtn" data-btn1="0">All</button>
+        <button type="button" class=" btn  shadow-none searchrequest " data-btn1="1">  <span class=" ms-2 patientdot  " id="dot"></span> <span>Patient</span></button>
+        <button class=" btn  searchrequest shadow-none " data-btn1="2">  <span class="ms-2 familydot" id="dot"></span><span>Family/Friend</span></button>
+        <button class="btn searchrequest shadow-none " data-btn1="3"><span class="ms-2 businessdot" id="dot"></span><span>Business</span></button>
+        <button class="btn  searchrequest shadow-none" data-btn1="4"> <span class="ms-2 condot" id="dot"></span><span>Concierge</span></button>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<div id="btnContent">
+    @* <div class="modelbody">
+    </div>*@
+
+
+</div>
+<div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    //Export ALl
+    $(".status").click(function () {
+
+        var statusid = $(this).data('id');
+        $("#hidden").val(statusid);
+    });
+
+
+        $(document).ready(function () {
+
+
+        // Variable to keep track of whether the event has been triggered initially
+
+
+
+        // Function to trigger the event initially and subsequently
+        function triggerEvent() {
+            if (dashboardclick == 1) {
+                //$('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
+                // Trigger the event with fixed data-btn and data-id values
+                $("[data-btn='NewPartial'][data-id='1']").click();
+
+                dashboardclick = 2;
+            } else {
+                // Trigger the event using the values of btnnameglobal and statusidglobal
+                $("[data-btn='" + btnnameglobal + "'][data-id='" + statusidglobal + "']").click();
+            }
+        }
+
+        // Call the triggerEvent function
+        triggerEvent();
+    });
+
+
+  
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
