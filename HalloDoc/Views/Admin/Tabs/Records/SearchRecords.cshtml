@@ -18,6 +18,9 @@
                 </button>
             </form>
         </div>
+
+
+
         <div class="shadow dashboard-card container-fluid mt-4 pb-3 px-3">
 
             <form id="formdata">
@@ -52,7 +55,7 @@
                     <div class="col-lg-3 mt-3">
 
                         <div class="form-floating">
-                            <select class="form-select" id="patient-state" asp-for="@Model.searchstream.reqType">
+                            <select class="form-select searchrequestpatient" id="patient-state" asp-for="@Model.searchstream.reqType">
                                 <option selected value="0">All Request Types</option>
 
                                 @foreach (var type in Model.Records.requesttypes)
