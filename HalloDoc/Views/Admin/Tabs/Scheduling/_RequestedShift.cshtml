@@ -1,19 +1,19 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-
-<div class="row justify-content-center mb-5 pb-5">
+<div class="row justify-content-center mb-5 pb-3">
     <div class="row m-4 col-xl-6 col-md-8 col-11">
         <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Requested Shifts</p>
         <div class="col mb-0 text-end">
-            <a class="text-decoration-none text-info rounded border border-info p-2 i-info scheduling-tab">
-                <i class="bi bi-chevron-left i-info"></i>
-                Back
-            </a>
+            <div>
+                <button type="button" class="btn btn-outline-info p-2 pe-3 button-info tablink" id="Scheduling">
+                    <i class="bi bi-chevron-left i-info"></i>Back
+                </button>
+            </div>
         </div>
     </div>
-
-    <div class="m-4 shadow col-xl-6 col-md-8 col-11">
-        <div class="d-flex flex-wrap align-items-center justify-content-between m-1 m-md-3">
+    ~
+    <div class="shadow col-xl-6 col-md-8 col-11 p-0 p-5">
+        <div class="d-flex flex-wrap align-items-center justify-content-between">
             <div class="d-flex form-group normal-input rounded align-items-center ms-2 position-relative mb-1">
                 <i class="bi bi-search position-absolute" style="left:10px"></i>
                 <select class="form-select ps-5 form-control z-3 bg-transparent" id="SearchRegion" aria-label="Default select example">
@@ -26,11 +26,12 @@
             </div>
 
             <div class="d-flex align-items-center">
-                <input type="hidden" id="viewAllOrCurrent" value="false"/>
-                <button type="button" class="btn btn-success text-white me-1" id="data" onclick="viewCurrentMonthShift()">
+                @*
+                <input type="hidden" id="viewAllOrCurrent" value="false"/> *@
+                <button type="button" class="btn btn-success text-white me-1 tablink0" id="Scheduling" id="data" @* onclick="viewCurrentMonthShift()" *@>
                     View Current Month Shifts
                 </button>
-                
+
                 <button type="button" id="approvedSelected" class="btn btn-success text-white me-1">
                     Approved Selected
                 </button>
@@ -43,7 +44,7 @@
 
         <div id="TableData"></div>
 
-        <div class="mb-4 pb-4"></div>
+
     </div>
 </div>
 
@@ -58,17 +59,95 @@
         $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
     });
 
-    function viewCurrentMonthShift() { 
-        var regionId = $('#SearchRegion').val();
-        if ($('#viewAllOrCurrent').val() == "true") {
-            $('#viewAllOrCurrent').val("false");
-            $('#data').text("View All Shift");
+    // function viewCurrentMonthShift() {
+    //     var regionId = $('#SearchRegion').val();
+    //     if ($('#viewAllOrCurrent').val() == "true") {
+    //         $('#viewAllOrCurrent').val("false");
+    //         $('#data').text("View All Shift");
+    //     }
+    //     else {
+    //         $('#viewAllOrCurrent').val("true");
+    //         $('#data').text("View Current Month Shifts");
+    //     }
+    //     var viewAllOrCurrent = $('#viewAllOrCurrent').val();
+    //     $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
+    // }
+
+    //open calender view
+   
+
+    $("#approvedSelected").click(function () {
+        var selectedPhysicians = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedPhysicians.length > 0) {
+
+            $.ajax({
+                url: "/Admin/RequestedShiftUpdate",
+                type: "POST",
+                data: { ids: selectedPhysicians, type: 1 },
+                success: function (result) {
+                    if (result.success) {
+                        var TabId = "RequestedShift";
+                        $.ajax({
+                            url: '/Admin/GetTabs',
+                            data: { Tabid: TabId },
+                            method: 'GET',
+                            success: function (data) {
+                                $("#TabContent").html(data);
+                            },
+                            error: function () {
+                                console.error('Error fetching partial view.');
+                            }
+                        });
+                        toastr.success("Selected Shifts are approved!");
+                    }
+                    else {
+                        toastr.error("Error while approving shift!");
+                    }
+                }
+            });
         }
         else {
-            $('#viewAllOrCurrent').val("true");
-            $('#data').text("View Current Month Shifts");
+            toastr.error("Please select at least one shift.");
         }
-        var viewAllOrCurrent = $('#viewAllOrCurrent').val();
-        $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
-    }
+    });
+
+    $("#deleteSelected").click(function () {
+        var selectedPhysicians = $('input[name="checkbox"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (selectedPhysicians.length > 0) {
+            $.ajax({
+                url: "/Admin/RequestedShiftUpdate",
+                type: "POST",
+                data: { ids: selectedPhysicians, type: 2 },
+                success: function (result) {
+                    if (result.success) {
+                        var TabId = "RequestedShift";
+                        $.ajax({
+                            url: '/Admin/GetTabs',
+                            data: { Tabid: TabId },
+                            method: 'GET',
+                            success: function (data) {
+                                $("#TabContent").html(data);
+                            },
+                            error: function () {
+                                console.error('Error fetching partial view.');
+                            }
+                        });
+                        toastr.success("Selected Shifts are deleted!");
+                    }
+                    else {
+                        toastr.error("Error while deleting shift!");
+                    }
+                }
+            });
+        }
+        else {
+            toastr.error("Please select at least one shift.");
+        }
+    });
 </script>

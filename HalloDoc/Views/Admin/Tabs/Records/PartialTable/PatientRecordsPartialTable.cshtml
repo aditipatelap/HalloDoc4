@@ -1,8 +1,5 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <div class="container-fluid">
     <div>
         <div class=" d-flex justify-content-between mt-5 mb-5">
@@ -13,7 +10,7 @@
             </button>
 
         </div>
-        @if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+        @if (Model.PatientsRecord != null && Model.PatientsRecord.Count() > 0)
 {
 <div class="table-responsive mt-6 d-md-block">
             <table class="table table-hover table-responsive rounded">
@@ -40,19 +37,20 @@
                     <td>@item.ConcludedDate.ToString("D")</td>
                     <td>@item.Status</td>
                     <td>
-                        <button class="btn btn-outline-info">View</button>
+                                    <button class="btn btn-outline-info tablink" id="EncounterForm" data-btn="@item.RequestId">View</button>
                     </td>
                     <td>
-                        <a class="btn btn-outline-info rounded dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                             
+                        <a class="btn btn-outline-info rounded dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Actions
                         </a>
 
-                        <ul class="dropdown-menu dropdown-menu-right">
+                        <ul class="dropdown-menu">
                             <li>
-                                <a class="btn dropdown-item returnview" data-btn="viewCase" id="@item.RequestId">View Case</a>
+                                <a class="btn dropdown-item tablink" id="ViewCase" data-btn="@item.RequestId">View Case</a>
                             </li>
                             <li>
-                                <a class="btn dropdown-item returnview" data-btn="viewDocument" id="@item.RequestId">
+                                <a class="btn dropdown-item tablink" id="ViewUpload" data-btn="@item.RequestId">
                                     (@(item.DocumentCount)) Documents 
                                 </a>
                             </li>
@@ -74,52 +72,72 @@
             </div>
         }
 
-        <div class="mb-0 float-right m-4">
-            <ul class="pagination align-items-center">
-                @if (Model.CurrentPage > 1)
+        <div id="my-pagination" class="d-flex justify-content-between">
+            @if (Model.CurrentPage <= Model.TotalPages && Model.TotalPages > 0)
+            {
+                @if (Model.TotalPages != 0)
                 {
-                    <li class="page-item">
-                        <a class="page-link custompagination" data-page="@(
-                Model.CurrentPage - 1
-                )"><i class="fa-solid fa-chevron-left"></i></a>
-                    </li>
+                    <div class="page-item disabled m-4 border-0 ">
+                        @*                <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.ToatCount</span>
+
+                *@
+                        <span class=""> @Model.CurrentPage of @Model.TotalPages</span>
+                    </div>
                 }
                 else
                 {
-                    <li class="page-item disabled">
-                        <a class="page-link custompagination" data-page="@(
+                    <div class="d-flex justify-content-center align-items-center pt-5">
+                        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+                    </div>
+                }
+
+                <div class="mb-0 float-right m-4">
+                    <ul class="pagination align-items-center">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link custompatientrecordpagination" data-page="@(
                 Model.CurrentPage - 1
                 )"><i class="fa-solid fa-chevron-left"></i></a>
-                    </li>
-                }
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link custompatientrecordpagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                            </li>
+                        }
 
 
-                <li class="page-item custompagination active">
-                    <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
-                </li>
-                @if (Model.CurrentPage < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link custompagination" href="#" data-page="@(
+                        <li class="page-item custompatientrecordpagination active">
+                            <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                        </li>
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link custompatientrecordpagination" href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <a class="page-link custompagination " href="#" data-page="@(
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link custompatientrecordpagination " href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
-                    </li>
-                }
-            </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
         </div>
-        }
-    </div>
-</div>
-</div>
+        </div>
+        </div>
 <script>
     $(".returnview").click(DashPartialView);
     $('.HeaderPartialViewRecords').click(HeaderPartialViewRecords);
+            $('.custompatientrecordpagination').click(explore);
 </script>

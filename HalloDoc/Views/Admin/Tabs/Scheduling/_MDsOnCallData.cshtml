@@ -2,7 +2,7 @@
 @model AdminDashboard
 
 <p class="fs-5 fw-bold"> MDs On Call </p>
-<div>
+<div class="d-flex justify-content-between">
     @if (Model.PhysicianProfilList != null && Model.PhysicianProfilList.Count() > 0)
     {
         var foundMD = false;
@@ -29,15 +29,15 @@
         }
         @if (!foundMD)
         {
-            <div class="d-flex justify-content-center align-items-center pt-5">
-                <strong class="fs-2 fw-normal text-center  text-secondary"> No MD Found </strong>
+            <div class="d-flex justify-content-center align-items-center py-2">
+                <strong class="fs-2 fw-normal text-center  text-secondary"> No On Call MD Found </strong>
             </div>
         }
     }
     else
     {
-        <div class="d-flex justify-content-center align-items-center pt-5">
-            <strong class="fs-2 fw-normal text-center  text-secondary"> No MD Found </strong>
+        <div class="d-flex justify-content-center align-items-center py-2">
+            <strong class="fs-2 fw-normal text-center  text-secondary"> No On Call MD Found </strong>
         </div>
     }
 
@@ -72,15 +72,15 @@
         }
         @if (!foundMD)
         {
-            <div class="pt-5">
-                <strong class="fs-2 fw-normal text-center  text-secondary"> No MD Found </strong>
+            <div class="py-2">
+                <strong class="fs-2 fw-normal text-secondary d-flex justify-content-center"> No Off Duty MD Found </strong>
             </div>
         }
     }
     else
     {
-        <div class="d-flex align-items-center pt-5">
-            <strong class="fs-2 fw-normal text-center  text-secondary"> No MD Found </strong>
+        <div class="d-flex align-items-center py-2">
+            <strong class="fs-2 fw-normal text-secondary"> No Off Duty MD Found </strong>
         </div>
     }
 

@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Http;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Spreadsheet;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -15,9 +14,14 @@ using System.Net.Http;
 using System.Web.WebPages;
 using static DataAccess.ViewModel.Constant;
 
+using System.Drawing.Printing;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
+using System.Net.Mail;
 namespace BusinessLogic.Service
 {
-    public class ProviderService:IProviderService
+    public class ProviderService : IProviderService
     {
         private readonly DataAccess.Data.ApplicationDbContext _db;
 
@@ -26,31 +30,31 @@ namespace BusinessLogic.Service
             _db = db;
         }
         public AdminDashboard GetProviderData(int regionid)
-            {
-            var result=_db.Physicians.Include(x=>x.Role).Include(x=>x.Physiciannotifications).Where( x=>x.Regionid==regionid|| regionid==0).Select(x=>new ProviderInfo
+        {
+            var result = _db.Physicians.Include(x => x.Role).Include(x => x.Physiciannotifications).Where(x => x.Regionid == regionid || regionid == 0).Select(x => new ProviderInfo
             {
                 ProviderName = x.Firstname + "" + x.Lastname,
-                physicianid=x.Physicianid,
-                Role=x.Role.Name,
-                notification=x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
-                 OnCall=x.Isnondisclosuredoc,
+                physicianid = x.Physicianid,
+                Role = x.Role.Name,
+                notification = x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
+                OnCall = x.Isnondisclosuredoc,
 
 
-                ProviderStatus=(PhysicianStatus)x.Status,
+                ProviderStatus = (PhysicianStatus)x.Status,
                 //OnCall
 
             }).ToList();
-            var regions=_db.Regions.ToList();
+            var regions = _db.Regions.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.ProviderInfo = result;
             adminDashboard.Regions = regions;
             return adminDashboard;
         }
-         public void PostProviderData(List<checkboxmodel> model)    
+        public void PostProviderData(List<checkboxmodel> model)
         {
             foreach (var item in model)
             {
-                var result = _db.Physiciannotifications.Where(x=>x.Pysicianid==item.physicianid).FirstOrDefault();
+                var result = _db.Physiciannotifications.Where(x => x.Pysicianid == item.physicianid).FirstOrDefault();
                 if (result != null)
                 {
 
@@ -62,27 +66,27 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetProviderAcccountData(int physicianid)
         {
-            var result = _db.Physicians.Include(x=>x.Aspnetuser).Where(x => x.Physicianid == physicianid).Select(x => new Profile
+            var result = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Physicianid == physicianid).Select(x => new Profile
             {
-                UserName=x.Aspnetuser.Name,
-                FirstName=x.Firstname,
-                LastName=x.Lastname,
-                Email=x.Email,
-                PhoneNumber=x.Mobile,
+                UserName = x.Aspnetuser.Name,
+                FirstName = x.Firstname,
+                LastName = x.Lastname,
+                Email = x.Email,
+                PhoneNumber = x.Mobile,
                 Address1 = x.Address1,
                 Address2 = x.Address2,
-                City=x.City,
-                Zipcode=x.Zip,  
-                Businessname=x.Businessname,
-                BusinessWebsite=x.Businesswebsite,
-                status=(PhysicianStatus)x.Status,
-                physicianid=x.Physicianid,
-                
-               
+                City = x.City,
+                Zipcode = x.Zip,
+                Businessname = x.Businessname,
+                BusinessWebsite = x.Businesswebsite,
+                status = (PhysicianStatus)x.Status,
+                physicianid = x.Physicianid,
+
+
 
             }).FirstOrDefault();
-            AdminDashboard adminDashboard= new AdminDashboard();
-            adminDashboard.myProfile = result;  
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.myProfile = result;
             //adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
@@ -90,31 +94,31 @@ namespace BusinessLogic.Service
         {
             Physician physician = new Physician();
             physician.Businessname = adminDashboard.myProfile.Businessname;
-            physician.Businesswebsite=adminDashboard.myProfile.BusinessWebsite;
+            physician.Businesswebsite = adminDashboard.myProfile.BusinessWebsite;
             physician.Adminnotes = adminDashboard.AdminNoes;
 
-        
+
 
         }
         public AdminDashboard GetAccessData()
         {
-            var result = _db.Roles.Where(x=>x.Isdeleted== new BitArray(new bool[1] { false })).Select(x => new AccountAccess
+            var result = _db.Roles.Where(x => x.Isdeleted == new BitArray(new bool[1] { false })).Select(x => new AccountAccess
             {
-                Name= x.Name,
-                AccountType = (Roles) x.Accounttype,
-                roleid=x.Roleid,
+                Name = x.Name,
+                AccountType = (Roles)x.Accounttype,
+                roleid = x.Roleid,
 
             }).ToList();
-          
+
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.accountAccess = result;
-          
+
             return adminDashboard;
         }
         public AdminDashboard GetCreateRoleData(int accounttype)
         {
-            var result = _db.Menus.Where(x=>x.Accounttype== accounttype || accounttype==0).ToList();
-          
+            var result = _db.Menus.Where(x => x.Accounttype == accounttype || accounttype == 0).ToList();
+
 
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.menu = result;
@@ -131,7 +135,7 @@ namespace BusinessLogic.Service
             roles.Isdeleted = new BitArray(new bool[1] { false });
             _db.Add(roles);
             _db.SaveChanges();
-            
+
             Rolemenu rolemenu = new Rolemenu();
 
             for (int i = 0; i < MenuIds.Count; i++)
@@ -145,14 +149,14 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetEditRoleData(int roleid)
         {
-            var result = _db.Roles.Where(x => x.Roleid == roleid).Select(x=> new EditAccountAccess
+            var result = _db.Roles.Where(x => x.Roleid == roleid).Select(x => new EditAccountAccess
             {
-                rolename= x.Name,
-                AccountType=x.Accounttype,
+                rolename = x.Name,
+                AccountType = x.Accounttype,
             }).FirstOrDefault();
 
             var data = _db.Menus.Where(x => x.Accounttype == result.AccountType).ToList();
-           
+
             var rolemenu = _db.Rolemenus.Where(x => x.Roleid == roleid).ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.EditaccountAccess = result;
@@ -188,8 +192,8 @@ namespace BusinessLogic.Service
         public void DeleteRolePost(int roleid)
         {
             var result = _db.Roles.Where(x => x.Roleid == roleid).FirstOrDefault();
-           
-            result.Isdeleted= new BitArray(new bool[1] { true });
+
+            result.Isdeleted = new BitArray(new bool[1] { true });
             _db.SaveChanges();
 
         }
@@ -200,18 +204,18 @@ namespace BusinessLogic.Service
             AdminDashboard model = new AdminDashboard();
             UserAccessModel userAccessModel = new UserAccessModel();
             var data = _db.Aspnetusers
-                            .Include(x => x.Aspnetuserroles).Include(x=>x.Physicians).Include(x=>x.AdminAspnetusers).Where(x=>x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter==0).Select(x => new UserAccessModel
+                            .Include(x => x.Aspnetuserroles).Include(x => x.Physicians).Include(x => x.AdminAspnetusers).Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter == 0).Select(x => new UserAccessModel
                             {
                                 AccountPOC = x.Name,
-                                AccountType=(Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
+                                AccountType = (Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
                                 PhoneNumber = x.Phonenumber,
-                                status = (PhysicianStatus)_db.Admins.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status) .Union(_db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
+                                status = (PhysicianStatus)_db.Admins.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status).Union(_db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
                                .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status))).FirstOrDefault(),
-                               // UserId = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
-                   // .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault().union,
+                                // UserId = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
+                                // .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault().union,
                                 //OpenRequests=
                             }).ToList();
-                
+
             model.userAccessModels = data;
             return model;
 
@@ -227,11 +231,11 @@ namespace BusinessLogic.Service
         public AdminDashboard CreaeAdminDataGet()
 
         {
-            var regions=_db.Regions.ToList();
+            var regions = _db.Regions.ToList();
             var roles = _db.Roles.ToList();
-            AdminDashboard model = new AdminDashboard();    
+            AdminDashboard model = new AdminDashboard();
             model.Regions = regions;
-            model.RoleModel= roles;
+            model.RoleModel = roles;
             return model;
         }
         public void CreateAdminDataPost(AdminDashboard model)
@@ -301,9 +305,9 @@ namespace BusinessLogic.Service
         }
 
         /*** create provider**/
-       
 
-public AdminDashboard CreateProviderAdminDataGet()
+
+        public AdminDashboard CreateProviderAdminDataGet()
         {
 
             var role = _db.Roles.ToList();
@@ -462,8 +466,8 @@ public AdminDashboard CreateProviderAdminDataGet()
 
             }
         }
-        
-     /***my profile**/
+
+        /***my profile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid)
         {
             aspnetuserid = "19";
@@ -480,7 +484,7 @@ public AdminDashboard CreateProviderAdminDataGet()
                 Mobile = x.Altphone,
                 Address1 = x.Address1,
                 Address2 = x.Address2,
-               
+
                 Zipcode = x.Zip,
                 regionid = x.Regionid,
                 roleid = x.Roleid,
@@ -572,23 +576,23 @@ public AdminDashboard CreateProviderAdminDataGet()
             }
         }
         /*** partner**/
-      
-        public AdminDashboard PartnerDataGet(int ProfessionId,string vendorsearch)
-       {
+
+        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch)
+        {
             var data = _db.Healthprofessionals.Where(x => (ProfessionId == 0 || x.Profession == ProfessionId)
-                                                     &&(vendorsearch==null || x.Vendorname.ToLower().Contains(vendorsearch.ToLower()))
+                                                     && (vendorsearch == null || x.Vendorname.ToLower().Contains(vendorsearch.ToLower()))
 
                                                      && x.Isdeleted == new BitArray(new bool[1] { false })).Select(x => new PartnerModel
-            {
-                BusinessName = x.Vendorname,
-                Profession = _db.Healthprofessionaltypes.Where(y => y.Healthprofessionalid == x.Profession).FirstOrDefault().Professionname,
-                email = x.Email,
-                phonenumber = x.Phonenumber,
-                businessContact = x.Businesscontact,
-                faxnumber = x.Faxnumber,
-                businessId = x.Vendorid,
-                
-            }).ToList();
+                                                     {
+                                                         BusinessName = x.Vendorname,
+                                                         Profession = _db.Healthprofessionaltypes.Where(y => y.Healthprofessionalid == x.Profession).FirstOrDefault().Professionname,
+                                                         email = x.Email,
+                                                         phonenumber = x.Phonenumber,
+                                                         businessContact = x.Businesscontact,
+                                                         faxnumber = x.Faxnumber,
+                                                         businessId = x.Vendorid,
+
+                                                     }).ToList();
             AdminDashboard model = new AdminDashboard();
             model.PartnerModel = data;
             return model;
@@ -623,21 +627,21 @@ public AdminDashboard CreateProviderAdminDataGet()
             _db.Add(healthprofessional);
             _db.SaveChanges();
         }
-       
-     private string GetUserIpAddress(HttpContext httpContext)
-    {
-        string ipAddress = httpContext.Connection.RemoteIpAddress.ToString();
 
-        if (string.IsNullOrEmpty(ipAddress))
+        private string GetUserIpAddress(HttpContext httpContext)
         {
-            ipAddress = httpContext.Request.Headers["X-Forwarded-For"];
+            string ipAddress = httpContext.Connection.RemoteIpAddress.ToString();
+
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = httpContext.Request.Headers["X-Forwarded-For"];
+            }
+
+            return ipAddress;
         }
 
-        return ipAddress;
-    }
 
-
-    public AdminDashboard EditBusinessDataGet(int VendorID)
+        public AdminDashboard EditBusinessDataGet(int VendorID)
         {
             AdminDashboard model = new AdminDashboard();
 
@@ -654,8 +658,8 @@ public AdminDashboard CreateProviderAdminDataGet()
                 zip = x.Zip,
                 ProfessionID = x.Profession,
                 vendorID = x.Vendorid,
-                street=x.Address,
-                ModifiedDate=DateTime.Now,
+                street = x.Address,
+                ModifiedDate = DateTime.Now,
 
             }).FirstOrDefault();
             model.AddBusinessModel = data;
@@ -866,8 +870,8 @@ public AdminDashboard CreateProviderAdminDataGet()
 
         //    }
         //}
-         /// Scheduling /
- public List<PhysicianProfile> GetProvider(int Regionid)
+        /// Scheduling /
+        public List<PhysicianProfile> GetProvider(int Regionid)
         {
             var list = _db.Physicians
                 .Select(p => new PhysicianProfile
@@ -895,8 +899,38 @@ public AdminDashboard CreateProviderAdminDataGet()
 
             return list;
         }
+        //public List<PhysicianProfile> GetProvider(int Regionid)
+        //{
+        //    var list = _db.Physicians
+        //        .Select(p => new PhysicianProfile
+        //        {
+        //            physicianid = p.Physicianid,
+        //            UserName = "MD." + p.Lastname + "." + p.Firstname,
+        //            firstName = p.Firstname,
+        //            lastName = p.Lastname,
+        //            roleid = p.Roleid,
+        //            role = _db.Roles.FirstOrDefault(r => r.Roleid == p.Roleid).Name,
+        //            Regionid = p.Regionid,
+        //            phone = p.Mobile,
+        //            email = p.Email,
+        //            status = p.Status,
+        //            IsPhoto = p.Photo != null ? new BitArray(new bool[1] { true }) : new BitArray(new bool[1] { false }),
+        //            PhotoName = p.Photo,
+        //        })
+        //        .OrderBy(p => p.firstName)
+        //        .ToList();
+
+        //    if (Regionid != 0)
+        //    {
+        //        list = list.Where(r => r.Regionid == Regionid).ToList();
+        //    }
+
+        //    return list;
+        //}
+        
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift)
         {
+            
             var data = _db.Shiftdetails
                 .Where(s => s.Isdeleted == new BitArray(new bool[1] { false }))
                 .Include(s => s.Shift)
@@ -915,6 +949,7 @@ public AdminDashboard CreateProviderAdminDataGet()
                         Regionid = s.Regionid,
                         Regionname = _db.Regions.Where(r => r.Regionid == s.Regionid).FirstOrDefault().Name,
                         color = s.Status == 1 ? "#F4CAED" : "#a9e1c8"
+
                     })
                 .ToList();
 
@@ -1104,6 +1139,37 @@ public AdminDashboard CreateProviderAdminDataGet()
 
             return true;
         }
+        //Requested shift
+        public void RequestedShiftUpdate(string ids, int type, string adminId)
+        {
+            List<string> selectedId = ids.Split(",").ToList();
+
+            foreach (var i in selectedId)
+            {
+                var id = int.Parse(i);
+                var data = _db.Shiftdetails.FirstOrDefault(s => s.Shiftdetailid == id);
+
+                if (type == 1)
+                {
+                    if (data.Status == 1)
+                    {
+                        data.Status = 2;
+                    }
+                    else
+                    {
+                        data.Status = 1;
+                    }
+                }
+                else
+                {
+                    data.Isdeleted = new BitArray(new bool[1] { true });
+                }
+                //data.Modifiedby = adminId;
+                data.Modifiedby = "8695ab30-4e1f-43cb-a944-fcf2670344d7";
+                data.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+        }
         /************************************records***********************/
         //Records
         public AdminDashboard GetSearchRecordInfo()
@@ -1118,21 +1184,22 @@ public AdminDashboard CreateProviderAdminDataGet()
             };
             return result;
         }
-        public AdminDashboard GetRecordTableInfo(searchstream model)
+        public AdminDashboard GetRecordTableInfo(AdminDashboard model, int currentpage)
         {
+
             var list = (from req in _db.Requests
                         join reqClient in _db.Requestclients on req.Requestid equals reqClient.Requestid
                         join reqType in _db.Requesttypes on req.Requesttypeid equals reqType.Requesttypeid
                         join phy in _db.Physicians on req.Physicianid equals phy.Physicianid
                         join reqNotes in _db.Requestnotes on req.Requestid equals reqNotes.Requestid
                         join reqStatus in _db.Requeststatuses on req.Status equals reqStatus.Statusid
-                        where model == null || (model.Status == 0 || req.Status == model.Status)
-                        && (model.Name == null || model.Name.Contains(reqClient.Firstname))
-                        && (model.reqType == 0 || model.reqType == req.Requesttypeid)
-                        && (model.providername == null || model.providername.Contains(phy.Firstname))
-                        && (model.email.Contains(reqClient.Email) || model.email == null)
-                        && (req.Lastreservationdate.Equals(model.dateofservice) || model.lastdateofservice == default)
-                        && (model.dateofservice == default || req.Lastreservationdate.Equals(model.dateofservice))
+                        where model.searchstream == null || (model.Status == 0 || req.Status == model.searchstream.Status)
+                        && (model.searchstream.Name == null || model.searchstream.Name.Contains(reqClient.Firstname))
+                        && (model.searchstream.reqType == 0 || model.searchstream.reqType == req.Requesttypeid)
+                        && (model.searchstream.providername == null || model.searchstream.providername.Contains(phy.Firstname))
+                        && (model.searchstream.email.Contains(reqClient.Email) || model.searchstream.email == null)
+                        && (req.Lastreservationdate.Equals(model.searchstream.dateofservice) || model.searchstream.lastdateofservice == default)
+                        && (model.searchstream.dateofservice == default || req.Lastreservationdate.Equals(model.searchstream.dateofservice))
                         select new Records
                         {
                             RequestId = req.Requestid,
@@ -1146,31 +1213,96 @@ public AdminDashboard CreateProviderAdminDataGet()
                             Address = reqClient.Address ?? "",
                             Zip = reqClient.Zipcode ?? "",
                             AdminNote = reqNotes.Adminnotes ?? "",
-                            //RequestStatus = reqStatus.Statusname,
+                            RequestStatus = reqStatus.Statusname,
                             Physician = phy.Firstname + " " + phy.Lastname,
                             PhysicianNote = reqNotes.Physiciannotes,
                             CancelledByPhysicianNote = "abc",
                             PatientNote = "abc"
                         }).ToList();
-            var count = list.Count();
+            int totalrecords = list.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = list.Skip((model.CurrentPage - 1) * pagesize).Take(pagesize).ToList();
+
+
             var result = new AdminDashboard()
             {
-                RecordsList = list,
+                RecordsList = paginateddashboard,
+                CurrentPage = model.CurrentPage,
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
             };
             return result;
         }
+        public void DeleteRequestFromSearchRecordsMethod(int requestid)
+        {
+            var data3 = _db.Requestclients.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data3 != null)
+            {
+                _db.Remove(data3);
+            }
+            var data4 = _db.Requestbusinesses.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data4 != null)
+            {
+                _db.Remove(data4);
+            }
+            var data2 = _db.Requestwisefiles.Where(x => x.Requestid == requestid).ToList();
+            if (data2 != null)
+            {
+                _db.RemoveRange(data2);
+            }
+            var data1 = _db.Requeststatuslogs.Where(x => x.Requestid == requestid).ToList();
+            if (data1 != null)
+            {
+                _db.RemoveRange(data1);
+            }
+            var data5 = _db.Requestconcierges.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data5 != null)
+            {
+                _db.Remove(data5);
+            }
+            var data6 = _db.Requestnotes.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data6 != null)
+            {
+                _db.Remove(data6);
+            }
+            var data7 = _db.Blockrequests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data7 != null)
+            {
+                _db.Remove(data7);
+            }
+            //var data8 = _db.EncounterForms.Where(x => x.RequestId == requestid).FirstOrDefault();
+            //if (data8 != null)
+            //{
+            //    _db.Remove(data8);
+
+            //}
+            var data = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (data != null)
+            {
+                _db.Remove(data);
+            }
+            var data9 = _db.Orderdetails.Where(x => x.Requestid == requestid).ToList();
+            if (data9 != null)
+            {
+                _db.RemoveRange(data9);
+            }
+            _db.SaveChanges();
+
+        }
         //BlockReqHistory
-        public AdminDashboard GetBlockHistoryData(searchstream model)
+        public AdminDashboard GetBlockHistoryData(AdminDashboard model)
         {
             var data1 = (from req in _db.Requests
                          join reqclient in _db.Requestclients on req.Requestid equals reqclient.Requestid
                          join blockreq in _db.Blockrequests on req.Requestid equals blockreq.Requestid
-                         where ((model == null) || ((model.Name == null
-                           || reqclient.Firstname.ToLower().Contains(model.Name.ToLower())
-                           || reqclient.Lastname.ToLower().Contains(model.Name.ToLower()))
-                           && (model.createdDate == default || blockreq.Createddate == model.createdDate)
-                                       && (string.IsNullOrEmpty(model.number) || blockreq.Phonenumber.Equals(model.number))
-                                 && (string.IsNullOrEmpty(model.email) || blockreq.Email.Equals(model.email))))
+                         where ((model.searchstream == null) || ((model.searchstream.Name == null
+                           || reqclient.Firstname.ToLower().Contains(model.searchstream.Name.ToLower())
+                           || reqclient.Lastname.ToLower().Contains(model.searchstream.Name.ToLower()))
+                           && (model.searchstream.createdDate == default || blockreq.Createddate == model.searchstream.createdDate)
+                                       && (string.IsNullOrEmpty(model.searchstream.number) || blockreq.Phonenumber.Contains(model.searchstream.number))
+                                 && (string.IsNullOrEmpty(model.searchstream.email) || blockreq.Email.Equals(model.searchstream.email))))
                          select new BlockedHistory
                          {
                              PatientName = reqclient.Firstname + reqclient.Lastname,
@@ -1179,29 +1311,43 @@ public AdminDashboard CreateProviderAdminDataGet()
                              CreatedDate = blockreq.Createddate,
                              Notes = blockreq.Reason,
                              IsActive = blockreq.Isactive,
-                             BlockedRequestID = blockreq.Blockrequestid,
+                             BlockedRequestID = req.Requestid,
                          }).ToList();
-            var count = data1.Count();
+
+            int totalrecords = data1.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = data1.Skip((model.CurrentPage - 1) * pagesize).Take(pagesize).ToList();
+
             var result = new AdminDashboard
             {
-                BlockedHistory = data1,
+                BlockedHistory = paginateddashboard,
+                CurrentPage = model.CurrentPage,
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
             };
             return result;
         }
         public bool unblockreq(int blockreqid)
         {
-            var unblockreq = _db.Blockrequests.FirstOrDefault(x => x.Blockrequestid == blockreqid);
-            var req = _db.Requests.FirstOrDefault(x => x.Requestid == unblockreq.Requestid);
-            req.Status = ((short)Status.New);
+
+
+            Blockrequest r = _db.Blockrequests.Where(x => x.Requestid == blockreqid).FirstOrDefault();
+            r.Isactive[0] = true;
+            r.Modifieddate = DateTime.Now;
+            _db.Blockrequests.Update(r);
             _db.SaveChanges();
 
-            if (unblockreq != null)
-            {
-                _db.Blockrequests.Remove(unblockreq);
-                _db.SaveChanges();
-                return true;
-            }
-            return false;
+            Request req = _db.Requests.Where(x => x.Requestid == blockreqid).FirstOrDefault();
+            req.Status = 1;
+            req.Modifieddate = DateTime.Now;
+            _db.Requests.Update(req);
+            _db.SaveChanges();
+
+            return true;
+
+
         }
         //Emaillog
         public AdminDashboard GetEmailLogInfo()
@@ -1215,17 +1361,17 @@ public AdminDashboard CreateProviderAdminDataGet()
             };
             return result;
         }
-        public AdminDashboard GetEmailLogTableInfo(EmailLogList model)
+        public AdminDashboard GetEmailLogTableInfo(AdminDashboard model)
         {
             var data = (from req in _db.Requests
                         join reqclient in _db.Requestclients on req.Requestid equals reqclient.Requestid
                         join emailLog in _db.Emaillogs on req.Requestid equals emailLog.Requestid
-                        where (model == null ||
-                        (model.ReceiverName == null || (reqclient.Firstname.ToLower().Contains(model.ReceiverName.ToLower()) || reqclient.Lastname.ToLower().Contains(model.ReceiverName.ToLower()))
-                        && (model.Email == null || emailLog.Emailid.Contains(model.Email))
-                        && (model.CreatedDate == default || emailLog.Createdate.Date == model.CreatedDate.Value.Date)
-                        && (model.SentDate == default || emailLog.Sentdate.Value.Date == model.CreatedDate.Value.Date)
-                        && (model.RoleId == 0 || emailLog.Roleid == model.RoleId)))
+                        where (model.EmailLog == null ||
+                        (model.EmailLog.ReceiverName == null || reqclient.Firstname.ToLower().Contains(model.EmailLog.ReceiverName.ToLower()) || reqclient.Lastname.ToLower().Contains(model.EmailLog.ReceiverName.ToLower()))
+                        && (model.EmailLog.Email == null || emailLog.Emailid.Contains(model.EmailLog.Email))
+                        && (model.EmailLog.CreatedDate == default || emailLog.Createdate.Date == model.EmailLog.CreatedDate.Value.Date)
+                        && (model.EmailLog.SentDate == default || emailLog.Sentdate.Value.Date == model.EmailLog.CreatedDate.Value.Date)
+                        && (model.EmailLog.RoleId == 0 || emailLog.Roleid == model.EmailLog.RoleId))
                         select new EmailLogModel
                         {
                             Receipient = reqclient.Firstname + reqclient.Lastname,
@@ -1236,12 +1382,22 @@ public AdminDashboard CreateProviderAdminDataGet()
                             Sent = emailLog.Isemailsent == new BitArray(1, true) ? "Yes" : "No",
                             SentTries = emailLog.Senttries,
                             ConfirmationNumber = emailLog.Confirmationnumber,
-                            //RoleName = (Roles)emailLog.Roleid
+                            RoleName = (Roles)emailLog.Roleid,
+                            //sentries
                         }).ToList();
+            int totalrecords = data.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = data.Skip((model.CurrentPage - 1) * pagesize).Take(pagesize).ToList();
+
 
             var result = new AdminDashboard()
             {
-                emailLogModel = data,
+                emailLogModel = paginateddashboard,
+                CurrentPage = model.CurrentPage,
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
 
             };
             return result;
@@ -1290,14 +1446,14 @@ public AdminDashboard CreateProviderAdminDataGet()
             return result;
         }
         //PatientHistory
-        public AdminDashboard PatientHistory(searchstream obj)
-         {
+        public AdminDashboard PatientHistory(AdminDashboard obj)
+        {
             var list = (from user in _db.Users
                         join req in _db.Requests on user.Userid equals req.Userid
-                        where (obj == null || (obj.FirstName == null || user.Firstname.ToLower().Contains(obj.FirstName.ToLower()))
-                       && (obj.LastName == null || user.Lastname.ToLower().Contains(obj.LastName.ToLower()))
-                       && (obj.number == null || user.Mobile == obj.number)
-                       && (obj.email == null || user.Email.ToLower().Contains(obj.email.ToLower())))
+                        where (obj.searchstream == null || (obj.searchstream.FirstName == null || user.Firstname.ToLower().Contains(obj.searchstream.FirstName.ToLower()))
+                       && (obj.searchstream.LastName == null || user.Lastname.ToLower().Contains(obj.searchstream.LastName.ToLower()))
+                       && (obj.searchstream.number == null || user.Mobile == obj.searchstream.number)
+                       && (obj.searchstream.email == null || user.Email.ToLower().Contains(obj.searchstream.email.ToLower())))
                         select new PatientHistoryModel()
                         {
                             FirstName = user.Firstname,
@@ -1307,14 +1463,22 @@ public AdminDashboard CreateProviderAdminDataGet()
                             Phone = user.Mobile,
                             UserId = user.Userid,
                         }).Distinct().ToList();
+            int totalrecords = list.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = list.Skip((obj.CurrentPage - 1) * pagesize).Take(pagesize).ToList();
 
             var result = new AdminDashboard()
             {
                 PatientHistory = list,
+                CurrentPage = obj.CurrentPage,
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
             };
             return result;
         }
-        public AdminDashboard PatientRecords(int id)
+        public AdminDashboard PatientRecords(int id, int currentpage)
         {
             var list = (from user in _db.Users
                         join req in _db.Requests on user.Userid equals req.Userid
@@ -1333,10 +1497,19 @@ public AdminDashboard CreateProviderAdminDataGet()
                             DocumentCount = _db.Requestwisefiles.Where(x => x.Requestid == reqClient.Requestid).ToList().Count,
                         });
             var data = list.ToList();
+            int totalrecords = data.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = list.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
 
-            var result = new AdminDashboard ()
+
+            var result = new AdminDashboard()
             {
-                PatientsRecord = data,
+                PatientsRecord = paginateddashboard,
+                CurrentPage = currentpage,
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
             };
             return result;
         }
@@ -1348,7 +1521,115 @@ public AdminDashboard CreateProviderAdminDataGet()
             adminDashboardModel.requestid = reqid;
             return adminDashboardModel;
         }
+        /******sms*************/
+        //    public void SendSMS(AdminDashboard model)
+        //    {
+        //        string link = $"https://localhost:7265/Patient/SubmitRequest";
+        //        string SMSTemplate = $"For Submit your Request: {link}";
+
+        //        var accountsid = "AC3f07238a0c7428a2c1861ee8d0da5275";
+        //        var authtoken = "5f682d44e9cb371de282ab1336c5a676";
+        //        TwilioClient.Init(accountsid, authtoken);
+
+        //        /*var messageoptions = new CreateMessageOptions(
+        //          new PhoneNumber("+919510155988"));*/
+        //        var messageoptions = new CreateMessageOptions(
+        //          new PhoneNumber(model.SendLinkModel.PhoneNumber));
+        //        messageoptions.From = new PhoneNumber("+17209618754");
+        //        messageoptions.Body = SMSTemplate;
+        //        MessageResource.Create(messageoptions);
+
+        //        var AdminId = _db.Admins.Where(x => x.Aspnetuserid == model.aspnetuserid).FirstOrDefault().Adminid;
+
+        //        SMSLogEntry(SMSTemplate, model.SendLinkModel.PhoneNumber, AdminId, default);
+        //    }
+        public void SMSLogEntry(string SMSTemplate, string MobileNo, int AdminId, int PhysicianId)
+        {
+            Smslog smslog = new Smslog();
+            if (PhysicianId == 0)
+            {
+                smslog.Smstemplate = SMSTemplate;
+                smslog.Mobilenumber = MobileNo;
+                smslog.Roleid = (int)Roles.Admin;
+                smslog.Adminid = AdminId;
+                smslog.Createdate = DateTime.Now;
+                smslog.Sentdate = DateTime.Now;
+                smslog.Senttries = 1;
+                smslog.Issmssent = new BitArray(new bool[1] { true });
+            }
+            else
+            {
+                smslog.Smstemplate = SMSTemplate;
+                smslog.Mobilenumber = MobileNo;
+                smslog.Roleid = (int)Roles.Admin;
+                smslog.Adminid = AdminId;
+                smslog.Createdate = DateTime.Now;
+                smslog.Sentdate = DateTime.Now;
+                smslog.Senttries = 1;
+                smslog.Issmssent = new BitArray(new bool[1] { true });
+                smslog.Physicianid = PhysicianId;
+            }
+
+            _db.Add(smslog);
+            _db.SaveChanges();
+        }
+
+       public AdminDashboard GetContactProvider(int physicianid)
+        {
+            AdminDashboard model =new AdminDashboard();
+            model.physicianid = physicianid;
+            return model;
+        }
+
+        public void ContactProvider(AdminDashboard model)
+        {
+            var data = _db.Physicians.FirstOrDefault(r => r.Physicianid == model.physicianid);
+
+            if (model.PhysicianProfile.radioSMSEmail == 1 || model.PhysicianProfile.radioSMSEmail == 3)
+            {
+                string SMSTemplate = model.PhysicianProfile.NotificationMassage;
+                var accountsid = "AC3f07238a0c7428a2c1861ee8d0da5275";
+                var authtoken = "5f682d44e9cb371de282ab1336c5a676";
+                TwilioClient.Init(accountsid, authtoken);
+
+                /*  var messageoptions = new CreateMessageOptions(
+                    new PhoneNumber(data.Mobile));*/
+                var messageoptions = new CreateMessageOptions(
+                  new PhoneNumber("+919510155988"));
+                messageoptions.From = new PhoneNumber("+17209618754");
+                messageoptions.Body = SMSTemplate;
+                MessageResource.Create(messageoptions);
+
+                var AdminId = _db.Admins.Where(x => x.Aspnetuserid == "8695ab30-4e1f-43cb-a944-fcf2670344d7").FirstOrDefault().Adminid;
+
+                SMSLogEntry(SMSTemplate, data.Mobile, AdminId, data.Physicianid);
+            }
+        }
+        //    if (model.PhysicianProfile.radioSMSEmail == 2 || model.PhysicianProfile.radioSMSEmail == 3)
+        //    {
+        //        var SubjectName = "Contact Provider";
+        //        var EmailTemplate = model.PhysicianProfile.NotificationMassage;
+
+        //        MailMessage message = new MailMessage();
+
+        //        message.From = new mailto:mailaddress("vidhi.makani@etatvasoft.com");
+        //        message.To.Add(new MailAddress(data.Email));
+        //        message.Subject = SubjectName;
+        //        message.IsBodyHtml = true;
+        //        message.Body = EmailTemplate;
+        //        SmtpClient smtp = new SmtpClient();
+        //        smtp.Host = "mail.etatvasoft.com";
+        //        smtp.Port = 587;
+        //        smtp.Credentials = new mailto:networkcredential("vidhi.makani@etatvasoft.com", "jKAO+h]uA+vk");
+        //        smtp.EnableSsl = true;
+        //        smtp.Send(message);
+        //        smtp.UseDefaultCredentials = false;
+
+        //        emailLogEntry(EmailTemplate, SubjectName, data.Email, 0);
+
+
+        //    }
+        //}
 
     }
-   
 }

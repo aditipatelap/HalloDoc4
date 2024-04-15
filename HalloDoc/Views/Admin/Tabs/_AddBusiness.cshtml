@@ -2,8 +2,7 @@
 @model AdminDashboard
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
@@ -120,23 +119,31 @@
     //$(".tablink").click(TabLink);
 
     $('#AddBusinessForm').on('submit', function (e) {
-       
-        e.preventDefault();
-        var data = new FormData(this);
-        $.ajax({
-            url: '/Admin/AddBusinessDataPost',
-            method: 'POST',
-            data: data,
-            processData: false,
-            contentType: false,
-            success: function (result) {
-                $('#TabContent').html(result);
-                //toastr.success("Business Added successfully!");
-            },
-            error: function (xhr, status, error) {
-                //toastr.error("Please provide valid Data!.");
-            },
-        });
+
+        if (!$(this)[0].checkValidity()) {
+          return;
+        } 
+            // Form is invalid, prevent the default form submission
+            e.preventDefault();
+
+
+           console.log("w2as");
+            var data = new FormData(this);
+            $.ajax({
+                url: '/Admin/AddBusinessDataPost',
+                method: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#TabContent').html(result);
+                    //toastr.success("Business Added successfully!");
+                },
+                error: function (xhr, status, error) {
+                    //toastr.error("Please provide valid Data!.");
+                },
+            });
+        
     });
 
 

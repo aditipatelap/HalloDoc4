@@ -9,7 +9,7 @@
         text-align: center;
     }
 </style>
-@if (Model.Dashboards != null && Model.Dashboards.Count() > 0)
+@if (Model.RecordsList != null && Model.RecordsList.Count() > 0)
 {
 <div class="table-responsive mt-3 d-md-block">
     <table class="table table-hover table-responsive rounded">
@@ -56,9 +56,7 @@
             <td>@items.AdminNote</td>
             <td>@items.PatientNote</td>
             <td>
-            <button type="button" class="btn btn-outline-info align-middle">
-            Delete
-            </button>
+                            <button class="btn btn-outline-info deleteBtn" data-bs-toggle="modal" data-bs-target="#modeldiv" data-roleid="@items.RequestId">Delete</button>
             </td>
             </tr>
             }
@@ -66,55 +64,127 @@
 
     </table>
 </div>
- }
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+    </div>
+}
+
+<div id="my-pagination" class="d-flex justify-content-between">
+    @if (Model.CurrentPage <= Model.TotalPages && Model.TotalPages > 0)
+    {
+        @if (Model.TotalPages != 0)
+        {
+            <div class="page-item disabled m-4 border-0 ">
+                @*                <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.ToatCount</span>
+
+        *@
+                <span class=""> @Model.CurrentPage of @Model.TotalPages</span>
+            </div>
+        }
         else
         {
-<div class="d-flex justify-content-center align-items-center pt-5">
-    <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
-</div>
+            <div class="d-flex justify-content-center align-items-center pt-5">
+                <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+            </div>
         }
 
-<div class="mb-0 float-right m-4">
-    <ul class="pagination align-items-center">
-        @if (Model.CurrentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link custompagination" data-page="@(
+        <div class="mb-0 float-right m-4">
+            <ul class="pagination align-items-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link customrecordpagination" data-page="@(
                 Model.CurrentPage - 1
                 )"><i class="fa-solid fa-chevron-left"></i></a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <a class="page-link custompagination" data-page="@(
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link customrecordpagination" data-page="@(
                 Model.CurrentPage - 1
                 )"><i class="fa-solid fa-chevron-left"></i></a>
-            </li>
-        }
+                    </li>
+                }
 
 
-        <li class="page-item custompagination active">
-            <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
-        </li>
-        @if (Model.CurrentPage < Model.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link custompagination" href="#" data-page="@(
+                <li class="page-item customrecordpagination active">
+                    <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                </li>
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link customrecordpagination" href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
-            </li>
-        }
-        else
-        {
-            <li class="page-item disabled">
-                <a class="page-link custompagination " href="#" data-page="@(
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link customrecordpagination " href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
-            </li>
-        }
-    </ul>
-</div>
+                    </li>
+                }
+            </ul>
+        </div>
     }
 </div>
+<div class="modal" id="modeldiv" tabindex="-3" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal header -->
+            <div class="modal-header">
+                <h5 class="modal-title">ALERT</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p>Are you sure you want to delete?</p>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-info" id="confirmDeleteBtn" data-bs-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Handle delete button click inside the modal
+    $('#modeldiv').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var requestid = button.data('roleid'); // Extract roleid from data-* attributes
+        var modal = $(this);
+        modal.find('#confirmDeleteBtn').attr('data-roleid', requestid); // Pass roleid to the delete button
+    });
+
+    $('#confirmDeleteBtn').click(function () {
+        var requestid = $(this).data('roleid');
+        // Perform delete operation using roleid
+        $.ajax({
+            url: "/Admin/DeleteRequestFromSearchRecordsMethod",
+            method: "POST",
+            data: { requestid: requestid },
+            success: function (result) {
+                $('#search-record-partial-table').html(data);
+                // $('#accounttype').val(0);
+                // $('#rolename').val('');
+                // $('.check_menu:checked').prop('checked', false);
+                // form.classlist.remove('was-validated');
+
+            },
+            error: function () {
+                toastr.error("Error while Create Role");
+            }
+        });
+
+    });
+</script>
 

@@ -109,6 +109,11 @@ namespace HalloDoc.Controllers
                 var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_CreatedShift", data);
             }
+            if (model.tabid == "RequestedShift")
+            {
+                var data = _providerService.GetRegion(0);
+                return PartialView("Tabs/Scheduling/_RequestedShift", data);
+            }
             if (model.tabid == "Records")
             {
                 return PartialView(result);
@@ -244,7 +249,7 @@ namespace HalloDoc.Controllers
             //return PartialView(partialview, result);
             return PartialView("Partials/_StatusView", result);
         }
-        public IActionResult GetModalPartialView(string modalName, int requestid, string patientname)
+        public IActionResult GetModalPartialView(string modalName, int requestid, string patientname,int physicianid)
         {
 
             var partialname = "Partials/" + "_" + modalName;
@@ -294,7 +299,7 @@ namespace HalloDoc.Controllers
             }
             if (modalName == "ContactProvider")
             {
-                //var result = _AdminDash.AssignRequest(requestid);
+                var result = _providerService.GetContactProvider(physicianid);
                 return PartialView(partialname);
 
             }
@@ -597,6 +602,13 @@ namespace HalloDoc.Controllers
 
 
             return GetTabs(admin, default, default, default, default, default, default);
+        }
+        public IActionResult ContactProvider(AdminDashboard model)
+        {
+            _providerService.ContactProvider(model);
+            _notyf.Success("Sms Sent Successfully");
+            return Ok(new { message = "Data saved successfully." });
+
         }
         public IActionResult CreateRolesPost(short AccountTypeId, string RoleName, List<int> MenuIds)
         {
@@ -919,20 +931,41 @@ namespace HalloDoc.Controllers
 
             return PartialView("Tabs/Scheduling/_RequestedShiftTable", model);
         }
+        public JsonResult RequestedShiftUpdate(string ids, int type)
+        {
+            var token = Request.Cookies["jwt"];
+            var adminId = "";
+            //if (_JWTService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            //{
+            //    adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            //}
+
+            _providerService.RequestedShiftUpdate(ids, type, adminId);
+            return Json(new { success = true });
+        }
         /********************records**********************/
 
         [HttpPost]
-        public IActionResult SearchRecordPartialTable(AdminDashboard model)
+        public IActionResult SearchRecordPartialTable(AdminDashboard model,int currentpage)
         {
-            var info = _providerService.GetRecordTableInfo(model.searchstream);
+            var info = _providerService.GetRecordTableInfo(model,currentpage);
             return PartialView("Tabs/Records/PartialTable/SearchRecordsPartialTable", info);
         }
+        public IActionResult DeleteRequestFromSearchRecordsMethod(int requestid)
+        {
 
-       /******** BlockHostory Data Get***/
-        [HttpPost]
+            _providerService.DeleteRequestFromSearchRecordsMethod(requestid);
+            _notyf.Custom("Request Deleted Permanently!", 3, "green", "bi bi-check-circle-fill");
+            AdminDashboard model = new AdminDashboard();
+            int currentpage = 1 ;
+            return SearchRecordPartialTable(model,currentpage);
+        }
+
+          /******** BlockHostory Data Get***/
+          [HttpPost]
         public IActionResult BlockedHistoryPartialTable(AdminDashboard model)
             {
-            var info = _providerService.GetBlockHistoryData(model.searchstream);
+            var info = _providerService.GetBlockHistoryData(model);
             return PartialView("Tabs/Records/PartialTable/BlockHistoryPartialTable", info);
         }
         //Unblock
@@ -940,15 +973,16 @@ namespace HalloDoc.Controllers
         public IActionResult UnblockRequest(int blockreqId)
         {
             _providerService.unblockreq(blockreqId);
-
+            _notyf.Custom("Request Unblocked Successfully!", 3, "green", "bi bi-check-circle-fill");
             AdminDashboard model = new AdminDashboard();
+            
             return BlockedHistoryPartialTable(model);
 
         }
         [HttpPost]
         public IActionResult EmailLogPartialTable(AdminDashboard model)
         {
-            var info = _providerService.GetEmailLogTableInfo(model.EmailLog);
+            var info = _providerService.GetEmailLogTableInfo(model);
             return PartialView("Tabs/Records/PartialTable/EmailLogPartialTable", info);
         }
         [HttpPost]
@@ -960,13 +994,13 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult PatientHistoryPartialTable(AdminDashboard model)
         {
-            var Info = _providerService.PatientHistory(model.searchstream);
+            var Info = _providerService.PatientHistory(model);
             return PartialView("Tabs/Records/PartialTable/PatientHistoryPartialTable", Info);
         }
         [HttpPost]
-        public IActionResult PatientRecordsPartialTable(int reqId)
+        public IActionResult PatientRecordsPartialTable(int reqId,int currentpage)
         {
-            var Info = _providerService.PatientRecords(reqId);
+            var Info = _providerService.PatientRecords(reqId,currentpage);
             return PartialView("Tabs/Records/PartialTable/PatientRecordsPartialTable", Info);
         }
 

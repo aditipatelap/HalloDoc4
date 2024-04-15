@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Service;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace BusinessLogic.Interface
         /**create provider**/
         public AdminDashboard CreateProviderAdminDataGet();
         public void CreateProviderDataPost(AdminDashboard model);
+        public AdminDashboard GetContactProvider(int physicianid);
+        public void ContactProvider(AdminDashboard model);
         /**myprofile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid);
         public void MyProfileResetPassDataUpdate(AdminDashboard model);
@@ -57,21 +60,24 @@ namespace BusinessLogic.Interface
         public bool EditShift(int shiftDetailId, DateTime Shiftdate, TimeOnly startTime, TimeOnly endTime, string adminId);
         public bool DeleteShift(int shiftDetailId, string adminId);
         public bool ReturnShift(int shiftDetailId, string adminId);
+        public void RequestedShiftUpdate(string ids, int type, string adminId);
         /********************records********/
         public AdminDashboard GetSearchRecordInfo();
-        public AdminDashboard GetRecordTableInfo(searchstream model);
-        public AdminDashboard GetBlockHistoryData(searchstream model);
+
+        public AdminDashboard GetRecordTableInfo(AdminDashboard model,int currentpage);
+        public void DeleteRequestFromSearchRecordsMethod(int requestid);
+        public AdminDashboard GetBlockHistoryData(AdminDashboard model);
         bool unblockreq(int blockreqid);
         // Emaillog
-        public AdminDashboard GetEmailLogTableInfo(EmailLogList model);
+        public AdminDashboard GetEmailLogTableInfo(AdminDashboard model);
         AdminDashboard GetEmailLogInfo();
         // SMSlog
         public AdminDashboard GetSMSLogTableInfo(SMSLogList model);
         AdminDashboard GetSMSLogInfo();
 
         //Patient Records
-        public AdminDashboard PatientHistory(searchstream obj);
-        public AdminDashboard PatientRecords(int id);
+        public AdminDashboard PatientHistory(AdminDashboard obj);
+        public AdminDashboard PatientRecords(int id, int currentpage);
 
     }
     

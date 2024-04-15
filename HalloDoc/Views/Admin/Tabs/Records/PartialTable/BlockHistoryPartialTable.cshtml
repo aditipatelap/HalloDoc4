@@ -1,6 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-
+ @if (Model.BlockedHistory != null && Model.BlockedHistory.Count() > 0)
+{
 <div class="table-responsive mt-3 d-md-block">
     <table class="table table-hover  admin-dashboard">
 
@@ -29,7 +30,7 @@
                     <td>@record.CreatedDate</td>
                     <td>@record.Notes</td>
                     <td style="text-align:center">
-                        <input type="checkbox" style="height:15px;width:15px" @(record.IsActive == new System.Collections.BitArray(1, true) ? "checked" : "") class="btn-outline-info" />
+                        <input type="checkbox" style="height:15px;width:15px" disabled @(record.IsActive[0] == true ? "checked" : "") class="btn-outline-info" />
                     </td>
                     <td>
                         <button type="button" class="btn btn-outline-info unblockreq" data-btn="@record.BlockedRequestID">Unblock</button>
@@ -39,6 +40,76 @@
         </tbody>
 
     </table>
+</div>
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+    </div>
+}
+
+<div id="my-pagination" class="d-flex justify-content-between">
+    @if (Model.CurrentPage <= Model.TotalPages && Model.TotalPages>0)
+    {
+        @if (Model.TotalPages != 0)
+        {
+            <div class="page-item disabled m-4 border-0 ">
+@*                <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.ToatCount</span>
+
+*@
+                <span class=""> @Model.CurrentPage of @Model.TotalPages</span>
+</div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center align-items-center pt-5">
+                <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+            </div>
+        }
+
+        <div class="mb-0 float-right m-4">
+            <ul class="pagination align-items-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
+                }
+
+
+                <li class="page-item custompagination active">
+                    <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                </li>
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link custompagination" href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link custompagination " href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 </div>
 
 <script>

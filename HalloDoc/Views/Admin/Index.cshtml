@@ -417,7 +417,7 @@
             var modalName = $(this).attr('id');
             var patientname = $(this).data('value1');
             var requestid = $(this).data('btn');
-
+        var physicianid = $(this).data('value1');
             if (!patientname) {
                 patientname = null;
             }
@@ -425,11 +425,16 @@
             if (typeof requestid === 'undefined') {
                 requestid = 0;
             }
+        if (typeof physicianid === 'undefined') {
+            physicianid = 0;
+        }
+
+
 
             $.ajax({
                 url: '@Url.Action("GetModalPartialView", "Admin")',
                 method: 'GET',
-                data: { modalName: modalName, patientname: patientname, requestid: requestid },
+                data: { modalName: modalName, patientname: patientname, requestid: requestid,physicianid:physicianid },
                 success: function (data) {
                     console.log("AJAX success");
 

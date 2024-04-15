@@ -6,7 +6,7 @@
         <div class=" d-flex justify-content-between mt-5">
             <h4 class="ms-3">Search Records</h4>
            
-            <form asp-action="Export">
+            <form asp-action="Export" id="ExportTable">
                 <input type="hidden" name="GridHtml" />
                 <button class="btn btn-info">
                     <svg width="25px" height="25px" viewBox="0 0 20 20" fill="white">
@@ -155,10 +155,16 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
+    function SearchRecords()
+    {
+       if(typeof currentpage === 'undefined') {
+            currentpage = 1;
+        };
+       
         $.ajax({
             url: "/Admin/SearchRecordPartialTable",
             type: 'POST',
+            data: { currentpage: currentpage },
             success: function (result) {
                 console.log("aaa");
                 $('#search-record-partial-table').html(result);
@@ -168,9 +174,36 @@
                 alert('error fetching details')
             },
         });
+
+       
         //$('#formdata').submit();
+    }
+    $(document).on('click', '.customrecordpagination', function () {
+        var currentpage = $(this).data('page');
+        console.log(currentpage);
+
+        $.ajax({
+            url: "/Admin/SearchRecordPartialTable",
+            type: 'POST',
+            data: { currentpage: currentpage },
+            success: function (result) {
+                console.log("aaa");
+                $('#search-record-partial-table').html(result);
+            },
+            error: function (error) {
+                console.log(error);
+                alert('error fetching details')
+            },
+        });
     });
+    $(document).ready(function () {
+        SearchRecords();
+    });
+
    
+
+
+
 </script>
 <script type="text/javascript">
     $(function () {
@@ -226,5 +259,5 @@
         clear();
         document.getElementById("formdata").reset();
     }
-    $(".reset").onclick();
+    //$(".reset").onclick();
 </script>

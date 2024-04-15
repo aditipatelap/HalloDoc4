@@ -339,7 +339,10 @@ namespace DataAccess.ViewModel
         public IFormFile? CredentialDocument { get; set; }
         public BitArray IsPhoto { get; set ;}
             public string PhotoName { get; set; }
-
+        public int radioSMSEmail { get; set; }
+        public string NotificationMassage { get; set; }
+        public TimeOnly Starttime { get; set; }
+        public TimeOnly Endtime { get; set; }
     }
     /**partner**/
     public class AddBusiness
@@ -491,7 +494,7 @@ public class Records
     {
         public string Receipient { get; set; }
         public string Action { get; set; }
-        public Role RoleName { get; set; }
+        public Roles RoleName { get; set; }
         public string Email { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? SentDate { get; set; }
@@ -587,8 +590,9 @@ public class Records
         public CreateReqquestModel CreateReqquestModel { get; set; }
         public CloseCaseModel CloseCaseModel { get; set; }
         public int PageSize { get; set; }
-        public int CurrentPage { get; set; }
+        public int CurrentPage { get; set; } = 1;
         public int TotalPages { get; set; }
+        public int ToatCount { get; set; }
 
         public List<ViewUpload> ViewUpload { get; set; }
         public BlockReq blockreq { get; set; }
