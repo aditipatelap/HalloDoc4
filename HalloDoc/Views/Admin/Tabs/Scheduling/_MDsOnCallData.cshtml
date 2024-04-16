@@ -3,29 +3,28 @@
 
 <p class="fs-5 fw-bold"> MDs On Call </p>
 <div class="d-flex justify-content-between">
-    @if (Model.PhysicianProfilList != null && Model.PhysicianProfilList.Count() > 0)
+    @if (Model.oncall != null && Model.oncall.Count() > 0)
     {
         var foundMD = false;
-        @foreach (var i in Model.PhysicianProfilList)
+        @foreach (var i in Model.oncall)
         {
 
-            if (i.status == 3)
-            {
-                foundMD = true;
-                <div class="d-inline-flex mb-3">
-                    <div class="d-inline me-2">
-                        @if (i.IsPhoto[0])
-                        {
-                            <img src="~/PhysicianDocuments/@i.physicianid/@i.PhotoName" style="height: 70px; width: 70px;" />
-                        }
-                        else
-                        {
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 70px; width: 70px;" />
-                        }
-                    </div>
-                    <p>@i.firstName</p>
+
+            foundMD = true;
+            <div class="d-inline-flex mb-3">
+                <div class="d-inline me-2">
+                    @if (i.Photo != null)
+                    {
+                        <img src="~/PhysicianDocuments/@i.Physicianid/@i.Photo" style="height: 70px; width: 70px;" />
+                    }
+                    else
+                    {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 70px; width: 70px;" />
+                    }
                 </div>
-            }
+                <p>@i.Firstname @i.Lastname</p>
+            </div>
+
         }
         @if (!foundMD)
         {
@@ -47,28 +46,27 @@
 
 <p class="fs-5 fw-bold"> Physicians Off Duty </p>
 <div class="d-flex justify-content-between">
-    @if (Model.PhysicianProfilList != null && Model.PhysicianProfilList.Count() > 0)
+    @if (Model.offduty != null && Model.offduty.Count() > 0)
     {
         var foundMD = false;
-        @foreach (var i in Model.PhysicianProfilList)
+        @foreach (var i in Model.offduty)
         {
-            if (i.status != 3)
-            {
-                foundMD = true;
-                <div class="d-inline-flex mb-3">
-                    <div class="d-inline me-3">
-                        @if (i.IsPhoto[0])
-                        {
-                            <img src="~/PhysicianDocuments/@i.physicianid/@i.PhotoName" style="height: 70px; width: 70px;" />
-                        }
-                        else
-                        {
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 70px; width: 70px;" />
-                        }
-                    </div>
-                    <p>@i.firstName</p>
+
+            foundMD = true;
+            <div class="d-inline-flex mb-3">
+                <div class="d-inline me-3">
+                    @if (i.Photo != null)
+                    {
+                        <img src="~/PhysicianDocuments/@i.Physicianid/@i.Photo" style="height: 70px; width: 70px;" />
+                    }
+                    else
+                    {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKIBpBz460WeOh7ds5JGbd_QaEYpB_zb9LIRvWmcUccw&s" style="height: 70px; width: 70px;" />
+                    }
                 </div>
-            }
+                <p>@i.Firstname @i.Lastname</p>
+            </div>
+
         }
         @if (!foundMD)
         {

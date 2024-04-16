@@ -4,7 +4,7 @@
 <div class= "row justify-content-center mb-5 pb-5">
     <div class="d-flex justify-content-between mt-5">
         <div class="d-flex">
-            <h4 class="m-0 pt-2 "> Provider Location </h4>
+            <h4 class=" pt-2 mx-5 mt-3"> Provider Location </h4>
         </div>
         <div>
             <button type="button" class="btn btn-outline-info p-2 pe-3 button-info tablink" id="home">
@@ -282,7 +282,7 @@
 <script>
 
      // cancel & Back button 
-     $(".tablink").click(TabLink);
+     //$(".tablink").click(TabLink);
 
     // function updateHiddenInput() {
     //     var selectedRegions = [];
@@ -307,7 +307,9 @@
 
     $('#CreateProvider').on('submit', function (e) {
         e.preventDefault();
-
+         if (!$('#CreateProvider')[0].checkValidity()) {
+            return;
+        }
         var data = new FormData(this);
 
         $.ajax({
@@ -366,11 +368,11 @@
 </script>
 
 
-<script>
+@*<script>
     $('#ProviderEmail').blur(function () {
         var email = $(this).val();
         $.ajax({
-            url: '/Admin/checkEmail',
+            url: '/Admin/CheckEmail',
             method: "GET",
             data: { email: email },
             success: function (CheckEmail) {
@@ -390,4 +392,4 @@
         });
     });
        
-</script>
+</script>*@

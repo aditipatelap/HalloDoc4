@@ -65,7 +65,7 @@
                         <input type="text" class="form-control" id="AdminLastname" placeholder="Last Name" asp-for="myProfile.LastName" required>
                         <label for="AdminLastname" class="floatingLabel">Last Name <span class="text-danger">*</span></label>
                     </div>
-                    <span id="LastName" asp-validation-for="myProfile.LastName" class="text-danger"></span>
+                    @Html.ValidationMessageFor(Model=>Model.myProfile.LastName,"",new{@class="text-danger"})
                 </div>
 
                 <div class="col-12 col-md-6 mb-3">

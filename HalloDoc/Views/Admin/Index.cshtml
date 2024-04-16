@@ -25,9 +25,14 @@
             <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
             <div>
-                <button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
-                    <i class="fa fa-moon i-info"></i>
+                <button type="button" class="ms-3 p-2  btn btn-outline-info"
+                  id="colorButton">
+                    <i id="moon" class="bi bi-moon text-info fs-5"></i>
+                    <i id="sun" class="bi bi-sun text-info fs-5 d-none"></i>
                 </button>
+                @*<button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
+                    <i class="fa fa-moon i-info"></i>
+                </button>*@
             </div>
         </div>
     </div>
@@ -48,7 +53,8 @@
                     <a class="nav-link px-4 tablink" id="ProviderLocation">Provider Location</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>
+                   
+                    <a class="nav-link px-4 tablink" data-aspnetuserid=" @_httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid")" id="MyProfile">My Profile </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -169,6 +175,7 @@
 
        
         var TabId = $(this).attr("id");
+        var aspnetuserid=$(this).data('aspnetuserid');
         var requestid = $(this).data('btn');
         var physicianid = $(this).data('id');
         var regionid = $('.filterphysician').val(); 
@@ -176,6 +183,7 @@
         var RoleName = $('#RoleName').val();
         var adminaccountfilter = $('#adminaccountfilter').val();
         var businessid = $(this).data('businessid');
+       
         //console.log(adminaccountfilter);
         //var roleid = checkbox.getAttribute('data-roleid');
         //console.log(businessid);
@@ -183,6 +191,9 @@
         
         if (typeof requestid === 'undefined') {
             requestid = 0;
+        }
+        if (typeof aspnetuserid === 'undefined') {
+            aspnetuserid = null;
         }
         if (typeof adminaccountfilter === 'undefined') {
             adminaccountfilter = 0;
@@ -227,8 +238,8 @@
             accounttype: accounttype,
             roleid:roleid,
             adminaccountfilter:adminaccountfilter,
-            VendorId: businessid
-
+            VendorId: businessid,
+                aspnetuserid: aspnetuserid
             };
 
             $.ajax({

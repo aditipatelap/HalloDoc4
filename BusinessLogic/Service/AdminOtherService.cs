@@ -19,6 +19,8 @@ using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using System.Net.Mail;
+using DocumentFormat.OpenXml.Wordprocessing;
+
 namespace BusinessLogic.Service
 {
     public class ProviderService : IProviderService
@@ -41,6 +43,7 @@ namespace BusinessLogic.Service
 
 
                 ProviderStatus = (PhysicianStatus)x.Status,
+                aspnetuserid=x.Aspnetuserid
                 //OnCall
 
             }).ToList();
@@ -64,9 +67,9 @@ namespace BusinessLogic.Service
             }
             _db.SaveChanges();
         }
-        public AdminDashboard GetProviderAcccountData(int physicianid)
+        public AdminDashboard GetProviderAcccountData(string aspnetuserid)
         {
-            var result = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Physicianid == physicianid).Select(x => new Profile
+            var result = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == aspnetuserid).Select(x => new Profile
             {
                 UserName = x.Aspnetuser.Name,
                 FirstName = x.Firstname,
@@ -81,6 +84,7 @@ namespace BusinessLogic.Service
                 BusinessWebsite = x.Businesswebsite,
                 status = (PhysicianStatus)x.Status,
                 physicianid = x.Physicianid,
+                Aspnetid=x.Aspnetuserid
 
 
 
@@ -197,35 +201,53 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
-        public AdminDashboard UserAccessDataGet(int adminaccountfilter)
+        public AdminDashboard UserAccessDataGet(int adminaccountfilter,int currentpage)
 
 
         {
             AdminDashboard model = new AdminDashboard();
-            UserAccessModel userAccessModel = new UserAccessModel();
-            var data = _db.Aspnetusers
-                            .Include(x => x.Aspnetuserroles).Include(x => x.Physicians).Include(x => x.AdminAspnetusers).Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter || adminaccountfilter == 0).Select(x => new UserAccessModel
-                            {
-                                AccountPOC = x.Name,
-                                AccountType = (Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
-                                PhoneNumber = x.Phonenumber,
-                                status = (PhysicianStatus)_db.Admins.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status).Union(_db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
-                               .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status))).FirstOrDefault(),
-                                // UserId = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
-                                // .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault().union,
-                                //OpenRequests=
-                            }).ToList();
 
-            model.userAccessModels = data;
+            var data = _db.Aspnetusers.Include(x => x.Aspnetuserroles).Include(x => x.AdminAspnetusers).Include(x => x.Physicians).
+                Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid != 3 && (adminaccountfilter == 0 || x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter) &&
+                (x.AdminAspnetusers.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }) ||
+                x.Physicians.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }))).Select(x => new UserAccessModel
+                {
+                    AccountType = (Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
+                    AccountPOC = x.Name,
+                    PhoneNumber = x.Phonenumber,
+                    accounttypeid = x.Aspnetuserroles.FirstOrDefault().Roleid,
+                    status = (PhysicianStatus)_db.Admins.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
+                                    .Union(_db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status)
+                                    .Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Status))).FirstOrDefault(),
+                    //userid = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
+                                    //.Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault(),
+                    aspnetuserid    = x.Id,
+                });
+
+
+            int totalrecords = data.Count();
+            int pagesize = 4;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddata = data.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+
+            model.userAccessModels = paginateddata;
+            model.CurrentPage = currentpage;
+            model.TotalPages = totalPages;
+            model.PageSize = pagesize;
+
             return model;
 
         }
 
-        public List<Physicianlocation> GetPhysicianlocations()
+        // provider location
+        public AdminDashboard GetPhysicianlocations()
         {
             var phyLocation = _db.Physicianlocations.ToList();
-            return phyLocation;
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.physicianlocations = phyLocation;
+            return adminDashboardModel;
         }
+
 
         /*********create admin**********/
         public AdminDashboard CreaeAdminDataGet()
@@ -337,13 +359,13 @@ namespace BusinessLogic.Service
             _db.Aspnetusers.Add(aspuser);
             _db.SaveChanges();
 
-            Aspnetuserrole aspnetrole = new Aspnetuserrole();
+            //Aspnetuserrole aspnetrole = new Aspnetuserrole();
 
-            aspnetrole.Userid = aspuser.Id;
-            aspnetrole.Roleid = (int)model.PhysicianProfile.roleid;
+            //aspnetrole.Userid = aspuser.Id;
+            //aspnetrole.Roleid = (int)model.PhysicianProfile.roleid;
 
-            _db.Aspnetuserroles.Add(aspnetrole);
-            _db.SaveChanges();
+            //_db.Aspnetuserroles.Add(aspnetrole);
+            //_db.SaveChanges();
 
             Physician physician = new Physician();
 
@@ -470,34 +492,35 @@ namespace BusinessLogic.Service
         /***my profile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid)
         {
-            aspnetuserid = "19";
-            var data = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuser.Id == aspnetuserid).Select(x => new Profile
+            aspnetuserid = "20";
+            var data = _db.Aspnetusers.Include(x => x.AdminAspnetusers).Where(x => x.Id == aspnetuserid).Select(x => new Profile
             {
-                UserName = x.Aspnetuser.Name,
-                Password = x.Aspnetuser.Passwordhash,
-                status = (PhysicianStatus)x.Status,
-                FirstName = x.Firstname,
-                LastName = x.Lastname,
+                UserName = x.Name,
+                Password = x.Passwordhash,
+                status = (PhysicianStatus)x.AdminAspnetusers.FirstOrDefault().Status,
+                FirstName = x.AdminAspnetusers.FirstOrDefault().Firstname,
+                LastName = x.AdminAspnetusers.FirstOrDefault().Lastname,
                 Email = x.Email,
-                ConfirmEmail = x.Email,
-                PhoneNumber = x.Mobile,
-                Mobile = x.Altphone,
-                Address1 = x.Address1,
-                Address2 = x.Address2,
+                ConfirmEmail = x.AdminAspnetusers.FirstOrDefault().Email,
+                PhoneNumber = x.AdminAspnetusers.FirstOrDefault().Mobile,
+                Mobile = x.AdminAspnetusers.FirstOrDefault().Altphone,
+                Address1 = x.AdminAspnetusers.FirstOrDefault().Address1,
+                Address2 = x.AdminAspnetusers.FirstOrDefault().Address2,
 
-                Zipcode = x.Zip,
-                regionid = x.Regionid,
-                roleid = x.Roleid,
-                adminid = x.Adminid,
+                Zipcode = x.AdminAspnetusers.FirstOrDefault().Zip,
+                regionid = x.AdminAspnetusers.FirstOrDefault().Regionid,
+                roleid = x.AdminAspnetusers.FirstOrDefault().Roleid,
+                adminid = x.AdminAspnetusers.FirstOrDefault().Adminid,
+                Aspnetid= x.AdminAspnetusers.FirstOrDefault().Aspnetuserid
                 //city = x.city,
 
             }).FirstOrDefault();
 
-            var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
-            {
-                RegionId = x.Regionid,
-                Regionname = x.Region.Name,
-            }).ToList();
+            //var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
+            //{
+            //    RegionId = x.Regionid,
+            //    Regionname = x.Region.Name,
+            //}).ToList();
 
             var role = _db.Roles.ToList();
             var region = _db.Regions.ToList();
@@ -505,10 +528,10 @@ namespace BusinessLogic.Service
             AdminDashboard adminDashboardModel = new AdminDashboard();
             //adminDashboardModel.myProfile.adminid = data.adminid;
             adminDashboardModel.myProfile = data;
-            adminDashboardModel.myProfile.Aspnetid = aspnetuserid;
+            //adminDashboardModel.myProfile.Aspnetid = aspnetuserid;
             adminDashboardModel.RoleModel = role;
             adminDashboardModel.Regions = region;
-            adminDashboardModel.regionCheckbox = RegionCheckbox;
+            //adminDashboardModel.regionCheckbox = RegionCheckbox;
             return adminDashboardModel;
         }
 
@@ -577,7 +600,7 @@ namespace BusinessLogic.Service
         }
         /*** partner**/
 
-        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch)
+        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch,int currentpage)
         {
             var data = _db.Healthprofessionals.Where(x => (ProfessionId == 0 || x.Profession == ProfessionId)
                                                      && (vendorsearch == null || x.Vendorname.ToLower().Contains(vendorsearch.ToLower()))
@@ -592,10 +615,26 @@ namespace BusinessLogic.Service
                                                          faxnumber = x.Faxnumber,
                                                          businessId = x.Vendorid,
 
+            
                                                      }).ToList();
-            AdminDashboard model = new AdminDashboard();
-            model.PartnerModel = data;
-            return model;
+            int totalrecords = data.Count();
+            int pagesize = 2;
+            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
+            var paginateddashboard = data.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+
+
+
+            var result = new AdminDashboard
+            {
+                PartnerModel = paginateddashboard,
+                CurrentPage = currentpage,
+                
+                TotalPages = totalPages,
+                PageSize = pagesize,
+                ToatCount = totalrecords
+            };
+            return result;
+                
         }
 
         public AdminDashboard AddBusinessDataGet()
@@ -870,7 +909,11 @@ namespace BusinessLogic.Service
 
         //    }
         //}
+        /// Scheduling / <summary>
         /// Scheduling /
+        /// </summary>
+        /// <param name="Regionid"></param>
+        /// <returns></returns>
         public List<PhysicianProfile> GetProvider(int Regionid)
         {
             var list = _db.Physicians
@@ -927,7 +970,41 @@ namespace BusinessLogic.Service
 
         //    return list;
         //}
-        
+        public AdminDashboard GetProviderOnCallData(int Regionid)
+        {
+            DateTime dateTime = DateTime.Now;
+            TimeSpan timeOnly = dateTime.TimeOfDay;
+
+            AdminDashboard model = new AdminDashboard();
+            var physicians = _db.Physicians.ToList();
+            var shiftDetails = _db.Shiftdetails.ToList();
+            var shifts = _db.Shifts.ToList();
+            foreach (var physician in physicians)
+            {
+                bool hasShift = shifts.Any(shift => shift.Physicianid == physician.Physicianid &&
+                                                     shiftDetails.Any(detail => detail.Shiftid == shift.Shiftid &&
+                                                                                  detail.Starttime.ToTimeSpan() <= timeOnly &&
+                                                                               detail.Endtime.ToTimeSpan() >= timeOnly));
+
+                if (hasShift)
+                {
+                    model.oncall.Add(physician);
+                }
+                else
+                {
+                    model.offduty.Add(physician);
+                }
+            }
+
+
+            //if (Regionid != 0)
+            //{
+            //    list = list.Where(r => r.Regionid == Regionid).ToList();
+            //}
+
+            return model;
+        }
+
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift)
         {
             

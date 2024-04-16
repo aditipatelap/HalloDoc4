@@ -257,6 +257,7 @@ namespace DataAccess.ViewModel
         public BitArray notification { get; set; }
 
         public BitArray checkbox { get; set; }
+        public string aspnetuserid { get;set; }
 
 
     }
@@ -646,6 +647,7 @@ public class Records
 
         /*******providers********/
         public List<int> RegionArray{get;set;}
+        public IEnumerable<Physicianlocation> physicianlocations { get; set; }
         public IEnumerable<Rolemenu> rolemenus { get; set; }
         public List<AccountAccess> accountAccess { get; set; }
         public List<MenuCheckbox> menuCheckboxes { get; set; }
@@ -669,6 +671,8 @@ public class Records
         //}
         //public ScheduleModel ScheduleModel { get;set; }
         /************scheduling********/
+        public List<Physician> oncall { get; set; } = new List<Physician>();
+        public List<Physician> offduty { get; set; } = new List<Physician>();
         public scheduleModel scheduleModel { get; set; }
         public List<EventModel> eventModel { get; set; }
         public List<PhysicianProfile> PhysicianProfilList { get; set; }

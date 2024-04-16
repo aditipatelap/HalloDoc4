@@ -24,6 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   @* Map*@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -34,15 +35,56 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
-<body>
+<body onload="checkMode()" class="dark-mode1">
     <header>
        
     </header>
     <div class="">
         <main class="">
             @RenderBody()
+
         </main>
     </div>
+    <script>
+        document.getElementById('colorButton').addEventListener('click', () => {
+            const mode = localStorage.getItem("mode");
+
+            if (mode == 'light' || mode == null) {
+                localStorage.setItem('mode', 'dark')
+                document.getElementById("moon").classList.add("d-none")
+                document.getElementById("sun").classList.remove("d-none")
+                document.documentElement.setAttribute('data-bs-theme', 'dark');
+            }
+            else {
+                localStorage.setItem('mode', 'light')
+                document.getElementById("sun").classList.add("d-none")
+                document.getElementById("moon").classList.remove("d-none")
+                document.documentElement.setAttribute('data-bs-theme', 'light');
+            }
+        })
+
+
+        const checkMode = () => {
+            try {
+                const mode = localStorage?.getItem("mode");
+
+                if (mode == 'light' || mode == null) {
+                    document.getElementById("sun").classList.add("d-none")
+                    document.getElementById("moon").classList.remove("d-none")
+                    document.documentElement.setAttribute('data-bs-theme', 'light');
+                }
+                else {
+                    document.getElementById("moon").classList.add("d-none")
+                    document.getElementById("sun").classList.remove("d-none")
+                    document.documentElement.setAttribute('data-bs-theme', 'dark');
+                }
+            }
+            catch (err) {
+                alert("there was some issue in changing mode")
+            }
+        }
+
+    </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>*@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

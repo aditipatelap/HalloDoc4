@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Web.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using DocumentFormat.OpenXml.Office.CustomUI;
+using Microsoft.EntityFrameworkCore;
 
 namespace HalloDoc.Controllers
 {
@@ -76,8 +77,8 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "ProviderLocation")
             {
-
-                return PartialView(result);
+                AdminDashboard getLocation = _providerService.GetPhysicianlocations();
+                return PartialView(result,getLocation);
             }
             if (model.tabid == "Providers")
             {
@@ -86,7 +87,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "PhysicianAccountEdit")
             {
-                var data = _providerService.GetProviderAcccountData(model.physicianid);
+                var data = _providerService.GetProviderAcccountData(model.aspnetuserid);
                 return PartialView(result, data);
             }
             if (model.tabid == "CreateProviderAccount")
@@ -135,7 +136,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "UserAccess")
             {
-                var data = _providerService.UserAccessDataGet(model.adminaccountfilter);
+                var data = _providerService.UserAccessDataGet(model.adminaccountfilter,model.CurrentPage);
                 return PartialView(result, data);
             }
             if (model.tabid == "CreateAdmin")
@@ -210,7 +211,7 @@ namespace HalloDoc.Controllers
             if (model.tabid == "SmsLogs")
             {
                 var data = model = _providerService.GetSMSLogInfo();
-                return PartialView("Tabs/Records/SMSLog");
+                return PartialView("Tabs/Records/SMSLog",data);
             }
             if (model.tabid == "PatientRecord")
             {
@@ -563,7 +564,7 @@ namespace HalloDoc.Controllers
             else
             {
                 _notyf.Error("Case Not Edited...");
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); 
             }
         }
         public IActionResult CloseCaseUnpaid(int RequestID)
@@ -642,28 +643,23 @@ namespace HalloDoc.Controllers
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "MyProfile";
-                return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
-            }
-            if (accounttypeid == 2)
-            {
-                AdminDashboard adminDashboard = new AdminDashboard();
-                adminDashboard.tabid = "PhysicianAccountEdit";
 
                 return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
             if (accounttypeid == 3)
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
-                adminDashboard.tabid = "MyProfile";
+                adminDashboard.tabid = "PhysicianAccountEdit";
+
                 return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
+           
             return Ok();
         }
-        public IActionResult GetLocation()
-        {
-            List<Physicianlocation> getLocation = _providerService.GetPhysicianlocations();
-            return Ok(getLocation);
-        }
+       
+        /*******provider location****/
+        // provider location
+
         /** create admin**/
         [HttpPost]
         public IActionResult CreateAdminDataPost(AdminDashboard model)
@@ -675,11 +671,12 @@ namespace HalloDoc.Controllers
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
         /**verify email**/
-        //public IActionResult checkEmail(string email)
-        // {
-
-        // }
-
+        public JsonResult CheckEmail(string email)
+        {
+            var userCheck = _db.Aspnetusers.Any(u =>
+                u.Email == email);
+            return Json(userCheck);
+        }
         /**create provider**/
         public IActionResult CreateProviderDataPost(AdminDashboard model)
         {
@@ -733,9 +730,9 @@ namespace HalloDoc.Controllers
         //Partner
 
         [HttpGet]
-        public IActionResult GetPartnerTable(int ProfessionId,string vendorsearch)
+        public IActionResult GetPartnerTable(int ProfessionId,string vendorsearch,int currentpage)
         {
-            var data = _providerService.PartnerDataGet(ProfessionId, vendorsearch);
+            var data = _providerService.PartnerDataGet(ProfessionId, vendorsearch,currentpage);
             return PartialView("Tabs/_PartnersTable", data);
         }
         [HttpPost]
@@ -900,19 +897,19 @@ namespace HalloDoc.Controllers
         }
 
         // MD or ProviderOnCall
-        public IActionResult LoadMDOnCall()
-        {
-            AdminDashboard model = new AdminDashboard();
-            _providerService.GetRegion(0);
-            model.PhysicianProfilList = _providerService.GetProvider(0);
+        //public IActionResult LoadMDOnCall()
+        //{
+        //    AdminDashboard model = new AdminDashboard();
+        //    _providerService.GetRegion(0);
+        //    model.PhysicianProfilList = _providerService.GetProvider(0);
 
-            return PartialView("_MDsOnCall", model);
-        }
+        //    return PartialView("_MDsOnCall", model);
+        //}
 
         public IActionResult LoadMDOnCallData(int RegionId)
         {
             AdminDashboard model = new AdminDashboard();
-            model.PhysicianProfilList = _providerService.GetProvider(0);
+            model= _providerService.GetProviderOnCallData(0);
 
             return PartialView("Tabs/Scheduling/_MDsOnCallData", model);
         }

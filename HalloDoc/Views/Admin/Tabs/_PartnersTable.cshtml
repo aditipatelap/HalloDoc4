@@ -1,65 +1,134 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
 <div>
-    @if (Model.PartnerModel.Any())
+    @if (Model.PartnerModel != null && Model.PartnerModel.Count() > 0)
     {
-        <div class="overflow-scroll d-none d-md-block">
-            <table class="table table-responsive">
-                <thead class="table-secondary">
-                    <tr>
-                        <th scope="col">Profession</th>
-                        <th scope="col">Business Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Fax Number</th>
-                        <th scope="col">Phone Number</th>
-                        <th scope="col">Business Contact</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model.PartnerModel)
-                    {
+        @if (Model.PartnerModel.Any())
+        {
+            <div class="overflow-scroll d-none d-md-block">
+                <table class="table table-responsive">
+                    <thead class="table-secondary">
                         <tr>
-                            <td>
-                                @item.Profession
-
-                            </td>
-                            <td>
-                                @item.BusinessName
-                            </td>
-                            <td>
-                                @item.email
-                            </td>
-                            <td>
-                                @item.faxnumber
-                            </td>
-                            <td>
-                                @item.phonenumber
-                            </td>
-                            <td>
-                                @item.businessContact
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-info button-info mx-2 tablink" id="UpdateBusiness" data-businessid="@item.businessId">
-                                    Edit
-                                </button>
-                                <button type="button" class="btn btn-outline-info button-info case" data-bs-toggle="modal" data-bs-target="#modeldiv" id="DeleteVendor" data-vendorid="@item.businessId">Delete</button>
-                            </td>
-
+                            <th scope="col">Profession</th>
+                            <th scope="col">Business Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Fax Number</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Business Contact</th>
+                            <th scope="col">Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.PartnerModel)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Profession
+
+                                </td>
+                                <td>
+                                    @item.BusinessName
+                                </td>
+                                <td>
+                                    @item.email
+                                </td>
+                                <td>
+                                    @item.faxnumber
+                                </td>
+                                <td>
+                                    @item.phonenumber
+                                </td>
+                                <td>
+                                    @item.businessContact
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info button-info mx-2 tablink" id="UpdateBusiness" data-businessid="@item.businessId">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info button-info case" data-bs-toggle="modal" data-bs-target="#modeldiv" id="DeleteVendor" data-vendorid="@item.businessId">Delete</button>
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
     }
     else
     {
         <div class="d-flex justify-content-center align-items-center pt-5">
-            <strong class="fs-3 fw-normal text-center text-secondary"> User Not Found </strong>
+            <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
         </div>
     }
+    
+
+    <div id="my-pagination" class="d-flex justify-content-between">
+        @if (Model.CurrentPage <= Model.TotalPages && Model.TotalPages > 0)
+        {
+            @if (Model.TotalPages != 0)
+            {
+                <div class="page-item disabled m-4 border-0 ">
+                    @*                <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.ToatCount</span>
+
+            *@
+                    <span class=""> @Model.CurrentPage of @Model.TotalPages</span>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-center align-items-center pt-5">
+                    <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+                </div>
+            }
+
+            <div class="mb-0 float-right m-4">
+                <ul class="pagination align-items-center">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link custompartnerpagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <a class="page-link custompartnerpagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                        </li>
+                    }
+
+
+                    <li class="page-item custompartnerpagination active">
+                        <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                    </li>
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link custompartnerpagination" href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <a class="page-link custompartnerpagination " href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
 </div>
+
 <div class="modal fade col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
         <div class="modelbody modal-content">
@@ -118,7 +187,7 @@
         });
         //console.log('Delete clicked for roleid:', roleid);
     });
-
+    $('.custompartnerpagination').click(GetPartnerTable);
 </script>
 
 

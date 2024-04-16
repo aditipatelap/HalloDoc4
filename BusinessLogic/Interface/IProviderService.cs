@@ -13,7 +13,7 @@ namespace BusinessLogic.Interface
     public  interface IProviderService
     {
         public AdminDashboard GetProviderData(int regionid);
-        public AdminDashboard GetProviderAcccountData(int physicianid);
+        public AdminDashboard GetProviderAcccountData(string aspnetuserid);
         //public void PostProviderData(AdminDashboard model);
 
         public void PostProviderData(List<checkboxmodel> model);
@@ -24,12 +24,14 @@ namespace BusinessLogic.Interface
         public AdminDashboard GetEditRoleData(int roleid);
         public void EditRolePost(string rolename, List<int> MenuIds);
         public void DeleteRolePost(int roleid);
-        public AdminDashboard UserAccessDataGet(int adminaccountfilter);
+        public AdminDashboard UserAccessDataGet(int adminaccountfilter,int currentpage);
 
-        public List<Physicianlocation> GetPhysicianlocations();
+      
         /*** create admin***/
         public AdminDashboard CreaeAdminDataGet();
         public void CreateAdminDataPost(AdminDashboard model);
+        /*provider location*/
+        public AdminDashboard GetPhysicianlocations();
         /**create provider**/
         public AdminDashboard CreateProviderAdminDataGet();
         public void CreateProviderDataPost(AdminDashboard model);
@@ -41,7 +43,7 @@ namespace BusinessLogic.Interface
         public void MyProfileDetailsDataUpdate(AdminDashboard model);
         public void MyProfileAddressDataUpdate(AdminDashboard model);
         /**partner**/
-        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch);
+        public AdminDashboard PartnerDataGet(int ProfessionId, string vendorsearch,int currentpage);
         public AdminDashboard AddBusinessDataGet();
         public void AddBusinessDataPost(AdminDashboard model);
         public AdminDashboard EditBusinessDataGet(int VendorID);
@@ -54,6 +56,7 @@ namespace BusinessLogic.Interface
         //public void AddShift(ScheduleModel model, List<string?>? chk, string adminId);
         /*** Scheduling *******/
         public AdminDashboard GetRegion(int reqid);
+        public AdminDashboard GetProviderOnCallData(int Regionid);
  public List<PhysicianProfile> GetProvider(int Regionid);
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift = false);
         public bool CreateShift(scheduleModel scheduleModel, string adminId);

@@ -555,10 +555,10 @@ h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content
     background-image: none !important;
 }
 
-a {
+/*a {
     text-decoration: none !important;
     color: inherit !important;
-}
+}*/
 
 ::-webkit-scrollbar {
     display: none;
@@ -629,5 +629,64 @@ th[role=columnheader] .fc-datagrid-cell-frame {
 .fc-event {
     height: 46px !important;
 }
+/********************Dardk mode**********/
 
 
+.dark-mode {
+    background-color: #333 !important;
+    color: #fff !important;
+}
+
+.dark-mode-two {
+    color: #fff !important;
+}
+
+html[data-bs-theme="dark"] nav.header {
+    background-color: rgb(42, 50, 56) !important;
+}
+
+html[data-bs-theme="dark"] .text-testing {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .modal-dark {
+    color: #212529 !important;
+}
+
+html[data-bs-theme="dark"] .dark-mode1 {
+    background-color: rgb(42, 50, 56) !important;
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .text-white1 {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .dark-mode2 {
+    background-color: rgb(42, 50, 56) !important;
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .new {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .Pending {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .Active {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .Conclude {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .ToClose {
+    color: white !important;
+}
+
+html[data-bs-theme="dark"] .Unpaid {
+    color: white !important;
+}

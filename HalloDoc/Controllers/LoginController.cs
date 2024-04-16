@@ -45,10 +45,10 @@ namespace HalloDoc.Controllers
                 
                 var jwtToken = _JwtService.GenerateToken(user);
                
-                Response.Cookies.Append("jwt", jwtToken);
-                string Adminid = user.Id;
+                Response.Cookies.Append("jwt", jwtToken);   
+                string Aspnetuserid = user.Id;
                 string Username = user.Name;
-                _httpContextAccessor.HttpContext.Session.SetString("Adminid", Adminid);
+                _httpContextAccessor.HttpContext.Session.SetString("Aspnetuserid", Aspnetuserid);
                 _httpContextAccessor.HttpContext.Session.SetString("Username", Username);
 
                 // Decode JWT token to get username
