@@ -25,10 +25,11 @@ using System.Web.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.Differencing;
 
 namespace HalloDoc.Controllers
 {
-    [CustomAuthorize("1")]
+    //[CustomAuthorize("1")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -64,6 +65,7 @@ namespace HalloDoc.Controllers
         {
             var result = "Tabs/" + "_" + model.tabid;
             string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
+            int roleid =(int) _httpContextAccessor.HttpContext.Session.GetInt32("roleid");
             if (model.tabid == "Dashboard")
             {
                 var req = _AdminDash.RequestCount();
@@ -72,7 +74,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "MyProfile")
             {
-                var req = _providerService.MyProfileDataGet(aspnetuserid);
+                var req = _providerService.MyProfileDataGet(model.aspnetuserid);
                 return PartialView(result, req);
             }
             if (model.tabid == "ProviderLocation")
@@ -87,7 +89,7 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "PhysicianAccountEdit")
             {
-                var data = _providerService.GetProviderAcccountData(model.aspnetuserid);
+                var data = _providerService.EditPhysicianDataGet(aspnetuserid);
                 return PartialView(result, data);
             }
             if (model.tabid == "CreateProviderAccount")
@@ -97,22 +99,22 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Scheduling")
             {
-                var data = _providerService.GetRegion(0);
+                var data = _providerService.GetRegion(0,roleid);
                 return PartialView("Tabs/Scheduling/_Scheduling",data);
             }
             if (model.tabid == "MDsOnCall")
             {
-                var data = _providerService.GetRegion(0);
+                var data = _providerService.GetRegion(0,roleid);
                 return PartialView("Tabs/Scheduling/_MDsOnCall", data);
             }
             if (model.tabid == "CreatedShift")
             {
-                var data = _providerService.GetRegion(0);
+                var data = _providerService.GetRegion(0,roleid);
                 return PartialView("Tabs/Scheduling/_CreatedShift", data);
             }
             if (model.tabid == "RequestedShift")
             {
-                var data = _providerService.GetRegion(0);
+                var data = _providerService.GetRegion(0,roleid);
                 return PartialView("Tabs/Scheduling/_RequestedShift", data);
             }
             if (model.tabid == "Records")
@@ -643,13 +645,15 @@ namespace HalloDoc.Controllers
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "MyProfile";
+                adminDashboard.aspnetuserid=aspnetuserid;
 
                 return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
-            if (accounttypeid == 3)
+            if (accounttypeid == 2)
             {
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "PhysicianAccountEdit";
+                adminDashboard.aspnetuserid = aspnetuserid;
 
                 return GetTabs(adminDashboard, default, default, default, default, default, aspnetuserid);
             }
@@ -698,6 +702,7 @@ namespace HalloDoc.Controllers
                 _notyf.Information("INfo Updated Successfully ...");
                 AdminDashboard adminDashboard = new AdminDashboard();
                 adminDashboard.tabid = "MyProfile";
+                adminDashboard.aspnetuserid = model.myProfile.Aspnetid;
                 return GetTabs(adminDashboard, default, default, default, default, default, default);
             }
             else
@@ -713,6 +718,7 @@ namespace HalloDoc.Controllers
             _notyf.Information("INfo Updated Successfully ...");
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "MyProfile";
+            adminDashboard.aspnetuserid = model.myProfile.Aspnetid;
             return GetTabs(adminDashboard, default, default, default, default, default, default);
 
         }
@@ -723,8 +729,80 @@ namespace HalloDoc.Controllers
             _notyf.Information("INfo Updated Successfully  ...");
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "MyProfile";
+            adminDashboard.aspnetuserid = model.myProfile.Aspnetid;
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
+        /******provider datapost***/
+          /// Edit Physician /
+  [HttpPost]
+        public JsonResult PhysicianResetPassDataUpdate(string password, int physicianid)
+        {
+            if (password != null)
+            {
+                _providerService.PhysiscianResetPassDataUpdate(password, physicianid);
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+        [HttpPost]
+        public JsonResult PhysicianAccountInfoDataUpdate(AdminDashboard model)
+        {
+            _providerService.PhysiscianAccountInfoDataUpdate(model);
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public JsonResult PhysicianInfoDataUpdate(AdminDashboard model)
+        {
+            _providerService.PhysicianInfoDataUpdate(model);
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public JsonResult PhysicianAddressDataUpdate(AdminDashboard model)
+        {
+            _providerService.PhysicianAddressDataUpdate(model);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult ProviderProfileDataUpdate(AdminDashboard model)
+        {
+            _providerService.ProviderProfileDataUpdate(model);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult ProviderOnboardingDataUpdate(AdminDashboard model)
+        {
+            _providerService.ProviderOnboardingDataUpdate(model);
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public JsonResult DeleteProviderAccount(int physicianid)
+        {
+            _providerService.DeleteProviderAccount(physicianid);
+            return Json(new { success = true });
+        }
+
+        public IActionResult ViewDocument(string documentPath)
+        {
+            // Check if the file exists
+            if (!System.IO.File.Exists(documentPath))
+            {
+                return NotFound();
+            }
+
+            // Read the file content
+            var fileBytes = System.IO.File.ReadAllBytes(documentPath);
+            var fileName = Path.GetFileName(documentPath);
+
+            // Return the file as a FileStreamResult
+            return File(fileBytes, "application/pdf", fileName);
+        }
+
         /*** partner**/
 
         //Partner

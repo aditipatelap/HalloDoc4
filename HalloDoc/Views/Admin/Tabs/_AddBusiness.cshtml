@@ -47,7 +47,8 @@
             <div class="col-md-6">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="businessName" placeholder="FaxNumber" asp-for="@Model.AddBusinessModel.FAXNumber" />
-                    <label for="businessName" class="floatingLabel text-secondary">FaxNumber</label>
+                    <label for="businessName" class="floatingLabel text-secondary">FaxNumber<span class="text-danger">*</span></label>
+                    @Html.ValidationMessageFor(Model => Model.AddBusinessModel.BusinessName, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="col-md-6">

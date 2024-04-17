@@ -25,8 +25,17 @@ namespace BusinessLogic.Interface
         public void EditRolePost(string rolename, List<int> MenuIds);
         public void DeleteRolePost(int roleid);
         public AdminDashboard UserAccessDataGet(int adminaccountfilter,int currentpage);
+        /****post  edit provider data*/
+        public AdminDashboard EditPhysicianDataGet(int physicianid);
+        public void PhysiscianResetPassDataUpdate(string password, int physicianid);
+        public void PhysiscianAccountInfoDataUpdate(AdminDashboard model);
+        public void PhysicianInfoDataUpdate(AdminDashboard model);
+        public void PhysicianAddressDataUpdate(AdminDashboard model);
+        public void ProviderProfileDataUpdate(AdminDashboard model);
+        public void ProviderOnboardingDataUpdate(AdminDashboard model);
+        public void DeleteProviderAccount(int physicianid);
 
-      
+
         /*** create admin***/
         public AdminDashboard CreaeAdminDataGet();
         public void CreateAdminDataPost(AdminDashboard model);
@@ -37,6 +46,7 @@ namespace BusinessLogic.Interface
         public void CreateProviderDataPost(AdminDashboard model);
         public AdminDashboard GetContactProvider(int physicianid);
         public void ContactProvider(AdminDashboard model);
+
         /**myprofile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid);
         public void MyProfileResetPassDataUpdate(AdminDashboard model);
@@ -55,7 +65,7 @@ namespace BusinessLogic.Interface
         // public AdminDashboard CreateShiftGet();
         //public void AddShift(ScheduleModel model, List<string?>? chk, string adminId);
         /*** Scheduling *******/
-        public AdminDashboard GetRegion(int reqid);
+        public AdminDashboard GetRegion(int reqid, int roleid);
         public AdminDashboard GetProviderOnCallData(int Regionid);
  public List<PhysicianProfile> GetProvider(int Regionid);
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift = false);

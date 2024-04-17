@@ -1,7 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model ProviderDash
 
-@if (Model.ProviderInfo != null)
+@if (Model.ProviderInfomodel != null)
 {
     <div class=" mb-5">
         <div class="container-fluid d-flex justify-content-between mt-4" style="max-width:1000px">
@@ -9,7 +9,7 @@
                 My Profile
             </h4>
             <div class="d-inline-flex">
-                <a class="btn btn-outline-info m-2 text-decoration-none float-end ProviderPartialViews" data-value="ProviderInformation">
+                <a class="btn btn-outline-info m-2 text-decoration-none float-end ProviderPartialViews" data-value="ProviderInfomodelrmation">
                     Back
                 </a>
             </div>
@@ -22,22 +22,22 @@
                     <div class="row g-2 m-1">
                         <div class="col-md">
                             <div class="form-floating">
-                                <input type="text" class="form-control" asp-for="ProviderInfo.UserName" id="userName" disabled>
+                                <input type="text" class="form-control" asp-for="ProviderInfomodel.UserName" id="userName" disabled>
                                 <label for="">User Name</label>
                             </div>
                         </div>
 
                         <div class="col-md">
                             <div class="form-floating">
-                                <input type="text" class="form-control " asp-for="ProviderInfo.Password" id="password">
+                                <input type="text" class="form-control " asp-for="ProviderInfomodel.Password" id="password">
                                 <label for="floatingSelectGrid">Password</label>
                             </div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-outline-info float-end m-1">Reset Password</button><br />
-                    <input asp-for="ProviderInfo.formid" value="1" hidden />
-                    <input asp-for="ProviderInfo.PhysicianId" value="@Model.ProviderInfo.PhysicianId" hidden />
-                    <input asp-for="ProviderInfo.viewid" value="PhysicianAccountEdit" hidden />
+                    <input asp-for="ProviderInfomodel.formid" value="1" hidden />
+                    <input asp-for="ProviderInfomodel.PhysicianId" value="@Model.ProviderInfomodel.PhysicianId" hidden />
+                    <input asp-for="ProviderInfomodel.viewid" value="PhysicianAccountEdit" hidden />
                 </form>
                 <h5>Physician Information</h5>
                 <fieldset id="fieldset2" disabled>
@@ -45,37 +45,37 @@
                     <div class="row g-2 m-1">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" asp-for="ProviderInfo.FirstName" disabled>
+                                <input type="text" class="form-control" asp-for="ProviderInfomodel.FirstName" disabled>
                                 <label for="">First Name</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" asp-for="ProviderInfo.LastName" disabled />
+                                <input type="text" class="form-control" asp-for="ProviderInfomodel.LastName" disabled />
                                 <label for="floatingSelectGrid">Last Name</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="email" class="form-control" asp-for="ProviderInfo.Email" disabled>
+                                <input type="email" class="form-control" asp-for="ProviderInfomodel.Email" disabled>
                                 <label for="">Email</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating phone-div w-100 h-100">
-                                <input type="tel" class="patientPhone form-control w-100 h-100" asp-for="ProviderInfo.Phone" disabled>
+                                <input type="tel" class="patientPhone form-control w-100 h-100" asp-for="ProviderInfomodel.Phone" disabled>
                                 <label for="">Phone</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" asp-for="ProviderInfo.MedicalLicenseNumber" disabled>
+                                <input type="text" class="form-control" asp-for="ProviderInfomodel.MedicalLicenseNumber" disabled>
                                 <label for="">Medical License Number</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" asp-for="ProviderInfo.NPINumber" disabled>
+                                <input type="text" class="form-control" asp-for="ProviderInfomodel.NPINumber" disabled>
                                 <label for="">NPI Number</label>
                             </div>
                         </div>
@@ -91,28 +91,28 @@
                     <div class="row g-2 m-1">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Address1">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.Address1">
                                 <label for="">Address1</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Address2">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.Address2">
                                 <label for="floatingSelectGrid">Address2</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.City">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.City">
                                 <label for="">City</label>
                             </div>
                         </div>
                         <div class="col-md-6 form-floating">
-                            <select class="form-select regionDropDown dark-background-div" id="floatingSelect" aria-label="Floating label select example" asp-for="ProviderInfo.regionId">
+                            <select class="form-select regionDropDown dark-background-div" id="floatingSelect" aria-label="Floating label select example" asp-for="ProviderInfomodel.regionId">
                                 <option selected disabled>Select Region</option>
                                 @foreach (var item in Model.regions)
                                 {
-                                    @if (Model.ProviderInfo.regionId == item.Regionid)
+                                    @if (Model.ProviderInfomodel.regionId == item.Regionid)
                                     {
                                         <option value="@item.Regionid">@item.Name</option>
                                     }
@@ -126,13 +126,13 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.Zip">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.Zip">
                                 <label for="">Zip</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating phone-div w-100 h-100 ">
-                                <input type="tel" class="patientPhone form-control w-100 h-100" placeholder="" asp-for="ProviderInfo.PhoneNumber">
+                                <input type="tel" class="patientPhone form-control w-100 h-100" placeholder="" asp-for="ProviderInfomodel.PhoneNumber">
                                 <label for="">Phone</label>
                             </div>
                         </div>
@@ -146,20 +146,20 @@
                     <div class="row g-2 m-1">
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.BusinessName">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.BusinessName">
                                 <label for="">Business name</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfo.BusinessWebsite">
+                                <input type="text" class="form-control" placeholder="" asp-for="ProviderInfomodel.BusinessWebsite">
                                 <label for="floatingSelectGrid">Business Website</label>
                             </div>
                         </div>
 
                         <div class="col-md-6">
                             <div class="input-group m-1 mb-3">
-                                <input id="actualFileBtn1" class="form-control" asp-for="ProviderInfo.Photo" hidden>
+                                <input id="actualFileBtn1" class="form-control" asp-for="ProviderInfomodel.Photo" hidden>
                                 <span id="fileChoosen1" class="form-control">Select Photo</span>
                                 <label class="input-group-text btn btn-info" id="uploadFileLabel1" for="actualFileBtn1">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
@@ -170,11 +170,11 @@
                                 </label>
                             </div>
                             <br />
-                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfo.PhysicianId/@Model.ProviderInfo.Photo1" alt="Photo" />
+                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfomodel.PhysicianId/@Model.ProviderInfomodel.Photo1" alt="Photo" />
                         </div>
                         <div class="col-md-4">
                             <div class="input-group m-1 mb-3">
-                                <input type="file" id="actualFileBtn2" class="form-control" asp-for="ProviderInfo.Signature" hidden>
+                                <input type="file" id="actualFileBtn2" class="form-control" asp-for="ProviderInfomodel.Signature" hidden>
                                 <span id="fileChoosen2" class="form-control">Select Signature</span>
                                 <label class="input-group-text btn btn-info" id="uploadFileLabel2" for="actualFileBtn2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
@@ -185,7 +185,7 @@
                                 </label>
                             </div>
                             <br />
-                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfo.PhysicianId/@Model.ProviderInfo.Signature1" alt="Signature" />
+                            <img style="height:150px;width:150px" src="~/images/PhysicianImages/@Model.ProviderInfomodel.PhysicianId/@Model.ProviderInfomodel.Signature1" alt="Signature" />
                         </div>
                         <div class="col-md-1">
                             <div class="input-group m-1 mb-3">
@@ -195,7 +195,7 @@
                         </div>
 
                         <div class="col-lg-12 col-md-12 col sm-12 col-12 ">
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Admin Notes" asp-for="ProviderInfo.AdminNote"></textarea>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Admin Notes" asp-for="ProviderInfomodel.AdminNote"></textarea>
                         </div>
                     </div>
 

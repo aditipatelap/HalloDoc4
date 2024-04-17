@@ -20,6 +20,7 @@ using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using System.Net.Mail;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Office2010.PowerPoint;
 
 namespace BusinessLogic.Service
 {
@@ -238,6 +239,254 @@ namespace BusinessLogic.Service
             return model;
 
         }
+        /************edit physicina********/
+        
+        /// Edit Physician /
+        public AdminDashboard EditPhysicianDataGet(string aspnetuserid)
+        {
+            var data = _db.Physicians.Where(x => x.Aspnetuserid == aspnetuserid).Select(x => new PhysicianProfile
+            {
+                
+                UserName = x.Firstname + " " + x.Lastname,
+                status = x.Status,
+                firstName = x.Firstname,
+                lastName = x.Lastname,
+                email = x.Email,
+                phone = x.Mobile,
+                phonenumber = x.Altphone,
+                LicenseNo = x.Medicallicense,
+                NIPNo = x.Npinumber,
+                SynchronizationEmailAddress = x.Syncemailaddress,
+                Address1 = x.Address1,
+                Address2 = x.Address2,
+                city = x.City,
+                //Zip = x.Zip,
+                BusinessName = x.Businessname,
+                BusinessWebsite = x.Businesswebsite,
+                Regionid = x.Regionid,
+                roleid = x.Roleid,
+                physicianid = x.Physicianid,
+                Isagreementdoc = x.Isagreementdoc,
+                Isbackgrounddoc = x.Isbackgrounddoc,
+                Iscredentialdoc = x.Iscredentialdoc,
+                Isnondisclosuredoc = x.Isnondisclosuredoc,
+                Islicensedoc = x.Islicensedoc,
+                PhotoName = x.Photo,
+                SignatureName = x.Signature,
+            }).FirstOrDefault();
+
+            var RegionCheckbox = _db.Physicianregions.Include(x => x.Region).Where(x => x.Physicianid == data.physicianid).Select(x => new RegionCheckbox
+            {
+                RegionId = x.Regionid,
+                Regionname = x.Region.Name,
+            }).ToList();
+
+            var role = _db.Roles.ToList();
+            var region = _db.Regions.ToList();
+
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            adminDashboardModel.PhysicianProfile = data;
+            adminDashboardModel.RoleModel = role;
+            adminDashboardModel.Regions = region;
+            adminDashboardModel.regionCheckbox = RegionCheckbox;
+
+            return adminDashboardModel;
+        }
+
+        public void PhysiscianResetPassDataUpdate(string password, int physicianid)
+        {
+            var data = _db.Aspnetusers.Include(x => x.Physicians).FirstOrDefault(x => x.Physicians.FirstOrDefault().Physicianid == physicianid);
+            // Hash the password
+            var passwordHasher = new PasswordHasher<Aspnetuser>();
+            if (data != null)
+            {
+                data.Passwordhash = passwordHasher.HashPassword(data, password);
+                data.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+        }
+        public void PhysiscianAccountInfoDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Physicians.FirstOrDefault(x => x.Physicianid == model.PhysicianProfile.physicianid);
+            if (data != null)
+            {
+                data.Firstname = model.PhysicianProfile.UserName;
+                data.Status =model.PhysicianProfile.status;
+                data.Roleid = model.PhysicianProfile.roleid;
+                data.Modifiedby = "Admin";
+                data.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+        }
+        public void PhysicianInfoDataUpdate(AdminDashboard model)
+        {
+            var physician = _db.Physicians.FirstOrDefault(x => x.Physicianid == model.PhysicianProfile.physicianid);
+            if (physician != null)
+            {
+                physician.Firstname = model.PhysicianProfile.firstName;
+                physician.Lastname = model.PhysicianProfile.lastName;
+                physician.Email = model.PhysicianProfile.email;
+                physician.Mobile = model.PhysicianProfile.phone;
+                physician.Medicallicense = model.PhysicianProfile.LicenseNo;
+                physician.Npinumber = model.PhysicianProfile.NIPNo;
+                physician.Syncemailaddress = model.PhysicianProfile.SynchronizationEmailAddress;
+                physician.Modifiedby = "Admin";
+                physician.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+
+            var region = _db.Physicianregions.Where(x => x.Physicianid == model.PhysicianProfile.physicianid).ToList();
+            _db.Physicianregions.RemoveRange(region);
+            _db.SaveChanges();
+
+            foreach (var i in model.RegionArray)
+            {
+                Physicianregion physicianregion = new Physicianregion();
+                physicianregion.Physicianid = model.PhysicianProfile.physicianid;
+                physicianregion.Regionid = i;
+
+                _db.Add(physicianregion);
+               _db.SaveChanges();
+            }
+        }
+        public void PhysicianAddressDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Physicians.FirstOrDefault(x => x.Physicianid == model.PhysicianProfile.physicianid);
+            if (data != null)
+            {
+                data.Address1 = model.PhysicianProfile.Address1;
+                data.Address2 = model.PhysicianProfile.Address2;
+                data.City = model.PhysicianProfile.city;
+                data.Zip = model.PhysicianProfile.Zip;
+                data.Mobile = model.PhysicianProfile.phonenumber;
+                data.Regionid = model.PhysicianProfile.Regionid;
+                data.Modifiedby = "Admin";
+                data.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+
+            Physicianlocation physicianlocation = new Physicianlocation();
+
+            physicianlocation.Physicianid = model.PhysicianProfile.physicianid;
+            physicianlocation.Physicianname = model.PhysicianProfile.firstName + " " + model.PhysicianProfile.lastName;
+            physicianlocation.Createddate = DateTime.Now;
+            physicianlocation.Address = model.PhysicianProfile.Address1;
+            /*physicianlocation.Latitude =
+            physicianlocation.Longitude =*/
+
+            /*_dbContext.Physicianlocations.Add(physicianlocation);
+            _dbContext.SaveChanges();*/
+        }
+
+        public void ProviderProfileDataUpdate(AdminDashboard model)
+        {
+            var physician = _db.Physicians.FirstOrDefault(x => x.Physicianid == model.PhysicianProfile.physicianid);
+            if (physician != null)
+            {
+                if (model.PhysicianProfile.Photo != null)
+                {
+                    physician.Photo = FileUpload(model.PhysicianProfile.Photo, physician.Physicianid);
+                    physician.Photo = model.PhysicianProfile.Photo.FileName;
+                }
+                if (model.PhysicianProfile.signature != null)
+                {
+                    physician.Signature = FileUpload(model.PhysicianProfile.signature, physician.Physicianid);
+                    physician.Signature = model.PhysicianProfile.signature.FileName;
+                }
+                physician.Businessname = model.PhysicianProfile.BusinessName;
+                physician.Businesswebsite = model.PhysicianProfile.BusinessWebsite;
+                physician.Adminnotes = model.PhysicianProfile.notes;
+                physician.Modifiedby = "Admin";
+                physician.Modifieddate = DateTime.Now;
+
+                _db.SaveChanges();
+            }
+        }
+
+        //string FileUpload(IFormFile file, int physicianId)
+        //{
+        //    if (file != null && file.Length > 0)
+        //    {
+        //        var fileName = Path.GetFileName(file.FileName);
+        //        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/PhysicianDocuments/" + physicianId);
+
+        //        if (!Directory.Exists(folderPath))
+        //        {
+        //            Directory.CreateDirectory(folderPath);
+        //        }
+        //        string filePath = Path.Combine(folderPath, fileName);
+        //        using (var stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            file.CopyTo(stream);
+        //        }
+        //        return filePath;
+        //    }
+        //    return null;
+        //}
+
+        public void ProviderOnboardingDataUpdate(AdminDashboard model)
+        {
+            var data = _db.Physicians.FirstOrDefault(p => p.Physicianid == model.PhysicianProfile.physicianid);
+
+            if (data != null)
+            {
+                if (model.PhysicianProfile.AgreementDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.AgreementDocument, model.PhysicianProfile.physicianid, "agreementdoc", "Isagreementdoc", data);
+                }
+                if (model.PhysicianProfile.BackgroundDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.BackgroundDocument, model.PhysicianProfile.physicianid, "backgrounddoc", "Isbackgrounddoc", data);
+                }
+                if (model.PhysicianProfile.Iscredentialdoc != null)
+                {
+                    SaveDocument(model.PhysicianProfile.CredentialDocument, model.PhysicianProfile.physicianid, "credentialdoc", "Iscredentialdoc", data);
+                }
+                if (model.PhysicianProfile.NonDisclosureDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.NonDisclosureDocument, model.PhysicianProfile.physicianid, "nondisclosuredoc", "Isnondisclosuredoc", data);
+                }
+                if (model.PhysicianProfile.LicenseDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.LicenseDocument, model.PhysicianProfile.physicianid, "licenseedoc", "Islicensedoc", data);
+                }
+            }
+            _db.SaveChanges();
+        }
+
+        private void SaveDocument(IFormFile document, int physicianId, string subfolder, string propertyName, Physician physician)
+        {
+            var propertyInfo = typeof(Physician).GetProperty(propertyName);
+            if (document != null)
+            {
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/PhysicianDocuments/{physicianId}");
+                string filePath = Path.Combine(folderPath, subfolder);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    document.CopyTo(stream);
+                }
+                propertyInfo.SetValue(physician, new BitArray(new bool[1] { true }));
+
+            }
+        }
+
+        public void DeleteProviderAccount(int physicianid)
+        {
+            var physician = _db.Physicians.FirstOrDefault(x => x.Physicianid == physicianid);
+            if (physician != null)
+            {
+                physician.Isdeleted = new BitArray(new bool[1] { true });
+                physician.Modifiedby = "Admin";
+                physician.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+            }
+        }
+
 
         // provider location
         public AdminDashboard GetPhysicianlocations()
@@ -310,7 +559,7 @@ namespace BusinessLogic.Service
             }
 
 
-            //var list = model.AdministratorModel.selectedRegions.Split(",").Select(int.Parse).ToList();
+            //var list = model.Ad.selectedRegions.Split(",").Select(int.Parse).ToList();
 
             //foreach (var i in list)
             //{
@@ -319,11 +568,11 @@ namespace BusinessLogic.Service
             //        Adminid = data.Adminid,
             //        Regionid = i
             //    };
-            //    _context.Adminregions.Add(a);
+            //    _db.Adminregions.Add(a);
             //}
-            //_context.SaveChanges();
+            //_db.SaveChanges();
 
-            //return true;
+            
         }
 
         /*** create provider**/
@@ -468,59 +717,65 @@ namespace BusinessLogic.Service
             }
             return null;
         }
-        private void SaveDocument(IFormFile document, int physicianId, string subfolder, string propertyName, Physician physician)
-        {
-            var propertyInfo = typeof(Physician).GetProperty(propertyName);
-            if (document != null)
-            {
-                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/PhysicianDocument/{physicianId}");
-                string filePath = Path.Combine(folderPath, subfolder);
+        //private void SaveDocument(IFormFile document, int physicianId, string subfolder, string propertyName, Physician physician)
+        //{
+        //    var propertyInfo = typeof(Physician).GetProperty(propertyName);
+        //    if (document != null)
+        //    {
+        //        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/PhysicianDocument/{physicianId}");
+        //        string filePath = Path.Combine(folderPath, subfolder);
 
-                if (!Directory.Exists(folderPath))
-                {
-                    Directory.CreateDirectory(folderPath);
-                }
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    document.CopyTo(stream);
-                }
-                propertyInfo.SetValue(physician, new BitArray(new bool[1] { true }));
+        //        if (!Directory.Exists(folderPath))
+        //        {
+        //            Directory.CreateDirectory(folderPath);
+        //        }
+        //        using (var stream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            document.CopyTo(stream);
+        //        }
+        //        propertyInfo.SetValue(physician, new BitArray(new bool[1] { true }));
 
-            }
-        }
+        //    }
+        //}
 
         /***my profile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid)
         {
-            aspnetuserid = "20";
-            var data = _db.Aspnetusers.Include(x => x.AdminAspnetusers).Where(x => x.Id == aspnetuserid).Select(x => new Profile
+            
+            var id  = aspnetuserid.Trim();
+            //var x =_db.Aspnetusers.Where(x=>x.Id== aspnetuserid);
+            //var y = _db.Aspnetusers.Where(x => x.Id == id);
+            //var y2 = _db.Aspnetusers.Find(id);
+            //var a = _db.Aspnetusers.Where(x => x.Id == z);
+            var data = (from aspnetUser in _db.Aspnetusers
+                        join adminAspnetUser in _db.Admins on aspnetUser.Id equals adminAspnetUser.Aspnetuserid
+                        where aspnetUser.Id == id
+                        select new Profile
+                        {
+                            UserName = aspnetUser.Name,
+                            Password = aspnetUser.Passwordhash,
+                            status = (PhysicianStatus)adminAspnetUser.Status,
+                            FirstName = adminAspnetUser.Firstname,
+                            LastName = adminAspnetUser.Lastname,
+                            Email = aspnetUser.Email,
+                            ConfirmEmail = adminAspnetUser.Email,
+                            PhoneNumber = adminAspnetUser.Mobile,
+                            Mobile = adminAspnetUser.Altphone,
+                            Address1 = adminAspnetUser.Address1,
+                            Address2 = adminAspnetUser.Address2,
+                            Zipcode = adminAspnetUser.Zip,
+                            regionid = adminAspnetUser.Regionid,
+                            roleid = adminAspnetUser.Roleid,
+                            adminid = adminAspnetUser.Adminid,
+                            Aspnetid = adminAspnetUser.Aspnetuserid
+                        }).FirstOrDefault();
+
+
+            var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
             {
-                UserName = x.Name,
-                Password = x.Passwordhash,
-                status = (PhysicianStatus)x.AdminAspnetusers.FirstOrDefault().Status,
-                FirstName = x.AdminAspnetusers.FirstOrDefault().Firstname,
-                LastName = x.AdminAspnetusers.FirstOrDefault().Lastname,
-                Email = x.Email,
-                ConfirmEmail = x.AdminAspnetusers.FirstOrDefault().Email,
-                PhoneNumber = x.AdminAspnetusers.FirstOrDefault().Mobile,
-                Mobile = x.AdminAspnetusers.FirstOrDefault().Altphone,
-                Address1 = x.AdminAspnetusers.FirstOrDefault().Address1,
-                Address2 = x.AdminAspnetusers.FirstOrDefault().Address2,
-
-                Zipcode = x.AdminAspnetusers.FirstOrDefault().Zip,
-                regionid = x.AdminAspnetusers.FirstOrDefault().Regionid,
-                roleid = x.AdminAspnetusers.FirstOrDefault().Roleid,
-                adminid = x.AdminAspnetusers.FirstOrDefault().Adminid,
-                Aspnetid= x.AdminAspnetusers.FirstOrDefault().Aspnetuserid
-                //city = x.city,
-
-            }).FirstOrDefault();
-
-            //var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
-            //{
-            //    RegionId = x.Regionid,
-            //    Regionname = x.Region.Name,
-            //}).ToList();
+                RegionId = x.Regionid,
+                Regionname = x.Region.Name,
+            }).ToList();
 
             var role = _db.Roles.ToList();
             var region = _db.Regions.ToList();
@@ -531,7 +786,7 @@ namespace BusinessLogic.Service
             //adminDashboardModel.myProfile.Aspnetid = aspnetuserid;
             adminDashboardModel.RoleModel = role;
             adminDashboardModel.Regions = region;
-            //adminDashboardModel.regionCheckbox = RegionCheckbox;
+            adminDashboardModel.regionCheckbox = RegionCheckbox;
             return adminDashboardModel;
         }
 
@@ -1590,12 +1845,14 @@ namespace BusinessLogic.Service
             };
             return result;
         }
-        public AdminDashboard GetRegion(int reqid)
+        public AdminDashboard GetRegion(int reqid,int roleid)
         {
             var regions = _db.Regions.ToList();
+           
             AdminDashboard adminDashboardModel = new AdminDashboard();
             adminDashboardModel.Regions = regions;
             adminDashboardModel.requestid = reqid;
+           adminDashboardModel.roleid = roleid;
             return adminDashboardModel;
         }
         /******sms*************/

@@ -125,43 +125,71 @@ namespace BusinessLogic.Service
             };
             return result;
         }
-        //public ProviderDash GetProviderInfo(int physicianId)
-        //{
-        //    var phy = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Physicianid == physicianId).Select(x=>new ProviderInfo
+        public ProviderDash GetProviderInfo(string aspnetuserid)
+        {
+            //var phy = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Physicianid == physicianId).Select(x=>new ProviderInfoModel
 
-        //    ProviderInfo obj = new()
-        //    {
-        //        PhysicianId = phy.Physicianid,
-        //        Password = phy.Aspnetuser.Passwordhash,
-        //        UserName = phy.Aspnetuser.Username,
-        //        FirstName = phy.Firstname,
-        //        LastName = phy.Lastname,
-        //        Email = phy.Email,
-        //        PhoneNumber = phy.Mobile,
-        //        MedicalLicenseNumber = phy.Medicallicense,
-        //        NPINumber = phy.Npinumber,
-        //        SyncEmail = phy.Syncemailaddress,
-        //        Address1 = phy.Address1,
-        //        Address2 = phy.Address2,
-        //        City = phy.City,
-        //        State = phy.City,
-        //        Zip = phy.Zip,
-        //        Phone = phy.Altphone, 
-        //        BusinessName = phy.Businessname,
-        //        BusinessWebsite = phy.Businesswebsite,
-        //        Photo1 = phy.Photo,
-        //        Signature1 = phy.Signature,
-        //        AdminNote = phy.Adminnotes,
-        //        RoleId = phy.Roleid,
-        //        regionId = phy.Regionid,
-        //    };
+            //ProviderInfo obj = new()
+            //{
+            //    PhysicianId = phy.Physicianid,
+            //    Password = phy.Aspnetuser.Passwordhash,
+            //    UserName = phy.Aspnetuser.Username,
+            //    FirstName = phy.Firstname,
+            //    LastName = phy.Lastname,
+            //    Email = phy.Email,
+            //    PhoneNumber = phy.Mobile,
+            //    MedicalLicenseNumber = phy.Medicallicense,
+            //    NPINumber = phy.Npinumber,
+            //    SyncEmail = phy.Syncemailaddress,
+            //    Address1 = phy.Address1,
+            //    Address2 = phy.Address2,
+            //    City = phy.City,
+            //    State = phy.City,
+            //    Zip = phy.Zip,
+            //    Phone = phy.Altphone, 
+            //    BusinessName = phy.Businessname,
+            //    BusinessWebsite = phy.Businesswebsite,
+            //    Photo1 = phy.Photo,
+            //    Signature1 = phy.Signature,
+            //    AdminNote = phy.Adminnotes,
+            //    RoleId = phy.Roleid,
+            //    regionId = phy.Regionid,
+            //};
 
-        //    var result = new ProviderDash
-        //    {
-        //        regions = GetAllRegions().regions,
-        //        ProviderInfo = obj,
-        //    };
-        //    return result;
-        //}
+            //var result = new ProviderDash
+            //{
+            //    regions = GetAllRegions().regions,
+            //    ProviderInfo = obj,
+            //};
+            //return result;
+          var id = aspnetuserid.Trim();
+
+            var result = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == id).Select(x => new ProviderInfoModel
+            {
+                UserName = x.Aspnetuser.Name,
+                FirstName = x.Firstname,
+                LastName = x.Lastname,
+                Email = x.Email,
+                PhoneNumber = x.Mobile,
+                Address1 = x.Address1,
+                Address2 = x.Address2,
+                City = x.City,
+                Zip = x.Zip,
+                BusinessName = x.Businessname,
+                BusinessWebsite = x.Businesswebsite,
+               // State = (PhysicianStatus)x.Status,
+                PhysicianId = x.Physicianid,
+                aspId = x.Aspnetuserid
+
+
+
+            }).FirstOrDefault();
+            ProviderDash adminDashboard = new ProviderDash();
+            adminDashboard.ProviderInfomodel = result;
+            adminDashboard.regions = GetAllRegions().regions;
+            //adminDashboard.physicianid = result.physicianid;
+            return adminDashboard;
+        }
     }
+    
 }

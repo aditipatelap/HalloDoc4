@@ -422,7 +422,7 @@ namespace BusinessLogic.Service
         public void SubmitTransferReq(AdminDashboard model, int requestid)
         {
             var id = _db.Physicians.Where(x => x.Firstname == model.transferreq.physicianname).FirstOrDefault();
-            var request = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == model.requestid).FirstOrDefault();
             request.Physicianid = id.Physicianid;
             _db.SaveChanges();
         }

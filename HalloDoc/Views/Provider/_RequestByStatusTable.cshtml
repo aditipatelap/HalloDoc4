@@ -119,24 +119,24 @@
                                                 Accept
                                             </a>
                                         }
-                                        <button class="dropdown-item tabBtn btn" id="viewCase" data-btn="@item.RequestId">
+                                        <button class="dropdown-item tabBtn btn tablink" id="ViewCase" data-btn="@item.RequestId">
                                             <i class="bi bi-search"></i>
                                             ViewCase
                                         </button>
                                         @if (Model.statusId != 1)
                                         {
-                                            <a class="dropdown-item tabBtn" id="viewDocument" data-btn="@item.RequestId">
+                                            <a class="dropdown-item tabBtn tablink" id="ViewUpload" data-btn="@item.RequestId">
                                                 <i class="bi bi-file-earmark-arrow-up"></i>
                                                 View Uploads
                                             </a>
                                         }
-                                        <a class="dropdown-item tabBtn" id="viewNotes">
+                                        <a class="dropdown-item tablink" id="ViewNotes">
                                             <i class="bi bi-book"></i>
                                             ViewNotes
                                         </a>
                                         @if (Model.statusId == 2)
                                         {
-                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#dashModel" id="transfer" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
+                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
                                                 <i class="bi bi-building"></i>
                                                 Transfer
                                             </a>
@@ -470,49 +470,49 @@
 <!--confirm cancellation Modal -->
 <div class="modal fade in  " id="dashModel" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="dashModel modal-content">
+        <div class="modelbody modal-content">
         </div>
     </div>
 </div>
 <script>
-    $('.btnModel').click(function () {
-        var ModelId = $(this).attr('id');
-        var id = $(this).data("btn");
-        var patientname = $(this).data('value1');
-        console.log(patientname);
-        $.ajax({
-            url: '/Admin/ActionView',
-            type: 'GET',
-            data: { id: ModelId, reqId: id, patientName: patientname },
-            success: function (result) {
+    //$('.btnModel').click(function () {
+    //    var ModelId = $(this).attr('id');
+    //    var id = $(this).data("btn");
+    //    var patientname = $(this).data('value1');
+    //    console.log(patientname);
+    //    $.ajax({
+    //        url: '/Admin/ActionView',
+    //        type: 'GET',
+    //        data: { id: ModelId, reqId: id, patientName: patientname },
+    //        success: function (result) {
 
-                $('.dashModel').html(result);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-    $(document).ready(function () {
-        $('.tabBtn').click(function () {
-            var id = $(this).data("btn");
-            console.log(id);
-            var tabBtnId = $(this).attr('id');
-            $.ajax({
-                url: '@Url.Action("DashNavTavView", "Admin")',
-                type: 'GET',
-                data: { Id: tabBtnId, reqid: id },
-                success: function (result) {
+    //            $('.dashModel').html(result);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            console.error(error);
+    //        }
+    //    });
+    //});
+    //$(document).ready(function () {
+    //    $('.tabBtn').click(function () {
+    //        var id = $(this).data("btn");
+    //        console.log(id);
+    //        var tabBtnId = $(this).attr('id');
+    //        $.ajax({
+    //            url: '@Url.Action("DashNavTavView", "Admin")',
+    //            type: 'GET',
+    //            data: { Id: tabBtnId, reqid: id },
+    //            success: function (result) {
 
-                    $('.tab-content').html(result);
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
-    });
-    $(document).ready(function () {
+    //                $('.tab-content').html(result);
+    //            },
+    //            error: function (xhr, status, error) {
+    //                console.error(error);
+    //            }
+    //        });
+    //    });
+    //});
+   
         $('.custompagination').click(function () {
             var currentpage = $(this).data('page');
             var tabId = globalstatusId;
@@ -531,24 +531,24 @@
                 }
             });
         });
-    });
-    $('.tabBtn').click(function () {
-        var id = $(this).data("btn");
-        var tabBtnId = $(this).attr('id');
-        $.ajax({
-            url: '@Url.Action("DocumentList", "Admin")',
-            type: 'GET',
-            data: { Id: tabBtnId, reqid: id },
-            success: function (result) {
+    
+    //$('.tabBtn').click(function () {
+    //    var id = $(this).data("btn");
+    //    var tabBtnId = $(this).attr('id');
+    //    $.ajax({
+    //        url: '@Url.Action("DocumentList", "Admin")',
+    //        type: 'GET',
+    //        data: { Id: tabBtnId, reqid: id },
+    //        success: function (result) {
 
-                $('#DocumentList').html(result);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
-        });
+    //            $('#DocumentList').html(result);
+    //        },
+    //        error: function (xhr, status, error) {
+    //            console.error(error);
+    //        }
+    //    });
 
-    });
+    //});
 </script>
 <script>
     function DashPartialView() {

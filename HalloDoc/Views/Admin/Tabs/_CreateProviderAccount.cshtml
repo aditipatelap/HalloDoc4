@@ -1,5 +1,6 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class= "row justify-content-center mb-5 pb-5">
     <div class="d-flex justify-content-between mt-5">
@@ -20,7 +21,7 @@
             <div class="row g-2 mt-2">
                 <div class="col-md-4 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="username" placeholder="User Name" asp-for="PhysicianProfile.UserName" disabled>
+                        <input type="text" class="form-control" id="username" placeholder="User Name" asp-for="PhysicianProfile.UserName" disabled >
                         <label for="username" class="floatingLabel">User Name</label>
                     </div>
                     <span id="Username" asp-validation-for="PhysicianProfile.UserName" class="text-danger"></span>
@@ -28,8 +29,8 @@
 
                 <div class="col-md-4 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control" id="password" placeholder="Password" asp-for="PhysicianProfile.Password">
-                        <label for="password" class="floatingLabel">Password</label>
+                        <input type="text" class="form-control" id="password" placeholder="Password" asp-for="PhysicianProfile.Password" required>
+                        <label for="password" class="floatingLabel">Password<span class="text-danger">*</span></label>
                     </div>
                     <span id="Password" asp-validation-for="PhysicianProfile.Password" class="text-danger"></span>
                 </div>
@@ -56,29 +57,29 @@
             <div class="row g-2 mt-2">
                 <div class="col-md-6 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control PhysicianInput" id="PhysicianFirstname" placeholder="First Name" asp-for="PhysicianProfile.firstName">
-                        <label for="PhysicianFirstname" class="floatingLabel">First Name</label>
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianFirstname" placeholder="First Name" asp-for="PhysicianProfile.firstName" required>
+                        <label for="PhysicianFirstname" class="floatingLabel">First Name<span class="text-danger">*</span></label>
                     </div>
-                    <span id="Firstname" asp-validation-for="PhysicianProfile.firstName" class="text-danger"></span>
+                    @Html.ValidationMessageFor(Model=>Model.PhysicianProfile.firstName,"",new{@class="text-danger"})
                 </div>
                 <div class="col-md-6 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control PhysicianInput" id="PhysicianLastname" placeholder="Last Name" asp-for="PhysicianProfile.lastName">
-                        <label for="PhysicianLastname" class="floatingLabel">Last Name</label>
+                        <input type="text" class="form-control PhysicianInput" id="PhysicianLastname" placeholder="Last Name" asp-for="PhysicianProfile.lastName" required>
+                        <label for="PhysicianLastname" class="floatingLabel">Last Name<span class="text-danger">*</span></label>
                     </div>
                     <span id="Lastname" asp-validation-for="PhysicianProfile.lastName" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6 mb-3">
                     <div class="form-floating">
-                        <input type="email" class="form-control PhysicianInput" id="ProviderEmail" placeholder="Email" asp-for="PhysicianProfile.email">
-                        <label for="PhysicianEmail" class="floatingLabel">Email</label>
+                        <input type="email" class="form-control PhysicianInput" id="ProviderEmail" placeholder="Email" asp-for="PhysicianProfile.email" required>
+                        <label for="PhysicianEmail" class="floatingLabel">Email<span class="text-danger">*</span></label>
                     </div>
                     <span id="Email" asp-validation-for="PhysicianProfile.email" class="text-danger"></span>
                     <div id="Emailverify" class="d-none text-danger">Email is Already Exist! Please try Another</div>
                 </div>
                 <div class="col-12 col-md-6 mb-3 z-3">
                     <div class="form-floating">
-                        <input type="tel" class="form-control p-3 ps-5 PhysicianInput" id="PhysicianMobile" placeholder="(201) 555-0123" asp-for="PhysicianProfile.phone">
+                        <input type="tel" class="form-control p-3 ps-5 PhysicianInput" id="PhysicianMobile" placeholder="(201) 555-0123" asp-for="PhysicianProfile.phone" required>
                     </div>
                     <span id="Mobile" asp-validation-for="PhysicianProfile.phone" class="text-danger"></span>
                 </div>
@@ -165,8 +166,8 @@
             <div class="row g-2">
                 <div class="col-md-6 col-12 mb-3">
                     <div class="form-floating">
-                        <input type="text" class="form-control mailingInput" id="ProfileBusinessName" placeholder="Business Name" asp-for="PhysicianProfile.BusinessName">
-                        <label for="ProfileBusinessName" class="floatingLabel">Business Name</label>
+                        <input type="text" class="form-control mailingInput" id="ProfileBusinessName" placeholder="Business Name" asp-for="PhysicianProfile.BusinessName" required>
+                        <label for="ProfileBusinessName" class="floatingLabel">Business Name<span class="text-danger">*</span></label>
                     </div>
                     <span id="Businessname" asp-validation-for="PhysicianProfile.BusinessName" class="text-danger"></span>
                 </div>

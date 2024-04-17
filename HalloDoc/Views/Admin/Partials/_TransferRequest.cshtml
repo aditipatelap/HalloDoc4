@@ -26,7 +26,8 @@
     <div class="mb-3 text-secondary">
         To transfer this request, search and select  another Physician.
     </div>
-    <form method="post" id="submittransfer" action='@Url.Action("TransferReq", "Admin",new {requestid=Model.requestid})'>
+    <form  id="submittransfer" >
+        <input asp-for="@Model.requestid" hidden />
         <div class="dropdown my-3  ">
             <div class="form-floating">
                 <select class="form-select" id="regionName" asp-for="@Model.transferreq.Region" aria-label="Floating label select example">
@@ -46,7 +47,7 @@
                 <label for="floatingSelect">Narrow Down Region Name</label>
             </div>
             @Html.ValidationMessageFor(Model => Model.transferreq.Region, "", new { @class = "text-danger" })
-
+            
             <div class="dropdown my-3  ">
                 <div class="form-floating">
                     <select class="form-select" id="Physician" asp-for="@Model.transferreq.physicianname" aria-label="Floating label select example" required>
@@ -67,7 +68,7 @@
 
             </div>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 ">Submit</button>
+                <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 transferrequest">Submit</button>
                 <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
             </div>
             <p aria-hidden="true" id="required-description">
@@ -76,6 +77,39 @@
     </form>
 </div>
 <script>
+    $('#submittransfer').on('submit', function (e) {
+        e.preventDefault();
+
+        if (!$('#submittransfer')[0].checkValidity()) {
+            return;
+        }
+
+        
+
+        var data = new FormData(this);
+
+         $.ajax({
+            url: "/Admin/TransferReq",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                $('#modeldiv').modal('hide');
+                //$("#").html(result);
+                // $('#accounttype').val(0);
+                // $('#rolename').val('');
+                // $('.check_menu:checked').prop('checked', false);
+                // form.classlist.remove('was-validated');
+                
+            },
+            error: function () {
+                toastr.error("Error whiletransferring request");
+            }
+        });
+
+    });
+
     $(document).on('change', '#regionName', function () {
         var selectedvalue = $(this).val();
 

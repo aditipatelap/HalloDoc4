@@ -305,12 +305,16 @@ namespace DataAccess.ViewModel
         public string? Password { get; set; }
         public short? status { get; set; }
         public string? role { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? firstName { get; set; }
+        public string aspnetid { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? lastName { get; set; }
         public string? email { get; set; }
         public string? phone { get; set; }
         public string LicenseNo { get; set; }
         public string? NIPNo { get; set; }
+        public string SignatureName { get; set; }
         public string? SynchronizationEmailAddress { get; set; }
         public string? Address1 { get; set; }
         public string? Address2 { get; set; }
@@ -354,6 +358,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "The field is required")]
         public int? ProfessionID { get; set; }
         [Required(ErrorMessage = "The field is required")]
+        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
         public string? PHoneNumber { get; set; }
         [Required(ErrorMessage = "The field is required")]
         public string? Email { get; set; }
@@ -591,6 +596,7 @@ public class Records
         public CreateReqquestModel CreateReqquestModel { get; set; }
         public CloseCaseModel CloseCaseModel { get; set; }
         public int PageSize { get; set; }
+        public IEnumerable<Adminregion> adminregions { get; set; }
         public int CurrentPage { get; set; } = 1;
         public int TotalPages { get; set; }
         public int ToatCount { get; set; }

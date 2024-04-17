@@ -201,7 +201,7 @@ namespace DataAccess.ViewModel
         public int? PageSize { get; set; }
         public List<Region> regions { get; set; }
         //public ReqCount reqCount { get; set; }
-        public ProviderInfoModel? ProviderInfo { get; set; }
+        public ProviderInfoModel? ProviderInfomodel { get; set; }
         public int newcount { get; set; }
         public int pendingcount { get; set; }
         public int activecount { get; set; }

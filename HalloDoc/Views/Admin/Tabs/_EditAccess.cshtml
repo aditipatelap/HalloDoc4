@@ -17,7 +17,7 @@
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating mb-3">
-                        <input type="text" class=" form-control" id="Rolename" asp-for=EditaccountAccess.rolename placeholder="name" disabled>
+                        <input type="text" class=" form-control inputform" id="Rolename" asp-for=EditaccountAccess.rolename placeholder="name" disabled>
                         <label class="text-secondary floatingLabel">Role Name</label>
                         <div class="invalid-feedback">
                             Please enter a role name.
@@ -35,7 +35,7 @@
 
                         </select>
 *@
-                        <select class="form-select" id="RoleSelect" asp-for="@Model.EditaccountAccess.AccountType" aria-label="form-select-lg example" disabled>
+                        <select class="form-select " id="RoleSelect" asp-for="@Model.EditaccountAccess.AccountType" aria-label="form-select-lg example" disabled>
                             <option selected value="0">All</option>
                             <option value="1">Admin</option>
                             <option value="2">Physician</option>
@@ -56,7 +56,7 @@
                     if (selected)
                     {
                         <div class="form-check d-flex d-inline-block ">
-                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid" checked>
+                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid" checked disabled>
                             <label class="form-check-label" for="flexCheckDefault">
                                 @i.Name
                             </label>
@@ -65,7 +65,7 @@
                     else
                     {
                         <div class="form-check d-flex d-inline-block">
-                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid">
+                            <input class="physicianInput border border-dark mt-1 me-2 inputform check_Menu" type="checkbox" name="@Model.menuCheckboxes" value="@i.Menuid" disabled>
                             <label class="form-check-label" for="flexCheckDefault">
                                 @i.Name
                             </label>
@@ -79,14 +79,47 @@
                 </div>
             </div>
             <div class="mt-4 d-flex justify-content-end mb-3 ">
-                <button type="button" class="btn btn-info btn-lg me-2 info-button d-none" id="savebtn">Save</button>
+                <button type="button" id="edit" class="btn btn-info info-button" onclick="inputClass()">Edit</button>
+                <div id="btnsave" style="display: none">
+                    <button type="submit" id="save"  class="btn btn-info me-2 info-button">Save</button>
+                    <button type="reset" id="cancel" class="btn btn-outline-info button-info " onclick="disableInputClass()">Cancel</button>
+                </div>
+                @*<button type="button" class="btn btn-info btn-lg me-2 info-button d-none" id="savebtn">Save</button>
                 <button type="button" class="btn btn-info btn-lg me-2 info-button d-block" id="editbtn" onclick="Editbtn()">Edit</button>
-                <button type="reset" class="btn btn-outline-info btn-lg  button-info">Cancel</button>
+                <button type="reset" class="btn btn-outline-info btn-lg  button-info">Cancel</button>*@
             </div>
         </form>
     </div>
 </div>
 
+
+    <script>
+        function inputClass() {
+            let input = document.getElementsByClassName('inputform');
+            for (var i = 0; i < input.length; i++) {
+                input[i].disabled = false;
+            }
+
+            var editBtn = document.getElementById("edit");
+            editBtn.style.display = "none";
+
+            var saveBtn = document.getElementById("btnsave");
+            saveBtn.style.display = "block";
+        }
+
+    function disableInputClass() {
+        let input = document.getElementsByClassName('inputform');
+        for (var i = 0; i < input.length; i++) {
+            input[i].disabled = true;
+        }
+
+        var editBtn = document.getElementById("edit");
+        editBtn.style.display = "block";
+
+        var saveBtn = document.getElementById("btnsave");
+        saveBtn.style.display = "none";
+    }
+</script>
 <script>
     //$('#AccountType').change(function () {
     //    var RoleName = $('#RoleName').val();

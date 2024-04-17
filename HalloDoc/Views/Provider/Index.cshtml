@@ -48,7 +48,7 @@
                     <a class="nav-link px-4 tablink" id="Invoicing">Invoicing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="MySchedule">My Schedule </a>
+                    <a class="nav-link px-4 tablink" id="Scheduling">My Schedule </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="MyProfile">My Profile </a>                      
@@ -124,9 +124,75 @@
         });
 
     });
+    
     function TabLoad() {
+
+        // Assuming you have a parent container with the id "tabContainer" that contains elements with the class "tablink"
+        // Get all elements with the class "tablink"
+        //var tabLinks = document.querySelectorAll(".tablink");
+
+        //// Add click event listener to each tablink element
+        //tabLinks.forEach(function (tabLink) {
+        //    tabLink.addEventListener("click", function (event) {
+        //        // Update TabId with the ID of the clicked tablink
+        //        var TabId = event.target.id;
+        //        // Use TabId as needed
+        //        console.log("Clicked tab ID:", TabId);
+        //    });
+        //});
+
+        debugger;
+
         var TabId = $(this).attr("id");
-       
+        var aspnetuserid = $(this).data('aspnetuserid');
+        var requestid = $(this).data('btn');
+        var physicianid = $(this).data('id');
+        var regionid = $('.filterphysician').val();
+        var accounttype = $('#AccountType').val();
+        var RoleName = $('#RoleName').val();
+        var adminaccountfilter = $('#adminaccountfilter').val();
+        var businessid = $(this).data('businessid');
+
+        //console.log(adminaccountfilter);
+        //var roleid = checkbox.getAttribute('data-roleid');
+        //console.log(businessid);
+        var roleid = $(this).data('roleid');
+
+        if (typeof requestid === 'undefined') {
+            requestid = 0;
+        }
+        if (typeof aspnetuserid === 'undefined') {
+            aspnetuserid = null;
+        }
+        if (typeof adminaccountfilter === 'undefined') {
+            adminaccountfilter = 0;
+        }
+        if (typeof businessid === 'undefined') {
+            businessid = 0;
+        }
+        if (typeof roleid === 'undefined') {
+            roleid = 0;
+        }
+        if (typeof RoleName === 'undefined') {
+            RoleName = null;
+        }
+        if (typeof btnname === 'undefined') {
+            btnname = null;
+        }
+        if (typeof physicianid === 'undefined') {
+            physicianid = null;
+        }
+        if (typeof statusid === 'undefined') {
+            statusid = 0;
+        }
+        if (typeof regionid === 'undefined') {
+            regionid = 0;
+        }
+
+        if (typeof accounttype === 'undefined') {
+            accounttype = 0;
+        }
+        console.log(requestid);
 
         if ($(this).hasClass('tablink')) {
             tabidglobal = TabId;
@@ -135,19 +201,28 @@
         var payload = {
 
             "tabid": tabidglobal,
-           
-
+            "requestid": requestid,
+            physicianid: physicianid,
+            regionid: regionid,
+            accounttype: accounttype,
+            roleid: roleid,
+            adminaccountfilter: adminaccountfilter,
+            VendorId: businessid,
+            aspnetuserid: aspnetuserid
         };
 
         $.ajax({
             url: '/Provider/GetTabs',
             data: payload,
 
-            method: 'GET',
+            method: 'Post',
             success: function (data) {
                 // Replace the content of the btnContent div with the retrieved partial view
                 $("#TabContent").html(data);
-               
+                $('.filterphysician').val(regionid);
+                $('#AccountType').val(accounttype);
+                $('#adminaccountfilter').val(adminaccountfilter);
+                $('#RoleName').val(RoleName);
             },
             error: function () {
                 console.error('Error fetching partial view.');
@@ -275,6 +350,8 @@
     }
 
     $(document).on('click', '.partialbtn', PartialDisplay);
+   
+    $(document).on('click', '.tablink', TabLoad);
     //$("[data-btn='NewPartial'][data-id='1']").click();
 </script>
 

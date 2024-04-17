@@ -4,9 +4,11 @@ using BusinessLogic.Service;
 using DataAccess.Data;
 using DataAccess.ViewModel;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace HalloDoc.Controllers
 {
@@ -48,21 +50,31 @@ namespace HalloDoc.Controllers
                 Response.Cookies.Append("jwt", jwtToken);   
                 string Aspnetuserid = user.Id;
                 string Username = user.Name;
+                int  roleid = (int)user.Aspnetuserroles.FirstOrDefault().Roleid;
                 _httpContextAccessor.HttpContext.Session.SetString("Aspnetuserid", Aspnetuserid);
                 _httpContextAccessor.HttpContext.Session.SetString("Username", Username);
-
+                _httpContextAccessor.HttpContext.Session.SetInt32("roleid", roleid);
                 // Decode JWT token to get username
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var decodedToken = tokenHandler.ReadJwtToken(jwtToken);
                 var usernameClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "Username");
+                var roleClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
                 if (usernameClaim != null)
                 {
-                    string username = usernameClaim.Value;
-                    var model=new AdminDashboard { UserName = username};
-
-                    // Use the username as needed
-                   
-                    return RedirectToAction("Index", "Admin",model);
+                    if (roleClaim != null)
+                    {
+                        string role = roleClaim.Value;
+                        if (role == "1")
+                        {
+                            // Redirect to admin index
+                            return RedirectToAction("Index", "Admin");
+                        }
+                        else if (role == "2")
+                        {
+                            // Redirect to provider index
+                            return RedirectToAction("Index", "Provider");
+                        }
+                    }
 
                 }
 
