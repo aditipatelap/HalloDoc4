@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace BusinessLogic.Service
 {
@@ -46,7 +47,7 @@ namespace BusinessLogic.Service
 
         //    return var;
 
-            // if(_db.Aspnetusers.Where(x=> x.Email == loginModel.Email)).FirstOrDefault())
+        // if(_db.Aspnetusers.Where(x=> x.Email == loginModel.Email)).FirstOrDefault())
 
 
 
@@ -54,10 +55,10 @@ namespace BusinessLogic.Service
 
 
 
-            //Aspnetuser temp1 = _db.Aspnetusers.Where(x => x.Email == loginModel.Email).FirstOrDefault();
-            //Aspnetuser temp2 = _db.Aspnetusers.Where(x => x.Passwordhash == loginModel.Password).FirstOrDefault();
-            //Aspnetuser temp = _db.Aspnetusers.Where(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password).FirstOrDefault();
-            //  return _db.Aspnetusers.Any(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password);
+        //Aspnetuser temp1 = _db.Aspnetusers.Where(x => x.Email == loginModel.Email).FirstOrDefault();
+        //Aspnetuser temp2 = _db.Aspnetusers.Where(x => x.Passwordhash == loginModel.Password).FirstOrDefault();
+        //Aspnetuser temp = _db.Aspnetusers.Where(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password).FirstOrDefault();
+        //  return _db.Aspnetusers.Any(x => x.Email == loginModel.Email && x.Passwordhash == loginModel.Password);
 
         //}
 
@@ -71,7 +72,7 @@ namespace BusinessLogic.Service
         //        {
         //            id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
         //        }
-               
+
         //        return user;
 
         //    if (user == null)
@@ -83,7 +84,7 @@ namespace BusinessLogic.Service
         //public Aspnetuser Login(LoginModel loginModel)
         //{
         //    var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email && u.Passwordhash == loginModel.Password);
-           
+
         //    if (user.Passwordhash == loginModel.Password)
         //    {
 
@@ -91,18 +92,57 @@ namespace BusinessLogic.Service
         //    }
 
         //}
-        public Aspnetuser Login(LoginModel loginModel)
+        //public Aspnetuser Login(LoginModel loginModel)
+        //{
+        //    Aspnetuser user = new Aspnetuser();
+        //    user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+
+        //    if (user.Passwordhash == loginModel.Password)
+        //    {
+        //        return user;
+        //    }
+
+
+
+        //    return null;
+        //}
+        public LoginModel Login(LoginModel loginModel)
         {
-            Aspnetuser user = new Aspnetuser();
-            user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
-           
-                if (user.Passwordhash == loginModel.Password)
+            var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+            if (user != null)
+            {
+                var roleid = user.Aspnetuserroles.FirstOrDefault().Roleid;
+                var data = new LoginModel
                 {
-                return user;
+                    Email = user.Email,
+                    Password = user.Passwordhash,
+                    AspNetUserId = user.Id,
+                    roleid = roleid,
+                    UserName = user.Name,
+                };
+                if (roleid == 1)
+                {
+                    var admin = _db.Admins.Where(x => x.Aspnetuserid == user.Id).FirstOrDefault();
+                    data.AdminId = admin.Adminid;
+                    data.SubRoleId = admin.Roleid;
                 }
-            
+                if (roleid == 2)
+                {
+                    var physician = _db.Physicians.Where(x => x.Aspnetuserid == user.Id).FirstOrDefault();
+                    data.PhysicianId = physician.Physicianid;
+                    data.SubRoleId = physician.Roleid;
+                }
+                //if (roleid == 3)
+                //{
+                //    var users = _db.Users.Where(x => x.Aspnetuserid == user.Id).FirstOrDefault();
+                //    data.UserId = users.Userid;
+                //    //data.SubRoleId = users.Roleid;
+                //}
+                return data;
+            }
             return null;
         }
+        
 
     }
 

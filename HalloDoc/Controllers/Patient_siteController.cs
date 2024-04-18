@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using BusinessLogic.Service;
 using static DataAccess.ViewModel.Constant;
 using DataAccess.Models;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 namespace HalloDoc.Controllers
 {
@@ -129,6 +130,17 @@ namespace HalloDoc.Controllers
             //{
             //var user = _aspNetUsersServices.Login(loginModel);
             var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
+
+            var data = new LoginModel
+            {
+
+                Email = user.Email,
+                Password = user.Passwordhash,
+                AspNetUserId = user.Id,
+                roleid = user.AdminAspnetusers.FirstOrDefault().Roleid,
+                UserName = user.Name,
+            };
+
             if (user == null)
             {
                 _notyf.Custom("Invalid Email", 3, "red", "bi bi-x-circle-fill");
@@ -153,7 +165,7 @@ namespace HalloDoc.Controllers
                         {
                             return RedirectToAction("Login", "Admin");
                         }
-                        var jwtToken = _JwtService.GenerateToken(user);
+                        var jwtToken = _JwtService.GenerateToken(data);
                         Response.Cookies.Append("jwt", jwtToken);
                         _httpContextAccessor.HttpContext.Session.SetInt32("id", id);
 

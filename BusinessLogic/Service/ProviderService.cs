@@ -22,7 +22,7 @@ namespace BusinessLogic.Service
         public ProviderDash reqByStatus(int statusId, int reqTypeId, int currentpage, string searchstream, string region, int physicianId)
         {
             currentpage = 1;
-            physicianId = 6;
+           
             List<int> reqStatusId = new List<int>();
             Physician phy = new Physician();
 
@@ -63,6 +63,7 @@ namespace BusinessLogic.Service
                             RequestId = req.Requestid,
                             StatusId = req.Status,
                             Address = rc.Address,
+                            isfinalize = _db.Encounters.FirstOrDefault(x => x.RequestId == req.Requestid).IsFinalize,
                         };
            
             int totalrecords = query.Count();//10
@@ -104,7 +105,7 @@ namespace BusinessLogic.Service
         //}
         public ProviderDash GetRequestStatusCountByPhysician(int physicianId)
         {
-            physicianId = 6;
+           
             ProviderDash dash = new ProviderDash();
             var Request = _db.Requests.Include(x => x.Requestclients).Where(x => x.Requestid == x.Requestclients.FirstOrDefault().Requestid).ToList();
             dash.newcount = Request.Count(x => x.Status == (int)Requeststatuses.Unassigned && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
@@ -190,6 +191,139 @@ namespace BusinessLogic.Service
             //adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
+        /***********encounter********/
+          public bool SetTypeOfCare(int requestid, int TOCId)
+        {
+            var req = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
+            if (req != null)
+            {
+                if (TOCId == 1)
+                {
+                    req.Status = (int)(Requeststatuses.MDonSite);
+                    req.Modifieddate = DateTime.Now;
+                }
+                else
+                {
+                    req.Status = (int)(Requeststatuses.Conclude);
+                    req.Modifieddate = DateTime.Now;
+                }
+                _db.SaveChanges();
+                return true;
+            }
+            else { return false; }
+        }
+        /****conclude care**/
+        public AdminDashboard ConcludeCareGet(int requestid)
+        {
+            var items = _db.Requestwisefiles
+                .Where(x => x.Requestid == requestid && x.Isdeleted == null)
+                .Select(m => new ViewDoc
+                {
+                    uploaddate = m.Createddate,
+                    uploader = m.Filename
+                })
+                .ToList();
+
+            var req = _db.Requestclients.Include(x => x.Request).FirstOrDefault(x => x.Requestid == requestid);
+            Profile patientInfo = new Profile();
+            patientInfo.FirstName = req.Firstname;
+            patientInfo.LastName = req.Lastname;
+            patientInfo.ConfirmationNo = req.Request.Confirmationnumber;
+            //var Month = ConvertMonthToInt(req.Strmonth);
+
+            var result = new AdminDashboard
+            {
+                myProfile = patientInfo,
+                doc = items,
+                requestid = requestid,
+            };
+            return result;
+        }
+        public bool ConcludeCare(int reqId, string notes, int phyId)
+        {
+            using (var transaction = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqId).FirstOrDefault();
+
+                    if (data != null)
+                    {
+                        data.Request.Status = (int)Status.ToClose;
+                        _db.SaveChanges();
+                    }
+                    Requeststatuslog rsl = new Requeststatuslog();
+                    rsl.Physicianid = phyId;
+                    rsl.Notes = notes;
+                    rsl.Createddate = DateTime.Now;
+                    rsl.Status = (int)(Status.ToClose);
+                    rsl.Requestid = reqId;
+
+
+                    _db.Requeststatuslogs.Add(rsl);
+                    _db.SaveChanges();
+                    Requestclosed requestclosed = new Requestclosed();
+                    requestclosed.Requestid = reqId;
+                    requestclosed.Requeststatuslogid = rsl.Requeststatuslogid;
+                    requestclosed.Phynotes = notes;
+                    _db.Requestcloseds.Add(requestclosed);
+                    _db.SaveChanges();
+                    var data1 = _db.Requestnotes.FirstOrDefault(x => x.Requestid == reqId);
+                    if (data1 != null)
+                    {
+                        data1.Physiciannotes = notes;
+                        data1.Modifieddate = DateTime.Now;
+                        data1.Modifiedby = phyId.ToString();
+                    }
+                    else
+                    {
+                        Requestnote requestnote = new Requestnote();
+                        requestnote.Requestid = reqId;
+                        requestnote.Intdate = DateTime.Now.Day;
+                        requestnote.Strmonth = DateTime.Now.Month.ToString();
+                        requestnote.Intyear = DateTime.Now.Year;
+                        requestnote.Createddate = DateTime.Now;
+                        requestnote.Createdby = phyId.ToString();
+                        requestnote.Physiciannotes = notes;
+                        _db.Requestnotes.Add(requestnote);
+                        _db.SaveChanges();
+                    }
+
+
+                    transaction.Commit();
+                    return true;
+                }
+                catch
+                {
+
+                    transaction.Rollback();
+                    return false;
+                }
+
+            }
+        }
+        /*******encounter****/
+
+        //EncounterForm DataPost
+        public bool FinalizeEncounterForm(int reqid)
+        {
+            var model = _db.Encounters.FirstOrDefault(x => x.RequestId == reqid);
+
+            if (model != null)
+            {
+                model.IsFinalize = true;
+                _db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        ///***pdf****/
+        ///
+
     }
-    
+
 }

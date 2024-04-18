@@ -29,7 +29,7 @@ using Microsoft.CodeAnalysis.Differencing;
 
 namespace HalloDoc.Controllers
 {
-    //[CustomAuthorize("1")]
+    [CustomAuthorize("1")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -65,7 +65,7 @@ namespace HalloDoc.Controllers
         {
             var result = "Tabs/" + "_" + model.tabid;
             string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
-            int roleid =(int) _httpContextAccessor.HttpContext.Session.GetInt32("roleid");
+            //int roleid =(int) _httpContextAccessor.HttpContext.Session.GetInt32("roleid");
             if (model.tabid == "Dashboard")
             {
                 var req = _AdminDash.RequestCount();
@@ -99,22 +99,22 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Scheduling")
             {
-                var data = _providerService.GetRegion(0,roleid);
+                var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_Scheduling",data);
             }
             if (model.tabid == "MDsOnCall")
             {
-                var data = _providerService.GetRegion(0,roleid);
+                var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_MDsOnCall", data);
             }
             if (model.tabid == "CreatedShift")
             {
-                var data = _providerService.GetRegion(0,roleid);
+                var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_CreatedShift", data);
             }
             if (model.tabid == "RequestedShift")
             {
-                var data = _providerService.GetRegion(0,roleid);
+                var data = _providerService.GetRegion(0);
                 return PartialView("Tabs/Scheduling/_RequestedShift", data);
             }
             if (model.tabid == "Records")
@@ -354,6 +354,17 @@ namespace HalloDoc.Controllers
                 return excelBytes;
             }
         }
+        //send link 
+       
+        public IActionResult SendLinkDataPost(AdminDashboard model)
+        {
+            var AspProviderId = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
+            _AdminDash.SendMailLink(model, AspProviderId);
+            _notyf.Custom("Link Send Successfully", 3, "green", "bi bi-check-circle-fill");
+            return Ok(new { message = "Data saved successfully." });
+
+        }
+
         [HttpPost]
         public IActionResult AssignReq(AdminDashboard model)
         {

@@ -13,7 +13,6 @@
 @await Html.PartialAsync("_Toast")
 
 
-
 <!-- Main Body Part-->
 <div class="container mt-3 d-flex justify-content-between" id="back">
     <div></div>
@@ -61,7 +60,7 @@
     <h3 class="mb-2">Patient Contact Information</h3>
     <div class="row">
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="email" class="form-control email" asp-for="Email" id="floatingInput" placeholder="name@example.com">
+            <input type="email" class="form-control checkpatientemail" asp-for="Email" id="floatingInput" placeholder="name@example.com">
             <label for="floatingInput" class="text-dark ms-2">Email</label>
             <span asp-validation-for="Email" id=""></span>
         </div>
@@ -158,7 +157,9 @@
         document.getElementById('file-name').textContent = fileName;
     });
     $(document).ready(function () {
-        $('.email').focusout(function () {
+        console.log("gvfsre");
+        $('.checkpatientemail').focusout(function () {
+            console.log("gvvdfvfsre");
             var email = $(this).val();
             if (email.trim() !== "") {
                 checkEmailExists(email);

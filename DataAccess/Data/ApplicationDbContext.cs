@@ -36,6 +36,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Emaillog> Emaillogs { get; set; }
 
+    public virtual DbSet<Encounter> Encounters { get; set; }
+
     public virtual DbSet<Healthprofessional> Healthprofessionals { get; set; }
 
     public virtual DbSet<Healthprofessionaltype> Healthprofessionaltypes { get; set; }
@@ -204,6 +206,19 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Physician).WithMany(p => p.Emaillogs).HasConstraintName("fk_emaillog3");
 
             entity.HasOne(d => d.Request).WithMany(p => p.Emaillogs).HasConstraintName("fk_emaillog1");
+        });
+
+        modelBuilder.Entity<Encounter>(entity =>
+        {
+            entity.HasKey(e => e.EncounterFormId).HasName("Encounter_pkey");
+
+            entity.Property(e => e.EncounterFormId).UseIdentityAlwaysColumn();
+
+            entity.HasOne(d => d.Admin).WithMany(p => p.Encounters).HasConstraintName("Encounter_AdminId_fkey");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Encounters).HasConstraintName("Encounter_PhysicianId_fkey");
+
+            entity.HasOne(d => d.Request).WithMany(p => p.Encounters).HasConstraintName("Encounter_RequestId_fkey");
         });
 
         modelBuilder.Entity<Healthprofessional>(entity =>

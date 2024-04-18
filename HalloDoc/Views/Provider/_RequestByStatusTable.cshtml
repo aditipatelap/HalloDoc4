@@ -119,13 +119,13 @@
                                                 Accept
                                             </a>
                                         }
-                                        <button class="dropdown-item tabBtn btn tablink" id="ViewCase" data-btn="@item.RequestId">
+                                        <button class="dropdown-item tabBtn btn tablink" id="ViewCaseProvider" data-btn="@item.RequestId">
                                             <i class="bi bi-search"></i>
                                             ViewCase
                                         </button>
                                         @if (Model.statusId != 1)
                                         {
-                                            <a class="dropdown-item tabBtn tablink" id="ViewUpload" data-btn="@item.RequestId">
+                                            <a class="dropdown-item tabBtn tablink" id="ViewUploadsProvider" data-btn="@item.RequestId">
                                                 <i class="bi bi-file-earmark-arrow-up"></i>
                                                 View Uploads
                                             </a>
@@ -143,10 +143,13 @@
                                         }
                                         @if (Model.statusId == 6 )
                                         {
-                                            <a class="dropdown-item tabBtn" id="CloseCase" data-btn="@item.RequestId">
+                                          
+                                            <a class="dropdown-item tablink" id="Conclude" data-btn="@item.RequestId">
                                                 <i class="fa-regular fa-circle-xmark"></i>
-                                                Close Case
+                                                Conclude Care
                                             </a>
+                                           
+
                                         }
                                         @if (Model.statusId == 6 || Model.statusId == 2)
                                         {
@@ -157,17 +160,45 @@
                                         }
                                         @if (Model.statusId == 3)
                                         {
-                                            <a class="dropdown-item tabBtn" data-btn="@item.RequestId" id="Order">
+                                            <a class="dropdown-item tablink" data-btn="@item.RequestId" id="SendOrdere">
                                                 <i class="bi bi-cart-plus"></i>
                                                 Orders
                                             </a>
-                                            <a class="dropdown-item tabBtn" data-btn="@item.RequestId" id="EncounterForm">
-                                                <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                                Encounter
-                                            </a>
+
+                                           
+
+                                        }
+                                        @if (Model.statusId == 4 || Model.statusId == 6)
+                                        {
+                                            @if (item.StatusId == 4)
+                                            {
+                                                <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" data-btn="@item.RequestId" id="EncounterPopUp">
+                                                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                    Encounter
+                                                </a>
+
+                                            }
+                                            else if (item.StatusId == 6 || item.StatusId == 5)
+                                            {
+                                                if (item.isfinalize == true)
+                                                {
+                                                    <a class="dropdown-item tablink" data-btn="@item.RequestId" id="Encounter">
+                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                        Encounter
+                                                    </a>
+
+                                                }
+                                                else
+                                                {
+                                                    <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" data-btn="@item.RequestId" id="EncounterPopUp">
+                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                        Encounter
+                                                    </a>
+                                                }
+                                            }
                                         }
 
-                                    </div>
+                                    
                                 </div>
                             </td>
                         </tr>
@@ -365,7 +396,7 @@
                                                 <button class="col-5 btn rounded-pill btn-danger mobile-font" onclick="DashboardCancelCase(@obj.RequestId)" type="button">Cancel Case</button>
                                             }
 
-                                            <button class="col-5 p-2 btn rounded-pill btn-success mobile-font">View Case</button>
+                                            <button class="col-5 p-2 btn rounded-pill btn-success mobile-font tablink" id="ViewCaseProvider" data-btn="@obj.RequestId" >View Case</button>
 
                                             @if (@Model.statusId == 1)
                                             {
@@ -475,6 +506,7 @@
     </div>
 </div>
 <script>
+    $(document).on('click', '.tablink', TabLoad);
     //$('.btnModel').click(function () {
     //    var ModelId = $(this).attr('id');
     //    var id = $(this).data("btn");

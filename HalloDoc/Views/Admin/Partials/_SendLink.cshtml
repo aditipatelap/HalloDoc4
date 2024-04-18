@@ -7,7 +7,7 @@
     <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" action='@Url.Action("SentLinkPostInfo1", "Admin")'>
+    <form method="post" action='@Url.Action("SendLinkDataPost", "Admin")'>
         <div class="col-12 w-100 mb-3">
             <div class="form-floating">
                 <input type="text" class="form-control" asp-for="@Model.sendLink.FirstName" id="firstName" placeholder="First name">

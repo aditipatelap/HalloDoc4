@@ -5,6 +5,7 @@ using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
 using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,9 @@ using System.Net.Mail;
 using System.Text.Json.Nodes;
 using System.Web.Helpers;
 using System.Web.Mvc;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
 using static DataAccess.ViewModel.Constant;
 
 namespace BusinessLogic.Service
@@ -301,6 +305,81 @@ namespace BusinessLogic.Service
 
             return data;
         }
+       
+        //send link
+        public void SendMailLink(AdminDashboard model, string AspProviderId)
+        {
+            var usr = _db.Users.Where(u => u.Email == model.sendLink.Email).FirstOrDefault();
+            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+
+        message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+        message.To.Add(new System.Net.Mail.MailAddress(model.sendLink.Email));
+            message.Subject = "Request submit page Link";
+            message.IsBodyHtml = true;
+            var resetLink = "https://localhost:7165/Patient/requestPage";
+            message.Body = "Submit Request Page Link :  " + resetLink;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+        smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+        smtp.EnableSsl = true;
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+            var isEmailSent = false;
+
+            var IsSMSSend = false;
+            string link = $"https://localhost:44367/Patient/SubmitRequest";
+            string SMSTemplate = $"For Submit your Request: {link}";
+
+            var accountsid = "AC4e906b8950220baa3121323a2a3ec1f8";
+            var authtoken = "5037610beaf3ced4e3e5b3c0a9796101";
+            TwilioClient.Init(accountsid, authtoken);
+
+            var messageoptions = new CreateMessageOptions(
+              new PhoneNumber(model.sendLink.PhoneNumber));
+            messageoptions.From = new PhoneNumber("+16562269587");
+            messageoptions.Body = SMSTemplate;
+            MessageResource.Create(messageoptions);
+            //var physicianId = _db.Physicians.Where(x => x.Aspnetuserid == AspProviderId).FirstOrDefault().Physicianid;
+            IsSMSSend = true;
+            isEmailSent = true;
+            if (IsSMSSend)
+            {
+                Smslog smslog = new Smslog();
+                smslog.Smstemplate = SMSTemplate;
+                smslog.Mobilenumber = model.sendLink.PhoneNumber;
+                smslog.Roleid = model.roleid;
+                //smslog.Physicianid = physicianId;
+               
+                smslog.Createdate = DateTime.Now;
+                smslog.Sentdate = DateTime.Now;
+                smslog.Senttries = 1;
+                smslog.Issmssent = new BitArray(new bool[1] { true });
+
+                _db.Add(smslog);
+                _db.SaveChanges();
+            }
+            var SubjectName = "Send Agreement";
+            var EmailTemplate = "Your Agreement is sent <a href=\"https://localhost:7165/Patient/CreateAccount\">ClickHere</a> to view";
+            var EmailTemplate1 = "Your Agreement is sent Click Here to view";
+            if (isEmailSent)
+            {
+                var emailLog = new Emaillog
+                {
+                    Emailtemplate = EmailTemplate1,
+                    Subjectname = SubjectName,
+                    Emailid = model.sendLink.Email,
+                    Createdate = DateTime.Now,
+                    Roleid = (int)Roles.Patient,
+                    Sentdate = DateTime.Now,
+                    //Physicianid = physicianId,
+                    Isemailsent = new BitArray(new bool[] { true }),
+                    Senttries = 1,
+                };
+                _db.Emaillogs.Add(emailLog);
+                _db.SaveChanges();
+            }
+        }
         public AdminDashboard GetViewCase(int requestid)
         {
             AdminDashboard dashboard = new AdminDashboard();
@@ -573,26 +652,137 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetEncounterForm(int requestid)
         {
-            var items = _db.Requestclients.Where(x => x.Requestid == requestid).Select(m => new EncounterForm
+            //var reqClient = _db.Requestclients.FirstOrDefault(x => x.Requestid == requestid);
+            var items = _db.Requestclients.Where(x => x.Requestid == requestid).FirstOrDefault();
+           
+            var model = _db.Encounters.FirstOrDefault(x => x.RequestId == requestid);
+            EncounterForm EncounterFormDetails = new EncounterForm();
+            EncounterFormDetails.Requestid = requestid;
+            if (model != null)
             {
-
-                FirstName = m.Firstname,
-                LastName=m.Lastname,
-                Email=m.Email,
-                Location=m.Address,
-                //Dob = $"{m.Intdate}/{m.Strmonth}/{m.Intyear}",
-                Dob = Convert.ToDateTime(m.Intdate.ToString() + "/" + m.Strmonth + "/" + m.Intyear.ToString()),
-
-
-            }).FirstOrDefault();
-            var result = new AdminDashboard()
+                EncounterFormDetails.FirstName = items.Firstname;
+                EncounterFormDetails.LastName= items.Lastname;
+                EncounterFormDetails.Email= items.Email;
+                EncounterFormDetails.Address=items.Address;
+               // EncounterFormDetails.BirthDate=items.
+                EncounterFormDetails.Requestid = (int)model.RequestId;
+                EncounterFormDetails.HistoryOfPresentIllness = model.HistoryOfPresentIllnessOrInjury;
+                EncounterFormDetails.MedicalHistory = model.MedicalHistory;
+                EncounterFormDetails.Medications = model.Medications;
+                EncounterFormDetails.Allergies = model.Allergies;
+                EncounterFormDetails.Temperature = model.Temp;
+                EncounterFormDetails.HR = model.Hr;
+                EncounterFormDetails.RR = model.Rr;
+                EncounterFormDetails.BPSystolic = model.BloodPressureSystolic;
+                EncounterFormDetails.BPDiastolic = model.BloodPressureDiastolic;
+                EncounterFormDetails.O2 = model.O2;
+                EncounterFormDetails.Pain = model.Pain;
+                EncounterFormDetails.Heent = model.Heent;
+                EncounterFormDetails.CV = model.Cv;
+                EncounterFormDetails.Chest = model.Chest;
+                EncounterFormDetails.ABD = model.Abd;
+                EncounterFormDetails.Extr = model.Extremeties;
+                EncounterFormDetails.Skin = model.Skin;
+                EncounterFormDetails.Neuro = model.Neuro;
+                EncounterFormDetails.Other = model.Other;
+                EncounterFormDetails.Diagnosis = model.Diagnosis;
+                EncounterFormDetails.TreatmentPlan = model.TreatmentPlan;
+                EncounterFormDetails.MedicationDispensed = model.MedicationsDispensed;
+                EncounterFormDetails.Procedures = model.Procedures;
+                EncounterFormDetails.FollowUp = model.FollowUp;
+                EncounterFormDetails.IsFinalize = model.IsFinalize;
+            }
+            var result = new AdminDashboard
             {
-                encounterform = items
+                encounterform = EncounterFormDetails,
+               
+                requestid = requestid,
             };
             return result;
+        }
+        /*post*/
+
+        public bool EncounterFormDataPost(EncounterForm model)
+        {
+            try
+            {
+
+                var EncounterForm = _db.Encounters.FirstOrDefault(r => r.RequestId == model.Requestid);
+                if (EncounterForm == null)
+                {
+                    Encounter _encounter = new Encounter()
+                    {
+                        RequestId = model.Requestid,
+                        HistoryOfPresentIllnessOrInjury = model.HistoryOfPresentIllness,
+                        MedicalHistory = model.MedicalHistory,
+                        Medications = model.Medications,
+                        Allergies = model.Allergies,
+                        Temp = model.Temperature,
+                        Hr = model.HR,
+                        Rr = model.RR,
+                        BloodPressureSystolic = model.BPSystolic,
+                        BloodPressureDiastolic = model.BPDiastolic,
+                        O2 = model.O2,
+                        Pain = model.Pain,
+                        Heent = model.Heent,
+                        Cv = model.CV,
+                        Chest = model.Chest,
+                        Abd = model.ABD,
+                        Extremeties = model.Extr,
+                        Skin = model.Skin,
+                        Neuro = model.Neuro,
+                        Other = model.Other,
+                        Diagnosis = model.Diagnosis,
+                        TreatmentPlan = model.TreatmentPlan,
+                        MedicationsDispensed = model.MedicationDispensed,
+                        Procedures = model.Procedures,
+                        FollowUp = model.FollowUp,
+                        IsFinalize = false
+                    };
+                    _db.Encounters.Add(_encounter);
+                }
+                else
+                {
+                    var EncounterFormDetails = _db.Encounters.FirstOrDefault(x => x.RequestId == model.Requestid);
+
+                    EncounterFormDetails.RequestId = model.Requestid;
+                    EncounterFormDetails.HistoryOfPresentIllnessOrInjury = model.HistoryOfPresentIllness;
+                    EncounterFormDetails.MedicalHistory = model.MedicalHistory;
+                    EncounterFormDetails.Medications = model.Medications;
+                    EncounterFormDetails.Allergies = model.Allergies;
+                    EncounterFormDetails.Temp = model.Temperature;
+                    EncounterFormDetails.Hr = model.HR;
+                    EncounterFormDetails.Rr = model.RR;
+                    EncounterFormDetails.BloodPressureSystolic = model.BPSystolic;
+                    EncounterFormDetails.BloodPressureDiastolic = model.BPDiastolic;
+                    EncounterFormDetails.O2 = model.O2;
+                    EncounterFormDetails.Pain = model.Pain;
+                    EncounterFormDetails.Heent = model.Heent;
+                    EncounterFormDetails.Cv = model.CV;
+                    EncounterFormDetails.Chest = model.Chest;
+                    EncounterFormDetails.Abd = model.ABD;
+                    EncounterFormDetails.Extremeties = model.Extr;
+                    EncounterFormDetails.Skin = model.Skin;
+                    EncounterFormDetails.Neuro = model.Neuro;
+                    EncounterFormDetails.Other = model.Other;
+                    EncounterFormDetails.Diagnosis = model.Diagnosis;
+                    EncounterFormDetails.TreatmentPlan = model.TreatmentPlan;
+                    EncounterFormDetails.MedicationsDispensed = model.MedicationDispensed;
+                    EncounterFormDetails.Procedures = model.Procedures;
+                    EncounterFormDetails.FollowUp = model.FollowUp;
+                    EncounterFormDetails.IsFinalize = false;
+                    _db.Encounters.Update(EncounterFormDetails);
+                };
+                _db.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
 
         }
-       
         //public AdminDashboard GetEncounterForm(int requestid)
         //{
         //    var items = _db.Requestclients.Where(x => x.Requestid == requestid).Select(m => new EncounterForm

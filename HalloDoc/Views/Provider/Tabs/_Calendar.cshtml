@@ -1,0 +1,292 @@
+﻿
+
+<div id="calendar" class="d-flex m-4 justify-content-center"></div>
+
+
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="eventModalLabel">Event Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            height: 'auto',
+            resourceAreaWidth: '15%',
+            initialView: 'dayGridMonth',
+            views: {
+                resourceTimelineDay: {
+                    slotLabelContent: function (slotInfo) {
+                        var hours = slotInfo.date.getHours();
+                        var meridiem = hours >= 12 ? 'P' : 'A';
+                        hours = hours % 12 || 12;
+                        return hours + meridiem;
+                    }
+                }
+            },
+            dayMaxEvents: 4,
+            headerToolbar: {
+                left: 'title',
+                center: 'prev,datepicker,next',
+                right: '',
+            },
+            editable: false,
+            resourceAreaHeaderContent: 'STAFF',
+            resources: [
+
+    @foreach (var e in Model.PhysicianProfilList)
+    {
+
+        <text>
+                    {
+                        id: '@e.physicianid',
+                        title: '@e.firstName',
+                        avatar: `../PhysicianDocuments/@e.physicianid/@e.PhotoName`
+                    },
+        </text>
+    }
+                                    ],
+            events: [
+    @foreach (var e in Model.eventModel)
+    {
+        <text>
+                    {
+                        id: '@e.Shiftdetailid',
+                        resourceId: '@e.Physicianid',
+                        title: 'Meeting',
+                        start: '@e.Starttime',
+                        end: '@e.Endtime',
+                        backgroundColor: '@e.color',
+                        borderColor: '@e.color',
+                        textColor: 'black',
+                        regionId: '@e.Regionid',
+                        dateString: '@e.Shiftdate',
+                        regionName: '@e.Regionname',
+                        resourceName: '@e.PhysicianName'
+                    },
+        </text>
+    }
+                                ],
+            resourceLabelContent: function (renderInfo) {
+                var resourceAvatar = renderInfo.resource.extendedProps.avatar;
+                var resourceName = renderInfo.resource.title;
+                var resourceLabel = document.createElement('div');
+                resourceLabel.className = 'resource-label';
+                resourceLabel.innerHTML = `<img src="${resourceAvatar}" class="avatar" style="height: 30px; width:30px;"/> ${resourceName}`;
+                return { domNodes: [resourceLabel] };
+            },
+            eventClick: function (info) {
+                var modalBody = document.querySelector('#eventModal .modal-body');
+                var eventDetails = `
+                                            <form id="viewShiftForm">
+                                                <input type="hidden" id="shiftDetailId" value="${info.event.id}" />
+                                                <input type="hidden" id="viewShiftregionId" value="${info.event.extendedProps.regionId}" />
+                                                <input type="hidden" id="viewShiftCalendarView" value="${calendar.view.type}" />
+                                                <div class="form-floating mb-3 mt-3">
+                                                    <select class="form-select" aria-label="Default select example" id="viewShiftregion" name="regionid" disabled>
+                                                        <option value=${info.event.extendedProps.regionId}>${info.event.extendedProps.regionName}</option>
+                                                    </select>
+                                                    <label for="viewShiftregion" class="floatingLabel">Region</label>
+                                                </div>
+                                                <div class="form-floating mb-3 mt-3">
+                                                    <select class="form-select" id="viewShiftPhysician" name="physicianId" disabled>
+                                                        <option value=${info.event.resourceId}>${info.event.extendedProps.resourceName}</option>
+                                                    </select>
+                                                    <label for="viewShiftPhysician" class="floatingLabel">Physician</label>
+                                                </div>
+                                                <div class="col-md-12 form-floating mb-3">
+                                                    <input class="form-control viewShiftInput" id="Shiftdate" type="date" value="${formatDate(info.event.extendedProps.dateString)}" disabled>
+                                                    <label for="Shiftdate">Shift Date</label>
+                                                    <div class="row g-2 mt-3">
+                                                        <div class="col-md-6 col-12 form-floating mb-3">
+                                                            <input class="form-control viewShiftInput" id="startTime" type="time" value="${formatTime(info.event.start)}" disabled>
+                                                            <label for="startTime">Start</label>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 form-floating mb-3">
+                                                            <input class="form-control viewShiftInput" id="endTime" type="time" value="${formatTime(info.event.end)}" disabled>
+                                                            <label for="endTime">End</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <button class="btn btn-info text-light me-2" type="button" onclick="returnShift()" data-bs-dismiss="modal">Return</button>
+                                                    <button class="btn btn-info text-light me-2" id="editbtn" type="button">Edit</button>
+                                                    <button class="btn btn-success text-light me-2" id="savebtn" type="button" style="display: none;" data-bs-dismiss="modal">Save</button>
+                                                    <button class="btn btn-danger text-light" type="button" onclick="deleteShift()" data-bs-dismiss="modal">Delete</button>
+                                                </div>
+                                            </form>
+                                                `;
+                modalBody.innerHTML = eventDetails;
+
+                $("#eventModal").modal("show");
+            },
+
+
+            datesSet: function (info) {
+                if (calendar.view.type === 'resourceTimelineWeek') {
+                    calendar.setOption('slotDuration', { days: 1 });
+                } else {
+                    calendar.setOption('slotDuration', '01:00:00');
+                }
+            }
+        });
+
+        function switchView() {
+            if (window.screen.width < 700) {
+                if (calendar.view.type === 'resourceTimelineWeek') {
+                    calendar.changeView('dayGridWeek');
+                }
+                if (calendar.view.type === 'resourceTimelineDay') {
+                    calendar.changeView('timeGridDay');
+                }
+            } else {
+                if (calendar.view.type === 'dayGridWeek') {
+                    calendar.changeView('resourceTimelineWeek');
+                }
+                if (calendar.view.type === 'timeGridDay') {
+                    calendar.changeView('resourceTimelineDay');
+                }
+            }
+        }
+
+        function adjustDayNamesFontSize() {
+            $("td[role='presentation']").each(function () {
+                var tableWidth = $(this).find("table[role='presentation']").outerWidth();
+                $(this).css("width", tableWidth + "px");
+            });
+        }
+
+        adjustDayNamesFontSize();
+
+        $(window).on('resize', adjustDayNamesFontSize);
+        window.addEventListener('resize', switchView);
+        $(document).on('click', '.fc-button', switchView);
+
+        var currentView = '@Model.currentView';
+
+        if (currentView != "") {
+            calendar.changeView(currentView);
+        }
+
+        calendar.render();
+
+        var datePickerBtn = document.querySelector('.fc-datepicker-button');
+        datePickerBtn.innerHTML = '<i class="bi bi-calendar3 text-info" id="picker"></i>';
+
+        $('#picker').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: parseInt(moment().format('YYYY'), 10)
+        }, function (start, end, label) {
+            var selectedDate = start.toDate();
+            console.log(selectedDate);
+            calendar.gotoDate(selectedDate);
+        });
+    });
+
+    function formatDate(dateString) {
+        const parts = dateString.split(' ')[0].split('-');
+        const formattedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+
+        return formattedDate;
+    }
+
+    function formatTime(timeString) {
+        const date = new Date(timeString);
+        let hours = date.getHours().toString().padStart(2, '0');
+        let minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    }
+
+    $(document).on('click', '#editbtn', function () {
+        let input = document.getElementsByClassName('viewShiftInput');
+        for (var i = 0; i < input.length; i++) {
+            input[i].disabled = false;
+        }
+
+        var editBtn = document.getElementById("editbtn");
+        editBtn.style.display = "none";
+
+        var saveBtn = document.getElementById("savebtn");
+        saveBtn.style.display = "block";
+    });
+
+    $(document).on('click', '#savebtn', function () {
+        var id = $('#shiftDetailId').val();
+        var date = $('#Shiftdate').val();
+        var startTime = $('#startTime').val();
+        var endTime = $('#endTime').val();
+        var regionId = $('#viewShiftregionId').val();
+        var view = $('#viewShiftCalendarView').val();
+        var aboveRegion = $('#SearchRegion').val();
+
+        $.ajax({
+            url: "/Provider/EditShift",
+            type: "Post",
+            data: { shiftDetailId: id, Shiftdate: date, startTime: startTime, endTime: endTime },
+            success: function (result) {
+                if (result.success) {
+                    $("#schedulingCalendar").load('@Url.Action("LoadSchedulingCalendar", "Admin")?RegionId=' + aboveRegion + "&currentView=" + view);
+                    toastr.success("Shift Edited!");
+                }
+                else {
+
+                    swal("Failed!", "Shift already exists in this time!", "Error");
+                }
+            }
+        });
+    });
+
+    function deleteShift() {
+        var id = $('#shiftDetailId').val();
+        var view = $('#viewShiftCalendarView').val();
+        var aboveRegion = $('#SearchRegion').val();
+
+        $.ajax({
+            url: "/Provider/DeleteShift",
+            type: "Post",
+            data: { shiftDetailId: id },
+            success: function (result) {
+                if (result.success) {
+                    $("#schedulingCalendar").load('@Url.Action("LoadSchedulingCalendar", "Admin")?RegionId=' + aboveRegion + "&currentView=" + view);
+                    swal("Done!", "Shift Deleted!", "success");
+                }
+                else {
+                    toastr.error("Error");
+                }
+            }
+        });
+    }
+
+    function returnShift() {
+        var id = $('#shiftDetailId').val();
+        var view = $('#viewShiftCalendarView').val();
+        var aboveRegion = $('#SearchRegion').val();
+
+        $.ajax({
+            url: "/Admin/ReturnShift",
+            type: "Post",
+            data: { shiftDetailId: id },
+            success: function (result) {
+                if (result.success) {
+                    $("#schedulingCalendar").load('@Url.Action("LoadSchedulingCalendar", "Admin")?RegionId=' + aboveRegion + "&currentView=" + view);
+                    swal("Done!", "Shift Status Changed!", "success");
+                }
+                else {
+                    toastr.error("Error");
+                }
+            }
+        });
+    }
+</script>

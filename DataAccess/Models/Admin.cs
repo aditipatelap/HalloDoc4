@@ -90,6 +90,9 @@ public partial class Admin
     [InverseProperty("Admin")]
     public virtual ICollection<Emaillog> Emaillogs { get; set; } = new List<Emaillog>();
 
+    [InverseProperty("Admin")]
+    public virtual ICollection<Encounter> Encounters { get; set; } = new List<Encounter>();
+
     [ForeignKey("Regionid")]
     [InverseProperty("Admins")]
     public virtual Region? Region { get; set; }

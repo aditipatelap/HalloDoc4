@@ -1,0 +1,167 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+    .container {
+        width: 950px;
+    }
+</style>
+
+
+<div class="container">
+    <div class="d-flex justify-content-between mt-4">
+        <div class="d-flex  ">
+            <h4 class="m-0 pt-2 fs-5 ">Notes  </h4>
+        </div>
+        <button class="btn btn-outline-info  bi bi-chevron-left backbtn">
+            Back
+        </button>
+    </div>
+    <form method="post" id="notesForm" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="@Model.requestid" />
+        <div class="row g-2 my-4">
+            <div class="col-md me-4 d-flex shadow rounded">
+                <div class="m-auto text-secondary col-1"><i class="bi bi-arrow-left-right text-secondary"></i></div>
+                <div class="ps-2 col-11">
+                    <div class="fw-bold">Transfer Notes</div>
+                    <select class="w-100 py-2 px-1  border-0 " id="Region">
+                        @foreach (var item in Model.viewnotes)
+                        {
+                            if (item == Model.viewnotes.Last())
+                            {
+                                <option disabled selected>Admin Transferred to Dr. @item.firstName @item.lastName on @item.CreatedDate.Date At @item.CreatedDate.TimeOfDay : @item.TransferNotes </option>
+
+                            }
+                            else
+                            {
+                                <option disabled>Admin Transferred to Dr. @item.firstName @item.lastName on @item.CreatedDate.Date At @item.CreatedDate.TimeOfDay : @item.TransferNotes </option>
+                            }
+                        }
+                        <option class="text-secondary">No More Items</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md d-flex shadow rounded">
+                <div class="m-auto text-secondary col-1"><i class="bi bi-clipboard2-pulse text-secondary"></i></div>
+                <div class="ms-2 col-11">
+                    <strong class="fw-bold">Physician Notes</strong>
+                    @if (Model.PhysicianNotes == null)
+                    {
+                        <div class="text-secondary">No Physician notes available </div>
+                    }
+                    else
+                    {
+                        <div>@Model.PhysicianNotes</div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="row g-2 my-4">
+            <div class="col-md me-4 d-flex shadow rounded">
+                <div class="m-auto text-secondary col-1"><i class="bi bi-person-gear text-secondary"></i></div>
+                <div class="ps-2 col-11 pb-2">
+                    <div class="fw-bold">Admin Notes</div>
+                    @if (Model.AdminNoes == null)
+                    {
+                        <div class="text-secondary">No Admin notes available </div>
+                    }
+                    else
+                    {
+                        <div>@Model.AdminNoes</div>
+                    }
+                </div>
+            </div>
+            <div class="col-md">
+            </div>
+        </div>
+        <div class="shadow rounded p-2">
+            <div class="form-floating my-4">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" asp-for="@Model.AdditionalNotes" required></textarea>
+                <label for="floatingTextarea2" class="text-secondary" id="label-floating">Admin Notes<span class="text-danger">*</span></label>
+                @*@Html.ValidationMessageFor(Model=>Model.AdditionalNotes,"",new{@class="text-danger"})*@
+                <div class="invalid-feedback">This is required</div>
+
+            </div>
+            <div class="d-flex justify-content-end mt-4 mb-4">
+                <button type="submit" class="btn btn-info text-white me-2">Save Changes </button>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div>
+</div>
+
+<script>
+
+
+    //console.log("dsf");
+    //$("#Dashboard")[0].click();
+
+    //console.log("fef");
+    //console.log(statusidglobal);
+    //console.log(btnnameglobal);
+    //$("[data-btn='btnnameglobal'][data-id='statusidglobal']").click();
+    //console.log("Ewdfawe");
+
+
+    $('.backbtn').on('click', function () {
+
+        $("#Dashboard")[0].click();
+
+    });
+
+
+
+    $('#notesForm').on('submit', function (e) {
+
+        e.preventDefault();
+        var form = $(this);
+        if (!form[0].checkValidity()) {
+            e.stopPropagation();
+            form.addClass('was-validated');
+            return;
+        }
+
+
+        var data = new FormData(this);
+
+        $.ajax({
+            url: "/Admin/PostViewNotes",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                if (result.success) {
+                    var TabId = "ViewNotes";
+                    var requestid = @Model.requestid;
+                    console.log(requestid);
+                    $.ajax({
+                        url: '/Admin/GetTabs',
+                        data: { Tabid: TabId, requestid: requestid },
+                        method: 'GET',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            toastr.success("Note Added successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+            }
+        });
+    });
+
+
+
+</script>
+
+

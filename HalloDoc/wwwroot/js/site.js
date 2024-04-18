@@ -46,7 +46,7 @@ btn1.addEventListener("click", function () {
     }
     localStorage.setItem("theme", theme);
 });
-<script>
+
     const phoneInputField = document.querySelectorAll("input[type='tel']");
     for (var i = 0; i < phoneInputField.length; i++) {
         const phoneInput = window.intlTelInput(phoneInputField[i], {
@@ -57,7 +57,7 @@ btn1.addEventListener("click", function () {
     $(window).on('load', function () {
         $('#myModal').modal('show');
     });
-</script>
+
 //<script>
 
 //    (function () {

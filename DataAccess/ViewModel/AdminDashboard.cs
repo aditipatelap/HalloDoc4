@@ -154,12 +154,44 @@ namespace DataAccess.ViewModel
     }
     public class EncounterForm
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Location { get; set; }
-        public DateTime Dob { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
+       
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public string? Location { get; set; }
+            public string? Address { get; set; }
+            public string? BirthDate { get; set; }
+            public string? Number { get; set; }
+            public DateTime? Date { get; set; }
+            public string? fullDate { get; set; }
+            public string? Email { get; set; }
+            public int Requestid { get; set; }
+            public bool? IsFinalized { get; set; }
+            public string? HistoryOfPresentIllness { get; set; }
+            public string? MedicalHistory { get; set; }
+            public string? Medications { get; set; }
+            public string? Allergies { get; set; }
+            public string? Temperature { get; set; }
+            public string? HR { get; set; }
+            public string? RR { get; set; }
+            public string? BPSystolic { get; set; }
+            public string? BPDiastolic { get; set; }
+            public string? O2 { get; set; }
+            public string? Pain { get; set; }
+            public string? Heent { get; set; }
+            public string? CV { get; set; }
+            public string? Chest { get; set; }
+            public string? ABD { get; set; }
+            public string? Extr { get; set; }
+            public string? Skin { get; set; }
+            public string? Neuro { get; set; }
+            public string? Other { get; set; }
+            public string? Diagnosis { get; set; }
+            public string? TreatmentPlan { get; set; }
+            public string? MedicationDispensed { get; set; }
+            public string? Procedures { get; set; }
+            public string? FollowUp { get; set; }
+            public bool IsFinalize { get; set; }
+        
 
     }
     public class SendLink
@@ -186,6 +218,7 @@ namespace DataAccess.ViewModel
         public int physicianid { get; set; }
         public string? Street { get; set; }
         public string? City { get; set; }
+        public string ConfirmationNo { get; set; }
         public string? State { get; set; }
         public string? Zipcode { get; set; }
         public string Mobile { get; set; }
@@ -204,6 +237,18 @@ namespace DataAccess.ViewModel
         public string Businessname { get; set; }
         public string? BusinessWebsite { get; set; }
         public PhysicianStatus status { get; set; }
+    }
+    public class ViewDoc
+    {
+        public int? Id { get; set; }
+        public string? uploader
+        {
+            get; set;
+        }
+        public DateTime uploaddate { get; set; }
+
+        public string Name { get; set; }
+        public int? reqId { get; set; }
     }
     public class RegionCheckbox {
         public int RegionId
@@ -582,7 +627,9 @@ public class Records
 
     public class AdminDashboard
     {
+        public List<ViewDoc> doc { get; set; }
         public string UserName { get; set; }
+       
         public IEnumerable<Casetag> Caserequest { get; set; }
         public IEnumerable<Physician> Physicians { get; set; }
         [Required(ErrorMessage = "the field is required")]

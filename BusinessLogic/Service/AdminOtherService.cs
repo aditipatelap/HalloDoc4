@@ -1259,7 +1259,31 @@ namespace BusinessLogic.Service
 
             return model;
         }
+        public List<EventModel> GetEventsByPhysicianID(int Physicianid)
+        {
+            var data = _db.Shiftdetails
+                .Where(s => s.Isdeleted == new BitArray(new bool[1] { false }) && s.Shift.Physicianid == Physicianid)
+                .Include(s => s.Shift)
+                .Select(
+                    s => new EventModel
+                    {
+                        Shiftdetailid = s.Shiftdetailid,
+                        Shiftdate = s.Shiftdate,
+                        Shiftid = s.Shiftid,
+                        Physicianid = s.Shift.Physicianid,
+                        PhysicianName = _db.Physicians.Where(p => p.Physicianid == s.Shift.Physicianid).FirstOrDefault().Firstname,
+                        Starttime = (s.Shiftdate.AddHours(s.Starttime.Hour).AddMinutes(s.Starttime.Minute).AddSeconds(s.Starttime.Second)).ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Endtime = (s.Shiftdate.AddHours(s.Endtime.Hour).AddMinutes(s.Endtime.Minute).AddSeconds(s.Endtime.Second)).ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Isdeleted = s.Isdeleted,
+                        Status = s.Status,
+                        Regionid = s.Regionid,
+                        Regionname = _db.Regions.Where(r => r.Regionid == s.Regionid).FirstOrDefault().Name,
+                        color = s.Status == 1 ? "#F4CAED" : "#a9e1c8"
+                    })
+                .ToList();
 
+            return data;
+        }
         public List<EventModel> GetEvents(int RegionId, bool currentMonthShift)
         {
             
@@ -1845,14 +1869,14 @@ namespace BusinessLogic.Service
             };
             return result;
         }
-        public AdminDashboard GetRegion(int reqid,int roleid)
+        public AdminDashboard GetRegion(int reqid)
         {
             var regions = _db.Regions.ToList();
            
             AdminDashboard adminDashboardModel = new AdminDashboard();
             adminDashboardModel.Regions = regions;
             adminDashboardModel.requestid = reqid;
-           adminDashboardModel.roleid = roleid;
+           //adminDashboardModel.roleid = roleid;
             return adminDashboardModel;
         }
         /******sms*************/
@@ -1922,15 +1946,15 @@ namespace BusinessLogic.Service
             if (model.PhysicianProfile.radioSMSEmail == 1 || model.PhysicianProfile.radioSMSEmail == 3)
             {
                 string SMSTemplate = model.PhysicianProfile.NotificationMassage;
-                var accountsid = "AC3f07238a0c7428a2c1861ee8d0da5275";
-                var authtoken = "5f682d44e9cb371de282ab1336c5a676";
+                var accountsid = "AC4e906b8950220baa3121323a2a3ec1f8";
+                var authtoken = "5037610beaf3ced4e3e5b3c0a9796101";
                 TwilioClient.Init(accountsid, authtoken);
 
                 /*  var messageoptions = new CreateMessageOptions(
                     new PhoneNumber(data.Mobile));*/
                 var messageoptions = new CreateMessageOptions(
-                  new PhoneNumber("+919510155988"));
-                messageoptions.From = new PhoneNumber("+17209618754");
+                  new PhoneNumber("+919408557289"));
+                messageoptions.From = new PhoneNumber("+16562269587");
                 messageoptions.Body = SMSTemplate;
                 MessageResource.Create(messageoptions);
 

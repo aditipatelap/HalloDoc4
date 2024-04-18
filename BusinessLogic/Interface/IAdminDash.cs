@@ -18,6 +18,8 @@ namespace BusinessLogic.Interface
         public AdminDashboard GetName(int statusid);
         //public MemoryStream ExportALl(int statusid);
         //public int[] RequestCount(int statusid);
+        /*******sendlink*/
+        public void SendMailLink(AdminDashboard model, string AspProviderId);
         public AdminDashboard GetPatientInfoByStatus(int statusid);
         public AdminDashboard RequestCount();
         public AdminDashboard AssignRequest(int requestid);
@@ -42,6 +44,8 @@ namespace BusinessLogic.Interface
         public void EditViewCaseData(AdminDashboard model, int requestid);
        // public AdminDashboard GetViewUpload(int requestid);
         public AdminDashboard SendAgreeement(int requestid);
+        /****encounter*/
+        public bool EncounterFormDataPost(EncounterForm model);
         public AdminDashboard GetEncounterForm(int requestid);
         //public AdminDashboard MyProfileDataGet(string aspnetuserid);
         //public void PostMyProfile(AdminDashboard model, int adminid);
@@ -57,6 +61,6 @@ namespace BusinessLogic.Interface
         public AdminDashboard CloseCaseData(int RequestID);
         public bool EditCloseCase(AdminDashboard vp, int RequestID);
         public bool CloseCase(int RequestID);
-
+        
         }
 }

@@ -25,8 +25,10 @@
             <div>   <button type="button" class="btn btn-outline-info  ms-3 p-2" onclick="location.href='@Url.Action("AdminLogout", "Login")'">Logout</button></div>
 
             <div>
-                <button class="ms-3 p-2  btn btn-outline-info btn-toggle" type="button">
-                    <i class="fa fa-moon i-info"></i>
+                <button type="button" class="ms-3 p-2  btn btn-outline-info"
+                        id="colorButton">
+                    <i id="moon" class="bi bi-moon text-info fs-5"></i>
+                    <i id="sun" class="bi bi-sun text-info fs-5 d-none"></i>
                 </button>
             </div>
         </div>  
@@ -44,9 +46,7 @@
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink  active" aria-current="page" id="Dashboard">Dashboard</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link px-4 tablink" id="Invoicing">Invoicing</a>
-                </li>
+               
                 <li class="nav-item">
                     <a class="nav-link px-4 tablink" id="Scheduling">My Schedule </a>
                 </li>
@@ -144,6 +144,7 @@
         debugger;
 
         var TabId = $(this).attr("id");
+        console.log(TabId);
         var aspnetuserid = $(this).data('aspnetuserid');
         var requestid = $(this).data('btn');
         var physicianid = $(this).data('id');
@@ -352,6 +353,44 @@
     $(document).on('click', '.partialbtn', PartialDisplay);
    
     $(document).on('click', '.tablink', TabLoad);
+    $(document).on('click', '.showmodal', ModalDisplay);
+    $(document).on('click', '.searchrequest', PartialDisplay);
+    $(document).on('keyup', '#searchInput', PartialDisplay);
+    $(document).on('click', '.custompagination', PartialDisplay);
+    function ModalDisplay() {
+        console.log("vidihiiiiiiiiiiiiii")
+        var modalName = $(this).attr('id');
+        var patientname = $(this).data('value1');
+        var requestid = $(this).data('btn');
+        var physicianid = $(this).data('value1');
+        if (!patientname) {
+            patientname = null;
+        }
+
+        if (typeof requestid === 'undefined') {
+            requestid = 0;
+        }
+        if (typeof physicianid === 'undefined') {
+            physicianid = 0;
+        }
+
+
+
+        $.ajax({
+            url: '@Url.Action("ModalPartialView", "Provider")',
+            method: 'GET',
+            data: { modalName: modalName, patientname: patientname, requestid: requestid, physicianid: physicianid },
+            success: function (data) {
+                console.log("AJAX success");
+
+                $('.modelbody').html(data);
+                //$('#' + modalName).modal('show');
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+    }
     //$("[data-btn='NewPartial'][data-id='1']").click();
 </script>
 

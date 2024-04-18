@@ -1,5 +1,6 @@
 ﻿using BusinessLogic.Interface;
 using DataAccess.Models;
+using DataAccess.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
@@ -21,14 +22,14 @@ namespace BusinessLogic.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(Aspnetuser user)
+        public string GenerateToken(LoginModel user)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Aspnetuserroles.FirstOrDefault().Roleid.ToString()),
-                new Claim("UserID", user.Id),
-                new Claim("Username", user.Name)
+                new Claim(ClaimTypes.Role, user.roleid.ToString()),
+                new Claim("UserID", user.AspNetUserId),
+                new Claim("Username", user.UserName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Convert.ToString(_configuration["Jwt:Key"])));

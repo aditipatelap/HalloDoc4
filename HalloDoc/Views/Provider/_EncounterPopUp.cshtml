@@ -1,0 +1,50 @@
+﻿@model Int32
+
+<div class="modal-header" style="background-color: deepskyblue; color: white;">
+    <h5 class="modal-title" id="exampleModalCenterTitle">Select Type Of Care</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="d-flex mt-1 justify-content-center">
+        @*@ <button type="button" class="btn btn-outline-primary m-2" name="someone_else">Me</button> @*@
+        <button type="button" class="btn btn-outline m-2 sky-blue typeofcare" name="someone_else" onclick=" btnclick1()" data-value="4">HouseCall</button>
+        <button type="button" class="btn btn-outline m-2 typeofcare" name="someone_else" onclick=" btnclick2()">Consult</button>
+    </div>
+</div>
+<div class="modal-footer border-0">
+    <button type="button" class="btn btn-info sky-blue save" data-bs-dismiss="modal" onclick="SaveBtn()" data-btn="@Model" value="@Model">Save</button>
+    <button type="button" class="btn btn-outline" data-bs-dismiss="modal" id="cancel">Cancel</button>
+</div>
+<script>
+    var TOC=0;
+    function btnclick1() {
+        TOC = 1;
+    }
+    function btnclick2() {
+        TOC = 2;
+
+    }
+    function SaveBtn() {
+        debugger;
+        var reqId = $(".save").data("btn");
+        $.ajax({
+            url: '@Url.Action("SetTypeOfCare", "Provider")',
+            type: 'GET',
+            data: { TOCId: TOC, reqid: reqId },
+            success: function (data) {
+                if (data.success){
+                    swal("Done", "Type Of Care Successfully Selected", "success");
+                    location.reload();
+                  
+                }
+                else{
+                    swal("Failed", "Failed To Select Type Of Care", "Error");
+                }
+
+            }
+        });
+    }
+
+</script>
+
+

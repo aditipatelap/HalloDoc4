@@ -1,0 +1,158 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+
+
+@if (Model.ViewUpload != null && Model.ViewUpload.Count() > 0)
+{
+    <div class="overflow-scroll p-4 d-none d-md-block">
+        <table class="table table-responsive mt-3 p-3">
+            <thead>
+                <tr class="bg-light">
+                    <th scope="col">
+                        <input type="checkbox" id="selectAll" />
+                    </th>
+                    <th></th>
+                    <th scope="col">Uploader</th>
+                    <th scope="col">Upload Date <i class="bi bi-arrow-up" id="toggleOrder"></i></th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                @foreach (var items in Model.ViewUpload)
+                {
+                    <tr>
+                        <td><input type="checkbox" id="selectedFiles" name="checkbox" value="@items.FileName"></td>
+                        <td><i class="bi bi-file-earmark-text-fill text-primary pe-3"></i>@items.FileName</td>
+                        <td>
+                            @if (items.Adminid == null)
+                            {
+                                @items.UploaderName
+                            }
+                            else
+                            {
+                                @Model.Adminname
+                            }
+                        </td>
+                        <td>
+                            @items.Month &nbsp;@items.CreatedDate.Day, @items.CreatedDate.Year
+                        </td>
+                        <td>
+                            <a href="~/Documents/@items.FileName" download class="button-info btn btn-outline-info me-1">
+                                <i class="btn-back bi bi-cloud-arrow-up "></i>
+                            </a>
+                            <button class="btn border border-info text-info DeleteDocument" data-id="@items.FileName" data-btn="@items.Requestid">
+                                <i class="bi bi-trash i-info"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-3 fw-normal text-center text-secondary"> No Document Found </strong>
+    </div>
+}
+
+
+@if (Model.ViewUpload != null && Model.ViewUpload.Count() > 0)
+{
+    <div class="d-block d-md-none mt-5">
+        <input type="checkbox" id="selectAll" />
+        <hr />
+        @foreach (var items in Model.ViewUpload)
+        {
+            <div>
+                <div class="pb-2">
+                    <input type="checkbox" id="selectedFiles" name="checkbox" value="@items.FileName">
+                    <span>@items.FileName</span>
+                </div>
+                <div class="pb-2">
+                    @if (items.Adminid == null)
+                    {
+                        @items.UploaderName
+                    }
+                    else
+                    {
+                        @Model.Adminname
+                    }
+                </div>
+                <div class="pb-2">
+                    @items.CreatedDate
+                </div>
+                <div class="pb-2">
+                    <button class="btn btn-outline-info button-info me-1">
+                        <a href="~/Documents/@items.FileName" class="button-info" download>
+                            <i class="bi bi-cloud-arrow-up"></i>
+                        </a>
+                    </button>
+                    <button class="btn btn-outline-info button-info me-1  DeleteDocument" id=" " data-btn="@items.Requestid" data-id="@items.FileName">
+                        <a class="">
+                            <i class="bi bi-trash3"></i>
+                        </a>
+                    </button>
+                </div>
+            </div>
+            <hr />
+        }
+    </div>
+}
+else
+{
+    <div class="d-block d-md-none mt-5 d-flex justify-content-center align-items-center pt-5">
+        <strong class="fs-5 fw-normal text-center text-secondary"> No Document Found </strong>
+    </div>
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@*
+Delete doc*@
+<script>
+    $(".DeleteDocument").click(function () {
+        var id = $(this).data("id");
+        var requestid = $(this).data("btn");
+        alert(id);
+
+        $.ajax({
+            url: '@Url.Action("DeleteDocument", "Admin")',
+            type: "Post",
+            data: { filename: id, requestid: requestid },
+            success: function (result) {
+                $("#ViewUploadsTable").html(result);
+                toastr.info("Document Deleted Successfully", {
+                    positionClass: "toast-top-center",
+                    timeOut: 5000,
+
+                    progressBar: true
+                });
+            }
+        });
+    });
+</script>
+
+@*  select all row*@
+<script>
+    $('#selectAll').click(function (e) {
+        var table = $(e.target).closest('table');
+        $('td input:checkbox', table).prop('checked', this.checked);
+    });
+
+</script>
+
+@*reverse list when click on arrow *@
+@*<script>
+    $('#toggleOrder').click(function () {
+        var $icon = $(this);
+        var isReversed = $icon.hasClass('bi-arrow-up');
+
+        $('#historyTableBody').html($('#historyTableBody tr').get().reverse());
+
+        $icon.toggleClass('bi-arrow-down', isReversed);
+        $icon.toggleClass('bi-arrow-up', !isReversed);
+    });
+</script>
+*@

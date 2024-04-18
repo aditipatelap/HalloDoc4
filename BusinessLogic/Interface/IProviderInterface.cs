@@ -14,5 +14,12 @@ namespace BusinessLogic.Interface
         //public ProviderDash GetProviderInfo(int physicianId);
         //public ProviderDash GetProviderAcccountData(string aspnetuserid);
         public ProviderDash GetProviderInfo(string aspnetuserid);
+        public bool SetTypeOfCare(int requestid, int TOCId);
+        /*******conclude care*/
+        public AdminDashboard ConcludeCareGet(int requestid);
+
+        public bool ConcludeCare(int reqId, string notes, int phyId);
+        /*******enciunter*/
+        public bool FinalizeEncounterForm(int reqid);
     }
 }

@@ -10,8 +10,8 @@ namespace BusinessLogic.Interface
 {
     public interface ILoginInterface
     {
-        
-     public Aspnetuser Login(LoginModel loginModel);
+
+        public LoginModel Login(LoginModel loginModel);
 
     }
 }

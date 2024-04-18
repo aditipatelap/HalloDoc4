@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using static DataAccess.ViewModel.Constant;
@@ -135,7 +136,7 @@ namespace DataAccess.ViewModel
     public class ProviderDashModel
     {
         public string? firstName { get; set; }
-
+        public bool isfinalize{get;set;}
         public string? lastName { get; set; }
 
         public string strMonth { get; set; }
@@ -193,6 +194,8 @@ namespace DataAccess.ViewModel
 
     public class ProviderDash
     {
+        public scheduleModel scheduleModel { get; set; }    
+        public List<EventModel> eventModel { get; set; }  
         public List<ProviderDashModel>? requestByStatus { get; set; }
         public int? statusId { get; set; }
         public Status? Status { get; set; }
