@@ -196,11 +196,16 @@ namespace DataAccess.ViewModel
     }
     public class SendLink
     {
+        //[Required(ErrorMessage = "email is required")]
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        [Required(ErrorMessage = "email is required")]
+            [Required(ErrorMessage = "Email is required.")]
+            [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
+
         [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string PhoneNumber { get; set; }
 
     }
@@ -402,8 +407,8 @@ namespace DataAccess.ViewModel
         public string? FAXNumber { get; set; }
         [Required(ErrorMessage = "The field is required")]
         public int? ProfessionID { get; set; }
-        [Required(ErrorMessage = "The field is required")]
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
         public string? PHoneNumber { get; set; }
         [Required(ErrorMessage = "The field is required")]
         public string? Email { get; set; }
@@ -694,6 +699,7 @@ public class Records
         public List<int> Physicianids { get; set; }
         public List<BitArray> checkbox { get; set; }
 
+        [Required(ErrorMessage = "please select atleast one checkbox")]
         public List<RegionCheckbox> regionCheckbox { get; set; }
         public GetTabParameter GetTabParameter { get; set; }
 

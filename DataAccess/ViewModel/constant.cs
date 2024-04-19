@@ -48,7 +48,8 @@ namespace DataAccess.ViewModel
                 Cancelledbypatient=7,
                 Closed=8,
                 Unpaid=9,
-            Clear=10
+            Clear=10,
+            assignedbyphysician=11
 
         }
         public enum RequestType

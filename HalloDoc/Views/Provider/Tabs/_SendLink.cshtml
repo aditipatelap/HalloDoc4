@@ -1,0 +1,57 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<div class="modal-header bg-info">
+    <h5 class="modal-title text-white" id="exampleModalLabel">Send mail to patient for submitting request</h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <form method="post" action='@Url.Action("SendLinkDataPost", "Admin")'>
+        <div class="col-12 w-100 mb-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" asp-for="@Model.sendLink.FirstName" id="firstName" placeholder="First name">
+                <label for="firstName" class="text-secondary">First Name</label>
+
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="form-floating">
+                <input type="text" class="form-control" asp-for="@Model.sendLink.LastName" id="lastName" placeholder="Last name">
+                <label for="lastName" class="text-secondary">Last Name</label>
+
+            </div>
+        </div>
+        <div class="col-12 mb-3">
+            <div class="form-floating">
+                <input type="tel" class="form-control p-3 ps-5" asp-for="@Model.sendLink.PhoneNumber" id="mobileNo" placeholder="(201) 555-0123" required>
+                <label for="mobileNo" class="text-secondary">Mobile Number</label>
+                @Html.ValidationMessageFor(Model=>Model.sendLink.PhoneNumber,"",new{@class="text-danger"})
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <div class="form-floating">
+                <input type="email" class="form-control" asp-for="@Model.sendLink.Email" id="Email" placeholder="Email" required>
+                <label for="Email" class="text-secondary">Email</label>
+                @Html.ValidationMessageFor(Model=>Model.sendLink.Email,"",new{@class="text-danger"})
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2" id="send">Send</button>
+            <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="cancel">Cancel</button>
+        </div>
+    </form>
+</div>
+@*<script>
+    $(document).ready(function () {
+
+        // Prevent form submission if validation fails
+        $('form').submit(function (event) {
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            $(this).addClass('was-validated');
+        });
+    });
+</script>*@

@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Net.Mail;
+using System.Net;
+using Twilio.Http;
 
 namespace BusinessLogic.Service
 {
@@ -143,10 +146,59 @@ namespace BusinessLogic.Service
             return null;
         }
         
+        public bool sendEmail(string email,string aspnetuserid)
+        {
+            
+            var link = $"https://localhost:44367/Login/ResetPassword?aspnetuserid={aspnetuserid}";
+
+            MailMessage message = new MailMessage();
+
+            message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+            message.To.Add(new MailAddress(email));
+            message.Subject = "Reset you Password";
+            message.IsBodyHtml = true;
+
+            message.Body = $"To reset you password click on link below. <a href=\"{link}\">ClickHere</a>";
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+            smtp.EnableSsl = true;
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+
+            return true;
+        }
+        public bool checkEmail(LoginModel model)
+        {
+            var re = _db.Aspnetusers.FirstOrDefault(x => x.Email == model.Email).Email;
+            if (re != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
+        public void ResetPassSave(LoginModel model)
+        {
+            Aspnetuser aspnetuser = new Aspnetuser();
+            var res = _db.Aspnetusers.FirstOrDefault(x => x.Email == model.Email);
+            if (res != null)
+            {
+                aspnetuser.Passwordhash=model.Password;
+                _db.SaveChanges();
+            }
+        }
+        
+
+
 
     }
 
-    }
+}
 
 
 

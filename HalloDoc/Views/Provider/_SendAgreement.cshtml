@@ -1,0 +1,34 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard;
+
+<link rel="stylesheet" href="~/css/AdminSite.css">
+<form method="post" asp-action="SendAgreement" asp-controller="Admin">
+
+    <div class="modal-header bg-info ">
+        <h5 class="modal-title text-white" id="exampleModalLabel">Send Agreement </h5>
+        <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body m-auto">
+        <div class="d-flex">
+            <div><button class="patientdot" id="dot" data-btn="1"></button><span class="mt-2">&nbsp;Patient</span></div>
+
+        </div>
+        <div class="text-secondary ">To Send Agreement please make sure you are uploading the correct contanct information below for the responsible party.</div>
+    </div>
+    <div class="mx-3 mb-3">
+        <div class="form-floating mb-3">
+            <input type="tel" class="form-control" id="Phone Number" placeholder="Phone Number" value="@Model.agreementReq.PhoneNumber">
+            <label for="floatingInputGrid" class="text-secondary">Phone Number</label>
+        </div>
+        <div class="form-floating">
+            <input type="email" class="form-control" id="Email" placeholder="Email" value="@Model.agreementReq.EmailID">
+            <input type="hidden" name="email" value="vanshita.bhansali@etatvasoft.com" @*value="@Model.agreementReq.EmailID"*@ />
+            <input type="hidden" name="requestid" value="@Model.agreementReq.Requestid" />
+            <label for="floatingInputGrid" class="text-secondary">Email</label>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mb-3 me-3">
+        <button type="submit" class="btn-back btn btn-outline-info btn-lg p-2 px-4 me-3 info-button me-2 " id="continue">Send</button>
+        <button type="button" class="btn-back btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal" id="CancelAgreement">Cancel</button>
+    </div>
+</form>

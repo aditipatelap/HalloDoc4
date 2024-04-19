@@ -28,5 +28,6 @@ namespace DataAccess.ViewModel
         public int UserId { get; set; }
 
     }
+   
 
 }

@@ -131,16 +131,7 @@ namespace HalloDoc.Controllers
             //var user = _aspNetUsersServices.Login(loginModel);
             var user = _db.Aspnetusers.Include(x => x.Aspnetuserroles).FirstOrDefault(u => u.Email == loginModel.Email);
 
-            var data = new LoginModel
-            {
-
-                Email = user.Email,
-                Password = user.Passwordhash,
-                AspNetUserId = user.Id,
-                roleid = user.AdminAspnetusers.FirstOrDefault().Roleid,
-                UserName = user.Name,
-            };
-
+           
             if (user == null)
             {
                 _notyf.Custom("Invalid Email", 3, "red", "bi bi-x-circle-fill");
@@ -148,15 +139,27 @@ namespace HalloDoc.Controllers
             }
             else
                 {
-                    /* if (user.Aspnetuserroles.FirstOrDefault().Roleid == "3")
-                     {
- */
-
+                /* if (user.Aspnetuserroles.FirstOrDefault().Roleid == "3")
+                 {
+*/
+                
+                
+                   
                     if (user.Passwordhash == loginModel.Password)
                     {
-                        //SessionUtils.SetLoggedInUser(HttpContext.Session, user);
+                    var roleid = user.Aspnetuserroles.FirstOrDefault().Roleid;
+                    var data = new LoginModel
+                    {
+                        Email = user.Email,
+                        Password = user.Passwordhash,
+                        AspNetUserId = user.Id,
+                        roleid = roleid,
+                        UserName = user.Name,
+                    };
 
-                        int id = 0;
+                    //SessionUtils.SetLoggedInUser(HttpContext.Session, user);
+
+                    int id = 0;
                         if (_db.Users.Any(u => u.Aspnetuserid == user.Id))
                         {
                             id = _db.Users.FirstOrDefault(u => u.Aspnetuserid == user.Id).Userid;
@@ -271,7 +274,7 @@ namespace HalloDoc.Controllers
 
         }
 
-        [CustomAuthorize("2")]
+        [CustomAuthorize("3")]
         public IActionResult patientDashboard()
         {
             int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");

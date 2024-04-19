@@ -19,7 +19,7 @@ namespace BusinessLogic.Interface
         //public MemoryStream ExportALl(int statusid);
         //public int[] RequestCount(int statusid);
         /*******sendlink*/
-        public void SendMailLink(AdminDashboard model, string AspProviderId);
+        public void SendMailLink(AdminDashboard model,int adminid);
         public AdminDashboard GetPatientInfoByStatus(int statusid);
         public AdminDashboard RequestCount();
         public AdminDashboard AssignRequest(int requestid);

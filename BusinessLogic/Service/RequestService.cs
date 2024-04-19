@@ -48,7 +48,7 @@ namespace BusinessLogic.Service
             DataAccess.Models.Request req = new DataAccess.Models.Request();
             Requestclient rc = new Requestclient();
             Requestwisefile rf = new Requestwisefile();
-            
+            Aspnetuserrole aspnetuserrole = new Aspnetuserrole();
             if (user == null)
             {
                 Au.Id = Guid.NewGuid().ToString();
@@ -77,6 +77,11 @@ namespace BusinessLogic.Service
                 _db.Users.Add(usr);
                 _db.SaveChanges();
 
+                aspnetuserrole.Roleid = (short)Roles.Patient;
+                aspnetuserrole.Userid= Au.Id;
+                _db.Aspnetuserroles.Add(aspnetuserrole);
+                _db.SaveChanges();  
+
 
             }
 
@@ -84,7 +89,7 @@ namespace BusinessLogic.Service
             req.Status = (short)Requeststatuses.Unassigned;
 
             req.Createddate = DateTime.Now;
-            
+            req.Userid = usr.Userid;
             req.Isurgentemailsent = new BitArray(1);
             req.Firstname = patientReq.Firstname;
             req.Lastname = patientReq.Lastname;
@@ -385,6 +390,7 @@ namespace BusinessLogic.Service
                 _db.Requestwisefiles.Add(requestwisefile);
                 _db.SaveChanges();
                 //ViewBag.Message = "File uploaded successfully!";
+                
             }
 
         }

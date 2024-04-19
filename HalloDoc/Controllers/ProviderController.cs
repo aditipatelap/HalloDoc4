@@ -104,10 +104,44 @@ namespace HalloDoc.Controllers
         public IActionResult ModalPartialView(string modalName,int requestid)
         {
             TempData["requestid"] = requestid;
+            if (modalName == "Accept")
+            {
+                //var result = _AdminDash.AssignRequest(requestid);
+                return PartialView("Tabs/_Accept",requestid);
+
+            }
             if (modalName == "EncounterPopUp")
             {
                 //var result = _AdminDash.AssignRequest(requestid);
                 return PartialView("_EncounterPopUp",requestid);
+                    
+            }
+            if (modalName == "SendAgreement")
+            {
+                var result = _AdminDash.SendAgreeement(requestid);
+                return PartialView("_SendAgreement", requestid);
+
+            }
+            if (modalName == "TransferReq")
+            {
+                //var result = _providerService.GetRegion(0);
+                ProviderDash providerDash = new ProviderDash();
+                providerDash.RequestId = requestid;
+                return PartialView("Tabs/_TransferReq", providerDash);
+
+            }
+            if (modalName == "Finalize")
+            {
+                //var result = _providerService.GetRegion(0);
+                
+                return PartialView("Tabs/_Finalize", requestid);
+
+            }
+            if (modalName == "SendLink")
+            {
+                //var result = _providerService.GetRegion(0);
+
+                return PartialView("Tabs/_SendLink", requestid);
 
             }
             return View();
@@ -217,18 +251,18 @@ namespace HalloDoc.Controllers
         /*********conclude care*******/
         public IActionResult ConcludeCare(int reqid, string notes)
         {
-            int? sessionPhysicianId = _httpContextAccessor.HttpContext?.Session?.GetInt32("physicianId");
+            int? sessionPhysicianId = _httpContextAccessor.HttpContext?.Session?.GetInt32("physicianid");
             int physicianId = sessionPhysicianId ?? default;
             bool result = _providerDataService.ConcludeCare(reqid, notes, physicianId);
             if (result)
             {
                 //_notyf.Success("Request Successfully Concluded !!");
-                return GetTabs("home", default, default, default, default,default,default,default,default,default,default);
+                return GetTabs("Index", default, default, default, default,default,default,default,default,default,default);
             }
             else
             {
                 // _notyf.Error("Request Failed To Conclude !!");
-                return GetTabs("home", default, default, default, default, default, default, default, default, default, default);
+                return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
             }
         }
         /******encounter****/
@@ -258,9 +292,25 @@ namespace HalloDoc.Controllers
             {
                 _notyf.Error("Encounter Form Failed To Finalized");
             }
-            return GetTabs("home", default, default, default, default, default, default, default, default, default, default);
+            return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
         }
-        
+        /*****accept*/
+        public IActionResult AcceptRequest(int Requestid)
+        {
+            var physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+
+            _providerDataService.AcceptRequest(Requestid, physicianid);
+            _notyf.Success("Request Accepted Successfully");
+            return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
+        }
+        [HttpPost]
+        public JsonResult TransferCaseData(ProviderDash model)
+        {
+            model.PhysicianId = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+            _providerDataService.TransferCaseDataPost(model);
+            return Json(new { success = true });
+        }
+
 
     }
 }

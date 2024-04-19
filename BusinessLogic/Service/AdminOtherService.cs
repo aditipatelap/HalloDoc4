@@ -1231,7 +1231,7 @@ namespace BusinessLogic.Service
             TimeSpan timeOnly = dateTime.TimeOfDay;
 
             AdminDashboard model = new AdminDashboard();
-            var physicians = _db.Physicians.ToList();
+            var physicians = _db.Physicians.Where(x=>x.Regionid==Regionid).ToList();
             var shiftDetails = _db.Shiftdetails.ToList();
             var shifts = _db.Shifts.ToList();
             foreach (var physician in physicians)

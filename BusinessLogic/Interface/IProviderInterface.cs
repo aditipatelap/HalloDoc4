@@ -21,5 +21,8 @@ namespace BusinessLogic.Interface
         public bool ConcludeCare(int reqId, string notes, int phyId);
         /*******enciunter*/
         public bool FinalizeEncounterForm(int reqid);
+        /*transferreq*/
+        public void TransferCaseDataPost(ProviderDash model);
+        public void AcceptRequest(int Requestid, int physicianid);
     }
 }

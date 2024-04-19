@@ -35,7 +35,7 @@ namespace BusinessLogic.Service
 
             AdminDashboard dash = new AdminDashboard();
             var req = _db.Requests.Include(x =>x.Requestclients).Where(x =>x.Requestid==x.Requestclients.FirstOrDefault().Requestid).ToList();
-            dash.newcount = req.Count(x => x.Status == (short)Requeststatuses.Unassigned);
+            dash.newcount = req.Count(x => x.Status == (short)Requeststatuses.Unassigned || x.Status == (short)Requeststatuses.assignedbyphysician);
             dash.pendingcount = req.Count(x => x.Status == (short)Requeststatuses.Accepted);
             dash.activecount = req.Count(x => x.Status == (short)Requeststatuses.MDEnRoute || x.Status == (short)Requeststatuses.MDonSite);
             dash.toclosecount = req.Count(x => x.Status == (short)Requeststatuses.Cancelled || x.Status == (short)Requeststatuses.Cancelledbypatient || x.Status == (short)Requeststatuses.Closed);
@@ -166,94 +166,7 @@ namespace BusinessLogic.Service
             };
             return adminDashboard;
         }
-        //    public MemoryStream ExportALl(int statusid)
-        //    {
-        //        List<int> id = new List<int>();
-        //        if (statusid != (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite && statusid != (short)Requeststatus.Cancelled || statusid != (short)Requeststatus.Cancelledbypatient || statusid == (short)Requeststatus.Closed)
-        //        {
-        //            id.Add(statusid);
-        //        }
-        //        else if (statusid == (short)Requeststatus.MDEnRoute || statusid == (short)Requeststatus.MDonSite)
-        //        {
-        //            id.Add((short)Requeststatus.MDEnRoute);
-        //            id.Add((short)Requeststatus.MDonSite);
-
-        //        }
-        //        else
-        //        {
-        //            id.Add((short)Requeststatus.Cancelled);
-        //            id.Add((short)Requeststatus.Cancelledbypatient);
-        //            id.Add((short)Requeststatus.Closed);
-
-        //        }
-        //        var dashboard = (from Request in _db.Requests
-        //                         join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-        //                         // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
-        //                         where id.Contains(Request.Status) && Request.Isdeleted == false 
-
-
-        //                         select new AdminDash
-        //                         {
-        //                             Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-        //                             Requestor = Request.Firstname + " " + Request.Lastname,
-        //                             RequestedDate = Request.Createddate,
-        //                             PatientPhone = Requestclient.Phonenumber,
-        //                             RequestorPhone = Request.Phonenumber,
-
-        //                             Address = Requestclient.Address,
-        //                             Notes = Requestclient.Notes,
-        //                             requestid = Request.Requestid,
-        //                             //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
-        //                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-        //                             RequestTypeid = Request.Requesttypeid
-        //                         }).ToList();
-        //        using (var workbook = new XLWorkbook())
-        //        {
-        //            var worksheet = workbook.Worksheets.Add("Dashboard");
-
-        //            // Add headers
-        //            var properties = typeof(AdminDash).GetProperties();
-        //            for (int i = 0; i < properties.Length; i++)
-        //            {
-        //                worksheet.Cell(1, i + 1).Value = properties[i].Name;
-        //            }
-
-        //            // Add data
-        //            for (int i = 0; i < dashboard.Count; i++)
-        //            {
-        //                for (int j = 0; j < properties.Length; j++)
-        //                {
-        //                    var value= properties[j].GetValue(dashboard[i]);
-
-        //                    if(value is DateTime)
-        //                    {
-        //                        worksheet.Cell(i + 2, j + 1).Value = ((DateTime)value).ToString("yyyyy-MM-dd   HH:mm:ss");
-
-        //                    }
-        //                    else
-        //                    {
-        //                        worksheet.Cell(i + 2, j + 1).Value = value != null ? value.ToString() : string.Empty;
-        //                    }
-        //                }
-        //            }
-
-        //            // Create a memory stream to store the Excel file
-        //            using (var stream = new MemoryStream())
-        //            {
-        //                // Save the workbook to the memory stream
-        //                workbook.SaveAs(stream)
-        //;
-
-        //                // Set the position to the beginning of the stream
-        //                stream.Seek(0, SeekOrigin.Begin);
-        //                return stream;
-
-        //                // Return the Excel file as a stream response
-        //               // return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "dashboard_data.xlsx");
-        //            }
-        //        }
-        //    }
-
+        
         public AdminDashboard GetPatientInfoByStatus(int statusid)
         {
             List<int> id = new List<int>();
@@ -265,6 +178,12 @@ namespace BusinessLogic.Service
             {
                 id.Add((short)Requeststatuses.MDEnRoute);
                 id.Add((short)Requeststatuses.MDonSite);
+
+            }
+            else if (statusid == (short)Status.New)
+            {
+                id.Add((short)Requeststatuses.Unassigned);
+                id.Add((short)Requeststatuses.assignedbyphysician);
 
             }
             else
@@ -307,7 +226,7 @@ namespace BusinessLogic.Service
         }
        
         //send link
-        public void SendMailLink(AdminDashboard model, string AspProviderId)
+        public void SendMailLink(AdminDashboard model,int adminid)
         {
             var usr = _db.Users.Where(u => u.Email == model.sendLink.Email).FirstOrDefault();
             System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
@@ -316,19 +235,19 @@ namespace BusinessLogic.Service
         message.To.Add(new System.Net.Mail.MailAddress(model.sendLink.Email));
             message.Subject = "Request submit page Link";
             message.IsBodyHtml = true;
-            var resetLink = "https://localhost:7165/Patient/requestPage";
+            var resetLink = "https://localhost:44367/Patient/submitReq";
             message.Body = "Submit Request Page Link :  " + resetLink;
             SmtpClient smtp = new SmtpClient();
             smtp.Host = "mail.etatvasoft.com";
             smtp.Port = 587;
-        smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
-        smtp.EnableSsl = true;
+           smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+           smtp.EnableSsl = true;
             smtp.Send(message);
             smtp.UseDefaultCredentials = false;
             var isEmailSent = false;
 
             var IsSMSSend = false;
-            string link = $"https://localhost:44367/Patient/SubmitRequest";
+            string link = $"https://localhost:44367/Patient/submitReq";
             string SMSTemplate = $"For Submit your Request: {link}";
 
             var accountsid = "AC4e906b8950220baa3121323a2a3ec1f8";
@@ -340,8 +259,8 @@ namespace BusinessLogic.Service
             messageoptions.From = new PhoneNumber("+16562269587");
             messageoptions.Body = SMSTemplate;
             MessageResource.Create(messageoptions);
-            //var physicianId = _db.Physicians.Where(x => x.Aspnetuserid == AspProviderId).FirstOrDefault().Physicianid;
-            IsSMSSend = true;
+           
+            IsSMSSend = true;   
             isEmailSent = true;
             if (IsSMSSend)
             {
@@ -349,19 +268,21 @@ namespace BusinessLogic.Service
                 smslog.Smstemplate = SMSTemplate;
                 smslog.Mobilenumber = model.sendLink.PhoneNumber;
                 smslog.Roleid = model.roleid;
-                //smslog.Physicianid = physicianId;
-               
                 smslog.Createdate = DateTime.Now;
-                smslog.Sentdate = DateTime.Now;
-                smslog.Senttries = 1;
+                smslog.Sentdate=DateTime.Now;
                 smslog.Issmssent = new BitArray(new bool[1] { true });
-
+                smslog.Senttries = 1;
+                smslog.Adminid = adminid;
                 _db.Add(smslog);
                 _db.SaveChanges();
             }
-            var SubjectName = "Send Agreement";
-            var EmailTemplate = "Your Agreement is sent <a href=\"https://localhost:7165/Patient/CreateAccount\">ClickHere</a> to view";
-            var EmailTemplate1 = "Your Agreement is sent Click Here to view";
+
+            var SubjectName = "Submit Request";
+            string link1 = $"https://localhost:44367/Patient/submitReq";
+            string EmailTemplate = $"For Submit your Request:<a href=\"{link}\">ClickHere</a>";
+
+            //var EmailTemplate = "You Can Submit Request<a href=\"https://localhost:44367/Patient/submitReq\">ClickHere</a> to view";
+            var EmailTemplate1 = "You can submit your request";
             if (isEmailSent)
             {
                 var emailLog = new Emaillog
@@ -372,7 +293,7 @@ namespace BusinessLogic.Service
                     Createdate = DateTime.Now,
                     Roleid = (int)Roles.Patient,
                     Sentdate = DateTime.Now,
-                    //Physicianid = physicianId,
+                   Adminid=adminid,
                     Isemailsent = new BitArray(new bool[] { true }),
                     Senttries = 1,
                 };
@@ -437,9 +358,9 @@ namespace BusinessLogic.Service
             var id = _db.Physicians.Where(x => x.Firstname == model.assignreq.physicianname).FirstOrDefault();
             var request = _db.Requests.Where(x => x.Requestid == model.requestid).FirstOrDefault();
 
-
+            Request req = new Request();
             request.Physicianid = id.Physicianid;
-            request.Status = (short)Requeststatuses.Accepted;
+            request.Status = (short)Requeststatuses.assignedbyphysician;
 
             _db.SaveChanges();
 

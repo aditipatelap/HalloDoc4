@@ -116,6 +116,38 @@
     </form>
 </div>
 <script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+
+
+
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
+<script>
     // Back button
     //$(".tablink").click(TabLink);
 

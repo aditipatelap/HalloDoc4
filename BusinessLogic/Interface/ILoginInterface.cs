@@ -12,6 +12,9 @@ namespace BusinessLogic.Interface
     {
 
         public LoginModel Login(LoginModel loginModel);
+        public bool checkEmail(LoginModel model);
+        public bool sendEmail(string email,string aspnetuserid);
+        public void ResetPassSave(LoginModel model);
 
     }
 }

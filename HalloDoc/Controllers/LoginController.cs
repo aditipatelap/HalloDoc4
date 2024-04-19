@@ -109,6 +109,7 @@ namespace HalloDoc.Controllers
 
                         if (user.roleid == (int)Roles.Admin)
                         {
+                            _httpContextAccessor.HttpContext.Session.SetInt32("Adminid", user.AdminId);
                             _notyf.Custom("Login Successfully!", 3, "green", "bi bi-check-circle-fill");
                             return RedirectToAction("Index", "Admin");
                         }
@@ -157,7 +158,53 @@ namespace HalloDoc.Controllers
            return RedirectToAction("AdminLogin", "Login");
            
         }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult ForgotPassword(LoginModel login)
+        {
+            if (_loginInterface.checkEmail(login))
+            {
+                //var token = _JwtService.GenerateToken(login);
+                if (_loginInterface.sendEmail(login.Email,login.AspNetUserId))
+                {
+                    _notyf.Custom("Email sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
+                }
+                return View();
+            }
+            else
+            {
+                _notyf.Custom("Request for reset password Failed", 3, "Goldenrod", "bi bi-x-circle-fill");
+            }
+            return View();
+
+
+        }
+        public IActionResult CreateAccount()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateAccount(LoginModel model)
+        {
+            //_loginInterface.ResetPassSave(model);
+            return View();
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ResetPassword(LoginModel model)
+        {
+           _loginInterface.ResetPassSave(model);
+            return View();  
+
+        }
         public IActionResult PatientLogin()
         {
 

@@ -1,0 +1,24 @@
+﻿@model Int32
+
+    <h3 class="">Confirmation for accept Request</h3>
+    <p>Are sure you want to accept this Request?</p>
+    <input type="hidden" id="acceptRequestid" />
+    <button type="button" class="btn btn-info text-light" onclick="AcceptRequest()" data-bs-dismiss="modal">Accept</button>
+    <button type="button" class="btn border border-info text-info" data-bs-dismiss="modal">Cancel</button>
+
+<script>
+ 
+ function AcceptRequest() {
+     var id =@Model;
+     $.ajax({
+         url: '/Provider/AcceptRequest',
+         type: 'POST',
+         data: { Requestid: id },
+         success: function (result) {
+             if (result.success) {
+                 LoadDashboard();
+             }
+         },
+     });
+ }
+</script>

@@ -358,8 +358,9 @@ namespace HalloDoc.Controllers
        
         public IActionResult SendLinkDataPost(AdminDashboard model)
         {
-            var AspProviderId = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
-            _AdminDash.SendMailLink(model, AspProviderId);
+          var adminid =(int) _httpContextAccessor.HttpContext.Session.GetInt32("Adminid");
+
+            _AdminDash.SendMailLink(model, adminid);
             _notyf.Custom("Link Send Successfully", 3, "green", "bi bi-check-circle-fill");
             return Ok(new { message = "Data saved successfully." });
 

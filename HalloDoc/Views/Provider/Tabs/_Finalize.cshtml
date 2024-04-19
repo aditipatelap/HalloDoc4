@@ -1,0 +1,20 @@
+﻿
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLongTitle">Encounter Form</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="encounterPopupRequestId" />
+                <p class="text-secondary"> Encounter Form is finalized succesfully! </p>
+                <div class="d-flex justify-content-center align-items-center">
+                    <button class="btn btn-info rounded text-light" type="button" data-bs-dismiss="modal" onclick="GeneratePDF()">Download</button>
+                </div>
+            </div>
+            <script>            function GeneratePDF() {
+    var id = $('#encounterPopupRequestId').val();
+    window.location.href = '@Url.Action("GeneratePDF", "Provider")?requestid=' + id;
+}
+</script>
+
+
+    

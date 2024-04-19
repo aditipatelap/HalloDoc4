@@ -26,9 +26,14 @@ namespace BusinessLogic.Service
             List<int> reqStatusId = new List<int>();
             Physician phy = new Physician();
 
-            if (statusId != (int)Status.ToClose && statusId != (int)Status.Active)
+            if ( statusId != (int)Status.Active)
             {
                 reqStatusId.Add(statusId);
+            }
+            if (statusId != (int)Status.New)
+            {
+                reqStatusId.Add((int)Requeststatuses.assignedbyphysician);
+                //reqStatusId.Add((int)Requeststatuses.MDEnRoute);
             }
             else if (statusId == (int)Status.Active)
             {
@@ -38,7 +43,7 @@ namespace BusinessLogic.Service
             }
 
 
-            var query = from req in _db.Requests
+                var query = from req in _db.Requests
                         join rc in _db.Requestclients
                         on req.Requestid equals rc.Requestid
                         where reqStatusId.Contains(req.Status) && req.Physicianid == physicianId &&
@@ -65,6 +70,7 @@ namespace BusinessLogic.Service
                             Address = rc.Address,
                             isfinalize = _db.Encounters.FirstOrDefault(x => x.RequestId == req.Requestid).IsFinalize,
                         };
+
            
             int totalrecords = query.Count();//10
             int pagesize = 2;
@@ -81,6 +87,7 @@ namespace BusinessLogic.Service
                 CurrentPage = currentpage,
                 TotalPages = totalPages,
                 PageSize = pagesize,
+                //Isfinalize
 
             };
             return result;
@@ -321,6 +328,58 @@ namespace BusinessLogic.Service
             }
 
         }
+        /******accept****/
+       
+ public void AcceptRequest(int Requestid, int physicianid)
+        {
+            var request = _db.Requests.FirstOrDefault(r => r.Requestid == Requestid);
+
+            if (request != null)
+            {
+                request.Status = 2;
+                request.Accepteddate = DateTime.Now;
+                request.Physicianid = physicianid;
+                request.Modifieddate = DateTime.Now;
+            }
+            _db.SaveChanges();
+
+            var requestStatusLog = new Requeststatuslog
+            {
+                Requestid = Requestid,
+                Status = 2,
+                Physicianid = physicianid,
+                Notes = "Accepted by physician",
+                Createddate = DateTime.Now
+            };
+            _db.Requeststatuslogs.Add(requestStatusLog);
+            _db.SaveChanges();
+        }
+        /*transferreq********/
+        public void TransferCaseDataPost(ProviderDash model)
+        {
+            var request = _db.Requests.FirstOrDefault(r => r.Requestid == model.RequestId);
+
+            if (request != null)
+            {
+                request.Status = 1;
+                request.Physicianid = model.PhysicianId;
+                request.Modifieddate = DateTime.Now;
+                request.Physicianid = null;
+            }
+            _db.SaveChanges();
+
+            var requestStatusLog = new Requeststatuslog
+            {
+                Requestid = model.RequestId,
+                Status = 1,
+                Physicianid = model.PhysicianId,
+                Notes = model.PhysicianNotes,
+                Createddate = DateTime.Now
+            };
+            _db.Requeststatuslogs.Add(requestStatusLog);
+            _db.SaveChanges();
+        }
+
         ///***pdf****/
         ///
 

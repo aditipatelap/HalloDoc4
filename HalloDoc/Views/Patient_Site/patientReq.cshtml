@@ -1,16 +1,18 @@
-﻿@using DataAccess.ViewModel
+﻿@*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+*@
+@using DataAccess.ViewModel
+
 @{
     ViewData["Title"] = "patientReq";
 }
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 
 @model patientReq
 
 @await Html.PartialAsync("_header")
-@await Html.PartialAsync("_Toast")
+
 
 
 <!-- Main Body Part-->
@@ -158,6 +160,7 @@
     });
     $(document).ready(function () {
         console.log("gvfsre");
+        debugger;
         $('.checkpatientemail').focusout(function () {
             console.log("gvvdfvfsre");
             var email = $(this).val();

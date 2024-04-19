@@ -107,14 +107,14 @@
                                         @if (Model.statusId == 2)
                                         {
 
-                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#dashModel" id="sentAgreement" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
+                                            <a class="dropdown-item showmodal" href="#" data-bs-toggle="modal" data-bs-target="#modeldiv" id="SendAgreement" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
                                                 <i class="bi bi-file-earmark"></i>
                                                 Send Agreement
                                             </a>
                                         }
                                         @if (Model.statusId == 1)
                                         {
-                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#dashModel" id="assignCase" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
+                                            <a class="dropdown-item showmodal" href="#" data-bs-toggle="modal" data-bs-target="#modeldiv" id="Accept" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
                                                 <i class="bi bi-building"></i>
                                                 Accept
                                             </a>
@@ -136,7 +136,7 @@
                                         </a>
                                         @if (Model.statusId == 2)
                                         {
-                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferRequest" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
+                                            <a class="dropdown-item showmodal" href="#" data-bs-toggle="modal" data-bs-target="#modeldiv" id="TransferReq" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
                                                 <i class="bi bi-building"></i>
                                                 Transfer
                                             </a>
@@ -168,7 +168,8 @@
                                            
 
                                         }
-                                        @if (Model.statusId == 4 || Model.statusId == 6)
+
+                                        @if (Model.statusId == 3 || Model.statusId == 6)
                                         {
                                             @if (item.StatusId == 4)
                                             {
@@ -182,21 +183,24 @@
                                             {
                                                 if (item.isfinalize == true)
                                                 {
+                                                    <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" data-btn="@item.RequestId" id="Finalize">
+                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                                        Encounter
+                                                    </a>
+                                                   
+                                                }
+                                                else
+                                                {
                                                     <a class="dropdown-item tablink" data-btn="@item.RequestId" id="Encounter">
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                                         Encounter
                                                     </a>
 
                                                 }
-                                                else
-                                                {
-                                                    <a class="dropdown-item showmodal" data-bs-toggle="modal" data-bs-target="#modeldiv" data-btn="@item.RequestId" id="EncounterPopUp">
-                                                        <i class="fa fa-file-text-o" aria-hidden="true"></i>
-                                                        Encounter
-                                                    </a>
-                                                }
                                             }
                                         }
+
+
 
                                     
                                 </div>

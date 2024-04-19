@@ -17,8 +17,10 @@
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating mb-3">
-                        <input type="text" class=" form-control inputform" id="Rolename" asp-for=EditaccountAccess.rolename placeholder="name" disabled>
+                        <input type="text" class=" form-control inputform" id="Rolename" asp-for=EditaccountAccess.rolename placeholder="name" disabled required>
                         <label class="text-secondary floatingLabel">Role Name</label>
+                        @Html.ValidationMessageFor(Model=>Model.EditaccountAccess.rolename,"",new{@class="text-danger"})
+
                         <div class="invalid-feedback">
                             Please enter a role name.
                         </div>
@@ -148,8 +150,15 @@
        
     }
     //create role
+        
+    $('#createRoleForm').on('submit', function (e) {
+        e.preventDefault();
+        var form = $(this);
+        if (!form[0].checkValidity()) {
 
-    $('#savebtn').click(function () {
+
+            return;
+        }
         var form = $('#createRoleForm')[0];
 
 

@@ -209,5 +209,9 @@ namespace DataAccess.ViewModel
         public int pendingcount { get; set; }
         public int activecount { get; set; }
         public int conclude { get; set; }
+        public int? Isfinalize { get; set; }
+        public string PhysicianNotes { get;set; }
+        public int RequestId { get; set; }
+        public int PhysicianId { get;set; }
     }
 }

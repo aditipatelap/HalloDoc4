@@ -1,0 +1,50 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+
+<div class="modal-header bg-info">
+    <h5 class="modal-title text-white" id="exampleModalLabel">Transfer Request</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+    <form id="TransferForm" class="needs-validation" novalidate>
+        <div> Request will be tranfered to Admin</div>
+        <div class="form-floating my-4">
+            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                      style="height: 100px" asp-for="@Model.PhysicianNotes" required></textarea>
+            <label for="floatingTextarea2" class="text-secondary floatingLabel" id="label-floating">Description <span class="text-danger"> *</span></label>
+            <div class="invalid-feedback">Please provide a description.</div>
+        </div>
+        <input asp-for="@Model.RequestId" hidden />
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-info btn-lg p-2 px-4 me-3 info-button">Submit</button>
+            <button type="button" class="btn btn-outline-info btn-lg p-2 px-4 button-info" data-bs-dismiss="modal">Cancel</button>
+        </div>
+    </form>
+
+
+<script>
+    $('#TransferForm').on('submit', function (e) {
+        e.preventDefault();
+
+        //if (!this.checkValidity()) {
+        //    e.preventDefault();
+        //    e.stopPropagation();
+        //    $(this).addClass('was-validated');
+        //    return;
+        //}
+
+        var data = new FormData(this);
+        $.ajax({
+            url: "Provider/TransferCaseData",
+            type: "POST",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+               
+            },
+        });
+    });
+
+</script>
+
