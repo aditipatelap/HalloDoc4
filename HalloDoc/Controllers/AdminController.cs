@@ -1021,7 +1021,7 @@ namespace HalloDoc.Controllers
         public JsonResult RequestedShiftUpdate(string ids, int type)
         {
             var token = Request.Cookies["jwt"];
-            var adminId = "";
+            var adminId = "";   
             //if (_JWTService.ValidateToken(token, out JwtSecurityToken jwtToken))
             //{
             //    adminId = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;

@@ -51,9 +51,11 @@ namespace DataAccess.ViewModel
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DOB { get; set; }
-        [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
         public string? Mobile { get; set; }
-        [Required(ErrorMessage = "required")]
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string Email { get; set; }
         public string? Region { get; set; }
         public string Address { get; set; }
@@ -213,12 +215,15 @@ namespace DataAccess.ViewModel
     {
         public string? Aspnetid { get; set; }
         public string? UserName { get; set; }
+        [Required(ErrorMessage = "fname is required")]
         public string? Password { get; set; }
         [Required(ErrorMessage = "fname is required")]
         public string? FirstName { get; set; }
         [Required(ErrorMessage = "lname is required")]
         public string? LastName { get; set; }
+        [Required(ErrorMessage = "fname is required")]
         public string? PhoneNumber { get; set; }
+        [Required(ErrorMessage = "fname is required")]
         public string? Email { get; set; }
         public int physicianid { get; set; }
         public string? Street { get; set; }
@@ -463,10 +468,12 @@ namespace DataAccess.ViewModel
 
         public int Physicianid { get; set; }
 
+        [Required(ErrorMessage = "The Field is required")]
         public DateTime ShiftDate { get; set; }
+        [Required(ErrorMessage = "The Field is required")]
 
         public TimeOnly StartTime { get; set; }
-
+        [Required(ErrorMessage = "The Field is required")]
         public TimeOnly EndTime { get; set; }
 
         public bool isRepeat { get; set; }

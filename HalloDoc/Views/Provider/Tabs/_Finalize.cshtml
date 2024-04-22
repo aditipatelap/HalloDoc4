@@ -1,4 +1,4 @@
-﻿
+﻿@model Int32
             <div class="modal-header bg-info">
                 <h5 class="modal-title text-white" id="exampleModalLongTitle">Encounter Form</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -11,7 +11,7 @@
                 </div>
             </div>
             <script>            function GeneratePDF() {
-    var id = $('#encounterPopupRequestId').val();
+    var id = @Model
     window.location.href = '@Url.Action("GeneratePDF", "Provider")?requestid=' + id;
 }
 </script>

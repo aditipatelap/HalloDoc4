@@ -57,7 +57,7 @@
                         <input type="text" class="form-control" id="AdminFirstname" placeholder="First Name" asp-for="myProfile.FirstName" required>
                         <label for="AdminFirstname" class="floatingLabel">First Name <span class="text-danger">*</span></label>
                     </div>
-                    <span id="FirstName" asp-validation-for="myProfile.FirstName" class="text-danger"></span>
+                    @Html.ValidationMessageFor(Model=>Model.myProfile.LastName,"",new{@class="text-danger"})
                 </div>
 
                 <div class="col-md-6 col-12 mb-3">
@@ -72,6 +72,7 @@
                     <div class="form-floating">
                         <input type="email" class="form-control" id="AdminEmail" placeholder="Email" asp-for="myProfile.Email" required>
                         <label class="floatingLabel">Email<span class="text-danger">*</span></label>
+                        @Html.ValidationMessageFor(Model=>Model.myProfile.LastName,"",new{@class="text-danger"})
                     </div>
                     <span id="Email" asp-validation-for="myProfile.Email" class="text-danger"></span>
                     <div id="Emailverify" class="d-none text-danger">Email is Already Exist! Please try Another</div>

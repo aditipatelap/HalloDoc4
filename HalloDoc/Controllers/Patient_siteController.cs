@@ -249,12 +249,14 @@ namespace HalloDoc.Controllers
         }
         public IActionResult submitReq()
         {
+
+
             return View();
         }
         public IActionResult patientReq()
         {
-
-            return View();
+            var res=_requestService.GetRegions();
+            return View(res);
         }
         [HttpPost]
         public IActionResult PatientReq(patientReq patientReq, Microsoft.AspNetCore.Http.IFormFile file)
@@ -267,7 +269,7 @@ namespace HalloDoc.Controllers
              
 
             _requestService.PatientInfo(patientReq);
-
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
 
 
@@ -296,7 +298,7 @@ namespace HalloDoc.Controllers
         {
             int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
             _requestService.SaveProfileData(model.Profiles, id);
-
+            _notyf.Custom("pROFILE Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("patientDashboard");
 
         }
@@ -304,19 +306,25 @@ namespace HalloDoc.Controllers
 
         public IActionResult familyFriendReq()
         {
-            return View();
+            var res = _requestService.GetfamilyRegions();
+            return View(res);
+           
         }
         [HttpPost]
         public IActionResult familyFriendReq(familyReq familyReq)
 
         {
                _requestService.familyreq(familyReq);
+            
                _requestService.mail(familyReq.Email);
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
         }
         public IActionResult conciergeReq()
         {
-            return View();
+            var res = _requestService.GetConciergeRegions();
+            return View(res);
+            
         }
         [HttpPost]
         public IActionResult ConciergeReq(conciergeReq conciergeReq)
@@ -324,13 +332,16 @@ namespace HalloDoc.Controllers
 
             _requestService.ConciergeReq(conciergeReq);
             _requestService.mail(conciergeReq.Email);
-          return RedirectToAction("submitReq", "Patient_site");
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return RedirectToAction("submitReq", "Patient_site");
             
             
         }
         public IActionResult businessReq()
         {
-            return View();
+            var res = _requestService.GetbusinessRegions();
+            return View(res);
+
         }
         [HttpPost]
         public IActionResult BusinessReq( businessReq businessReq)
@@ -339,6 +350,7 @@ namespace HalloDoc.Controllers
          
                 _requestService.BusinessReq(businessReq);
             _requestService.mail(businessReq.Email);
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
             
           
@@ -360,6 +372,7 @@ namespace HalloDoc.Controllers
         {
             
            _requestService.FileUpload( file,  id);
+            _notyf.Custom("Document Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("Document", "Patient_site");
         }
         public IActionResult Information(patientReq patientreq) {
@@ -382,12 +395,13 @@ namespace HalloDoc.Controllers
             }
            // _requestService.UploadFile(patientreq.file, id);
           _requestService.PatientInfo(patientreq);
-            return View();
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return RedirectToAction("patientDashboard", "Patient_site");
         }
         public IActionResult Someonelse()
         {
-            //familyReq reqeust = new familyReq();
-            return View();
+            var res=_requestService.SomeOneelse();
+            return View(res);
         }
 
         [HttpPost]
@@ -401,7 +415,8 @@ namespace HalloDoc.Controllers
 
             }
             _requestService.Someoneelse(patientreq,id);
-            return View();
+            _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return RedirectToAction("patientDashboard", "Patient_site");
         }
        
 

@@ -6,6 +6,7 @@ using DataAccess.Data;
 using DataAccess.ViewModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Rotativa.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,7 @@ if (!app.Environment.IsDevelopment())
 app.UseNotyf();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseRotativa();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();

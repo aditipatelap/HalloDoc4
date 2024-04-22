@@ -2,10 +2,14 @@
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static DataAccess.ViewModel.Constant;
@@ -30,7 +34,7 @@ namespace BusinessLogic.Service
             {
                 reqStatusId.Add(statusId);
             }
-            if (statusId != (int)Status.New)
+            if (statusId == (int)Status.New)
             {
                 reqStatusId.Add((int)Requeststatuses.assignedbyphysician);
                 //reqStatusId.Add((int)Requeststatuses.MDEnRoute);
@@ -117,7 +121,7 @@ namespace BusinessLogic.Service
             var Request = _db.Requests.Include(x => x.Requestclients).Where(x => x.Requestid == x.Requestclients.FirstOrDefault().Requestid).ToList();
             dash.newcount = Request.Count(x => x.Status == (int)Requeststatuses.Unassigned && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
             dash.pendingcount = Request.Count(x => x.Status == (int)Requeststatuses.Accepted && x.Physicianid == physicianId && x.Requestid == x.Requestclients.FirstOrDefault().Requestid);
-            dash.activecount = Request.Count(x => x.Status == (int)Requeststatuses.MDonSite || x.Status == (int)Requeststatuses.MDEnRoute && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
+            dash.activecount = Request.Count(x => (x.Status == (int)Requeststatuses.MDonSite || x.Status == (int)Requeststatuses.MDEnRoute && x.Requestid == x.Requestclients.FirstOrDefault().Requestid) && (x.Physicianid == physicianId));
             dash.conclude = Request.Count(x => x.Status == (int)Requeststatuses.Conclude && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
 
 
@@ -223,7 +227,7 @@ namespace BusinessLogic.Service
         public AdminDashboard ConcludeCareGet(int requestid)
         {
             var items = _db.Requestwisefiles
-                .Where(x => x.Requestid == requestid && x.Isdeleted == null)
+                .Where(x => x.Requestid == requestid && x.Isdeleted == new BitArray(new bool[1] { false }))
                 .Select(m => new ViewDoc
                 {
                     uploaddate = m.Createddate,
@@ -382,6 +386,310 @@ namespace BusinessLogic.Service
 
         ///***pdf****/
         ///
+        string fileName = "";
+        string filePath = "";
+
+        public void SaveDocument(IFormFile Document, int reqid, int Physicianid)
+        {
+            if (Document != null)
+            {
+                fileName = $"{Guid.NewGuid().ToString()}_{Document.FileName}";
+                filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Documents", fileName);
+
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Documents");
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                Document.CopyTo(stream);
+
+                var requestWiseFile = new Requestwisefile
+                {
+                    Requestid = reqid,
+                    Filename = fileName,
+                    Createddate = DateTime.Now,
+                    Isdeleted = new BitArray(new bool[1] {false}),
+                    Ispatientrecords = new BitArray(new bool[1]),
+                    Physicianid = Physicianid,
+                };
+                _db.Requestwisefiles.Add(requestWiseFile);
+                _db.SaveChanges();
+            }
+        }
+        /****scheduling*/
+        public bool CreateShift(scheduleModel scheduleModel, string aspnetid)
+        {
+            var data = _db.Shiftdetails.Include(s => s.Shift).ToList();
+            //////
+            foreach (var i in data)
+            {
+                if (i.Shift.Physicianid == scheduleModel.Physicianid && i.Shiftdate == new DateTime(scheduleModel.ShiftDate.Year, scheduleModel.ShiftDate.Month, scheduleModel.ShiftDate.Day))
+                {
+                    if (scheduleModel.StartTime >= i.Starttime && scheduleModel.StartTime <= i.Endtime || scheduleModel.EndTime >= i.Starttime && scheduleModel.EndTime <= i.Endtime)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            var shift = new Shift
+            {
+                Physicianid  = _db.Aspnetusers
+    .Include(x => x.Physicians)
+    .Where(x => x.Id == aspnetid && x.Physicians.Any())
+    .FirstOrDefault()
+    .Physicians
+    .FirstOrDefault()
+    .Physicianid,
+            Startdate = DateOnly.FromDateTime(scheduleModel.ShiftDate),
+                Isrepeat = new BitArray(new bool[1] { scheduleModel.isRepeat }),
+                Weekdays = scheduleModel.SelectedDayIds,
+                Repeatupto = scheduleModel.RepeatEnd,
+                Createdby = aspnetid,
+                Createddate = DateTime.Now
+            };
+            _db.Shifts.Add(shift);
+            _db.SaveChanges();
+
+            var shiftdetail = new Shiftdetail
+            {
+                Shiftid = shift.Shiftid,
+                Shiftdate = new DateTime(scheduleModel.ShiftDate.Year, scheduleModel.ShiftDate.Month, scheduleModel.ShiftDate.Day),
+                Regionid = scheduleModel.Regionid,
+                Starttime = scheduleModel.StartTime,
+                Endtime = scheduleModel.EndTime,
+                Status = 1,
+                Isdeleted = new BitArray(new bool[1] { false }),
+            };
+
+            _db.Shiftdetails.Add(shiftdetail);
+            _db.SaveChanges();
+
+            var shiftdetailregion = new Shiftdetailregion
+            {
+                Shiftdetailid = shiftdetail.Shiftdetailid,
+                Regionid = scheduleModel.Regionid,
+                Isdeleted = new BitArray(new bool[1] { false }),
+            };
+
+            _db.Shiftdetailregions.Add(shiftdetailregion);
+            _db.SaveChanges();
+
+            if (shift.Weekdays != null)
+            {
+                var list = scheduleModel.SelectedDayIds.Split(",").Select(int.Parse).ToList();
+                //////////////
+                var currentDate = scheduleModel.ShiftDate.AddDays(1);
+                int occurrences = 0;
+                int totalShift = scheduleModel.RepeatEnd * list.Count;
+
+                while (occurrences < totalShift)
+                {
+                    if (list.Contains((int)currentDate.DayOfWeek))
+                    {
+                        bool canCreate = true;
+                        foreach (var i in data)
+                        {
+                            if (i.Shift.Physicianid == scheduleModel.Physicianid && i.Shiftdate == new DateTime(scheduleModel.ShiftDate.Year, scheduleModel.ShiftDate.Month, scheduleModel.ShiftDate.Day))
+                            {
+                                if (scheduleModel.StartTime >= i.Starttime && scheduleModel.StartTime <= i.Endtime || scheduleModel.EndTime >= i.Starttime && scheduleModel.EndTime <= i.Endtime)
+                                {
+                                    canCreate = false;
+                                }
+                            }
+                        }
+
+                        if (canCreate)
+                        {
+                            shiftdetail = new Shiftdetail
+                            {
+                                Shiftid = shift.Shiftid,
+                                Shiftdate = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day),
+                                Regionid = scheduleModel.Regionid,
+                                Starttime = scheduleModel.StartTime,
+                                Endtime = scheduleModel.EndTime,
+                                Status = 1,
+                                Isdeleted = new BitArray(new bool[1] { false }),
+                            };
+
+                            _db.Shiftdetails.Add(shiftdetail);
+                            _db.SaveChanges();
+
+                            shiftdetailregion = new Shiftdetailregion
+                            {
+                                Shiftdetailid = shiftdetail.Shiftdetailid,
+                                Regionid = scheduleModel.Regionid,
+                                Isdeleted = new BitArray(new bool[1] { false }),
+                            };
+
+                            _db.Shiftdetailregions.Add(shiftdetailregion);
+                            _db.SaveChanges();
+
+                            occurrences++;
+                        }
+                    }
+                    currentDate = currentDate.AddDays(1);
+                }
+
+            }
+            return true;
+        }
+        public List<EventModel> GetEvents(int RegionId, bool currentMonthShift)
+        {
+
+            var data = _db.Shiftdetails
+                .Where(s => s.Isdeleted == new BitArray(new bool[1] { false }))
+                .Include(s => s.Shift)
+                .Select(
+                    s => new EventModel
+                    {
+                        Shiftdetailid = s.Shiftdetailid,
+                        Shiftdate = s.Shiftdate,
+                        Shiftid = s.Shiftid,
+                        Physicianid = s.Shift.Physicianid,
+                        PhysicianName = _db.Physicians.Where(p => p.Physicianid == s.Shift.Physicianid).FirstOrDefault().Firstname,
+                        Starttime = (s.Shiftdate.AddHours(s.Starttime.Hour).AddMinutes(s.Starttime.Minute).AddSeconds(s.Starttime.Second)).ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Endtime = (s.Shiftdate.AddHours(s.Endtime.Hour).AddMinutes(s.Endtime.Minute).AddSeconds(s.Endtime.Second)).ToString("yyyy-MM-ddTHH:mm:ss"),
+                        Isdeleted = s.Isdeleted,
+                        Status = s.Status,
+                        Regionid = s.Regionid,
+                        Regionname = _db.Regions.Where(r => r.Regionid == s.Regionid).FirstOrDefault().Name,
+                        color = s.Status == 1 ? "#F4CAED" : "#a9e1c8"
+
+                    })
+                .ToList();
+
+            if (RegionId != 0)
+            {
+                data = data.Where(r => r.Regionid == RegionId).ToList();
+            }
+            if (currentMonthShift)
+            {
+                var month = DateTime.Now.Month;
+                data = data.Where(r => r.Shiftdate.Month == month).ToList();
+            }
+            return data;
+
+        }
+
+        /*********create req*********/
+        public void CreateRequestDatapost(AdminDashboard model)
+        {
+            Request request = new Request();
+            Requestclient requestclient = new Requestclient();
+            Requestnote requestnote = new Requestnote();
+
+            var date = model.CreateReqquestModel.DOB.Day;
+            var month = model.CreateReqquestModel.DOB.Month.ToString();
+            var year = model.CreateReqquestModel.DOB.Year;
+
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
+
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name == model.CreateReqquestModel.State)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     model.CreateReqquestModel.LastName.Substring(0, 2).ToUpper() +
+                                     model.CreateReqquestModel.FirstName.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
+
+
+            request.Requesttypeid = (int)DataAccess.ViewModel.Constant.RequestType.Business;
+            request.Status = (int)Requeststatuses.Unassigned;
+            request.Createddate = DateTime.Now;
+            request.Isurgentemailsent = new BitArray(new bool[1] { true });
+            request.Firstname = model.CreateReqquestModel.FirstName;
+            request.Lastname = model.CreateReqquestModel.LastName;
+            request.Phonenumber = model.CreateReqquestModel.PhoneNumber;
+            request.Email = model.CreateReqquestModel.Email;
+            request.Confirmationnumber = confirmationNumber;
+            request.Physicianid = model.physicianid;
+            _db.Add(request);
+            _db.SaveChanges();
+
+            requestclient.Requestid = request.Requestid;
+            requestclient.Regionid = regionInfo.Regionid;
+            requestclient.Email = model.CreateReqquestModel.Email;
+            requestclient.Firstname = model.CreateReqquestModel.FirstName;
+            requestclient.Lastname = model.CreateReqquestModel.LastName;
+            requestclient.Phonenumber = model.CreateReqquestModel.PhoneNumber;
+            requestclient.City = model.CreateReqquestModel.City;
+            requestclient.Street = model.CreateReqquestModel.Street;
+            requestclient.State = model.CreateReqquestModel.State;
+            requestclient.Zipcode = model.CreateReqquestModel.ZipCode;
+            requestclient.Address = model.CreateReqquestModel.Street + ' ' + model.CreateReqquestModel.City + ' ' + model.CreateReqquestModel.State;
+            requestclient.Intyear = year;
+            requestclient.Strmonth = month;
+            requestclient.Intdate = date;
+
+            _db.Add(requestclient);
+            _db.SaveChanges();
+
+
+            requestnote.Adminnotes = model.CreateReqquestModel.Notes;
+            requestnote.Requestid = request.Requestid;
+            requestnote.Createddate = DateTime.Now;
+            requestnote.Createdby = "admin";
+
+            _db.Add(requestnote);
+            _db.SaveChanges();
+
+            var SubjectName = "Create Account";
+            var EmailTemplate = "Request for you is generated. To check your request status click on below link to generate account. <a href=\"https://localhost:7265/Patient/CreateAccount\">ClickHere</a>";
+            var isEmailSent = "false";
+
+            MailMessage message = new MailMessage();
+
+            message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+            message.To.Add(new MailAddress(requestclient.Email));
+            message.Subject = SubjectName;
+            message.IsBodyHtml = true;
+            message.Body = EmailTemplate;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+            smtp.EnableSsl = true;
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+            isEmailSent = "true";
+
+            if (isEmailSent == "true")
+            {
+                var emailLog = new DataAccess.Models.Emaillog
+                {
+                    Emailtemplate = EmailTemplate,
+                    Subjectname = SubjectName,
+                    Emailid = requestclient.Email,
+                    Createdate = DateTime.Now,
+                    Requestid = request.Requestid,
+                    Confirmationnumber = request.Confirmationnumber,
+                    Roleid = (int)Roles.Patient,
+                    Physicianid = request.Physicianid,
+                    Sentdate = DateTime.Now,
+                    Isemailsent = new BitArray(new bool[] { true }),
+                };
+                _db.Emaillogs.Add(emailLog);
+                _db.SaveChanges();
+            }
+        }
+
 
     }
 

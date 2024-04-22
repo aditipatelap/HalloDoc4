@@ -66,7 +66,7 @@
         if (selectedFiles.length > 0) {
             selectedFiles.forEach(function (id) {
                 $.ajax({
-                    url: '@Url.Action("DeleteDocument", "Admin")',
+                    url: '@Url.Action("DeleteDocument", "Provider")',
                     type: "Post",
                     data: { filename: id, reqid: reqid },
                     success: function (result) {
@@ -95,7 +95,7 @@
 
             if (selectedFiles.length > 0) {
                 alert(selectedFiles);
-                window.location.href = "/Admin/DownloadAll?file=" + selectedFiles;
+                window.location.href = "/Provider/DownloadAll?file=" + selectedFiles;
             }
             else {
                 alert("Please select at least one file.");
@@ -123,7 +123,7 @@
         var id = $(this).data("btn");
         var formData = new FormData();
         var fileInput = document.getElementById('formFile').files[0];
-        $('#formFile').val('');
+        //$('#formFile').val('');
         if (fileInput != null) {
 
 
@@ -134,7 +134,7 @@
 
 
             $.ajax({
-                url: '@Url.Action("ViewDocument", "Admin")',
+                url: '@Url.Action("ViewDocument", "Provider")',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -173,7 +173,7 @@
             alert("send mail: " + selectedFiles);
 
             $.ajax({
-                url: "/Admin/SendEmail",
+                url: "/Provider/SendEmail",
                 type: "Post",
                 data: {
                     file: selectedFiles,
@@ -191,7 +191,7 @@
     });
     $(document).ready(function () {
         var requestid = @Model.requestid;
-        $("#ViewUploadsTable").load('@Url.Action("ViewUploadsList", "Admin")?requestid=' + requestid);
+        $("#ViewUploadsTable").load('@Url.Action("ViewUploadsList", "Provider")?requestid=' + requestid);
     });
 
     $('.backbtn').on('click', function () {

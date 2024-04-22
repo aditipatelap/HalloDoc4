@@ -1,4 +1,5 @@
 ﻿using DataAccess.ViewModel;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,7 @@ namespace BusinessLogic.Interface
         /*transferreq*/
         public void TransferCaseDataPost(ProviderDash model);
         public void AcceptRequest(int Requestid, int physicianid);
+        public void SaveDocument(IFormFile Document, int reqid, int Physicianid);
+        public bool CreateShift(scheduleModel scheduleModel, string aspnetuserid);
     }
 }

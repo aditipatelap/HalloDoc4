@@ -78,7 +78,7 @@
         <div class="shadow rounded p-2">
             <div class="form-floating my-4">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" asp-for="@Model.AdditionalNotes" required></textarea>
-                <label for="floatingTextarea2" class="text-secondary" id="label-floating">Admin Notes<span class="text-danger">*</span></label>
+                <label for="floatingTextarea2" class="text-secondary" id="label-floating">Provider Notes<span class="text-danger">*</span></label>
                 @*@Html.ValidationMessageFor(Model=>Model.AdditionalNotes,"",new{@class="text-danger"})*@
                 <div class="invalid-feedback">This is required</div>
 
@@ -129,29 +129,13 @@
         var data = new FormData(this);
 
         $.ajax({
-            url: "/Admin/PostViewNotes",
+            url: "/Provider/PostViewNotes",
             type: "Post",
             data: data,
             processData: false,
             contentType: false,
             success: function (result) {
-                if (result.success) {
-                    var TabId = "ViewNotes";
-                    var requestid = @Model.requestid;
-                    console.log(requestid);
-                    $.ajax({
-                        url: '/Admin/GetTabs',
-                        data: { Tabid: TabId, requestid: requestid },
-                        method: 'GET',
-                        success: function (data) {
-                            $("#TabContent").html(data);
-                            toastr.success("Note Added successfully!");
-                        },
-                        error: function () {
-                            console.error('Error fetching partial view.');
-                        }
-                    });
-
+               console.log("sucess");
                 }
                 else {
                     toastr.error("Please provide valid data.");

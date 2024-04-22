@@ -338,15 +338,17 @@ namespace BusinessLogic.Service
             var region = _db.Physicianregions.Where(x => x.Physicianid == model.PhysicianProfile.physicianid).ToList();
             _db.Physicianregions.RemoveRange(region);
             _db.SaveChanges();
-
-            foreach (var i in model.RegionArray)
+            if (model.RegionArray != null)
             {
-                Physicianregion physicianregion = new Physicianregion();
-                physicianregion.Physicianid = model.PhysicianProfile.physicianid;
-                physicianregion.Regionid = i;
+                foreach (var i in model.RegionArray)
+                {
+                    Physicianregion physicianregion = new Physicianregion();
+                    physicianregion.Physicianid = model.PhysicianProfile.physicianid;
+                    physicianregion.Regionid = i;
 
-                _db.Add(physicianregion);
-               _db.SaveChanges();
+                    _db.Add(physicianregion);
+                    _db.SaveChanges();
+                }
             }
         }
         public void PhysicianAddressDataUpdate(AdminDashboard model)
@@ -602,19 +604,20 @@ namespace BusinessLogic.Service
             aspuser.Createddate = DateTime.Now;
 
             // Hash the password
-            var passwordHasher = new PasswordHasher<Aspnetuser>();
-            aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.PhysicianProfile.Password);
-
+            //var passwordHasher = new PasswordHasher<Aspnetuser>();
+            //aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.PhysicianProfile.Password);
+            aspuser.Passwordhash = model.PhysicianProfile.Password;
             _db.Aspnetusers.Add(aspuser);
             _db.SaveChanges();
 
-            //Aspnetuserrole aspnetrole = new Aspnetuserrole();
+            Aspnetuserrole aspnetrole = new Aspnetuserrole();
 
-            //aspnetrole.Userid = aspuser.Id;
+            aspnetrole.Userid = aspuser.Id;
             //aspnetrole.Roleid = (int)model.PhysicianProfile.roleid;
+            aspnetrole.Roleid =(int) Roles.Provider;
 
-            //_db.Aspnetuserroles.Add(aspnetrole);
-            //_db.SaveChanges();
+            _db.Aspnetuserroles.Add(aspnetrole);
+            _db.SaveChanges();
 
             Physician physician = new Physician();
 
@@ -830,13 +833,16 @@ namespace BusinessLogic.Service
             _db.Adminregions.RemoveRange(region);
             _db.SaveChanges();
 
-            foreach (var i in model.RegionArray)
+            if (model.RegionArray != null)
             {
-                Adminregion adminregion = new Adminregion();
-                adminregion.Adminid = model.myProfile.adminid;
-                adminregion.Regionid = i;
-                _db.Add(adminregion);
-                _db.SaveChanges();
+                foreach (var i in model.RegionArray)
+                {
+                    Adminregion adminregion = new Adminregion();
+                    adminregion.Adminid = model.myProfile.adminid;
+                    adminregion.Regionid = i;
+                    _db.Add(adminregion);
+                    _db.SaveChanges();
+                }
             }
         }
         public void MyProfileAddressDataUpdate(AdminDashboard model)

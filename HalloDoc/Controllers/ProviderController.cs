@@ -8,7 +8,9 @@ using DocumentFormat.OpenXml.Drawing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 using Twilio.Http;
+using Path = System.IO.Path;
 
 namespace HalloDoc.Controllers
 {
@@ -19,14 +21,17 @@ namespace HalloDoc.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAdminDash _AdminDash;
         private readonly IProviderService _providerService;
+        private readonly IRequestInterface _requestInterface;
         private readonly ApplicationDbContext _db;
         private readonly INotyfService _notyf;
-        public ProviderController(ApplicationDbContext db,IProviderInterface providerDataService, IHttpContextAccessor httpContextAccessor, INotyfService notyf,IAdminDash adminDash, IProviderService providerService)
+        public ProviderController(ApplicationDbContext db,IProviderInterface providerDataService, IHttpContextAccessor httpContextAccessor, IRequestInterface requestInterface,INotyfService notyf,IAdminDash adminDash, IProviderService providerService)
         {
             _providerDataService = providerDataService;
             _httpContextAccessor = httpContextAccessor;
             _AdminDash = adminDash;
             _providerService = providerService;
+            _requestInterface = requestInterface;
+
             _db = db;
             _notyf = notyf;
 
@@ -90,6 +95,15 @@ namespace HalloDoc.Controllers
                 var orderdetail =_providerDataService.ConcludeCareGet(requestid);
                 return PartialView("Tabs/_ConcludeCare",orderdetail);
             }
+            if (tabid == "CreateReq")
+            {
+                var res = _db.Regions.ToList();
+                AdminDashboard admin = new AdminDashboard();
+                admin.Regions = res;
+                admin.physicianid = physicianId;
+                //var orderdetail = _providerDataService.ConcludeCareGet(requestid);
+                return PartialView("Tabs/_CreateRequest", admin);
+            }
 
             return View();
             
@@ -119,7 +133,7 @@ namespace HalloDoc.Controllers
             if (modalName == "SendAgreement")
             {
                 var result = _AdminDash.SendAgreeement(requestid);
-                return PartialView("_SendAgreement", requestid);
+                return PartialView("_SendAgreement", result);
 
             }
             if (modalName == "TransferReq")
@@ -140,8 +154,9 @@ namespace HalloDoc.Controllers
             if (modalName == "SendLink")
             {
                 //var result = _providerService.GetRegion(0);
-
-                return PartialView("Tabs/_SendLink", requestid);
+                AdminDashboard adminDashboard = new AdminDashboard();
+                adminDashboard.requestid = requestid;   
+                return PartialView("Tabs/_SendLink", adminDashboard);
 
             }
             return View();
@@ -160,13 +175,13 @@ namespace HalloDoc.Controllers
         //scheduling
         public IActionResult LoadSchedulingCalendar(int RegionId, int PhysicianId, string currentView = "")
         {
-            int? sessionPhysicianId = _httpContextAccessor.HttpContext?.Session?.GetInt32("physicianId");
+            int sessionPhysicianId = (int)_httpContextAccessor.HttpContext?.Session?.GetInt32("physicianid");
 
             //int physicianId = sessionPhysicianId ?? default;
-            int physicianId = 6;
+           
             AdminDashboard model = new AdminDashboard();
             model.PhysicianProfilList = _providerService.GetProvider(RegionId);
-            model.eventModel = _providerService.GetEventsByPhysicianID(physicianId);
+            model.eventModel = _providerService.GetEventsByPhysicianID(sessionPhysicianId);
             model.currentView = currentView;
 
             return PartialView("Tabs/_Calendar", model);
@@ -175,11 +190,11 @@ namespace HalloDoc.Controllers
 
         public JsonResult CreateShift(scheduleModel scheduleModel)
         {
-            var token = Request.Cookies["jwt"];
-            var adminId = "";
+            //var token = Request.Cookies["jwt"];
+            //var adminId = "";
+            string aspnetuserid = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
 
-
-            if (_providerService.CreateShift(scheduleModel, adminId))
+            if (_providerDataService.CreateShift(scheduleModel, aspnetuserid))
             {
                 return Json(new { success = true });
             }
@@ -256,13 +271,13 @@ namespace HalloDoc.Controllers
             bool result = _providerDataService.ConcludeCare(reqid, notes, physicianId);
             if (result)
             {
-                //_notyf.Success("Request Successfully Concluded !!");
-                return GetTabs("Index", default, default, default, default,default,default,default,default,default,default);
+                _notyf.Success("Request Successfully Concluded !!");
+                return GetTabs("Conclude", default, default, default, default,default,default,reqid,default,default,default);
             }
             else
             {
-                // _notyf.Error("Request Failed To Conclude !!");
-                return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
+                 _notyf.Error("Request Failed To Conclude !!");
+                return GetTabs("Conclude", default, default, default, default, default, default, reqid, default, default, default);
             }
         }
         /******encounter****/
@@ -279,7 +294,7 @@ namespace HalloDoc.Controllers
             {
                 _notyf.Error("Encounter Form Failed To Save");
             }
-            return GetTabs("home", default, default, default, default, default, default, default, default, default, default);
+            return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
         public IActionResult EncounterFormFinalize(int reqid)
         {
@@ -292,7 +307,7 @@ namespace HalloDoc.Controllers
             {
                 _notyf.Error("Encounter Form Failed To Finalized");
             }
-            return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
+            return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
         /*****accept*/
         public IActionResult AcceptRequest(int Requestid)
@@ -301,7 +316,7 @@ namespace HalloDoc.Controllers
 
             _providerDataService.AcceptRequest(Requestid, physicianid);
             _notyf.Success("Request Accepted Successfully");
-            return GetTabs("Index", default, default, default, default, default, default, default, default, default, default);
+            return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
         [HttpPost]
         public JsonResult TransferCaseData(ProviderDash model)
@@ -310,6 +325,134 @@ namespace HalloDoc.Controllers
             _providerDataService.TransferCaseDataPost(model);
             return Json(new { success = true });
         }
+        public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
+        {
+            _AdminDash.EditViewCaseData(model, requestid);
+            _notyf.Custom("Data Saved Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
+
+
+        }
+        [HttpPost]
+        public IActionResult PostViewNotes(AdminDashboard model)
+
+        {
+            _AdminDash.PostViewNotes(model);
+            _notyf.Custom("Notes Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
+            //return Json(new { success = true });
+            
+            return GetTabs("ViewNotes", default, default, default, default, default, default, model.requestid, default, default, default);
+        }
+        [HttpPost]
+        public IActionResult DeleteDocument(string filename, int requestid)
+        {
+            _AdminDash.deleteDocument(filename);
+            _notyf.Information("dOCUMENT dELETED sUCCESSFULLY ...");
+
+            return ViewUploadsList(requestid);
+
+        }
+        public ActionResult DownloadAll(string file)
+        {
+            List<string> files = file.Split(",").ToList();
+
+            var tempFileName = Guid.NewGuid().ToString() + ".zip";
+            var tempFilePath = Path.Combine(Path.GetTempPath(), tempFileName);
+
+            using (var zip = ZipFile.Open(tempFilePath, ZipArchiveMode.Create))
+            {
+                foreach (var fileName in files)
+                {
+                    var uploadsFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/documents/" + fileName);
+                    zip.CreateEntryFromFile(uploadsFolderPath, fileName);
+                }
+            }
+            var bytes = System.IO.File.ReadAllBytes(tempFilePath);
+            System.IO.File.Delete(tempFilePath);
+
+            return File(bytes, "application/zip", "Documents.zip");
+        }
+        public IActionResult SendEmail(List<string> file, string email, int requestid)
+        {
+            _AdminDash.sendEmail(file, email, requestid);
+            _notyf.Custom("Email Sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return ViewUploadsList(requestid);
+        }
+        [HttpPost]
+        public IActionResult ViewDocument(IFormFile Document, int requestid)
+        {
+            if (Document != null)
+            {
+                _AdminDash.SaveDocument(Document, requestid);
+                _notyf.Custom("Document Uploaded Successfully!", 3, "green", "bi bi-check-circle-fill");
+            }
+            else
+            {
+                _notyf.Custom("Please Select Document", 3, "red", "bi-check-square-fill");
+            }
+            return ViewUploadsList(requestid);
+        }
+        public IActionResult ViewUploadsList(int requestid)
+        {
+            var model = _AdminDash.ViewUploadDataList(requestid);
+            return PartialView("Tabs/_ViewUploadPartial", model);
+        }
+        [HttpPost]
+        public IActionResult SendAgreement(string email, int requestid)
+        {
+            _requestInterface.SendMailService(email, requestid);
+            _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
+
+            return GetTabs("Dashboard", default, default, default, default, default, default,default, default, default, default);
+        }
+        [HttpPost]
+        public IActionResult SendOrder(AdminDashboard model, int requestid, string adminname)
+        {
+            _AdminDash.SendOrderReq(model, requestid, adminname);
+            _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return GetTabs("SendOrdere", default, default, default, default, default, default, requestid, default, default, default);
+        }
+        [HttpPost]
+        public IActionResult CreateRequestDatapost(AdminDashboard model)
+        {
+            _AdminDash.CreateRequestDatapost(model);
+
+            _notyf.Custom("Request Created Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return RedirectToAction("Index", "Provider");
+        }
+        public IActionResult GeneratePDF(int requestid)
+        {
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard = _AdminDash.GetEncounterForm(requestid);
+
+            if (adminDashboard == null)
+            {
+                return NotFound();
+            }
+
+            return new Rotativa.AspNetCore.ViewAsPdf("Tabs/Encounterpdf", adminDashboard)
+            {
+                FileName = "encounter.pdf"
+            };
+        }
+        public IActionResult UploadDocument(int Requestid, IFormFile document)
+        {
+            var PhysicianId = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+            _providerDataService.SaveDocument(document, Requestid, PhysicianId);
+
+            return GetTabs("Conclude", default, default, default, default, default, default, Requestid, default, default, default);
+        }
+        public IActionResult SendLinkDataPost(AdminDashboard model)
+        {
+            var adminid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+
+            _AdminDash.SendMailLink(model, adminid);
+            _notyf.Custom("Link Send Successfully", 3, "green", "bi bi-check-circle-fill");
+            return Ok(new { message = "Data saved successfully." });
+
+        }
+
+
 
 
     }

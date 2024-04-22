@@ -10,6 +10,8 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.Net.Mail;
 using System.Net;
 using Twilio.Http;
+using DocumentFormat.OpenXml.InkML;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace BusinessLogic.Service
 {
@@ -192,7 +194,70 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
         }
-        
+        public bool CreateAccount(LoginModel viewPatientReq)
+        {
+            var isexist = _db.Users.Any(req => req.Email == viewPatientReq.Email);
+            if (isexist)
+            {
+                return false;
+            }
+            var Aspnetuser = new Aspnetuser();
+            var role = new Aspnetuserrole();
+            var User = new User();
+            var Request = new DataAccess.Models.Request();
+            var Requestclient = new Requestclient();
+            var U = _db.Requestclients.FirstOrDefault(m => m.Email == viewPatientReq.Email);
+            Guid g = Guid.NewGuid();
+            Aspnetuser.Id = g.ToString();
+            Aspnetuser.Name = U.Firstname;
+            Aspnetuser.Passwordhash = viewPatientReq.Password;
+            Aspnetuser.Email = viewPatientReq.Email;
+            Aspnetuser.Phonenumber = U.Phonenumber;
+            Aspnetuser.Createddate = DateTime.Now;
+            _db.Aspnetusers.Add(Aspnetuser);
+            _db.SaveChanges();
+            role.Userid = Aspnetuser.Id;
+            role.Roleid = 3; //For Patient Role
+            _db.Aspnetuserroles.Add(role);
+            _db.SaveChanges();
+
+
+            User.Aspnetuserid = Aspnetuser.Id;
+            User.Firstname = U.Firstname;
+            User.Lastname = U.Lastname;
+            User.Email = viewPatientReq.Email;
+            User.Mobile = U.Phonenumber;
+            User.Street = U.Street;
+            User.City = U.City;
+            User.State = U.State;
+            User.Zip = U.Zipcode;
+            User.Strmonth = U.Strmonth;
+            User.Intdate = U.Intdate;
+            User.Intyear = U.Intyear;
+            User.Status = 1; //for new request
+            User.Createdby = Aspnetuser.Id;
+            User.Createddate = DateTime.Now;
+            _db.Users.Add(User);
+            _db.SaveChanges();
+
+            //var res = (from req in _context.Requests
+            //           join rc in _context.RequestClients
+            //           on req.RequestId equals rc.RequestId
+            //           where rc.Email == viewPatientReq.Email
+            //           select req.RequestId).ToList();
+
+            //foreach (var r in res)
+            //{
+            //    var req = _context.Requests.FirstOrDefault(req => req.RequestId == r);
+            //    req.UserId = User.UserId;
+            //    _context.Requests.Update(req);
+            //    _context.SaveChanges();
+            //}
+            //return true;
+            return true;
+        }
+
+
 
 
 

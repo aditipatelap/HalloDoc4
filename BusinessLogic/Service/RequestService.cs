@@ -37,7 +37,35 @@ namespace BusinessLogic.Service
             _env = Environment;
 
         }
-        
+        public patientReq GetRegions()
+        {
+            var res = _db.Regions.ToList();
+            patientReq patientReq = new patientReq();
+            patientReq.Regions = res;
+            return patientReq;
+        }
+        public familyReq GetfamilyRegions()
+        {
+            var res = _db.Regions.ToList();
+            familyReq patientReq = new familyReq();
+            patientReq.Regions = res;
+            return patientReq;
+        }
+        public businessReq GetbusinessRegions()
+        {
+            var res = _db.Regions.ToList();
+            businessReq patientReq = new businessReq();
+            patientReq.Regions = res;
+            return patientReq;
+        }
+        public conciergeReq GetConciergeRegions()
+        {
+            var res = _db.Regions.ToList();
+            conciergeReq patientReq = new conciergeReq();
+            patientReq.Regions = res;
+            return patientReq;
+        }
+
         public void PatientInfo(patientReq patientReq)
         {
             Aspnetuser user = _db.Aspnetusers.Where(x => x.Email == patientReq.Email).FirstOrDefault();
@@ -68,10 +96,13 @@ namespace BusinessLogic.Service
                 usr.Lastname = patientReq.Lastname;
                 usr.Email = patientReq.Email;
                 usr.Mobile = patientReq.Phonenumber;
-                usr.City = patientReq.City;
+                usr.City = patientReq.City; 
                 usr.State = patientReq.State;
                 usr.Zip = patientReq.Zipcode;
                 usr.Createdby = Au.Id;
+                usr.Intdate = patientReq.DOB.Day;
+                usr.Intyear = patientReq.DOB.Year;
+                usr.Strmonth = patientReq.DOB.Month.ToString();
                 usr.Createddate = DateTime.Now.Date;
 
                 _db.Users.Add(usr);
@@ -83,11 +114,34 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();  
 
 
+
             }
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
+
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name ==patientReq.State)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     patientReq.Lastname.Substring(0, 2).ToUpper() +
+                                     patientReq.Firstname.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
 
             req.Requesttypeid = 1;
             req.Status = (short)Requeststatuses.Unassigned;
-
+         
             req.Createddate = DateTime.Now;
             req.Userid = usr.Userid;
             req.Isurgentemailsent = new BitArray(1);
@@ -95,14 +149,16 @@ namespace BusinessLogic.Service
             req.Lastname = patientReq.Lastname;
             req.Phonenumber = patientReq.Phonenumber;
             req.Email = patientReq.Email;
-          //  req.Requesttypeid = (int)RequestType.Patient;
-           // Status = (status)x.Status;
-          /// req.Requesttypeid = (RequestType)patientReq.Requesttypeid;
+            req.Confirmationnumber=confirmationNumber;
+           
+            //  req.Requesttypeid = (int)RequestType.Patient;
+            // Status = (status)x.Status;
+            /// req.Requesttypeid = (RequestType)patientReq.Requesttypeid;
             //req.Status = (short)Status.Unassigned;
             if (user != null)
             {
                 req.Userid = users.Userid;
-                
+
             }
             _db.Requests.Add(req);
             _db.SaveChanges();
@@ -122,7 +178,7 @@ namespace BusinessLogic.Service
             rc.City = patientReq.City;
             rc.State = patientReq.State;
             rc.Zipcode = patientReq.Zipcode;
-            rc.Regionid = 1;
+            rc.Regionid = regionInfo.Regionid;
             rc.Address = patientReq.Street + " " + patientReq.City + "" + patientReq.State + " " + patientReq.Zipcode;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
@@ -174,9 +230,9 @@ namespace BusinessLogic.Service
             rc.Email = familyReq.Email;
             rc.Street = familyReq.Street;
             rc.City = familyReq.City;
-            rc.State = familyReq.State;
+            //rc.State = familyReq.State;
             rc.Zipcode = familyReq.Zipcode;
-            rc.Regionid = 1;
+            rc.Regionid = familyReq.State;
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
@@ -234,7 +290,7 @@ namespace BusinessLogic.Service
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
-            rc.Regionid = 1;
+            rc.Regionid = conciergereq.cState;
             rc.Address = conciergereq.pRoomNo + " " + conciergereq.hotelName;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
@@ -245,7 +301,7 @@ namespace BusinessLogic.Service
                 Address = conciergereq.hotelName,
                 Street = conciergereq.cStreet,
                 City = conciergereq.cCity,
-                State = conciergereq.cState,
+                //State = conciergereq.cState,
                 Zipcode = conciergereq.cZipcode,
                 Createddate = DateTime.Now,
                 Regionid = 1
@@ -297,7 +353,7 @@ namespace BusinessLogic.Service
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
-            rc.Regionid = 1;
+            rc.Regionid = businessReq.State;
             rc.Address = businessReq.RoomNo + " " + businessReq.City;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
@@ -418,6 +474,15 @@ namespace BusinessLogic.Service
             user.PhoneNumber = singleUser.Mobile;
             user.Street = singleUser.Street;
             user.City = singleUser.City;
+            user.Dob = new DateTime((int)singleUser.Intyear, Convert.ToInt32(singleUser.Strmonth.Trim()), (int)singleUser.Intdate);
+            //user.Dob = Convert.ToDateTime(singleUser.Intdate.ToString() + "/" + singleUser.Strmonth + "/" + singleUser.Intyear.ToString());
+            user.State=singleUser.State;
+            //user.Dob=singleUse
+            //user.Dob = Convert.ToDateTime(singleUser.Intdate.ToString() + "-" + singleUser.Strmonth + "-" + singleUser.Intyear);
+
+            //user.State = singleUser.State;
+            
+            user.Zipcode = singleUser.Zip;
 
 
             var result = new Dashboardpage()
@@ -452,10 +517,16 @@ namespace BusinessLogic.Service
             user.FirstName = singleUser.Firstname;
             user.LastName = singleUser.Lastname;
             user.Email = singleUser.Email;
-            user.PhoneNumber = singleUser.Mobile;
+            user.PhoneNumber = singleUser.Mobile;   
             user.Street = singleUser.Street;
             user.City = singleUser.City;
-                
+            //user.Dob = Convert.ToDateTime(singleUser.Intdate.ToString() + "/" + singleUser.Strmonth + "/" + singleUser.Intyear.ToString());
+            user.State = singleUser.State;
+            user.Dob = new DateTime((int)singleUser.Intyear, Convert.ToInt32(singleUser.Strmonth.Trim()), (int)singleUser.Intdate);
+            //user.State = singleUser.State;
+
+            user.Zipcode = singleUser.Zip;
+
 
             var result = new Dashboardpage()
             {
@@ -500,7 +571,7 @@ namespace BusinessLogic.Service
             {
                 user.Firstname = model.FirstName;
                 user.Lastname = model.LastName;
-                //DOB
+               
                 user.Mobile = model.PhoneNumber;
                 // user.Email = model.Email;
                 user.Street = model.Street;
@@ -508,8 +579,12 @@ namespace BusinessLogic.Service
                 user.State = model.State;
                 user.Zip = model.Zipcode;
                 user.Modifieddate = DateTime.Now;
-                    
+                user.Intdate = model.Dob.Day;
+                user.Intyear = model.Dob.Year;
+                user.Strmonth = model.Dob.Month.ToString();
+                // user.Do = Convert.ToDateTime(singleUser.Intdate.ToString() + "/" + singleUser.Strmonth + "/" + singleUser.Intyear.ToString());
             }
+            _db.Update(user);
             _db.SaveChanges();
         }
         public patientReq Information(patientReq patientreq,int id)
@@ -523,11 +598,20 @@ namespace BusinessLogic.Service
             user.Phonenumber = singleUser.Mobile;
             user.Street = singleUser.Street;
             user.City = singleUser.City;
-
+            user.DOB = new DateTime((int)singleUser.Intyear, Convert.ToInt32(singleUser.Strmonth.Trim()), (int)singleUser.Intdate);
+            user.Zipcode = singleUser.Zip;
+            var regions = _db.Regions.ToList();
+            user.Regions=regions;
             return user;
 
         }
-
+public familyReq SomeOneelse()
+        {
+            var res = _db.Regions.ToList();
+            familyReq patientReq = new familyReq();
+            patientReq.Regions=res;
+            return patientReq;
+        }
 
         public void Someoneelse(patientReq model, int id)
         {
@@ -661,7 +745,7 @@ namespace BusinessLogic.Service
             }
             else
             {
-                message.Body = "Request for you is generated by please reset your password. <a href=\"https://localhost:7011/Patient_Site/ResetPassword\">ClickHere</a>";
+                message.Body = "Request for you is generated by please reset your password. <a href=\"https://localhost:44367/Patient_Site/ResetPassword\">ClickHere</a>";
 
             }
             SmtpClient smtp = new SmtpClient();
@@ -680,7 +764,7 @@ namespace BusinessLogic.Service
             message.To.Add(new System.Net.Mail.MailAddress(email));
             message.Subject = "ReviewAgreement";
             message.IsBodyHtml = true;
-            string link = $"https://localhost:7011/Patient_Site/SendAgreement?requestid={requestid}";
+            string link = $"https://localhost:44367/Patient_Site/SendAgreement?requestid={requestid}";
             message.Body =$"Please Accept the agreement. <a href=\"{link}\">ClickHere</a>";
 
             SmtpClient smtp = new SmtpClient();

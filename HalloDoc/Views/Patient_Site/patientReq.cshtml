@@ -24,7 +24,7 @@
     </button>
 
 </div>
-<form class="container form-group mt-2" method="post" enctype="multipart/form-data">
+<form id="patientForm" class="container form-group mt-2" method="post" enctype="multipart/form-data">
 
     <div class="row d-flex">
 
@@ -42,46 +42,47 @@
     </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="text" class="form-control " asp-for="Firstname" id="floatingInput" placeholder="Your First Name">
-            <label for="floatingInput" class="text-dark ms-2">First Name</label>
+            <input type="text" class="form-control " asp-for="Firstname" id="floatingInput" placeholder="Your First Name" maxlength="100">
+            <label for="floatingInput" class="text-dark ms-2">First Name<span class="text-danger">*</span></label>
             <span asp-validation-for="Firstname" id="Errorinfo"></span>
         </div>
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="text" class="form-control " asp-for="Lastname" id="floatingInput" placeholder="Your Last Name">
-            <label for="floatingInput" class="text-dark ms-2">Last Name</label>
+            <input type="text" class="form-control " asp-for="Lastname" id="floatingInput" placeholder="Your Last Name" maxlength="100">
+            <label for="floatingInput" class="text-dark ms-2">Last Name<span class="text-danger">*</span></label>
             <span asp-validation-for="Lastname" id="Errorinfo"></span>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="date" class="form-control " asp-for="DOB" id="floatingInput" placeholder="Date">
-            <label for="floatingInput" class="text-dark ms-2">Date of Birth</label>
-          
+            <input type="date" class="form-control "  max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                   asp-for="DOB" id="dob" id="floatingInput" placeholder="Date">
+            <label for="floatingInput" class="text-dark ms-2">Date of Birth<span class="text-danger">*</span></label>
+            <span asp-validation-for="DOB" id="Errorinfo"></span>
         </div>
     </div>
     <h3 class="mb-2">Patient Contact Information</h3>
     <div class="row">
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
             <input type="email" class="form-control checkpatientemail" asp-for="Email" id="floatingInput" placeholder="name@example.com">
-            <label for="floatingInput" class="text-dark ms-2">Email</label>
-            <span asp-validation-for="Email" id=""></span>
+            <label for="floatingInput" class="text-dark ms-2">Email<span class="text-danger">*</span></label>
+            <span asp-validation-for="Email" id="Errorinfo"></span>
         </div>
         <div class="col-lg-6 col-sm-12 form-floating mb-3 formgroup">
             <div class="form-floating">
-                <input type="tel" class="form-control p-3 ps-5 phoneNumber" asp-for="Phonenumber" placeholder="(201) 555-0123">
+                <input type="tel" class="form-control p-3 ps-5 phoneNumber" asp-for="Phonenumber" id="phoneNumber1" placeholder=" (201) 555-0123">
                 <span asp-validation-for="Phonenumber" id="Errorinfo"></span>
             </div>
         </div>
     </div>
     <div class="row " id="password" style="display:none">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="password" class="form-control " name="createPassword" id="floatingInput" placeholder="CreatePassword">
-            <label for="floatingInput" class="text-dark ms-2">CreatePassword</label>
+            <input type="password" class="form-control " asp-for="createPassword" id="floatingInput" placeholder="CreatePassword">
+            <label for="floatingInput" class="text-dark ms-2">CreatePassword<span class="text-danger">*</span></label>
             <span asp-validation-for="createPassword" id="Errorinfo"></span>
         </div>
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
             <input type="password" class="form-control " asp-for="confirmPassword" id="floatingInput" placeholder="confirmPassword">
-            <label for="floatingInput" class="text-dark ms-2">ConfrimPassword</label>
+            <label for="floatingInput" class="text-dark ms-2">ConfrimPassword<span class="text-danger">*</span></label>
             <span asp-validation-for="confirmPassword" id="Errorinfo"></span>
         </div>
     </div>
@@ -100,13 +101,22 @@
     </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="text" class="form-control " asp-for="State"  id="floatingInput" placeholder="state">
-            <label for="floatingInput" class="text-dark ms-2">State</label>
+            @*<input type="text" class="form-control " asp-for="State"  id="floatingInput" placeholder="state">
+            <label for="floatingInput" class="text-dark ms-2">State</label>*@
+            <select class="form-select form-control "  asp-for="State" >
+                @foreach (var i in Model.Regions)
+                {
+                    <option value="@i.Regionid">@i.Name</option>
+                }
+            </select>
+
+            <label for="state" class="dropdown-toggle" asp-for="State">State<span class="text-danger">*</span></label>
           
         </div>
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
             <input type="text" class="form-control" asp-for="Zipcode" id="floatingInput" placeholder="number">
-            <label for="floatingInput" class="text-dark ms-2">Zip Code</label>
+            <label for="floatingInput" class="text-dark ms-2">Zip Code<span class="text-danger">*</span></label>
+            <span asp-validation-for="Zipcode" id="Errorinfo"></span>
           
         </div>
     </div>
@@ -141,12 +151,26 @@
         
     <div class="d-flex justify-content-end  mt-2 mb-2">
         <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" class="btn btn-outline-primary ms-2">Cancel</button>
+        <button type="reset" class="btn btn-outline-primary ms-2">Cancel</button>
     </div>
 </form>
 @await Html.PartialAsync("_footer")
 
 <script>
+    $('#patientForm').submit(function (e) {
+
+        if (!$(this).valid()) {
+            return; // If the form is not valid, don't proceed
+        }
+        else {
+            //checkcity();
+            checkEmail();
+        }
+        e.preventDefault();
+
+
+    });
+   
     const phoneInputField = document.querySelectorAll("input[type='tel']");
     for (var i = 0; i < phoneInputField.length; i++) {
         const phoneInput = window.intlTelInput(phoneInputField[i], {
@@ -158,6 +182,18 @@
         var fileName = this.files[0].name;
         document.getElementById('file-name').textContent = fileName;
     });
+    $(document).ready(function () {
+        $('input[type=text], textarea,input[type=tel],input[type=email]').keyup(function () {
+            var value = $(this).val();
+            if (!/\S/.test(value)) {
+                $(this).val($.trim(value));
+            }
+        });
+    });
+    window.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('dob').value = '';
+    });
+
     $(document).ready(function () {
         console.log("gvfsre");
         debugger;
@@ -203,6 +239,26 @@
                 }
             });
         });
+    });
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
     });
 </script>
 

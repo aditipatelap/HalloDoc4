@@ -118,7 +118,7 @@ Delete doc*@
         alert(id);
 
         $.ajax({
-            url: '@Url.Action("DeleteDocument", "Admin")',
+            url: '@Url.Action("DeleteDocument", "Provider")',
             type: "Post",
             data: { filename: id, requestid: requestid },
             success: function (result) {

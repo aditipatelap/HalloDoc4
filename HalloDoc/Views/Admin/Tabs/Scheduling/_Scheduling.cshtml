@@ -2,6 +2,7 @@
 @model AdminDashboard
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class="row justify-content-center">
     <div class="row m-4 col-xl-8 col-md-9 col-11">
@@ -79,19 +80,22 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="createShiftDate" asp-for="scheduleModel.ShiftDate">
+                        <input type="date" class="form-control" id="createShiftDate" asp-for="scheduleModel.ShiftDate" required>
                         <label for="createShiftDate" class="floatingLabel">Shift Date</label>
+                        @Html.ValidationMessageFor(Model=>Model.scheduleModel.ShiftDate,"",new{@class="text-danger"})
                     </div>
 
                     <div class="row g-2">
                         <div class="col-md-6 form-floating mb-3">
-                            <input id="StartTime" class="form-control" type="time" asp-for="scheduleModel.StartTime">
+                            <input id="StartTime" class="form-control" type="time" asp-for="scheduleModel.StartTime" required>
                             <label for="StartTime">Start Time</label>
+                            @Html.ValidationMessageFor(Model=>Model.scheduleModel.StartTime,"",new{@class="text-danger"})
                         </div>
 
                         <div class="col-md-6 form-floating mb-3">
-                            <input id="EndTime" class="form-control" type="time" asp-for="scheduleModel.EndTime">
+                            <input id="EndTime" class="form-control" type="time" asp-for="scheduleModel.EndTime" required>
                             <label for="EndTime">End Time</label>
+                            @Html.ValidationMessageFor(Model=>Model.scheduleModel.EndTime,"",new{@class="text-danger"})
                         </div>
                     </div>
                     
@@ -254,8 +258,15 @@
 
     $('#CreateShift').on('submit', function (e) {
         e.preventDefault();
-        var data = new FormData(this);
+        
+        
+        var form = $(this);
+        if (!form[0].checkValidity()) {
 
+
+            return;
+        }
+        var data = new FormData(this);
         $.ajax({
             url: "/Admin/CreateShift",
             type: "Post",

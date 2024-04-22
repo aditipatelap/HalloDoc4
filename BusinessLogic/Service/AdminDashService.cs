@@ -751,6 +751,7 @@ namespace BusinessLogic.Service
                     model.PhysicianNotes = null;
 
                 }
+
                 return model;
             }
         [HttpPost]
@@ -979,7 +980,7 @@ namespace BusinessLogic.Service
             var regionlist = _db.Regions.Select(x => x.Name).ToList();
 
             var regionInfo = _db.Regions
-                            .Where(x => x.Name == model.CreateReqquestModel.City)
+                            .Where(x => x.Name == model.CreateReqquestModel.State)
                             .Select(x => new { x.Abbreviation, x.Regionid })
                             .FirstOrDefault();
 

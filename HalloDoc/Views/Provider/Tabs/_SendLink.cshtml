@@ -7,33 +7,33 @@
     <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" action='@Url.Action("SendLinkDataPost", "Admin")'>
+    <form method="post" id="Sendlink">
         <div class="col-12 w-100 mb-3">
             <div class="form-floating">
-                <input type="text" class="form-control" asp-for="@Model.sendLink.FirstName" id="firstName" placeholder="First name">
-                <label for="firstName" class="text-secondary">First Name</label>
-
+                <input type="text" class="form-control" asp-for="@Model.sendLink.FirstName" id="firstName" placeholder="First name" required>
+                <label for="firstName" class="text-secondary">First Name<span class="text-danger">*</span> </label>
+                @Html.ValidationMessageFor(Model=>Model.sendLink.FirstName,"",new{@class="text-danger"})
             </div>
         </div>
         <div class="col-12 mb-3">
             <div class="form-floating">
-                <input type="text" class="form-control" asp-for="@Model.sendLink.LastName" id="lastName" placeholder="Last name">
-                <label for="lastName" class="text-secondary">Last Name</label>
-
+                <input type="text" class="form-control" asp-for="@Model.sendLink.LastName" id="lastName" placeholder="Last name" required>
+                <label for="lastName" class="text-secondary">Last Name<span class="text-danger">*</span> </label>
+                @Html.ValidationMessageFor(Model=>Model.sendLink.LastName,"",new{@class="text-danger"})
             </div>
         </div>
         <div class="col-12 mb-3">
             <div class="form-floating">
-                <input type="tel" class="form-control p-3 ps-5" asp-for="@Model.sendLink.PhoneNumber" id="mobileNo" placeholder="(201) 555-0123" required>
-                <label for="mobileNo" class="text-secondary">Mobile Number</label>
+                <input type="tel" class="form-control p-3 ps-5" asp-for="@Model.sendLink.PhoneNumber" id="phoneNumber1" required>
+
                 @Html.ValidationMessageFor(Model=>Model.sendLink.PhoneNumber,"",new{@class="text-danger"})
             </div>
         </div>
         <div class="col-12 mb-4">
             <div class="form-floating">
                 <input type="email" class="form-control" asp-for="@Model.sendLink.Email" id="Email" placeholder="Email" required>
-                <label for="Email" class="text-secondary">Email</label>
-                @Html.ValidationMessageFor(Model=>Model.sendLink.Email,"",new{@class="text-danger"})
+                <label for="Email" class="text-secondary">Email<span class="text-danger">*</span></label>
+                @Html.ValidationMessageFor(Model => Model.sendLink.Email, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="d-flex justify-content-end">
@@ -42,16 +42,62 @@
         </div>
     </form>
 </div>
-@*<script>
-    $(document).ready(function () {
-
-        // Prevent form submission if validation fails
-        $('form').submit(function (event) {
-            if (!this.checkValidity()) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            $(this).addClass('was-validated');
+<!-- script for phone number -->
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
         });
+    }
+
+
+
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
     });
-</script>*@
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
+<script>
+    $('#Sendlink').submit(function (event) {
+        event.preventDefault();
+        console.log("Fweaf");
+
+        var data = new FormData(this);
+        debugger;
+        $.ajax({
+            url: '/Provider/SendLinkDataPost',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+
+                console.log("sucess");
+
+                $('#modeldiv').modal('hide');
+            },
+            error: function () {
+                console.error("Error occurred while fetching data.");
+            }
+        });
+
+    });
+</script>

@@ -16,13 +16,16 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your Lastname.")]
         public string? Lastname { get; set; }
 
-         [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
-       // [StringLength(10, ErrorMessage = "Phone number must be of 10 digit") ]
-        [Required(ErrorMessage = "Please enter Your Phonenumber.")]
+        //  [RegularExpression("^[0-9]{10}$", ErrorMessage = "Phone number must be of 10 digit")]
+        //// [StringLength(10, ErrorMessage = "Phone number must be of 10 digit") ]
+        // [Required(ErrorMessage = "Please enter Your Phonenumber.")]
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
         public string? Phonenumber { get; set; }
-        [Required(ErrorMessage = "Please enter Your Email Address.")]
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string? Email { get; set; }
-       
+        [Required(ErrorMessage = "BirthDate is required.")]
         public DateTime DOB { get; set; }
         public string? Notes { get; set; }
        
@@ -30,11 +33,13 @@ namespace DataAccess.ViewModel
    
         public string ? City { get; set; }
     
-        public string ? State { get; set; }
+        public string  State { get; set; }
         public string Region { get; set; }
         public string Address { get; set; }
 
+        public IEnumerable<Region> Regions { get; set; }
 
+        [Required(ErrorMessage = "Please enter ZipCode.")]
         public string ? Zipcode { get; set; }
      
         public string? RoomNo { get; set; }
@@ -60,7 +65,7 @@ namespace DataAccess.ViewModel
     public class familyReq {
         [Required(ErrorMessage = "Please enter Your Firstname")]
         public string? F_Firstname { get; set; }
-       
+        public IEnumerable<Region> Regions { get; set; }
         public string? F_Lastname { get; set; }
         public DateTime DOB { get; set; }
  
@@ -85,7 +90,7 @@ namespace DataAccess.ViewModel
     
         public string? City { get; set; }
 
-        public string? State { get; set; }
+        public int State { get; set; }
      
         public string? Zipcode { get; set; }
         public string? RoomNo { get; set; }
@@ -99,7 +104,7 @@ namespace DataAccess.ViewModel
     {
         [Required(ErrorMessage = "Please enter Your Firstname")]
         public string? cFirstname { get; set; }
-       
+        public IEnumerable<Region> Regions { get; set; }
         public string? cLastname { get; set; }
       
         public string? cPhonenumber { get; set; }
@@ -112,7 +117,7 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your City:")]
         public string? cCity { get; set; }
         [Required(ErrorMessage = "Please enter Your State.")]
-        public string? cState { get; set; }
+        public int cState { get; set; }
         [Required(ErrorMessage = "Please enter Your ZipCode.")]
         public string? cZipcode { get; set; }
 
@@ -133,7 +138,7 @@ namespace DataAccess.ViewModel
     {
         [Required(ErrorMessage = "Please enter Your Firstname")]
         public string? bFirstname { get; set; }
-        
+        public IEnumerable<Region> Regions { get; set; }
         public string? bLastname { get; set; }
    
         public string? bPhonenumber { get; set; }
@@ -151,7 +156,7 @@ namespace DataAccess.ViewModel
         public string? Phonenumber { get; set; }
         [Required(ErrorMessage = "Please enter patient email address.")]
         public string? Email { get; set; }
-       
+        
         public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         
@@ -159,7 +164,7 @@ namespace DataAccess.ViewModel
         
         public string? City { get; set; }
       
-        public string? State { get; set; }
+        public int State { get; set; }
        
         public string? Zipcode { get; set; }
         public string? RoomNo { get; set; }
@@ -199,13 +204,21 @@ namespace DataAccess.ViewModel
     }
     public class Profilemodel
     {
+        [Required(ErrorMessage = "the fileld is required")]
         public string ? FirstName { get; set; }
+        [Required(ErrorMessage = "the fileld is required")]
+
         public string ? LastName { get; set; }
+        [Required(ErrorMessage = "the fileld is required")]
         public string ? Email { get; set; }
-        public string ? Dob { get; set; }
+        [Required(ErrorMessage = "the fileld is required")]
+        public DateTime  Dob { get; set; }
+        [Required(ErrorMessage = "the fileld is required")]
         public string  ? PhoneNumber { get; set; }
         public string ? Street { get; set; }
+
         public string ? City { get; set; }
+        [Required(ErrorMessage = "the fileld is required")]
         public string ? State { get; set; }
         public string ? Zipcode { get; set; }
     }

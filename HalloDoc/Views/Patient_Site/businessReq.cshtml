@@ -21,24 +21,24 @@
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
             <input type="text" class="form-control " id="floatingInput" placeholder="Your First Name" asp-for="bFirstname">
-            <label for="floatingInput" class=" text-dark ms-2">Your First Name</label>
+            <label for="floatingInput" class=" text-dark ms-2">Your First Name<span class="text-danger">*</span></label>
             <span asp-validation-for="bFirstname" id="Errorinfo"></span>
         </div>
         <div class="col-lg-6 col-sm-12  form-floating mb-3">
             <input type="text" class="form-control " id="floatingInput" placeholder="Your Last Name" asp-for="bLastname">
-            <label for="floatingInput" class="text-dark  ms-2">Your Last Name</label>
-            
+            <label for="floatingInput" class="text-dark  ms-2">Your Last Name<span class="text-danger">*</span></label>
+            <span asp-validation-for="bLastname" id="Errorinfo"></span>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating">
-            <input type="tel" class="form-control p-3 ps-5 phoneNumber" placeholder="(201) 555-0123" asp-for="bPhonenumber">
+            <input type="tel" class="form-control p-3 ps-5 phoneNumber" placeholder="(201) 555-0123" id="phoneNumber1"  asp-for="bPhonenumber">
          
         </div>
         <div class=" col-lg-6 col-sm-12  form-floating mb-3 ">
             <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" asp-for="bEmail">
-            <label for="floatingInput" class="text-dark  ms-2">Email</label>
-          
+            <label for="floatingInput" class="text-dark  ms-2">Email<span class="text-danger">*</span></label>
+            <span asp-validation-for="bEmail" id="Errorinfo"></span>
         </div>
     </div>
     <div class="row">
@@ -67,31 +67,31 @@
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
             <input type="text" class="form-control " id="floatingInput" placeholder="Your First Name" asp-for="Firstname">
-            <label for="floatingInput" class="text-dark  ms-2">First Name</label>
+            <label for="floatingInput" class="text-dark  ms-2">First Name<span class="text-danger">*</span></label>
             <span asp-validation-for="Firstname" id="Errorinfo"></span>
         </div>
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
             <input type="text" class="form-control " id="floatingInput" placeholder="Your Last Name" asp-for="Lastname">
-            <label for="floatingInput" class="text-dark  ms-2">Last Name</label>
+            <label for="floatingInput" class="text-dark  ms-2">Last Name<span class="text-danger">*</span></label>
             <span asp-validation-for="Lastname" id="Errorinfo"></span>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="Date" class="form-control " id="floatingInput" placeholder="Date" asp-for="DOB">
-            <label for="floatingInput" class="text-dark  ms-2">Date</label>
-            
+            <input type="Date" class="form-control " id="floatingInput" placeholder="Date" id="dob" asp-for="DOB">
+            <label for="floatingInput" class="text-dark  ms-2">Date<span class="text-danger">*</span></label>
+            <span asp-validation-for="DOB" id="Errorinfo"></span>
         </div>
     </div>
     <h3 class="mb-2">Patient Contact Information</h3>
     <div class="row ">
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
             <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" asp-for="Email">
-            <label for="floatingInput" class="text-dark  ms-2">Email</label>
+            <label for="floatingInput" class="text-dark  ms-2">Email<span class="text-danger">*</span></label>
             <span asp-validation-for="Email" id="Errorinfo"></span>
         </div>
         <div class="col-lg-6 col-sm-12 form-floating">
-            <input type="tel" class="form-control p-3 ps-5 phoneNumber"  placeholder="(201) 555-0123" asp-for="Phonenumber">
+            <input type="tel" class="form-control p-3 ps-5 phoneNumber" placeholder="(201) 555-0123" id="phoneNumber2" asp-for="Phonenumber">
             
         </div>
     </div>
@@ -110,14 +110,20 @@
     </div>
     <div class="row ">
         <div class="col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="text" class="form-control " id="floatingInput" placeholder="state" asp-for="State">
-            <label for="floatingInput" class="text-dark  ms-2">State</label>
+            <select class="form-select form-control inputform1" asp-for="State">
+                @foreach (var i in Model.Regions)
+                {
+                    <option value="@i.Regionid">@i.Name</option>
+                }
+            </select>
+
+            <label for="state" class="dropdown-toggle" asp-for="State">State<span class="text-danger">*</span></label>
             
         </div>
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
             <input type="number" class="form-control" id="floatingInput" placeholder="number" asp-for="Zipcode">
-            <label for="floatingInput" class="text-dark  ms-2">Zip Code</label>
-       
+            <label for="floatingInput" class="text-dark  ms-2">Zip Code<span class="text-danger">*</span></label>
+            <span asp-validation-for="Email" id="Errorinfo"></span>
         </div>
     </div>
     <div class="row">
@@ -145,6 +151,40 @@
     $(window).on('load', function () {
         $('#myModal').modal('show');
     });
+    // Remove default value from date input after page load
+    window.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('dob').value = '';
+    });
+
+    $(document).ready(function () {
+        $('input[type=text], textarea,input[type=tel],input[type=email]').keyup(function () {
+            var value = $(this).val();
+            if (!/\S/.test(value)) {
+                $(this).val($.trim(value));
+            }
+        });
+    });
 </script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
+
 @await Html.PartialAsync("_footer")
 

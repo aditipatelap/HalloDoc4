@@ -19,7 +19,7 @@
     </div>
 </div>
 <div class="bg-white reqform p-3 container ">
-    <form class="bg-white sbox" method="post" action='@Url.Action("EditViewCaseData", "Admin",new {requestid=Model.requestid})'>
+    <form class="bg-white sbox" method="post" action='@Url.Action("EditViewCaseData", "Provider",new {requestid=Model.requestid})'>
 
         <h5><b>Patient Information</b></h5>
         <p class="text-secondary">
@@ -45,7 +45,7 @@
                 <label class="form-label ps-4" for="Date">Date of Birth</label>
             </div>
             <div class="mb-3 col-lg-5 form-floating phone">
-                <input type="tel" asp-for="@Model.viewcase.Mobile" class="form-control shadow-none viewenable" id="phone" disabled required>
+                <input type="tel" asp-for="@Model.viewcase.Mobile" class="form-control shadow-none viewenable" id="phoneNumber1" disabled required>
                 @* <label for="PhoneNumber" class="form-label ps-4">PhoneNumber<span class="text-danger"> *</span></label>*@
                 @Html.ValidationMessageFor(Model=>Model.viewcase.Mobile,"",new{@class="text-danger"})
             </div>
@@ -86,7 +86,7 @@
                 <input type="submit" id="submit" class=" btn btn-lg bg-info text-white rounded px-3" value="Save" style="display: none;">
             </div>
             <div class="row px-3 d-flex justify-content-end">
-                <a class="col-1 btn btn-info text-white rounded p-2 me-2 showmodal case" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest"> Assign</a>
+                @*<a class="col-1 btn btn-info text-white rounded p-2 me-2 showmodal case" data-bs-toggle="modal" data-bs-target="#modeldiv" id="AssignRequest"> Assign</a>*@
                 <a class="col-1 btn btn-info text-white rounded p-2 me-2 tablink" id="ViewNotes" data-btn="@Model.requestid"> View Notes </a>
                 <a class="col-1 btn btn-danger text-white rounded p-2 me-2 showmodal case" data-bs-toggle="modal" data-btn="@Model.requestid" data-bs-target="#modeldiv" id="CancelCase"> Cancel</a>
             </div>
@@ -98,6 +98,38 @@
         <div class="modelbody modal-content"></div>
     </div>
 </div>
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+
+
+
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
 <script>
 
 

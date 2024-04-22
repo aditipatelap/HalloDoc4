@@ -31,6 +31,7 @@
                         <i class="bi bi-cloud-arrow-up"></i>
                         Upload
                     </button>
+                    <input type="file" id="uploadInput" class="position-absolute opacity-0 start-0 end-0" />
 
                 </div>
             </div>
@@ -67,6 +68,7 @@
                                                 <button type="button" class="btn btn-outline shadow-none">
                                                     <a href="~/UploadFile/@item.uploader" class="text-decoration-none ElementColor" download>
                                                         <i class="fa fa-cloud-arrow-up"></i>
+                                              
                                                     </a>
                                                 </button>
                                             </td>
@@ -112,6 +114,23 @@
 </div>
 
 <script>
+    $('#uploadInput').change(function () {
+        var formData = new FormData();
+        formData.append('Requestid', @Model.requestid);
+        formData.append('document', $('#uploadInput')[0].files[0]);
+        $.ajax({
+            url: '/Provider/UploadDocument',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+               console.log("sucess");
+                
+            },
+        });
+    });
+
     $(".concludecare").click(ConcludeCare);
     function ConcludeCare() {
         debugger;
@@ -190,6 +209,6 @@
 </script>
 <script>
     $('.backbtn').on('click', function () {
-        $("#home")[0].click();
+        $("#Dashboard")[0].click();
     });
 </script>

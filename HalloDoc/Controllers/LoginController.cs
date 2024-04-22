@@ -190,7 +190,7 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CreateAccount(LoginModel model)
         {
-            //_loginInterface.ResetPassSave(model);
+            _loginInterface.CreateAccount(model);
             return View();
         }
 
