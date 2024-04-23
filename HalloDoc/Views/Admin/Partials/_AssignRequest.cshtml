@@ -126,11 +126,32 @@
             data: data,
             processData: false,
             contentType: false,
-            success: function (data) {
+            success: function (result) {
                 //$('#block-history-partial-table').html(data);
                 console.log("sucess");
 
                 $('#modeldiv').modal('hide');
+                if (result.success) {
+                    var TabId = "Dashboard";
+                    
+                    $.ajax({
+                        url: '/Admin/GetTabs',
+                        data: { Tabid: TabId },
+                        method: 'Post',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            //toastr.success("Note Added successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+            
             },
             error: function () {
                 console.error("Error occurred while fetching data.");

@@ -373,7 +373,7 @@ namespace HalloDoc.Controllers
             _notyf.Custom("Case Assign Successfully!", 3, "green", "bi bi-check-circle-fill");
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "Dashboard";
-            return GetTabs(adminDashboard, default, default, default, default, default, default);
+            return Json(new { success = true });
 
         }
 
