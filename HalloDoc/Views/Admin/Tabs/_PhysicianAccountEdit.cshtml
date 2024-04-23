@@ -200,7 +200,7 @@
                                 <option value="@i.Regionid">@i.Name</option>
                             }
                         </select>
-                        <label for="state" class="floatingLabel dropdown-toggle" asp-for="@Model.PhysicianProfile.state">State</label>
+                        <label for="state" class="floatingLabel dropdown-toggle" asp-for="@Model.PhysicianProfile.Regionid">State</label>
                     </div>
                 </div>
             </div>
@@ -280,6 +280,18 @@
                         </label>
                     </div>
                 </div>
+                 <div class="col-md-6 d-flex justify-content-center">
+    @if(@Model.PhysicianProfile.PhotoName != null)
+    {
+         <img class="" style="height:150px;width:150px" src="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/@Model.PhysicianProfile.PhotoName" alt="Photo" />
+    }                  
+</div>
+<div class="col-md-6 d-flex justify-content-center">
+     @if(@Model.PhysicianProfile.SignatureName != null)
+    {
+        <img style="height:150px;width:150px" src="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/@Model.PhysicianProfile.SignatureName" alt="Signature" />  
+    }                
+</div>
                 <div class="col-md-1">
                     <div class="input-group mb-3">
                         <button type="button" class="btn btn-info py-3 info-button inputform3" disabled><i class="bi bi-pencil-fill"></i> <span class="d-none d-md-inline">Create</span></button>
@@ -333,13 +345,12 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
-                        @if(Model.PhysicianProfile.Isagreementdoc[0])
-                        {
-                            <button type="button" class="btn btn-info text-light">
-                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
-                                <span class="d-none d-xl-inline d-lg-inline">View</span>
-                            </button>
-                        }
+                         @if(Model.PhysicianProfile.Isagreementdoc[0])
+ {
+     <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/agreementdoc.pdf" target="_blank">
+         <span class="d-none d-xl-inline d-lg-inline">View</span>
+     </a>
+ }
                     </td>    
                 </tr>
 
@@ -362,13 +373,12 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
-                        @if(Model.PhysicianProfile.Isbackgrounddoc[0])
-                        {
-                            <button type="button" class="btn btn-info text-light">
-                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
-                                <span class="d-none d-xl-inline d-lg-inline">View</span>
-                            </button>
-                        }
+                         @if(Model.PhysicianProfile.Isbackgrounddoc[0])
+ {
+     <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/backgrounddoc.pdf" target="_blank">
+         <span class="d-none d-xl-inline d-lg-inline">View</span>
+     </a>
+ }
                     </td>                    
                 </tr>
 
@@ -392,12 +402,11 @@
                     </td>
                     <td class="bg-transparent">
                         @if(Model.PhysicianProfile.Iscredentialdoc[0])
-                        {
-                            <button type="button" class="btn btn-info text-light">
-                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
-                                <span class="d-none d-xl-inline d-lg-inline">View</span>
-                            </button>
-                        }
+ {
+     <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/credentialdoc.pdf" target="_blank">
+         <span class="d-none d-xl-inline d-lg-inline">View</span>
+     </a>
+ }
                     </td>    
                 </tr>
 
@@ -421,13 +430,12 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
-                        @if(Model.PhysicianProfile.Isnondisclosuredoc[0])
-                        {
-                            <button type="button" class="btn btn-info text-light">
-                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
-                                <span class="d-none d-xl-inline d-lg-inline">View</span>
-                            </button>
-                        }
+                         @if(Model.PhysicianProfile.Isnondisclosuredoc[0])
+ {
+     <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/nondisclosuredoc.pdf" target="_blank">
+         <span class="d-none d-xl-inline d-lg-inline">View</span>
+     </a>
+ }
                     </td>    
                 </tr>
             
@@ -452,12 +460,11 @@
                     </td>
                     <td class="bg-transparent">
                         @if(Model.PhysicianProfile.Islicensedoc[0])
-                        {
-                            <button type="button" class="btn btn-info text-light">
-                                <i class="bi bi-cloud-arrow-up pe-1 text-light"></i>
-                                <span class="d-none d-xl-inline d-lg-inline">View</span>
-                            </button>
-                        }
+ {
+     <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/licenseedoc.pdf" target="_blank">
+         <span class="d-none d-xl-inline d-lg-inline">View</span>
+     </a>
+ }
                     </td>    
                 </tr>
             </tbody>

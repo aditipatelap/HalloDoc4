@@ -13,6 +13,9 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static DataAccess.ViewModel.Constant;
+using Twilio.Types;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace BusinessLogic.Service
 {
@@ -25,7 +28,7 @@ namespace BusinessLogic.Service
         }
         public ProviderDash reqByStatus(int statusId, int reqTypeId, int currentpage, string searchstream, string region, int physicianId)
         {
-            currentpage = 1;
+
            
             List<int> reqStatusId = new List<int>();
             Physician phy = new Physician();
@@ -75,6 +78,7 @@ namespace BusinessLogic.Service
                             isfinalize = _db.Encounters.FirstOrDefault(x => x.RequestId == req.Requestid).IsFinalize,
                         };
 
+
            
             int totalrecords = query.Count();//10
             int pagesize = 2;
@@ -119,7 +123,7 @@ namespace BusinessLogic.Service
            
             ProviderDash dash = new ProviderDash();
             var Request = _db.Requests.Include(x => x.Requestclients).Where(x => x.Requestid == x.Requestclients.FirstOrDefault().Requestid).ToList();
-            dash.newcount = Request.Count(x => x.Status == (int)Requeststatuses.Unassigned && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
+            dash.newcount = Request.Count(x => x.Status == (int)Requeststatuses.assignedbyphysician && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
             dash.pendingcount = Request.Count(x => x.Status == (int)Requeststatuses.Accepted && x.Physicianid == physicianId && x.Requestid == x.Requestclients.FirstOrDefault().Requestid);
             dash.activecount = Request.Count(x => (x.Status == (int)Requeststatuses.MDonSite || x.Status == (int)Requeststatuses.MDEnRoute && x.Requestid == x.Requestclients.FirstOrDefault().Requestid) && (x.Physicianid == physicianId));
             dash.conclude = Request.Count(x => x.Status == (int)Requeststatuses.Conclude && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
@@ -202,8 +206,32 @@ namespace BusinessLogic.Service
             //adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
+        /*view notes*/
+
+        public void PostViewNotes(AdminDashboard model,string aspnetuserid)
+        {
+
+
+            var data = _db.Requestnotes.FirstOrDefault(x => x.Requestid == model.requestid);
+            if (data != null)
+            {
+                data.Physiciannotes = model.AdditionalNotes;
+                data.Modifieddate = DateTime.Now;
+                data.Modifiedby = aspnetuserid;
+            }
+            else
+            {
+                var data2 = new Requestnote();
+                data2.Requestid = model.requestid;
+                data2.Adminnotes = model.AdditionalNotes;
+                data2.Createdby = aspnetuserid;
+                data2.Createddate = DateTime.Now;
+                _db.Add(data2);
+            }
+            _db.SaveChanges();
+        }
         /***********encounter********/
-          public bool SetTypeOfCare(int requestid, int TOCId)
+        public bool SetTypeOfCare(int requestid, int TOCId)
         {
             var req = _db.Requests.Where(x => x.Requestid == requestid).FirstOrDefault();
             if (req != null)
@@ -256,23 +284,24 @@ namespace BusinessLogic.Service
             {
                 try
                 {
-                    var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqId).FirstOrDefault();
+                    var data = _db.Requests.Where(x => x.Requestid == reqId).FirstOrDefault();
 
                     if (data != null)
                     {
-                        data.Request.Status = (int)Status.ToClose;
+                        data.Status = (int)Requeststatuses.Closed;
                         _db.SaveChanges();
                     }
                     Requeststatuslog rsl = new Requeststatuslog();
                     rsl.Physicianid = phyId;
                     rsl.Notes = notes;
                     rsl.Createddate = DateTime.Now;
-                    rsl.Status = (int)(Status.ToClose);
+                    rsl.Status = (int)Requeststatuses.Closed;
                     rsl.Requestid = reqId;
 
 
                     _db.Requeststatuslogs.Add(rsl);
                     _db.SaveChanges();
+                   
                     Requestclosed requestclosed = new Requestclosed();
                     requestclosed.Requestid = reqId;
                     requestclosed.Requeststatuslogid = rsl.Requeststatuslogid;
@@ -689,7 +718,82 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
         }
+        //send link
+        public void SendMailLink(AdminDashboard model, int physicianid)
+        {
+            var usr = _db.Users.Where(u => u.Email == model.sendLink.Email).FirstOrDefault();
+            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
 
+            message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+            message.To.Add(new System.Net.Mail.MailAddress(model.sendLink.Email));
+            message.Subject = "Request submit page Link";
+            message.IsBodyHtml = true;
+            var resetLink = "https://localhost:44367/Patient/submitReq";
+            message.Body = "Submit Request Page Link :  " + resetLink;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "mail.etatvasoft.com";
+            smtp.Port = 587;
+            smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+            smtp.EnableSsl = true;
+            smtp.Send(message);
+            smtp.UseDefaultCredentials = false;
+            var isEmailSent = false;
+
+            var IsSMSSend = false;
+            string link = $"https://localhost:44367/Patient/submitReq";
+            string SMSTemplate = $"For Submit your Request: {link}";
+
+            var accountsid = "AC4e906b8950220baa3121323a2a3ec1f8";
+            var authtoken = "5037610beaf3ced4e3e5b3c0a9796101";
+            TwilioClient.Init(accountsid, authtoken);
+
+            var messageoptions = new CreateMessageOptions(
+              new PhoneNumber(model.sendLink.PhoneNumber));
+            messageoptions.From = new PhoneNumber("+16562269587");
+            messageoptions.Body = SMSTemplate;
+            MessageResource.Create(messageoptions);
+
+            IsSMSSend = true;
+            isEmailSent = true;
+            if (IsSMSSend)
+            {
+                Smslog smslog = new Smslog();
+                smslog.Smstemplate = SMSTemplate;
+                smslog.Mobilenumber = model.sendLink.PhoneNumber;
+                smslog.Roleid = model.roleid;
+                smslog.Createdate = DateTime.Now;
+                smslog.Sentdate = DateTime.Now;
+                smslog.Issmssent = new BitArray(new bool[1] { true });
+                smslog.Senttries = 1;
+                smslog.Adminid = physicianid;
+                _db.Add(smslog);
+                _db.SaveChanges();
+            }
+
+            var SubjectName = "Submit Request";
+            string link1 = $"https://localhost:44367/Patient/submitReq";
+            string EmailTemplate = $"For Submit your Request:<a href=\"{link}\">ClickHere</a>";
+
+            //var EmailTemplate = "You Can Submit Request<a href=\"https://localhost:44367/Patient/submitReq\">ClickHere</a> to view";
+            var EmailTemplate1 = "You can submit your request";
+            if (isEmailSent)
+            {
+                var emailLog = new Emaillog
+                {
+                    Emailtemplate = EmailTemplate1,
+                    Subjectname = SubjectName,
+                    Emailid = model.sendLink.Email,
+                    Createdate = DateTime.Now,
+                    Roleid = (int)Roles.Patient,
+                    Sentdate = DateTime.Now,
+                    Adminid = physicianid,
+                    Isemailsent = new BitArray(new bool[] { true }),
+                    Senttries = 1,
+                };
+                _db.Emaillogs.Add(emailLog);
+                _db.SaveChanges();
+            }
+        }
 
     }
 

@@ -13,7 +13,7 @@
     </div>
     <div class="shadow rounded mt-3 py-3">
         <div class="px-3">
-            <form method="post" action='@Url.Action("SendOrder", "Admin",new {requestid=Model.requestid})' id="orderForm">
+            <form method="post" action='@Url.Action("SendOrder", "Provider",new {requestid=Model.requestid})' id="orderForm">
 
                 <div class="row g-2 mt-2">
                     <div class="col-md dropdown my-2 m-auto">
@@ -152,7 +152,7 @@
         $('#Email').val('');
         $.ajax({
 
-            url: '/Admin/GetDropDownofBusinessname',
+            url: '/Provider/GetDropDownofBusinessname',
             method: 'POST',
             data: { selectedvalue: selectedvalue },
             success: function (response) {
@@ -179,7 +179,7 @@
 
 
         $.ajax({
-            url: '/Admin/GetBusinessDetails',
+            url: '/Provider/GetBusinessDetails',
             type: 'GET',
             data: {
                 selectedvalue: selectedvalue,

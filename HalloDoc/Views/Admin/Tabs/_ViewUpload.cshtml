@@ -44,7 +44,7 @@
                 <button type="button" class="btn d-none d-md-block btn btn-outline-info p-2 me-2 button-info" id="deleteAll" data-btn="@Model.requestid">
                     Delete All
                 </button>
-                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info" id="sendMail" data-btn="vanshitabhansali@etatvasoft.com" data-reqid="@Model.requestid">
+                <button type="button" class="d-none d-md-block btn btn-outline-info p-2 button-info" id="sendMail" data-btn="vanshita.bhansali@etatvasoft.com" data-reqid="@Model.requestid">
                     Send Mail
                 </button>
             </div>
@@ -76,7 +76,7 @@
             });
         }
         else {
-            alert("Please select at least one file.");
+            swal("Warning!", "Please select at least one file.", "warning");
         }
     });
 </script>
@@ -98,7 +98,7 @@
                 window.location.href = "/Admin/DownloadAll?file=" + selectedFiles;
             }
             else {
-                alert("Please select at least one file.");
+                swal("Warning!", "Please select at least one file.", "warning");
             }
         });
     });
@@ -124,6 +124,10 @@
             var formData = new FormData();
             var fileInput = document.getElementById('formFile').files[0];
         $('#formFile').val('');
+        
+        if (fileInput == null) {
+            swal("Warning!", "Please select at least one file.", "warning");
+        }
             if(fileInput!=null)
             {
               
@@ -142,8 +146,8 @@
                 contentType: false,
                 success: function (result) {
                     $('#ViewUploadsTable').html(result);
-                   
-                    
+
+                    toastr.success("Document Uploaded Successfully");
                 },
                 error: function (xhr, status, error) {
                     console.error(error);
@@ -152,7 +156,7 @@
             }
             else
             {
-                alert('please select one file')
+            swal("Warning!", "Please select at least one file.", "warning");
             }
 
         });
@@ -163,9 +167,9 @@
     //send email with file
     $("#sendMail").click(function () {
         var email = $(this).data("btn");
-        alert("email: " + email);
+       
         var requestid = $(this).data("reqid");
-        alert("requestid: " + requestid);
+       
 
         var selectedFiles = $('input[name="checkbox"]:checked').map(function () {
             return this.value;
@@ -188,7 +192,7 @@
             });
         }
         else {
-            alert("Please select at least one file.");
+            swal("Warning!", "Please select at least one file.", "warning");
         }
     });
     $(document).ready(function () {

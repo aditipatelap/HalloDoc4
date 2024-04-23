@@ -92,7 +92,7 @@
         </div>
         <div class="col-lg-6 col-sm-12 form-floating">
             <input type="tel" class="form-control p-3 ps-5 phoneNumber" placeholder="(201) 555-0123" id="phoneNumber2" asp-for="Phonenumber">
-            
+            <span asp-validation-for="Phonenumber" id="Errorinfo"></span>
         </div>
     </div>
     <h3 class="mb-2">Patient Location</h3>
@@ -113,7 +113,7 @@
             <select class="form-select form-control inputform1" asp-for="State">
                 @foreach (var i in Model.Regions)
                 {
-                    <option value="@i.Regionid">@i.Name</option>
+                    <option value="@i.Name">@i.Name</option>
                 }
             </select>
 
@@ -121,7 +121,7 @@
             
         </div>
         <div class=" col-lg-6 col-sm-12 form-floating mb-3">
-            <input type="number" class="form-control" id="floatingInput" placeholder="number" asp-for="Zipcode">
+            <input type="text" class="form-control" id="floatingInput" placeholder="number" asp-for="Zipcode">
             <label for="floatingInput" class="text-dark  ms-2">Zip Code<span class="text-danger">*</span></label>
             <span asp-validation-for="Email" id="Errorinfo"></span>
         </div>

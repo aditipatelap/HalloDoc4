@@ -74,11 +74,13 @@
                         </div>
                     }
                 }
-
-
-                <div class="invalid-feedback">
+                <div id="checkboxerror" class="d-none text-danger mt-1">
                     Please select at least one menu.
                 </div>
+
+                @*<div class="invalid-feedback">
+                    Please select at least one menu.
+                </div>*@
             </div>
             <div class="mt-4 d-flex justify-content-end mb-3 ">
                 <button type="button" id="edit" class="btn btn-info info-button" onclick="inputClass()">Edit</button>
@@ -171,7 +173,12 @@
             MenuIds.push(menuid);
         });
 
-
+        if (MenuIds.length === 0) {
+            $('#checkboxerror').removeClass('d-none');
+            return;
+        } else {
+            $('#checkboxerror').addClass('d-none');
+        }
 
         $.ajax({
             url: "/Admin/EditRolePost",

@@ -92,6 +92,7 @@ namespace BusinessLogic.Interface
         //Patient Records
         public AdminDashboard PatientHistory(AdminDashboard obj);
         public AdminDashboard PatientRecords(int id, int currentpage);
+        public void requestsupport(string Notes, int AdminId);
 
     }
     

@@ -38,7 +38,7 @@ namespace DataAccess.ViewModel
         public string Address { get; set; }
 
         public IEnumerable<Region> Regions { get; set; }
-
+        [RegularExpression(@"^\d{6}$", ErrorMessage = "ZipCode must be exactly 6 digits.")]
         [Required(ErrorMessage = "Please enter ZipCode.")]
         public string ? Zipcode { get; set; }
      
@@ -66,11 +66,19 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your Firstname")]
         public string? F_Firstname { get; set; }
         public IEnumerable<Region> Regions { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? F_Lastname { get; set; }
+        [Required(ErrorMessage = "BirthDate is required.")]
+
         public DateTime DOB { get; set; }
- 
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? F_Phonenumber { get; set; }
-      
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
+
+
         public string? F_Email { get; set; }
         [Required(ErrorMessage = "Please enter Your Relation with Patient.")]
         public string? Relation { get; set; }
@@ -79,9 +87,12 @@ namespace DataAccess.ViewModel
         public string? Firstname { get; set; }
         [Required(ErrorMessage = "Please enter patient lastname.")]
         public string? Lastname { get; set; }
-  
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? Phonenumber { get; set; }
-        [Required(ErrorMessage = "Please enter patient email address.")]
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string? Email { get; set; }
     
         public string? Notes { get; set; }
@@ -89,9 +100,12 @@ namespace DataAccess.ViewModel
         public string? Street { get; set; }
     
         public string? City { get; set; }
+        [Required(ErrorMessage = "The field is required")]
 
-        public int State { get; set; }
-     
+
+        public string State { get; set; }
+        [Required(ErrorMessage = "The field is required")]
+
         public string? Zipcode { get; set; }
         public string? RoomNo { get; set; }
        
@@ -105,10 +119,15 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your Firstname")]
         public string? cFirstname { get; set; }
         public IEnumerable<Region> Regions { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? cLastname { get; set; }
-      
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? cPhonenumber { get; set; }
-      
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
+
         public string? cEmail { get; set; }
         [Required(ErrorMessage = "Please enter Your Hotel/Property Name.")]
         public string? hotelName{ get; set; }
@@ -117,19 +136,24 @@ namespace DataAccess.ViewModel
         [Required(ErrorMessage = "Please enter Your City:")]
         public string? cCity { get; set; }
         [Required(ErrorMessage = "Please enter Your State.")]
-        public int cState { get; set; }
+        public string cState { get; set; }
         [Required(ErrorMessage = "Please enter Your ZipCode.")]
         public string? cZipcode { get; set; }
 
         [Required(ErrorMessage = "Please enter Patient Firstname")]
         public string? Firstname { get; set; }
-      
+        [Required(ErrorMessage = "The field is required")]
+
         public string? Lastname { get; set; }
-      
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? Phonenumber { get; set; }
-        [Required(ErrorMessage = "Please enter patient Email Address.")]
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string? Email { get; set; }
-       
+        [Required(ErrorMessage = "The field is required")]
+
         public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         public string? pRoomNo { get; set; }
@@ -137,35 +161,53 @@ namespace DataAccess.ViewModel
     public class businessReq
     {
         [Required(ErrorMessage = "Please enter Your Firstname")]
+
         public string? bFirstname { get; set; }
         public IEnumerable<Region> Regions { get; set; }
+        [Required(ErrorMessage = "The field is required")]
         public string? bLastname { get; set; }
-   
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? bPhonenumber { get; set; }
-      
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
+
         public string? bEmail { get; set; }
         [Required(ErrorMessage = "Please enter Your Business/Property Name")]
         public string? businessName { get; set; }
         public string? caseNo { get; set; }
 
         [Required(ErrorMessage = "Please enter patient firstname")]
+
         public string? Firstname { get; set; }
-     
+        [Required(ErrorMessage = "Please enter patient lastname")]
+
         public string? Lastname { get; set; }
-       
+        [Required(ErrorMessage = "number is required")]
+        [RegularExpression(@"^\+\d{1,3}\d{10}$", ErrorMessage = "Phone number must be in the format +[Country Code][10 Digits].")]
+
         public string? Phonenumber { get; set; }
-        [Required(ErrorMessage = "Please enter patient email address.")]
+        [Required(ErrorMessage = "Email is required.")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address.")]
         public string? Email { get; set; }
-        
+        [Required(ErrorMessage = "The field is required")]
+
+
         public DateTime DOB { get; set; }
         public string? Notes { get; set; }
         
         public string? Street { get; set; }
         
         public string? City { get; set; }
-      
-        public int State { get; set; }
-       
+        [Required(ErrorMessage = "The field is required")]
+
+
+        public string State { get; set; }
+        [Required(ErrorMessage = "The field is required")]
+
+
+
         public string? Zipcode { get; set; }
         public string? RoomNo { get; set; }
         public string? Country { get; set; }
@@ -230,6 +272,8 @@ namespace DataAccess.ViewModel
         public List<Dashboardmodel> Dashboard { get; set; }
         public Profilemodel? Profiles { get; set; }
         public List<Documentmodel> models { get; set; }
+        public string confirmation { get;set; }
+        public IEnumerable<Region> Regions { get;set; }
     }
   
     public class Documentmodel

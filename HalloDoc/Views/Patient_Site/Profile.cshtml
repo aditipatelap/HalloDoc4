@@ -92,8 +92,14 @@
 
                 <div class="col-xs-12 col-sm-5">
                     <div class="form-floating">
-                    <input type="text" class="form-control inputf" placeholder="State" asp-for="Profiles.State" disabled>
-                        <label for="comment" class="floatingLabel text-dark">State</label>
+                    <select class="form-select form-control inputform1" asp-for="Profiles.State">
+                        @foreach (var i in Model.Regions)
+                        {
+                            <option value="@i.Name">@i.Name</option>
+                        }
+                    </select>
+
+                    <label for="state" asp-for="Profiles.State">State<span class="text-danger">*</span></label>
                     <span asp-validation-for=" Profiles.State" id="Errorinfo"></span>
                     </div>
                 </div>
@@ -120,7 +126,7 @@
                     Save 
                 </button>
 
-            <button id="cancelBtn" type="button" class="btn btn-info btn-lg" style="display:none" onclick="disableInputClass1">
+            <button id="cancelBtn" type="button" class="btn btn-info btn-lg" style="display:none" onclick="disableInputClass1()">
                     Cancel
                 </button>
 

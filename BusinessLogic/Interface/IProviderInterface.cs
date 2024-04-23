@@ -27,5 +27,8 @@ namespace BusinessLogic.Interface
         public void AcceptRequest(int Requestid, int physicianid);
         public void SaveDocument(IFormFile Document, int reqid, int Physicianid);
         public bool CreateShift(scheduleModel scheduleModel, string aspnetuserid);
+        /*viewnote****/
+        public void PostViewNotes(AdminDashboard model, string aspnetuserid);
+        public void SendMailLink(AdminDashboard model, int physicianid);
     }
 }

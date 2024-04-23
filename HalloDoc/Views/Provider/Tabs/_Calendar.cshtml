@@ -275,7 +275,7 @@
         var aboveRegion = $('#SearchRegion').val();
 
         $.ajax({
-            url: "/Admin/ReturnShift",
+            url: "/Provider/ReturnShift",
             type: "Post",
             data: { shiftDetailId: id },
             success: function (result) {

@@ -162,7 +162,7 @@
 
                     <div class="row">
                         <div class="col-12 d-flex justify-content-end">
-                            <button type="submit" class="btn btn-info me-2 text-white"  >Save</button>
+                            <button type="submit" class="btn btn-info me-2 text-white" data-bs-dismiss="modal">Save</button>
                             <button type="button" class="btn border border-info text-info" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>
@@ -268,7 +268,7 @@
                             data: { tabid: TabId },
                             method: 'Post',
                             success: function (data) {
-                                $('.tab-content').html(data);
+                                $('#TabContent').html(data);
                             },
                             error: function () {
                                 console.error('Error fetching partial view.');
@@ -314,7 +314,7 @@
     </script>
     <script>
         $('.backbtn').on('click', function () {
-            $("#home")[0].click();
+            $("#Dashboard")[0].click();
         });
     </script>
 

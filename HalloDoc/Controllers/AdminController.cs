@@ -371,7 +371,9 @@ namespace HalloDoc.Controllers
         {
             _AdminDash.SubmitAssignReq(model);
             _notyf.Custom("Case Assign Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return Ok(new { message = "Data saved successfully." });
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "Dashboard";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
 
         }
 
@@ -1089,6 +1091,15 @@ namespace HalloDoc.Controllers
         {
             var Info = _providerService.PatientRecords(reqId,currentpage);
             return PartialView("Tabs/Records/PartialTable/PatientRecordsPartialTable", Info);
+        }
+        //Request Support
+        public IActionResult RequestForSupport(AdminDashboard model)
+        {
+            int Adminid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("Adminid");
+            _providerService.requestsupport(model.AdminNoes, Adminid);
+            AdminDashboard admin= new AdminDashboard();
+            admin.tabid = "Dashboard";
+            return GetTabs(admin, default, default, default, default, default, default);
         }
 
     }

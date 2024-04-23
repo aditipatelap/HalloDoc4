@@ -72,7 +72,7 @@
                     $.ajax({
                         url: '/Admin/GetTabs',
                         data: { Tabid: TabId,requestid:requestid},
-                        method: 'GET',
+                        method: 'Post',
                         success: function (data) {
                             $("#TabContent").html(data);
                             toastr.success("Note Added successfully!");

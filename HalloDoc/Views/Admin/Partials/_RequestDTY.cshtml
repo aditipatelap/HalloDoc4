@@ -6,7 +6,7 @@
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Request Support</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method=post asp-action="BlockCase" asp-controller="Admin">
+<form method=post asp-action="RequestForSupport" asp-controller="Admin">
                 <input type="hidden" value="" id="RequestID_ModelBlockCase" name="RequestId" />
                 <div class="modal-body">
                     <p>
@@ -16,7 +16,7 @@
                         </small>
                     </p>
                     <div class="form-floating mb-3">
-                        <textarea id="changenote" rows="4" name="Notes" class="input-outline w-100 h-100 fs-6 form-control shadow-none" type="text" required></textarea>
+                        <textarea id="changenote" rows="4" asp-for="AdminNoes"class="input-outline w-100 h-100 fs-6 form-control shadow-none" type="text" required></textarea>
                         <label class="inputs-lable fs-6" for="changenote">Message</label>
 
                     </div>
@@ -26,6 +26,4 @@
                     <a class="btn btn-outline-info" data-bs-dismiss="modal">Cancel</a>
                 </div>
             </form>
-        </div>
-    </div>
-</div>
+        <

@@ -7,7 +7,8 @@
     <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
-    <form method="post" id="Sendlink">
+    <form method="post" id="Sendlink1" action='@Url.Action("SendLinkDataPost", "Provider")'>
+        
         <div class="col-12 w-100 mb-3">
             <div class="form-floating">
                 <input type="text" class="form-control" asp-for="@Model.sendLink.FirstName" id="firstName" placeholder="First name" required>
@@ -43,40 +44,10 @@
     </form>
 </div>
 <!-- script for phone number -->
-<script>
-    const phoneInputField = document.querySelectorAll("input[type='tel']");
-    for (var i = 0; i < phoneInputField.length; i++) {
-        const phoneInput = window.intlTelInput(phoneInputField[i], {
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    }
 
 
-
-</script>
-<script>
-    var phone1 = document.querySelector("#phoneNumber1");
-    var phoneInput1 = window.intlTelInput(phone1, {
-        utilsScript:
-            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        nationalMode: false,
-        showSelectedDialCode: true,
-        autoInsertDialCode: true,
-        formatOnDisplay: false,
-    });
-    var phone2 = document.querySelector("#phoneNumber2");
-    var phoneInput2 = window.intlTelInput(phone2, {
-        utilsScript:
-            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        nationalMode: false,
-        showSelectedDialCode: true,
-        autoInsertDialCode: true,
-        formatOnDisplay: false,
-    });
-</script>
-<script>
-    $('#Sendlink').submit(function (event) {
+<@*script>
+    $('#Sendlink1').submit(function (event) {
         event.preventDefault();
         console.log("Fweaf");
 
@@ -101,3 +72,4 @@
 
     });
 </script>
+*@

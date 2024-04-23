@@ -129,6 +129,7 @@ namespace BusinessLogic.Service
             if (regionInfo != null)
             {
                 regionAbbreviation = regionInfo.Abbreviation;
+                rc.Regionid = regionInfo.Regionid;
             }
 
             var confirmationNumber = regionAbbreviation +
@@ -151,10 +152,7 @@ namespace BusinessLogic.Service
             req.Email = patientReq.Email;
             req.Confirmationnumber=confirmationNumber;
            
-            //  req.Requesttypeid = (int)RequestType.Patient;
-            // Status = (status)x.Status;
-            /// req.Requesttypeid = (RequestType)patientReq.Requesttypeid;
-            //req.Status = (short)Status.Unassigned;
+           
             if (user != null)
             {
                 req.Userid = users.Userid;
@@ -178,7 +176,7 @@ namespace BusinessLogic.Service
             rc.City = patientReq.City;
             rc.State = patientReq.State;
             rc.Zipcode = patientReq.Zipcode;
-            rc.Regionid = regionInfo.Regionid;
+            
             rc.Address = patientReq.Street + " " + patientReq.City + "" + patientReq.State + " " + patientReq.Zipcode;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
@@ -207,7 +205,28 @@ namespace BusinessLogic.Service
             DataAccess.Models.Request req =new DataAccess.Models.Request();  
             Requestclient rc = new Requestclient();
             Requestwisefile rf = new Requestwisefile();
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
 
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name == familyReq.State)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     familyReq.Lastname.Substring(0, 2).ToUpper() +
+                                     familyReq.Firstname.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
 
             req.Createddate = DateTime.Now;
             req.Isurgentemailsent = new BitArray(1);
@@ -217,6 +236,7 @@ namespace BusinessLogic.Service
             req.Email = familyReq.Email;
             req.Requesttypeid = 2;
             req.Status = (short)Requeststatuses.Unassigned;
+            req.Confirmationnumber = confirmationNumber;
             _db.Requests.Add(req);
             _db.SaveChanges();
             var date = familyReq.DOB.Day;
@@ -230,9 +250,9 @@ namespace BusinessLogic.Service
             rc.Email = familyReq.Email;
             rc.Street = familyReq.Street;
             rc.City = familyReq.City;
-            //rc.State = familyReq.State;
+            rc.State = familyReq.State;
             rc.Zipcode = familyReq.Zipcode;
-            rc.Regionid = familyReq.State;
+            rc.Regionid = regionInfo.Regionid;
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
@@ -263,7 +283,28 @@ namespace BusinessLogic.Service
             
             DataAccess.Models.Request req = new DataAccess.Models.Request();
             Requestclient rc = new Requestclient();
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
 
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name == conciergereq.cState)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     conciergereq.Lastname.Substring(0, 2).ToUpper() +
+                                     conciergereq.Firstname.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
 
             req.Createddate = DateTime.Now;
             req.Isurgentemailsent = new BitArray(1);
@@ -271,7 +312,8 @@ namespace BusinessLogic.Service
             req.Lastname = conciergereq.cLastname;
             req.Phonenumber = conciergereq.cPhonenumber;
             req.Email = conciergereq.Email;
-            //req.Requesttypeid = (int)RequestType.Patient;
+
+            req.Requesttypeid = (int)DataAccess.ViewModel.Constant.RequestType.Concierge;
             req.Status = 1;
             _db.Requests.Add(req);
             _db.SaveChanges();
@@ -290,7 +332,7 @@ namespace BusinessLogic.Service
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
-            rc.Regionid = conciergereq.cState;
+            rc.Regionid = regionInfo.Regionid;
             rc.Address = conciergereq.pRoomNo + " " + conciergereq.hotelName;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
@@ -301,11 +343,11 @@ namespace BusinessLogic.Service
                 Address = conciergereq.hotelName,
                 Street = conciergereq.cStreet,
                 City = conciergereq.cCity,
-                //State = conciergereq.cState,
+                State = conciergereq.cState,
                 Zipcode = conciergereq.cZipcode,
                 Createddate = DateTime.Now,
-                Regionid = 1
-            };
+                Regionid = regionInfo.Regionid
+        };
 
             _db.Concierges.Add(concierge);
             _db.SaveChanges();
@@ -330,14 +372,37 @@ namespace BusinessLogic.Service
         {
             DataAccess.Models.Request req = new DataAccess.Models.Request();
              Requestclient rc = new Requestclient();
-             req.Createddate = DateTime.Now;
+            var countOfRequests = _db.Requests.Count(r => r.Createddate.Date == DateTime.Today);
+            var regionAbbreviation = "";
+            var regionlist = _db.Regions.Select(x => x.Name).ToList();
+
+            var regionInfo = _db.Regions
+                            .Where(x => x.Name == businessReq.State)
+                            .Select(x => new { x.Abbreviation, x.Regionid })
+                            .FirstOrDefault();
+
+
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+            }
+
+            var confirmationNumber = regionAbbreviation +
+                                     DateTime.Now.Day.ToString("D2") +
+                                     DateTime.Now.Month.ToString("D2") +
+                                     DateTime.Now.Year.ToString().Substring(2, 2) +
+                                     businessReq.Lastname.Substring(0, 2).ToUpper() +
+                                     businessReq.Firstname.Substring(0, 2).ToUpper() +
+                                     (countOfRequests + 1).ToString("D4");
+            req.Createddate = DateTime.Now;
             req.Isurgentemailsent = new BitArray(1);
             req.Firstname = businessReq.bFirstname;
             req.Lastname = businessReq.bLastname;
             req.Phonenumber = businessReq.bPhonenumber;
             req.Email = businessReq.Email;
-            //req.Requesttypeid = (int)RequestType.Business;
-            //;req.Status = (short)Status.Unassigned;
+            req.Requesttypeid = (int)DataAccess.ViewModel.Constant.RequestType.Business;
+            req.Status = (short)Requeststatuses.Unassigned;
+            req.Confirmationnumber = confirmationNumber;
             _db.Requests.Add(req);
             _db.SaveChanges();
 
@@ -353,25 +418,28 @@ namespace BusinessLogic.Service
             rc.Intyear = year;
             rc.Intdate = date;
             rc.Strmonth = month;
-            rc.Regionid = businessReq.State;
+            rc.Regionid = regionInfo.Regionid;
             rc.Address = businessReq.RoomNo + " " + businessReq.City;
             _db.Requestclients.Add(rc);
             _db.SaveChanges();
 
-            Aspnetuser user=  _db.Aspnetusers.Where(x => x.Email==businessReq.Email).FirstOrDefault();
-
-            Business business = new()
+            Aspnetuser user=  _db.Aspnetusers.Where(x => x.Email==businessReq.bEmail).FirstOrDefault();
+            if (user != null)
             {
-               
-                Name = businessReq.businessName,
-                Phonenumber = businessReq.bPhonenumber,
-                Createddate = DateTime.Now,
-                Createdby=user.Id
-               
-            };
+                Business business = new()
+                {
 
-            _db.Businesses.Add(business);
-            _db.SaveChanges();
+                    Name = businessReq.businessName,
+                    Phonenumber = businessReq.bPhonenumber,
+                    Createddate = DateTime.Now,
+                    Createdby = user.Id
+                    
+            };
+                _db.Businesses.Add(business);
+                _db.SaveChanges();
+            }
+
+            
 
 
 
@@ -477,18 +545,17 @@ namespace BusinessLogic.Service
             user.Dob = new DateTime((int)singleUser.Intyear, Convert.ToInt32(singleUser.Strmonth.Trim()), (int)singleUser.Intdate);
             //user.Dob = Convert.ToDateTime(singleUser.Intdate.ToString() + "/" + singleUser.Strmonth + "/" + singleUser.Intyear.ToString());
             user.State=singleUser.State;
-            //user.Dob=singleUse
-            //user.Dob = Convert.ToDateTime(singleUser.Intdate.ToString() + "-" + singleUser.Strmonth + "-" + singleUser.Intyear);
-
-            //user.State = singleUser.State;
             
             user.Zipcode = singleUser.Zip;
 
-
+            var req = _db.Requests.FirstOrDefault(x => x.Userid == userid).Confirmationnumber;
+            var regions = _db.Regions.ToList();
             var result = new Dashboardpage()
             {
                 models = items,
-               Profiles = user
+                Profiles = user,
+                confirmation = req,
+            Regions= regions
 
 
             };
@@ -526,13 +593,15 @@ namespace BusinessLogic.Service
             //user.State = singleUser.State;
 
             user.Zipcode = singleUser.Zip;
-
-
+             var req = _db.Requests.FirstOrDefault(x => x.Userid == Userid).Confirmationnumber;
+            var regions = _db.Regions.ToList();
             var result = new Dashboardpage()
             {
                 Dashboard = items1,
-                Profiles = user
-
+                Profiles = user,
+                confirmation = req,
+                Regions= regions
+               
 
             };
 
@@ -600,6 +669,8 @@ namespace BusinessLogic.Service
             user.City = singleUser.City;
             user.DOB = new DateTime((int)singleUser.Intyear, Convert.ToInt32(singleUser.Strmonth.Trim()), (int)singleUser.Intdate);
             user.Zipcode = singleUser.Zip;
+            user.State = singleUser.State;
+            
             var regions = _db.Regions.ToList();
             user.Regions=regions;
             return user;
@@ -626,22 +697,21 @@ public familyReq SomeOneelse()
                 var Date = model.DOB.Day;
 
 
-                var user = _db.Users.FirstOrDefault(x => x.Userid == id);
+                var user = _db.Users.FirstOrDefault(x => x.Email == model.Email);
 
 
 
-                if (user != null)
-                {
+               
 
                     request.Requesttypeid = 1;
                     request.Status = 2;
-                    request.Userid = user.Userid;
+                    //request.Userid = user.Userid;
                     request.Createddate = DateTime.Now;
                     request.Isurgentemailsent = new BitArray(new bool[1]);
-                    request.Firstname = user.Firstname;
-                    request.Lastname = user.Lastname;
-                    request.Phonenumber = user.Mobile;
-                    request.Email = user.Email;
+                    request.Firstname = model.Firstname;
+                    request.Lastname = model.Lastname;
+                    request.Phonenumber = model.Phonenumber;
+                    request.Email = model.Email;
                     request.Relationname = model.relation;
 
 
@@ -649,7 +719,7 @@ public familyReq SomeOneelse()
                     _db.Requests.Add(request);
                     _db.SaveChanges();
 
-                }
+                
 
                 requestclient.Requestid = request.Requestid;
                 requestclient.Regionid = 1;
@@ -741,13 +811,9 @@ public familyReq SomeOneelse()
 
             if (usr == null)
             {
-                message.Body = "Request for you is generated by your family member or friend. To check your request status click on below link to generate account. <a href=\"https://localhost:7011/Patient_Site/CreateAccount\">ClickHere</a>";
+                message.Body = "Request for you is generated. To check your request status click on below link to generate account. <a href=\"https://localhost:44367/login/CreateAccount\">ClickHere</a>";
             }
-            else
-            {
-                message.Body = "Request for you is generated by please reset your password. <a href=\"https://localhost:44367/Patient_Site/ResetPassword\">ClickHere</a>";
-
-            }
+            
             SmtpClient smtp = new SmtpClient();
             smtp.Host = "mail.etatvasoft.com";
             smtp.Port = 587;
@@ -790,7 +856,7 @@ public familyReq SomeOneelse()
             if (req != null)
             {
                 
-                    req.Status = (short)Requeststatuses.MDonSite;
+                    req.Status = (short)Requeststatuses.MDEnRoute;
                     req.Modifieddate = DateTime.Now;
                     req.Casetag = "Review Agrement";
 

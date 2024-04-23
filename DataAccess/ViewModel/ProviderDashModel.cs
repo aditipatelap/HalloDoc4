@@ -136,7 +136,7 @@ namespace DataAccess.ViewModel
     public class ProviderDashModel
     {
         public string? firstName { get; set; }
-        public bool isfinalize{get;set;}
+        public bool? isfinalize{get;set;}
         public string? lastName { get; set; }
 
         public string strMonth { get; set; }

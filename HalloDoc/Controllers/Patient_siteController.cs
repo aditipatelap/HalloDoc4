@@ -298,7 +298,7 @@ namespace HalloDoc.Controllers
         {
             int id = (int)_httpContextAccessor.HttpContext.Session.GetInt32("id");
             _requestService.SaveProfileData(model.Profiles, id);
-            _notyf.Custom("pROFILE Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
+            _notyf.Custom("Profile  Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("patientDashboard");
 
         }
@@ -314,9 +314,13 @@ namespace HalloDoc.Controllers
         public IActionResult familyFriendReq(familyReq familyReq)
 
         {
-               _requestService.familyreq(familyReq);
-            
-               _requestService.mail(familyReq.Email);
+            var res = _db.Users.Where(x => x.Email == familyReq.Email).FirstOrDefault();
+            if (res==null)
+            {
+                _requestService.mail(familyReq.Email);
+               
+            }
+            _requestService.familyreq(familyReq);
             _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
         }
@@ -329,9 +333,14 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult ConciergeReq(conciergeReq conciergeReq)
         {
+            var res = _db.Users.Where(x => x.Email == conciergeReq.Email).FirstOrDefault();
+            if (res == null)
+            {
+                _requestService.mail(conciergeReq.Email);
 
+            }
             _requestService.ConciergeReq(conciergeReq);
-            _requestService.mail(conciergeReq.Email);
+           
             _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
             
@@ -346,10 +355,14 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult BusinessReq( businessReq businessReq)
         {
-           
-         
-                _requestService.BusinessReq(businessReq);
-            _requestService.mail(businessReq.Email);
+            var res = _db.Users.Where(x => x.Email == businessReq.Email).FirstOrDefault();
+            if (res == null)
+            {
+                _requestService.mail(businessReq.Email);
+
+            }
+            _requestService.BusinessReq(businessReq);
+            
             _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("submitReq", "Patient_site");
             
@@ -370,9 +383,15 @@ namespace HalloDoc.Controllers
         [HttpPost]  
         public IActionResult Document(IFormFile file,int id)
         {
-            
-           _requestService.FileUpload( file,  id);
-            _notyf.Custom("Document Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
+            if (file == null)
+            {
+                _notyf.Custom("Please select file to upload!", 3, "red", "bi bi-check-circle-fill");
+            }
+            else
+            {
+                _requestService.FileUpload(file, id);
+                _notyf.Custom("Document Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
+            }
             return RedirectToAction("Document", "Patient_site");
         }
         public IActionResult Information(patientReq patientreq) {
@@ -414,6 +433,12 @@ namespace HalloDoc.Controllers
 
 
             }
+            var res = _db.Users.Where(x => x.Email == patientreq.Email).FirstOrDefault();
+            if (res == null)
+            {
+                _requestService.mail(patientreq.Email);
+
+            }
             _requestService.Someoneelse(patientreq,id);
             _notyf.Custom("Request Submitted Successfully!", 3, "green", "bi bi-check-circle-fill");
             return RedirectToAction("patientDashboard", "Patient_site");
@@ -451,21 +476,22 @@ namespace HalloDoc.Controllers
                 //return View("");
                 _notyf.Custom("Agreement Already Approved", 3, "Goldenrod", "bi bi-x-circle-fill");
             }
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("PatientLogin", "Login");
+
         }
         [HttpPost]
         public IActionResult PostSendAgreement(int requestid)
         {
            _requestService.PostSendAgreement(requestid);
             _notyf.Custom("Agreement Approved Successfully!!", 3, "deepskyblue", "bi bi-check2");
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("PatientLogin", "Login");
         }
        
         [HttpPost]
         public IActionResult SubmitSendAgree(AdminDashboard model,int requestid)
         {
              _requestService.CancelAgreemnt(model, requestid);
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("PatientLogin", "Login");
         
         }
     }

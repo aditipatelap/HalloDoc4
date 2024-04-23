@@ -49,7 +49,7 @@
                         </label>
                     </span>
                 }
-                <div class="invalid-feedback">
+                <div id="checkboxerror" class="d-none text-danger mt-1">
                     Please select at least one menu.
                 </div>
             </div>
@@ -95,6 +95,13 @@
                 var menuid = $(this).val();
                 MenuIds.push(menuid);
             });
+        if (MenuIds.length === 0) {
+            $('#checkboxerror').removeClass('d-none');
+            return;
+        } else {
+            $('#checkboxerror').addClass('d-none');
+        }
+
 
 
             $.ajax({

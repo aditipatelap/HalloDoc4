@@ -190,7 +190,7 @@ namespace BusinessLogic.Service
             var res = _db.Aspnetusers.FirstOrDefault(x => x.Email == model.Email);
             if (res != null)
             {
-                aspnetuser.Passwordhash=model.Password;
+                res.Passwordhash=model.Password;
                 _db.SaveChanges();
             }
         }
@@ -220,8 +220,18 @@ namespace BusinessLogic.Service
             role.Roleid = 3; //For Patient Role
             _db.Aspnetuserroles.Add(role);
             _db.SaveChanges();
+            var regionAbbreviation = "";
+            var regionInfo = _db.Regions
+                           .Where(x => x.Name == U.State)
+                           .Select(x => new { x.Abbreviation, x.Regionid })
+                           .FirstOrDefault();
 
 
+            if (regionInfo != null)
+            {
+                regionAbbreviation = regionInfo.Abbreviation;
+                User.Regionid = regionInfo.Regionid;
+            }
             User.Aspnetuserid = Aspnetuser.Id;
             User.Firstname = U.Firstname;
             User.Lastname = U.Lastname;
@@ -237,24 +247,26 @@ namespace BusinessLogic.Service
             User.Status = 1; //for new request
             User.Createdby = Aspnetuser.Id;
             User.Createddate = DateTime.Now;
+           
+
             _db.Users.Add(User);
             _db.SaveChanges();
 
-            //var res = (from req in _context.Requests
-            //           join rc in _context.RequestClients
-            //           on req.RequestId equals rc.RequestId
-            //           where rc.Email == viewPatientReq.Email
-            //           select req.RequestId).ToList();
+            var res = (from req in _db.Requests
+                       join rc in _db.Requestclients
+                       on req.Requestid equals rc.Requestid
+                       where rc.Email == viewPatientReq.Email
+                       select req.Requestid).ToList();
 
-            //foreach (var r in res)
-            //{
-            //    var req = _context.Requests.FirstOrDefault(req => req.RequestId == r);
-            //    req.UserId = User.UserId;
-            //    _context.Requests.Update(req);
-            //    _context.SaveChanges();
-            //}
-            //return true;
+            foreach (var r in res)
+            {
+                var req = _db.Requests.FirstOrDefault(req => req.Requestid == r);
+                req.Userid = User.Userid;
+                _db.Requests.Update(req);
+                _db.SaveChanges();
+            }
             return true;
+            
         }
 
 

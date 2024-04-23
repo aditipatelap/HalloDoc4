@@ -119,36 +119,73 @@
         formData.append('Requestid', @Model.requestid);
         formData.append('document', $('#uploadInput')[0].files[0]);
         $.ajax({
-            url: '/Provider/UploadDocument',
-            type: 'POST',
+            url: "/Provider/UploadDocument",
+            type: "Post",
             data: formData,
             processData: false,
             contentType: false,
             success: function (result) {
-               console.log("sucess");
-                
-            },
+                if (result.success) {
+                    var TabId = "Conclude";
+                    var requestid = @Model.requestid;
+                    console.log(requestid);
+                    $.ajax({
+                        url: '/Provider/GetTabs',
+                        data: { Tabid: TabId, requestid: requestid },
+                        method: 'Post',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            //toastr.success("Note Added successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+
+                }
+                else {
+                    //toastr.error("Please provide valid data.");
+                }
+            }
         });
     });
 
     $(".concludecare").click(ConcludeCare);
+   
     function ConcludeCare() {
-        debugger;
+        
         var reqid = $(this).data("btn");
         var notes = $('.providernotes').val();
         //if (!$("#concludecareform").valid()) {
         //    return; // If the form is not valid, don't proceed
         //}
         $.ajax({
-            url: '@Url.Action("ConcludeCare", "Provider")',
-            type: 'Post',
-            data: { reqid: reqid, notes: notes },
-            success: function (data) {
-                $('.TabContent').html(data);
-            },
-            error: function () {
+            url: "/Provider/ConcludeCare",
+            type: "Post",
+            data: { reqid: reqid, notes:notes},
+           
+            success: function (result) {
+                if (result.success) {
+                    var TabId = "Conclude";
+                    var requestid = @Model.requestid;
+                    console.log(requestid);
+                    $.ajax({
+                        url: '/Provider/GetTabs',
+                        data: { Tabid: TabId, requestid: requestid },
+                        method: 'Post',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            //toastr.success("Note Added successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
 
-                console.error("Error occurred while fetching data.");
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
             }
         });
     }
@@ -192,20 +229,20 @@
             });
         });
     }
-    const input = document.querySelector("#phone");
-    const input2 = document.querySelector("#phone1");
-    const button = document.querySelector("#btn");
-    const errorMsg = document.querySelector("#error-msg");
-    const validMsg = document.querySelector("#valid-msg");
-    const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
-    const iti = window.intlTelInput(input, {
-        initialCountry: "us",
-        utilsScript: "/intl-tel-input/js/utils.js?1706723638591"
-    });
-    const iti1 = window.intlTelInput(input2, {
-        initialCountry: "us",
-        utilsScript: "/intl-tel-input/js/utils.js?1706723638591"
-    });
+    //const input = document.querySelector("#phone");
+    //const input2 = document.querySelector("#phone1");
+    //const button = document.querySelector("#btn");
+    //const errorMsg = document.querySelector("#error-msg");
+    //const validMsg = document.querySelector("#valid-msg");
+    //const errorMap = ["Invalid number", "Invalid country code", "Too short", "Too long", "Invalid number"];
+    //const iti = window.intlTelInput(input, {
+    //    initialCountry: "us",
+    //    utilsScript: "/intl-tel-input/js/utils.js?1706723638591"
+    //});
+    //const iti1 = window.intlTelInput(input2, {
+    //    initialCountry: "us",
+    //    utilsScript: "/intl-tel-input/js/utils.js?1706723638591"
+    //});
 </script>
 <script>
     $('.backbtn').on('click', function () {

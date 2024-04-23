@@ -191,7 +191,8 @@ namespace HalloDoc.Controllers
         public IActionResult CreateAccount(LoginModel model)
         {
             _loginInterface.CreateAccount(model);
-            return View();
+            _notyf.Custom("Accoutn created Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return RedirectToAction("PatientLogin", "Login");
         }
 
         public IActionResult ResetPassword()
@@ -202,7 +203,8 @@ namespace HalloDoc.Controllers
         public IActionResult ResetPassword(LoginModel model)
         {
            _loginInterface.ResetPassSave(model);
-            return View();  
+            _notyf.Custom("Accoutn created Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            return RedirectToAction("PatientLogin", "Login");
 
         }
         public IActionResult PatientLogin()

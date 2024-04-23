@@ -35,7 +35,7 @@ namespace BusinessLogic.Service
 
             AdminDashboard dash = new AdminDashboard();
             var req = _db.Requests.Include(x =>x.Requestclients).Where(x =>x.Requestid==x.Requestclients.FirstOrDefault().Requestid).ToList();
-            dash.newcount = req.Count(x => x.Status == (short)Requeststatuses.Unassigned || x.Status == (short)Requeststatuses.assignedbyphysician);
+            dash.newcount = req.Count(x => x.Status == (short)Requeststatuses.Unassigned );
             dash.pendingcount = req.Count(x => x.Status == (short)Requeststatuses.Accepted);
             dash.activecount = req.Count(x => x.Status == (short)Requeststatuses.MDEnRoute || x.Status == (short)Requeststatuses.MDonSite);
             dash.toclosecount = req.Count(x => x.Status == (short)Requeststatuses.Cancelled || x.Status == (short)Requeststatuses.Cancelledbypatient || x.Status == (short)Requeststatuses.Closed);
@@ -100,7 +100,7 @@ namespace BusinessLogic.Service
                 id.Add((short)Requeststatuses.MDEnRoute);
                 id.Add((short)Requeststatuses.MDonSite);
 
-            }
+            }   
             else
             {
                 id.Add((short)Requeststatuses.Cancelled);
@@ -183,7 +183,7 @@ namespace BusinessLogic.Service
             else if (statusid == (short)Status.New)
             {
                 id.Add((short)Requeststatuses.Unassigned);
-                id.Add((short)Requeststatuses.assignedbyphysician);
+                //id.Add((short)Requeststatuses.assignedbyphysician);
 
             }
             else
@@ -361,8 +361,16 @@ namespace BusinessLogic.Service
             Request req = new Request();
             request.Physicianid = id.Physicianid;
             request.Status = (short)Requeststatuses.assignedbyphysician;
-
             _db.SaveChanges();
+            Requeststatuslog requeststatuslog= new Requeststatuslog();
+            requeststatuslog.Requestid = model.requestid;
+            requeststatuslog.Status= (short)Requeststatuses.assignedbyphysician; 
+            requeststatuslog.Physicianid=id.Physicianid;
+            _db.Requeststatuslogs.Add(requeststatuslog);
+            _db.SaveChanges();
+
+
+
 
 
         }
@@ -932,15 +940,17 @@ namespace BusinessLogic.Service
             }
             _db.SaveChanges();
         }
+     
         public void sendEmail(List<string> file, string email, int requestid)
         {
             var SubjectName = "Email with Document";
             var EmailTemplate =
                 $"Your files for Requestid {requestid} are as attached.";
 
-            MailMessage message = new MailMessage();
+            System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+
             message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
-            message.To.Add(new MailAddress(email));
+            message.To.Add(new System.Net.Mail.MailAddress(email));
             message.Subject = SubjectName;
             message.IsBodyHtml = true;
             message.Body = EmailTemplate;

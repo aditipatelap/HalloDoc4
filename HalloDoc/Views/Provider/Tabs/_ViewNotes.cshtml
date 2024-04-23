@@ -18,7 +18,7 @@
             Back
         </button>
     </div>
-    <form method="post" id="notesForm" class="needs-validation" novalidate>
+    <form method="post" id="notesForm" >
         <input type="hidden" asp-for="@Model.requestid" />
         <div class="row g-2 my-4">
             <div class="col-md me-4 d-flex shadow rounded">
@@ -79,8 +79,8 @@
             <div class="form-floating my-4">
                 <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" asp-for="@Model.AdditionalNotes" required></textarea>
                 <label for="floatingTextarea2" class="text-secondary" id="label-floating">Provider Notes<span class="text-danger">*</span></label>
-                @*@Html.ValidationMessageFor(Model=>Model.AdditionalNotes,"",new{@class="text-danger"})*@
-                <div class="invalid-feedback">This is required</div>
+                @Html.ValidationMessageFor(Model=>Model.AdditionalNotes,"",new{@class="text-danger"})
+                @*<div class="invalid-feedback">This is required</div>*@
 
             </div>
             <div class="d-flex justify-content-end mt-4 mb-4">
@@ -120,8 +120,8 @@
         e.preventDefault();
         var form = $(this);
         if (!form[0].checkValidity()) {
-            e.stopPropagation();
-            form.addClass('was-validated');
+           
+           
             return;
         }
 
@@ -135,7 +135,23 @@
             processData: false,
             contentType: false,
             success: function (result) {
-               console.log("sucess");
+                if (result.success) {
+                    var TabId = "ViewNotes";
+                    var requestid = @Model.requestid;
+                    console.log(requestid);
+                    $.ajax({
+                        url: '/Provider/GetTabs',
+                        data: { Tabid: TabId, requestid: requestid },
+                        method: 'Post',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            toastr.success("Note Added successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+
                 }
                 else {
                     toastr.error("Please provide valid data.");

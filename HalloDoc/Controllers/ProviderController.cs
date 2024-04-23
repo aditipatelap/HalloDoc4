@@ -196,15 +196,15 @@ namespace HalloDoc.Controllers
 
             if (_providerDataService.CreateShift(scheduleModel, aspnetuserid))
             {
-                return Json(new { success = true });
+                _notyf.Success("Request Successfully Crerated !!");
             }
+            _notyf.Success("Error Creating shift !!");
             return Json(new { success = false });
         }
 
         public JsonResult EditShift(int shiftDetailId, DateTime Shiftdate, TimeOnly startTime, TimeOnly endTime)
         {
-            var token = Request.Cookies["jwt"];
-            var adminId = "";
+            string adminId = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
 
             if (_providerService.EditShift(shiftDetailId, Shiftdate, startTime, endTime, adminId))
             {
@@ -215,8 +215,7 @@ namespace HalloDoc.Controllers
 
         public JsonResult DeleteShift(int shiftDetailId)
         {
-            var token = Request.Cookies["jwt"];
-            var adminId = "";
+            string adminId = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
 
             if (_providerService.DeleteShift(shiftDetailId, adminId))
             {
@@ -227,9 +226,7 @@ namespace HalloDoc.Controllers
 
         public JsonResult ReturnShift(int shiftDetailId)
         {
-            var token = Request.Cookies["jwt"];
-            var adminId = "";
-
+            string adminId = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
             if (_providerService.ReturnShift(shiftDetailId, adminId))
             {
                 return Json(new { success = true });
@@ -264,7 +261,7 @@ namespace HalloDoc.Controllers
         //    return GetTabs("_RequestedShift", default, default, default, default);
         //}
         /*********conclude care*******/
-        public IActionResult ConcludeCare(int reqid, string notes)
+        public JsonResult ConcludeCare(int reqid, string notes)
         {
             int? sessionPhysicianId = _httpContextAccessor.HttpContext?.Session?.GetInt32("physicianid");
             int physicianId = sessionPhysicianId ?? default;
@@ -272,12 +269,14 @@ namespace HalloDoc.Controllers
             if (result)
             {
                 _notyf.Success("Request Successfully Concluded !!");
-                return GetTabs("Conclude", default, default, default, default,default,default,reqid,default,default,default);
+                return Json(new { success = true });
+                //return GetTabs("Conclude", default, default, default, default,default,default,reqid,default,default,default);
             }
             else
             {
                  _notyf.Error("Request Failed To Conclude !!");
-                return GetTabs("Conclude", default, default, default, default, default, default, reqid, default, default, default);
+                return Json(new { success = false });
+                //return GetTabs("Conclude", default, default, default, default, default, default, reqid, default, default, default);
             }
         }
         /******encounter****/
@@ -296,9 +295,9 @@ namespace HalloDoc.Controllers
             }
             return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
-        public IActionResult EncounterFormFinalize(int reqid)
+        public IActionResult EncounterFormFinalize(int Reqid)
         {
-            bool result = _providerDataService.FinalizeEncounterForm(reqid);
+            bool result = _providerDataService.FinalizeEncounterForm(Reqid);
             if (result)
             {
                 _notyf.Success("Encounter Form Successfully Finalized !!");
@@ -316,14 +315,17 @@ namespace HalloDoc.Controllers
 
             _providerDataService.AcceptRequest(Requestid, physicianid);
             _notyf.Success("Request Accepted Successfully");
-            return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
+            //return GetTabs("Dashboard", default, default, default, default, default, default, Requestid, default, default, default);
+            return RedirectToAction("Index", "Provider");
+            // return RedirectToAction("Dashboard");
         }
         [HttpPost]
-        public JsonResult TransferCaseData(ProviderDash model)
+        public IActionResult TransferCaseData(ProviderDash model)
         {
             model.PhysicianId = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
             _providerDataService.TransferCaseDataPost(model);
-            return Json(new { success = true });
+            return RedirectToAction("Index", "Provider");
+            //return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
         public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
         {
@@ -334,14 +336,15 @@ namespace HalloDoc.Controllers
 
         }
         [HttpPost]
-        public IActionResult PostViewNotes(AdminDashboard model)
+        public JsonResult PostViewNotes(AdminDashboard model)
 
         {
-            _AdminDash.PostViewNotes(model);
+            string aspnetuserid = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
+            _providerDataService.PostViewNotes(model, aspnetuserid);
             _notyf.Custom("Notes Updated Successfully!", 3, "green", "bi bi-check-circle-fill");
             //return Json(new { success = true });
-            
-            return GetTabs("ViewNotes", default, default, default, default, default, default, model.requestid, default, default, default);
+            return Json(new { success = true });
+            //return GetTabs("ViewNotes", default, default, default, default, default, default, model.requestid, default, default, default);
         }
         [HttpPost]
         public IActionResult DeleteDocument(string filename, int requestid)
@@ -378,6 +381,26 @@ namespace HalloDoc.Controllers
             _notyf.Custom("Email Sent Successfully!!", 3, "deepskyblue", "bi bi-check2");
             return ViewUploadsList(requestid);
         }
+        /*send order*/
+
+        public IActionResult GetDropDownofBusinessname(int selectedvalue)
+        {
+            var model = _AdminDash.GetBusiness(selectedvalue);
+            return Json(model);
+        }
+        public IActionResult GetBusinessDetails(int selectedvalue)
+        {
+            var model = _AdminDash.GetBusinessDetails(selectedvalue);
+            return Json(model);
+        }
+        [HttpPost]
+        public IActionResult SendOrder(AdminDashboard model, int requestid)
+        {
+            string aspnetuserid = _httpContextAccessor.HttpContext.Session.GetString("Aspnetuserid");
+            _AdminDash.SendOrderReq(model, requestid, aspnetuserid);
+            _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
+            return RedirectToAction("Index", "Provider");
+        }
         [HttpPost]
         public IActionResult ViewDocument(IFormFile Document, int requestid)
         {
@@ -398,20 +421,14 @@ namespace HalloDoc.Controllers
             return PartialView("Tabs/_ViewUploadPartial", model);
         }
         [HttpPost]
-        public IActionResult SendAgreement(string email, int requestid)
+        public IActionResult SendAgreement(AdminDashboard model)
         {
-            _requestInterface.SendMailService(email, requestid);
+            _requestInterface.SendMailService(model.email,model.requestid);
             _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
 
             return GetTabs("Dashboard", default, default, default, default, default, default,default, default, default, default);
         }
-        [HttpPost]
-        public IActionResult SendOrder(AdminDashboard model, int requestid, string adminname)
-        {
-            _AdminDash.SendOrderReq(model, requestid, adminname);
-            _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return GetTabs("SendOrdere", default, default, default, default, default, default, requestid, default, default, default);
-        }
+       
         [HttpPost]
         public IActionResult CreateRequestDatapost(AdminDashboard model)
         {
@@ -435,20 +452,21 @@ namespace HalloDoc.Controllers
                 FileName = "encounter.pdf"
             };
         }
-        public IActionResult UploadDocument(int Requestid, IFormFile document)
+        public JsonResult UploadDocument(int Requestid, IFormFile document)
         {
             var PhysicianId = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
             _providerDataService.SaveDocument(document, Requestid, PhysicianId);
-
-            return GetTabs("Conclude", default, default, default, default, default, default, Requestid, default, default, default);
+            _notyf.Custom("Document uploded Successfully", 3, "green", "bi bi-check-circle-fill");
+            return Json(new { success = true });
+            //return GetTabs("Conclude", default, default, default, default, default, default, Requestid, default, default, default);
         }
         public IActionResult SendLinkDataPost(AdminDashboard model)
         {
             var adminid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
 
-            _AdminDash.SendMailLink(model, adminid);
+            _providerDataService.SendMailLink(model, adminid);
             _notyf.Custom("Link Send Successfully", 3, "green", "bi bi-check-circle-fill");
-            return Ok(new { message = "Data saved successfully." });
+            return RedirectToAction("Index", "Provider");
 
         }
 

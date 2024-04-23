@@ -35,7 +35,7 @@
     <div class="row">
       <div class="form-floating col-xs-12 col-sm-12 col-lg-6 mb-3 ">
             <input type="tel" class="form-control p-3 ps-5 phoneNumber" asp-for="F_Phonenumber" id="phoneNumber1" placeholder="(201) 555-0123">
-            
+            <span asp-validation-for="F_Phonenumber" id="Errorinfo"></span>
       </div>
       <div class=" col-lg-6 col-sm-12 form-floating mb-3">
         <input type="email" class="form-control" id="floatingInput" asp-for="F_Email" placeholder="name@example.com">
@@ -78,7 +78,8 @@
     </div>
     <div class="row">
       <div class="col-lg-6 col-sm-12 form-floating mb-3">
-        <input type="Date" class="form-control " id="floatingInput" placeholder="Date" id="dob" asp-for="DOB">
+            <input type="date" class="form-control " id="floatingInput" id="dob" max="@DateTime.Now.ToString("yyyy-MM-dd")" 
+            placeholder="Date" asp-for="DOB">
             <label for="floatingInput" class="text-dark ms-2">Date<span class="text-danger">*</span></label>
             <span asp-validation-for="DOB" id="Errorinfo"></span>
 
@@ -115,12 +116,12 @@
             <select class="form-select form-control inputform1" asp-for="State">
                 @foreach (var i in Model.Regions)
                 {
-                    <option value="@i.Regionid">@i.Name</option>
+                    <option value="@i.Name">@i.Name</option>
                 }
             </select>
 
-            <label for="state" class="dropdown-toggle" asp-for="State">State<span class="text-danger">*</span></label>
-            
+            <label for="state"  asp-for="State">State<span class="text-danger">*</span></label>
+            <span asp-validation-for="State" id="Errorinfo"></span>
       </div>
       <div class=" col-lg-6 col-sm-12 form-floating mb-3">
         <input type="text" class="form-control" id="floatingInput" placeholder="number" asp-for="Zipcode">
@@ -150,14 +151,25 @@
       <button type="button" class="btn btn-outline-primary ms-2">Cancel</button>
     </div>
   </form>
-  <!-- script for phone number -->
   <script>
-    window.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('dob').value = '';
+          window.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('dob').value = '';
+        });
+    $(document).ready(function () {
+        $('input[type=text], textarea,input[type=tel],input[type=email]').keyup(function () {
+            var value = $(this).val();
+            if (!/\S/.test(value)) {
+                $(this).val($.trim(value));
+            }
+        });
     });
+   <script>
+ 
+  <script>
+    
 
 
-    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    var phoneInputField = document.querySelectorAll("input[type='tel']");
     for (var i = 0; i < phoneInputField.length; i++) {
       const phoneInput = window.intlTelInput(phoneInputField[i], {
         utilsScript:
@@ -169,14 +181,7 @@
             $('#myModal').modal('show');
         });
    
-    $(document).ready(function () {
-        $('input[type=text], textarea,input[type=tel],input[type=email]').keyup(function () {
-            var value = $(this).val();
-            if (!/\S/.test(value)) {
-                $(this).val($.trim(value));
-            }
-        });
-    });
+    
   </script>
 <script>
     var phone1 = document.querySelector("#phoneNumber1");

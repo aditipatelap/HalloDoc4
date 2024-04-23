@@ -11,7 +11,7 @@
         <button type="button" class="w-100 btn partialbtn newbtn text-start status" data-btn="NewPartial" data-id="1">
 
             <i class="fa-solid fa-plus "></i> <span class="fw-bolder">New</span>
-            <p class="fw-bold fs-3">@*@ViewBag.Request[0]*@ @Model.newcount</p>
+            <p class="fw-bold fs-3"> @Model.newcount</p>
 
         </button>
         <div class=" d-flex justify-content-center">
@@ -110,35 +110,35 @@
 
 <script>
     var tabidglobal;
-    $(".createreq").click(function () {
-        var TabId = $(this).attr("id");
+    //$(".createreq").click(function () {
+    //    var TabId = $(this).attr("id");
 
 
-        if ($(this).hasClass('createreq')) {
-            tabidglobal = TabId;
+    //    if ($(this).hasClass('createreq')) {
+    //        tabidglobal = TabId;
 
-        }
-        var payload = {
+    //    }
+    //    var payload = {
 
-            "tabid": tabidglobal,
+    //        "tabid": tabidglobal,
 
 
-        };
-        $.ajax({
-            url: '/Admin/GetTabs',
-            data: payload,
+    //    };
+    //    $.ajax({
+    //        url: '/Admin/GetTabs',
+    //        data: payload,
 
-            method: 'GET',
-            success: function (data) {
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#TabContent").html(data);
+    //        method: 'GET',
+    //        success: function (data) {
+    //            // Replace the content of the btnContent div with the retrieved partial view
+    //            $("#TabContent").html(data);
 
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    });
+    //        },
+    //        error: function () {
+    //            console.error('Error fetching partial view.');
+    //        }
+    //    });
+    //});
 
 
 
@@ -175,41 +175,7 @@
         // Call the triggerEvent function
         triggerEvent();
     });
-    $(document).on('click', '.showmodal', ModalDisplay);
-    function ModalDisplay() {
-        console.log("vidihiiiiiiiiiiiiii")
-        var modalName = $(this).attr('id');
-        var patientname = $(this).data('value1');
-        var requestid = $(this).data('btn');
-        var physicianid = $(this).data('value1');
-        if (!patientname) {
-            patientname = null;
-        }
 
-        if (typeof requestid === 'undefined') {
-            requestid = 0;
-        }
-        if (typeof physicianid === 'undefined') {
-            physicianid = 0;
-        }
-
-
-
-        $.ajax({
-            url: '@Url.Action("GetModalPartialView", "Admin")',
-            method: 'GET',
-            data: { modalName: modalName, patientname: patientname, requestid: requestid, physicianid: physicianid },
-            success: function (data) {
-                console.log("AJAX success");
-
-                $('.modelbody').html(data);
-                //$('#' + modalName).modal('show');
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-    }
 
 
 

@@ -21,6 +21,7 @@ using Twilio.Types;
 using System.Net.Mail;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Office2010.PowerPoint;
+using System.Net;
 
 namespace BusinessLogic.Service
 {
@@ -34,7 +35,7 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetProviderData(int regionid)
         {
-            var result = _db.Physicians.Include(x => x.Role).Include(x => x.Physiciannotifications).Where(x => x.Regionid == regionid || regionid == 0).Select(x => new ProviderInfo
+            var result = _db.Physicians.Include(x => x.Role).Include(x => x.Physiciannotifications).Where(x => (x.Regionid == regionid || regionid == 0) && (x.Isdeleted == new BitArray(new bool[1] { false }))).Select(x => new ProviderInfo
             {
                 ProviderName = x.Firstname + "" + x.Lastname,
                 physicianid = x.Physicianid,
@@ -297,10 +298,10 @@ namespace BusinessLogic.Service
         {
             var data = _db.Aspnetusers.Include(x => x.Physicians).FirstOrDefault(x => x.Physicians.FirstOrDefault().Physicianid == physicianid);
             // Hash the password
-            var passwordHasher = new PasswordHasher<Aspnetuser>();
+          
             if (data != null)
             {
-                data.Passwordhash = passwordHasher.HashPassword(data, password);
+                data.Passwordhash = password;
                 data.Modifieddate = DateTime.Now;
                 _db.SaveChanges();
             }
@@ -644,53 +645,62 @@ namespace BusinessLogic.Service
             physician.Medicallicense = model.PhysicianProfile.LicenseNo;
             physician.Adminnotes = model.PhysicianProfile.notes;
             physician.Createddate = DateTime.Now;
-            if (model.PhysicianProfile.Photo != null)
-            {
-                physician.Photo = FileUpload(model.PhysicianProfile.Photo, physician.Physicianid);
-                physician.Photo = model.PhysicianProfile.Photo.FileName;
-            }
-            if (model.PhysicianProfile.AgreementDocument != null)
-            {
-                SaveDocument(model.PhysicianProfile.AgreementDocument, model.PhysicianProfile.physicianid, "agreementdoc", "Isagreementdoc", physician);
-            }
-            else
-            {
-                physician.Isagreementdoc = new BitArray(new bool[1] { false });
-            }
-            if (model.PhysicianProfile.BackgroundDocument != null)
-            {
-                SaveDocument(model.PhysicianProfile.BackgroundDocument, model.PhysicianProfile.physicianid, "backgrounddoc", "Isbackgrounddoc", physician);
-            }
-            else
-            {
-                physician.Isbackgrounddoc = new BitArray(new bool[1] { false });
-            }
-            if (model.PhysicianProfile.Iscredentialdoc != null)
-            {
-                SaveDocument(model.PhysicianProfile.CredentialDocument, model.PhysicianProfile.physicianid, "credentialdoc", "Iscredentialdoc", physician);
-            }
-            else
-            {
-                physician.Iscredentialdoc = new BitArray(new bool[1] { false });
-            }
-            if (model.PhysicianProfile.NonDisclosureDocument != null)
-            {
-                SaveDocument(model.PhysicianProfile.NonDisclosureDocument, model.PhysicianProfile.physicianid, "nondisclosuredoc", "Isnondisclosuredoc", physician);
-            }
-            else
-            {
-                physician.Isnondisclosuredoc = new BitArray(new bool[1] { false });
-            }
-            if (model.PhysicianProfile.LicenseDocument != null)
-            {
-                SaveDocument(model.PhysicianProfile.LicenseDocument, model.PhysicianProfile.physicianid, "licenseedoc", "Islicensedoc", physician);
-            }
-            else
-            {
-                physician.Islicensedoc = new BitArray(new bool[1] { false });
-            }
-
             _db.Physicians.Add(physician);
+            _db.SaveChanges();
+
+            var physicianid = _db.Physicians.FirstOrDefault(x => x.Physicianid == physician.Physicianid).Physicianid;
+
+            if (physicianid != null)
+            {
+                if (model.PhysicianProfile.Photo != null)
+                {
+                    physician.Photo = FileUpload(model.PhysicianProfile.Photo, physician.Physicianid);
+                    physician.Photo = model.PhysicianProfile.Photo.FileName;
+                }
+                
+                
+                if (model.PhysicianProfile.AgreementDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.AgreementDocument, model.PhysicianProfile.physicianid, "agreementdoc", "Isagreementdoc", physician);
+                }
+                else
+                {
+                    physician.Isagreementdoc = new BitArray(new bool[1] { false });
+                }
+                if (model.PhysicianProfile.BackgroundDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.BackgroundDocument, model.PhysicianProfile.physicianid, "backgrounddoc", "Isbackgrounddoc", physician);
+                }
+                else
+                {
+                    physician.Isbackgrounddoc = new BitArray(new bool[1] { false });
+                }
+                if (model.PhysicianProfile.Iscredentialdoc != null)
+                {
+                    SaveDocument(model.PhysicianProfile.CredentialDocument, model.PhysicianProfile.physicianid, "credentialdoc", "Iscredentialdoc", physician);
+                }
+                else
+                {
+                    physician.Iscredentialdoc = new BitArray(new bool[1] { false });
+                }
+                if (model.PhysicianProfile.NonDisclosureDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.NonDisclosureDocument, model.PhysicianProfile.physicianid, "nondisclosuredoc", "Isnondisclosuredoc", physician);
+                }
+                else
+                {
+                    physician.Isnondisclosuredoc = new BitArray(new bool[1] { false });
+                }
+                if (model.PhysicianProfile.LicenseDocument != null)
+                {
+                    SaveDocument(model.PhysicianProfile.LicenseDocument, model.PhysicianProfile.physicianid, "licenseedoc", "Islicensedoc", physician);
+                }
+                else
+                {
+                    physician.Islicensedoc = new BitArray(new bool[1] { false });
+                }
+            }
+            _db.Physicians.Update(physician);
             _db.SaveChanges();
 
             Physiciannotification physiciannotification = new Physiciannotification();
@@ -700,6 +710,7 @@ namespace BusinessLogic.Service
             _db.Physiciannotifications.Add(physiciannotification);
             _db.SaveChanges();
         }
+        
         string FileUpload(IFormFile file, int physicianId)
         {
             if (file != null && file.Length > 0)
@@ -1653,6 +1664,53 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
+
+        public void requestsupport(string Notes, int AdminId)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var physicians = _db.Physicians.ToList();
+            var shifts = _db.Shifts.ToList();
+            foreach (var physician in physicians)
+            {
+                bool hasShift = shifts.Any(s => s.Physicianid == physician.Physicianid && s.Startdate.Equals(today));
+                if (!hasShift)
+                {
+                    var SubjectName = "Request Support";
+                    var EmailTemplate = Notes;
+
+                    System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+
+                    message.From = new System.Net.Mail.MailAddress("vanshita.bhansali@etatvasoft.com");
+                    message.To.Add(new MailAddress(physician.Email));
+                    message.Subject = SubjectName;
+                    message.IsBodyHtml = true;
+                    message.Body = EmailTemplate;
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = "mail.etatvasoft.com";
+                    smtp.Port = 587;
+                    smtp.Credentials = new NetworkCredential("vanshita.bhansali@etatvasoft.com", "GEtTj-2V%=0u");
+                    smtp.EnableSsl = true;
+                    smtp.Send(message);
+                    smtp.UseDefaultCredentials = false;
+
+                    Emaillog EmailLog = new Emaillog();
+                    EmailLog.Emailid = physician.Email;
+                    EmailLog.Isemailsent = new BitArray(1, true);
+                    EmailLog.Sentdate = DateTime.Now;
+                    EmailLog.Createdate = DateTime.Now;
+                    EmailLog.Senttries = 1;
+                    EmailLog.Emailtemplate = SubjectName;
+                    EmailLog.Subjectname = EmailTemplate;
+                    EmailLog.Roleid = (int)Roles.Admin;
+                    EmailLog.Adminid = AdminId;
+                 
+                    _db.Emaillogs.Add(EmailLog);
+                    _db.SaveChanges();
+                }
+
+            }
+        }
+    
         //BlockReqHistory
         public AdminDashboard GetBlockHistoryData(AdminDashboard model)
         {

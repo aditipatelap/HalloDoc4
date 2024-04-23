@@ -639,6 +639,7 @@ public class Records
 
     public class AdminDashboard
     {
+        public string email { get; set; }
         public List<ViewDoc> doc { get; set; }
         public string UserName { get; set; }
        

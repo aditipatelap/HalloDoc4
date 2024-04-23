@@ -108,21 +108,7 @@
  $(document).ready(function () {
 
         $("#Dashboard")[0].click();
-        $.ajax({
-            url: '/Provider/GetTabs',
-        
-
-            method: 'GET',
-            success: function (data) {
-                // Replace the content of the btnContent div with the retrieved partial view
-                $("#TabContent").html(data);
-
-            },
-            error: function () {
-                console.error('Error fetching partial view.');
-            }
-        });
-
+       
     });
     
     function TabLoad() {
@@ -306,7 +292,8 @@
         console.log(searchValue);
         console.log(reqtype);
         console.log(dropdown);
-
+        console.log("fcnhser");
+        console.log(currentpage);
         var physicianid;
         // Make an AJAX request to get the partial view content
 
@@ -357,6 +344,8 @@
     $(document).on('click', '.searchrequest', PartialDisplay);
     $(document).on('keyup', '#searchInput', PartialDisplay);
     $(document).on('click', '.custompagination', PartialDisplay);
+    
+
     function ModalDisplay() {
         console.log("vidihiiiiiiiiiiiiii")
         var modalName = $(this).attr('id');
