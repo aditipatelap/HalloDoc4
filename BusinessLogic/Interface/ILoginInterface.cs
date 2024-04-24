@@ -15,7 +15,7 @@ namespace BusinessLogic.Interface
         public bool checkEmail(LoginModel model);
         public bool sendEmail(string email,string aspnetuserid);
         public void ResetPassSave(LoginModel model);
-        public bool CreateAccount(LoginModel viewPatientReq);
+        public bool CreateAccount(LoginModel viewPatientReq,string email);
 
     }
 }

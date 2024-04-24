@@ -101,7 +101,8 @@
                 // $('#rolename').val('');
                 // $('.check_menu:checked').prop('checked', false);
                 // form.classlist.remove('was-validated');
-                
+                $("#Dashboard").click();
+                toastr.error("Case Transferred Successfully");
             },
             error: function () {
                 toastr.error("Error whiletransferring request");

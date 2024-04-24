@@ -539,7 +539,7 @@ namespace BusinessLogic.Service
                 Requeststatuslog reqlog = new Requeststatuslog();
                 reqlog.Requestid = requestid;
                 reqlog.Status = req.Status;
-                // reqlog.Adminid = adminid;
+                 //reqlog.Adminid = adminid;
                 reqlog.Createddate = DateTime.Now;
                 _db.Requeststatuslogs.Add(reqlog);
             }

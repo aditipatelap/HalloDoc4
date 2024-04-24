@@ -811,7 +811,7 @@ public familyReq SomeOneelse()
 
             if (usr == null)
             {
-                message.Body = "Request for you is generated. To check your request status click on below link to generate account. <a href=\"https://localhost:44367/login/CreateAccount\">ClickHere</a>";
+                message.Body = $"Request for you is generated. To check your request status click on below link to generate account. <a href=\"https://localhost:44367/login/CreateAccount?email={email}\">ClickHere</a>";
             }
             
             SmtpClient smtp = new SmtpClient();

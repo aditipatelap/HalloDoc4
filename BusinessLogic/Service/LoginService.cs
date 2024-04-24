@@ -194,7 +194,7 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
         }
-        public bool CreateAccount(LoginModel viewPatientReq)
+        public bool CreateAccount(LoginModel viewPatientReq,string email)
         {
             var isexist = _db.Users.Any(req => req.Email == viewPatientReq.Email);
             if (isexist)

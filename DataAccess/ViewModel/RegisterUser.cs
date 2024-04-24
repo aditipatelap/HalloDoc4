@@ -27,6 +27,16 @@ namespace DataAccess.ViewModel
         public int PhysicianId { get; set; }
         public int UserId { get; set; }
 
+    }public class PasswordModel
+    {
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter and one digit")]
+        [StringLength(20, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 20 characters long")]
+
+        [Required(ErrorMessage = "Please enter Your Password.")]
+        public string? Password { get; set; }
+        [Required(ErrorMessage = "Please Confirm Your Password.")]
+        [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
+        public string? ConfirmPassword { get; set; }
     }
    
 

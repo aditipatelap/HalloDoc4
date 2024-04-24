@@ -188,10 +188,18 @@ namespace HalloDoc.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult CreateAccount(LoginModel model)
+        public IActionResult CreateAccount(LoginModel model,string email)
         {
-            _loginInterface.CreateAccount(model);
-            _notyf.Custom("Accoutn created Successfully!!", 3, "deepskyblue", "bi bi-check2");
+            if(!_loginInterface.CreateAccount(model,email))
+            {
+                _notyf.Custom("Accoutn already exists!!", 3, "deepskyblue", "bi bi-check2");
+            }
+            else
+            {
+                _notyf.Custom("Accoutn created successfully!!", 3, "deepskyblue", "bi bi-check2");
+            }
+           
+           
             return RedirectToAction("PatientLogin", "Login");
         }
 

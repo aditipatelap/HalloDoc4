@@ -1,27 +1,64 @@
-﻿@*<div class="modal fade" tabindex="-1" id="myModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">*@
-@*            <div class="modalbody">*@
-@using DataAccess.ViewModel;
+﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-@*<form method="post" action='@Url.Action("SubmitClearCase", "Admin",new {requestid=Model.requestid})>*@
+<div class="modal-header bg-info ">
     <div class="d-flex justify-content-center">
         <img src="/images/Warning-icon.png" alt="" id="warning-icon" class="ms-2">
     </div>
+</div>
 
-    <p class="d-flex flex-column align-items-center">Confirmation for clear case</p>
-    <p class=" d-flex flex-column align-items-center">
-        Are you sure you want to clear this request? Once clear this request then you are not able to see this request
-    </p>
-
+<div class="modal-body m-auto">
+   
+<p class="d-flex flex-column align-items-center">Confirmation for clear case</p>
+<p class=" d-flex flex-column align-items-center">
+    Are you sure you want to clear this request? Once clear this request then you are not able to see this request
+</p>
+<form method="post" id="cleasrcase" >
     <div class="modal-footer d-flex justify-content-center">
-   <form method="post" action='@Url.Action("SubmitClearCase", "Admin",new {requestid=Model.requestid})'>
+
         <button type="submit" class="btn btn-outline-info btn btn-default close" id="closebtn" data-dismiss="modal">
-            Clear   
+            Clear
         </button>
         <button class="btn btn-outline-info btn btn-default close" id="closebtn" data-dismiss="modal" onclick="$('#myModal').modal('hide');">
             Cancel
         </button>
-      </form> 
+        <input value="@Model.requestid" asp-for="requestid" hidden />
     </div>
-    
+</form>
+</div>
+<script>
+    $('#cleasrcase').on('submit', function (e) {
+        e.preventDefault();
+
+        if (!$('#cleasrcase')[0].checkValidity()) {
+            return;
+        }
+
+
+
+        var data = new FormData(this);
+
+        $.ajax({
+            url: "/Admin/SubmitClearCase",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                $('#modeldiv').modal('hide');
+                //$("#").html(result);
+                // $('#accounttype').val(0);
+                // $('#rolename').val('');
+                // $('.check_menu:checked').prop('checked', false);
+                // form.classlist.remove('was-validated');
+                if (result.success) {
+                $("#Dashboard").click();
+                //toastr.error("Case Transferred Successfully");
+                }
+            },
+            error: function () {
+                toastr.error("Error whiletransferring request");
+            }
+        });
+
+    });
+    </script>

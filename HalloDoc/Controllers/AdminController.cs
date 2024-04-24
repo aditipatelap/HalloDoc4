@@ -362,7 +362,7 @@ namespace HalloDoc.Controllers
 
             _AdminDash.SendMailLink(model, adminid);
             _notyf.Custom("Link Send Successfully", 3, "green", "bi bi-check-circle-fill");
-            return Ok(new { message = "Data saved successfully." });
+            return RedirectToAction("Index", "Admin");
 
         }
 
@@ -398,14 +398,14 @@ namespace HalloDoc.Controllers
         {
             _AdminDash.SubmitTransferReq(model, requestid);
             _notyf.Custom("Case Transferred Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return RedirectToAction("Index", "Admin");
+            return Json(new { success = true });
         }
         [HttpPost]
         public IActionResult SendOrder(AdminDashboard model, int requestid, string adminname)
         {
             _AdminDash.SendOrderReq(model, requestid, adminname);
             _notyf.Custom("Order sent  Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return RedirectToAction("Index", "Admin");
+            return Json(new { success = true });
         }
         public IActionResult GetDropDownofBusinessname(int selectedvalue)
         {
@@ -418,11 +418,12 @@ namespace HalloDoc.Controllers
             return Json(model);
         }
         [HttpPost]
-        public IActionResult SubmitClearCase(AdminDashboard model, int requestid, int adminid)
+        public JsonResult SubmitClearCase(AdminDashboard model, int requestid, int adminid)
         {
             _AdminDash.SubmitClearCase(model, requestid, adminid);
             _notyf.Custom("Case Cleared Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return RedirectToAction("Index", "Admin");
+            //return RedirectToAction("Index", "Admin");
+            return Json(new { success = true });
         }
         public IActionResult ViewUpload()
         {
@@ -449,7 +450,7 @@ namespace HalloDoc.Controllers
             _requestInterface.SendMailService(email, requestid);
             _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
 
-            return RedirectToAction("Index", "Admin");
+            return Json(new { success = true });
         }
         //[HttpPost]
         //public IActionResult PostMyProfile( AdminDashboard adminDashboard,int adminid)
