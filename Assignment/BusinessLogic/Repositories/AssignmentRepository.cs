@@ -26,7 +26,12 @@ namespace BusinessLogic.Repositories
                 currentpage = 1;
             }
             var res= (from Projects in _db.Projects
-                      where (searchval == null || Projects.ProjectName.ToLower().Contains(searchval))
+                      where (searchval == null || Projects.ProjectName.ToLower().Contains(searchval)||
+                      Projects.Assignee.ToLower().Contains(searchval)||
+                      Projects.Description.ToLower().Contains(searchval)||
+                      Projects.Domain.ToLower().Contains(searchval)
+
+                      )
                       select new ProjectManagement
                       {
                ProjectId= Projects.Id,

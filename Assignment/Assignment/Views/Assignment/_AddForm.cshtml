@@ -17,27 +17,36 @@
       
         <div class="container">
             <div class="row mb-3">
-                <div class="col-lg-6">
-                    <input type="text" class="form-control" asp-for="AddData.ProjectName" placeholder="Task Name"required />
+                <div class="col-lg-6 form-floating">
+                    <input type="text" class="form-control " asp-for="AddData.ProjectName" id="floatingInput" placeholder="Your First Name" maxlength="100" required>
+                    <label for="floatingInput" class="text-dark ms-2">Project Name<span class="text-danger">*</span></label>
+                    <span asp-validation-for="AddData.ProjectName" id="Errorinfo"></span>
+                   @* <input type="text" class="form-control" asp-for="AddData.ProjectName" placeholder="Task Name"required />*@
                     @Html.ValidationMessageFor(Model=>Model.AddData.ProjectName,"",new{@class="text-danger"})
 
                 </div>
-                <div class="col-lg-6">
-                    <input type="text" class="form-control" asp-for="AddData.Assignee" placeholder="Assignee" required />
+                <div class="col-lg-6 form-floating ">
+                    <input type="text" class="form-control " asp-for="AddData.Assignee" id="floatingInput" placeholder="Your First Name" maxlength="100" required>
+                    <label for="floatingInput" class="text-dark ms-2">Assignee<span class="text-danger">*</span></label>
+                    <span asp-validation-for="AddData.Assignee" id="Errorinfo"></span>
                     @Html.ValidationMessageFor(Model=>Model.AddData.Assignee,"",new{@class="text-danger"})
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 form-floating">
                 <div class="col-lg-6">
-                    <input type="text" class="form-control" asp-for="AddData.Description" placeholder="Description" required />
+                    <input type="text" class="form-control " asp-for="AddData.Description" id="floatingInput" placeholder="Your First Name" maxlength="100" required>
+                    <label for="floatingInput" class="text-dark ms-2">Description<span class="text-danger">*</span></label>
+                    <span asp-validation-for="AddData.Description" id="Errorinfo"></span>
                     @Html.ValidationMessageFor(Model=>Model.AddData.Description,"",new{@class="text-danger"})
                 </div>
                 <div class="col-lg-6">
-                    <input type="date" class="form-control" asp-for="AddData.DueDate" placeholder="DueDate" required />
+                    <input type="text" class="form-control " asp-for="AddData.DueDate" id="floatingInput" placeholder="Your First Name" maxlength="100" required>
+                    <label for="floatingInput" class="text-dark ms-2">Due Date<span class="text-danger">*</span></label>
+                    <span asp-validation-for="AddData.DueDate" id="Errorinfo"></span>
                     @Html.ValidationMessageFor(Model=>Model.AddData.DueDate,"",new{@class="text-danger"})
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 form-floating">
                 <div class="col-lg-6">
                      <select id="selectId" class="form-select form-control ms-3 filteradmin " asp-for="AddData.City" aria-label="Default select example" required>
                     <option value="" selected>City</option>
@@ -50,12 +59,14 @@
                     @Html.ValidationMessageFor(Model=>Model.AddData.City,"",new{@class="text-danger"})
                 </div>
                 <div class="col-lg-6">
-                   
-                    <input type="text" class="form-control" asp-for="AddData.Domain" placeholder="Domain" required />
+
+                    <input type="text" class="form-control " asp-for="AddData.Domain" id="floatingInput" placeholder="Your First Name" maxlength="100" required>
+                    <label for="floatingInput" class="text-dark ms-2">Domain<span class="text-danger">*</span></label>
+                    <span asp-validation-for="AddData.Domain" id="Errorinfo"></span>
                     @Html.ValidationMessageFor(Model=>Model.AddData.Domain,"",new{@class="text-danger"})
                 </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 form-floating">
                 <div class="col-lg-6">
                     <button class="btn btn-secondary" data-bs-dismiss="modal"  type="button">Cancel</button>
                 </div>
