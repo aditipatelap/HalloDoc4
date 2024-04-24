@@ -1,0 +1,150 @@
+﻿@using DataAccess.CustomModels;
+@model MainModel
+
+    <div class="container-fluid">
+
+        <div class="table-responsive mt-3 d-md-block">
+            <table class="table table-hover">
+
+                <thead class="table-head align-middle">
+
+                    <tr>
+                        <th>ProjectId</th>
+                        <th>ProjectName</th>
+                        <th>Assignee</th>
+                        <th>Description</th>
+                        <th>DueDate</th>
+                        <th>Domain</th>
+                        <th>City</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody class="align-middle" id="email-log-table">
+
+                    @foreach (var record in Model.ProjectManagement)
+                    {
+                        <tr>
+                            <td>@record.ProjectId</td>
+                            <td>@record.ProjectName</td>
+                            <td>@record.Assignee</td>
+                            <td>@record.Description</td>
+                            <td>@record.DueDate </td>
+                            <td>@record.Domain </td>
+                            <td>@record.City </td>
+
+                            <td>
+                                <button type="button" class="btn text-white" data-bs-toggle="modal" data-bs-target="#modeldiv" id="EditReq" data-btn="@record.ProjectId" style="background-color:#75634f;">Edit</button>
+                                <button type="button" class="btn  deletereq text-white" data-btn="@record.ProjectId" style="background-color:#323333;">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
+
+        <div id="my-pagination" class="d-flex justify-content-between fixed-bottom">
+            @if (Model.CurrentPage <= Model.TotalPages)
+            {
+                @if (Model.TotalPages != 0)
+                {
+                    <div class="page-item disabled m-4 border-0 ">
+                        <span class=""> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-center align-items-center pt-5">
+                        <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+                    </div>
+                }
+
+                <div class="mb-0 float-right m-4">
+                    <ul class="pagination align-items-center">
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link custompagination" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                            </li>
+                        }
+
+
+                        <li class="page-item custompagination active">
+                            <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                        </li>
+                        @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link custompagination" href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link custompagination " href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+<script>
+    $(".custompagination").click(MainData);
+    $("#EditReq").click(function () {
+
+        var id = $(this).data('btn');
+        $.ajax({
+            url: '@Url.Action("EditModalPartialView", "Assignment")',
+            method: 'Post',
+            data: { id: id },
+            success: function (data) {
+                console.log("success");
+                $('.modelbody').html(data);
+                //toastr.success("Data Edited successfully!");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    });
+    $(".deletereq").click(function () {
+        var id = $(this).data('btn');
+        $.ajax({
+            url: '@Url.Action("Delete", "Assignment")',
+            method: 'GET',
+            data: { Projectid: id },
+            success: function (data) {
+                console.log("success");
+                
+                MainData();
+                //toastr.success("Data Deleted successfully!");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    });
+    
+
+</script>

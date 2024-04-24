@@ -1,0 +1,86 @@
+﻿@using DataAccess.CustomModels;
+@model MainModel
+
+@{
+    ViewData["Title"] = "Maim Page";
+}
+
+
+
+<div class="container-fluid">
+    <div class="h-50">
+        <h3 class="text-center text-white m-0 p-0" style="background-color:#75634f;"> Project Managemnet System</h3>
+    </div>
+    <div class="text-center h-30" style="background-color:#323333;">
+        <button type="button" class="btn btn-light" id="AddProject" data-bs-toggle="modal" data-bs-target="#modeldiv"> Add Project</button>
+    </div>
+    <div class="mt-5">
+        <input type="search" class="form-control searchinput" placeholder="Search" />
+    </div>
+        
+</div>
+<div id="BodyContent">
+</div>
+<div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modelbody modal-content"></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+      MainData();
+
+    });
+    function MainData()
+    {
+        var searchval = $('.searchinput').val().toLowerCase();
+        var currentpage=$(this).data('page');
+        
+        if(currentpage==='undefined')
+        {
+            currentpage=1;
+        }
+        if (!searchval) {
+            searchval = null;
+        }
+        console.log(currentpage);
+       
+        $.ajax({
+            url: '@Url.Action("MainDataGet", "Assignment")',
+            method: 'Post',
+            data: { searchval: searchval,currentpage:currentpage },
+            success: function (data) {
+                console.log("success");
+                $('#BodyContent').html(data);
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    }
+    $(".searchinput").keyup(MainData);
+    
+
+        
+
+    
+    $("#AddProject").click(function () {
+        $.ajax({
+            url: '@Url.Action("ModalPartialView", "Assignment")',
+            method: 'GET',
+
+            success: function (data) {
+                console.log("success");
+                $('.modelbody').html(data);
+                //toastr.success("Data Added successfully!");
+            },
+            error: function () {
+                console.error('Error fetching partial view.');
+            }
+        });
+
+    });
+    
+</script>
