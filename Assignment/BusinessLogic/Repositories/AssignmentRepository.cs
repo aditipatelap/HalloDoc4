@@ -46,9 +46,6 @@ namespace BusinessLogic.Repositories
                 ProjectManagement = paginateddashboard,
                 CurrentPage = currentpage,
                 TotalPages = totalPages,
-                
-
-
             };
           
            
@@ -80,11 +77,6 @@ namespace BusinessLogic.Repositories
             project.City=projectManagement.City;
             project.Domain = projectManagement.Domain;
             project.DomainId = result.Id;
-           
-            
-          
-            //var domainid=_db.Domains.Where(x=>x.Name==projectManagement.Domain).Select(x=>x.Id).FirstOrDefault();  
-            //project.DomainId= domainid; 
           _db.Add(project);
             _db.SaveChanges();
 

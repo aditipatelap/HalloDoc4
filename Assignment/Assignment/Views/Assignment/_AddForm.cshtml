@@ -1,7 +1,12 @@
 ﻿@using DataAccess.CustomModels;
 @model MainModel
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<style>
+    input[type=text]::-webkit-input-placeholder:after {
+        content: '*';
+        color: red;
+    }
+</style>
 <div class="modal-header   " style="background-color:#75634f;">
     <h5 class="modal-title text-white" >  Task Form </h5>
    
@@ -45,15 +50,7 @@
                     @Html.ValidationMessageFor(Model=>Model.AddData.City,"",new{@class="text-danger"})
                 </div>
                 <div class="col-lg-6">
-                    @*<input type="text" class="form-control" asp-for="AddData.Domain"  placeholder="Domain" />*@
-                    @*<select class="form-select form-control " asp-for="AddData.Domain" required>
-                        @foreach (var i in Model.domains)
-                        {
-                            <option value="@i.Name">@i.Name</option>
-                        }
-                    </select>
-
-                    <label for="state" class="dropdown-toggle" asp-for="AddData.Domain">State<span class="text-danger">*</span></label>*@
+                   
                     <input type="text" class="form-control" asp-for="AddData.Domain" placeholder="Domain" required />
                     @Html.ValidationMessageFor(Model=>Model.AddData.Domain,"",new{@class="text-danger"})
                 </div>
@@ -73,6 +70,3 @@
        
     </form>
 </div>
-<script>
-
-</script>

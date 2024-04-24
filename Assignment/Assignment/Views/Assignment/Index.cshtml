@@ -4,9 +4,6 @@
 @{
     ViewData["Title"] = "Maim Page";
 }
-
-
-
 <div class="container-fluid">
     <div class="h-50">
         <h3 class="text-center text-white m-0 p-0" style="background-color:#75634f;"> Project Managemnet System</h3>
@@ -44,8 +41,6 @@
         if (!searchval) {
             searchval = null;
         }
-        console.log(currentpage);
-       
         $.ajax({
             url: '@Url.Action("MainDataGet", "Assignment")',
             method: 'Post',
@@ -61,11 +56,7 @@
 
     }
     $(".searchinput").keyup(MainData);
-    
-
-        
-
-    
+  
     $("#AddProject").click(function () {
         $.ajax({
             url: '@Url.Action("ModalPartialView", "Assignment")',
