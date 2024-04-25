@@ -101,6 +101,11 @@
         } else {
             $('#checkboxerror').addClass('d-none');
         }
+        e.preventDefault();
+
+        if (!$('#createRoleForm')[0].checkValidity()) {
+            return;
+        }
 
 
 

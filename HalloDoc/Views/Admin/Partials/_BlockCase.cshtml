@@ -32,7 +32,14 @@
 <script>
     $('#BlocReq').submit(function (event) {
         event.preventDefault();
-      
+        
+        var form = $(this);
+        if (!form[0].checkValidity()) {
+
+
+            return;
+        }
+
 
         var data = new FormData(this);
         debugger;

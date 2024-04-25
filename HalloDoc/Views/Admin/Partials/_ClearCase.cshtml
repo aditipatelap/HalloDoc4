@@ -1,6 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
-<div class="modal-header bg-info ">
+
+<div class="modal-header  ">
     <div class="d-flex justify-content-center">
         <img src="/images/Warning-icon.png" alt="" id="warning-icon" class="ms-2">
     </div>
@@ -18,7 +19,7 @@
         <button type="submit" class="btn btn-outline-info btn btn-default close" id="closebtn" data-dismiss="modal">
             Clear
         </button>
-        <button class="btn btn-outline-info btn btn-default close" id="closebtn" data-dismiss="modal" onclick="$('#myModal').modal('hide');">
+        <button class="btn btn-outline-info btn btn-default close" id="closebtn" data-bs-dismiss="modal">
             Cancel
         </button>
         <input value="@Model.requestid" asp-for="requestid" hidden />

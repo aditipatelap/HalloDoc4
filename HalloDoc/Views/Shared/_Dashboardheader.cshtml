@@ -24,7 +24,7 @@
     <div class="d-flex justify-content-end mt-3">
         <h4 class=" ms-4 d-lg-block d-none"> Welcome</h4>
         <h4 class=" ms-2 d-lg-block d-none"> @_httpContextAccessor.HttpContext.Session.GetString("PatientName")</h4>
-        <div>   <button type="button" class="btn btn-outline-info ms-3" onclick="location.href='@Url.Action("submitReq", "Patient_site")'">Logout</button></div>
+        <div>   <button type="button" class="btn btn-outline-info ms-3" onclick="location.href='@Url.Action("PatientLogin", "Login")'">Logout</button></div>
 
        @* <a class="navbar-brand ms-3" href="#">*@
             @*       <img src="/images/darkmodelight.png" onclick="myFunction()" id="dark-icon" alt="">

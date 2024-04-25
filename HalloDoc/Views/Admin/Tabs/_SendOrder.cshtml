@@ -203,10 +203,13 @@
     $('#orderForm').on('submit', function (e) {
         e.preventDefault();
 
-        if (!$('#orderForm')[0].checkValidity()) {
+        
+        var form = $(this);
+        if (!form[0].checkValidity()) {
+
+
             return;
         }
-
 
 
         var data = new FormData(this);

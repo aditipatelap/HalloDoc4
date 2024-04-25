@@ -79,6 +79,13 @@
     $('#Sendlink').submit(function (event) {
         event.preventDefault();
         console.log("Fweaf");
+        
+        var form = $(this);
+        if (!form[0].checkValidity()) {
+
+
+            return;
+        }
 
         var data = new FormData(this);
         debugger;
