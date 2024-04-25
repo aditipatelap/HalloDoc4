@@ -43,19 +43,19 @@ namespace Assignment.Controllers
         {
              _assignmentInterface.EditFormDataPost(mainModel.AddData);
             _notyf.Success("Data Edited Successfully!!");
-            return RedirectToAction("Index");
+            return Json(new { success = true });
         }
         public IActionResult Add(MainModel mainModel)
         {   
             _assignmentInterface.AddFormDataPost(mainModel.AddData);
             _notyf.Success("Data Added Successfully!!");
-            return RedirectToAction("Index");
+            return Json(new { success = true });
         }
         public IActionResult Delete(int Projectid)
         {
             _assignmentInterface.DeleteFormDataPost(Projectid);
             _notyf.Success("Data Deleted Successfully!!");
-            return RedirectToAction("Index");   
+            return Json(new { success = true });
         }
 
 

@@ -84,12 +84,7 @@
             type: 'POST',
             data: { selectedvalue: selectedvalue },
             success: function (data) {
-                //var secondDropdown = '<select id="secondDropdown">';
-                //$.each(data, function (index, item) {
-                //    secondDropdown += '<option>' + item + '</option>';
-                //});
-                //secondDropdown += '<option disabled selected style="display:none">Select Physician</option></select>';
-                //$('#secondDropdownContainer').html(secondDropdown);
+              
                 console.log("AJAX success");
                 if (data.length === 0) {
                     // Clear the current options and add a "No physician available" option

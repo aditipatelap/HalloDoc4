@@ -41,7 +41,7 @@ namespace BusinessLogic.Service
                 physicianid = x.Physicianid,
                 Role = x.Role.Name,
                 notification = x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
-                OnCall = x.Isnondisclosuredoc,
+                //OnCall = x.Isnondisclosuredoc,
 
 
                 ProviderStatus = (PhysicianStatus)x.Status,
@@ -210,9 +210,9 @@ namespace BusinessLogic.Service
             AdminDashboard model = new AdminDashboard();
 
             var data = _db.Aspnetusers.Include(x => x.Aspnetuserroles).Include(x => x.AdminAspnetusers).Include(x => x.Physicians).
-                Where(x => x.Aspnetuserroles.FirstOrDefault().Roleid != 3 && (adminaccountfilter == 0 || x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter) &&
-                (x.AdminAspnetusers.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }) ||
-                x.Physicians.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }))).Select(x => new UserAccessModel
+                Where(x => (x.Aspnetuserroles.FirstOrDefault().Roleid != 3) && (adminaccountfilter == 0 || x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter) &&
+                (x.AdminAspnetusers.FirstOrDefault().Isdeleted == null || x.AdminAspnetusers.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }) ||
+               x.Physicians.FirstOrDefault().Isdeleted ==null|| x.Physicians.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }))).Select(x => new UserAccessModel
                 {
                     AccountType = (Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
                     AccountPOC = x.Name,
@@ -261,7 +261,7 @@ namespace BusinessLogic.Service
                 Address1 = x.Address1,
                 Address2 = x.Address2,
                 city = x.City,
-                //Zip = x.Zip,
+                Zip = x.Zip,
                 BusinessName = x.Businessname,
                 BusinessWebsite = x.Businesswebsite,
                 Regionid = x.Regionid,
@@ -1248,7 +1248,7 @@ namespace BusinessLogic.Service
             TimeSpan timeOnly = dateTime.TimeOfDay;
 
             AdminDashboard model = new AdminDashboard();
-            var physicians = _db.Physicians.Where(x=>x.Regionid==Regionid).ToList();
+            var physicians = _db.Physicians.Where(x=>x.Regionid==Regionid || Regionid==0).ToList();
             var shiftDetails = _db.Shiftdetails.ToList();
             var shifts = _db.Shifts.ToList();
             foreach (var physician in physicians)
@@ -1890,7 +1890,7 @@ namespace BusinessLogic.Service
 
             var result = new AdminDashboard()
             {
-                PatientHistory = list,
+                PatientHistory = paginateddashboard,
                 CurrentPage = obj.CurrentPage,
                 TotalPages = totalPages,
                 PageSize = pagesize,

@@ -40,6 +40,7 @@
                             <label for="floatingTextarea2">Email</label>
                         </div>
                     </div>
+                    <input id="currentpageinput" asp-for="@Model.CurrentPage" type="hidden">
                     <div class="col-3 mt-3">
                         <div class="form-floating">
                             <input type="text" class="form-control" placeholder="Enter receiver name"
@@ -48,8 +49,9 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="d-flex justify-content-between float-end">
-                    <button type="submit" class="btn btn-info align-middle m-2" id="search-record-search-btn">
+                    <button type="submit" class="btn btn-info align-middle m-2" id="submit-button" id="search-record-search-btn">
                         Search
                     </button>
                     <button type="button" class="btn btn-outline-info align-middle m-2" onclick="clearSearch()">
@@ -118,6 +120,7 @@
             },
         });
     }
-</script>
+     
 
+        
 

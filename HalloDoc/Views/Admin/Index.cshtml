@@ -223,7 +223,7 @@
             if (typeof accounttype === 'undefined') {
                 accounttype = 0;
             }
-            console.log(requestid);
+            
 
             if ($(this).hasClass('tablink')) {
                 tabidglobal = TabId;
@@ -331,13 +331,7 @@
 
 
 
-            console.log("Button clicked: " + btnnameglobal);
-
-
-            console.log("Button clicked: " + statusidglobal);
-            console.log(searchValue);
-            console.log(reqtype);
-            console.log(dropdown);
+            
 
 
             // Make an AJAX request to get the partial view content
@@ -358,8 +352,7 @@
                     console.error('Error fetching partial view.');
                 }
             });
-        console.log("fewa");
-        console.log(statusidglobal);
+        
         if (statusidglobal == 1) {
             var tabId = "(NEW)";
             $('#status').css('font-weight', 'bold').css('color', 'darkblue');
@@ -424,7 +417,7 @@
     $(document).on('change', '#adminaccountfilter', TabLoad);
 
         function ModalDisplay() {
-            console.log("vidihiiiiiiiiiiiiii")
+            
             var modalName = $(this).attr('id');
             var patientname = $(this).data('value1');
             var requestid = $(this).data('btn');
@@ -447,7 +440,7 @@
                 method: 'GET',
                 data: { modalName: modalName, patientname: patientname, requestid: requestid,physicianid:physicianid },
                 success: function (data) {
-                    console.log("AJAX success");
+                    
 
                     $('.modelbody').html(data);
                     //$('#' + modalName).modal('show');

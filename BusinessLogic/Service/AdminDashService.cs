@@ -47,37 +47,7 @@ namespace BusinessLogic.Service
 
 
         }
-        //public AdminDashboard GetName(int statusid)
-        //  {
-        //      AdminDashboard adminDashboard = new AdminDashboard();
-        //    adminDashboard.Status = (status)statusid;
-        //      return adminDashboard;
-
-        //  }
-        //public  RequestCount(int statusid)
-        //{
-
-
-        //    //for()
-        //    //int[] arr = new int[5];
-        //    //if(statusid==1)
-        //    //{
-        //    //    arr[0]++;
-        //    //}
-        //    //if(statusid==2)
-        //    //{
-        //    //    arr[1]++;
-        //    ////}
-        //    //if (statusid == 1)
-        //    //{
-        //    //    Array[0]
-        //    //}
-        //    //var reqtypes = new int[] { 1, 2, 3 ,4,5,6};
-        //    //var reqcount = reqtypes
-        //    //    .Select(reqtype => _db.Requests.Count(x => x.Status == reqtype)).ToArray();
-        //    ////var requestcount = _db.Requests.GroupBy(x => x.Status).Select(req => req.Count()).ToArray();
-        //    //return reqcount;
-        //  }
+       
 
         public AdminDashboard GetName(int statusid)
         {
@@ -122,9 +92,9 @@ namespace BusinessLogic.Service
                              select new AdminDash
                              {
                                  Name = Requestclient.Firstname + " " + Requestclient.Lastname,
-                                 IntDate = Requestclient.Intdate,
+                                 IntDate = Requestclient.Intdate,   
                                  IntYear = Requestclient.Intyear,
-                                 StrMonth = Requestclient.Strmonth,
+                                 StrMonth = Requestclient.Strmonth, 
                                  Requestor = Request.Firstname + " " + Request.Lastname,
                                  RequestedDate = Request.Createddate,
                                  PatientPhone = Requestclient.Phonenumber,
@@ -387,7 +357,7 @@ namespace BusinessLogic.Service
         public void SubmitBlockCase(AdminDashboard model, int reqid)
         {
             Blockrequest blockrequest = new Blockrequest();
-            var request = _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
+            var request = _db.Requests.Where(x => x.Requestid == model.requestid).FirstOrDefault();
             request.Status = (short)Requeststatuses.Clear;
             BlockReq blockReq = new BlockReq();
             blockrequest.Reason = model.blockreq.Blockreason;
@@ -998,6 +968,7 @@ namespace BusinessLogic.Service
             if (regionInfo != null)
             {
                 regionAbbreviation = regionInfo.Abbreviation;
+                requestclient.Regionid = regionInfo.Regionid;
             }
 
             var confirmationNumber = regionAbbreviation +
@@ -1023,7 +994,7 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
             requestclient.Requestid = request.Requestid;
-            requestclient.Regionid = regionInfo.Regionid;
+           
             requestclient.Email = model.CreateReqquestModel.Email;
             requestclient.Firstname = model.CreateReqquestModel.FirstName;
             requestclient.Lastname = model.CreateReqquestModel.LastName;

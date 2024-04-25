@@ -84,6 +84,7 @@
             <h5 class="d-flex justify-content-start ">
                 Physician Information
             </h5>
+            <input type="hidden" asp-for="@Model.PhysicianProfile.physicianid" value="@Model.PhysicianProfile.physicianid">
             <div class="row g-2 mt-2">
                 <div class="col-md">
                     <div class="form-floating">
@@ -625,6 +626,29 @@
             },
             error: function () {
                 toastr.error("Please provide valid password.");
+            }
+        });
+    });
+</script>
+<script>
+    $('#infoupadateform').on('submit', function (e) {
+        e.preventDefault();
+        // var form = $(this);
+        // if (!form[0].checkValidity()) {
+        //     e.stopPropagation();
+        //     form.addClass('was-validated');
+        //     return;
+        // }
+
+        var data = new FormData(this);
+        $.ajax({
+            url: "/Admin/PhysicianInfoDataUpdate",
+            type: "Post",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                disableInputClass0(); 
             }
         });
     });

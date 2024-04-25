@@ -34,7 +34,7 @@ namespace HalloDoc.Controllers
 
             _db = db;
             _notyf = notyf;
-
+                
         }
 
         public IActionResult Index(ProviderDash model)
@@ -316,7 +316,7 @@ namespace HalloDoc.Controllers
             _providerDataService.AcceptRequest(Requestid, physicianid);
             _notyf.Success("Request Accepted Successfully");
             //return GetTabs("Dashboard", default, default, default, default, default, default, Requestid, default, default, default);
-            return RedirectToAction("Index", "Provider");
+            return Json(new { success = true });
             // return RedirectToAction("Dashboard");
         }
         [HttpPost]
@@ -324,7 +324,8 @@ namespace HalloDoc.Controllers
         {
             model.PhysicianId = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
             _providerDataService.TransferCaseDataPost(model);
-            return RedirectToAction("Index", "Provider");
+            //return Json(new { success = true });
+            return RedirectToAction("Index","Provider");
             //return GetTabs("Dashboard", default, default, default, default, default, default, default, default, default, default);
         }
         public IActionResult EditViewCaseData(AdminDashboard model, int requestid)
@@ -419,14 +420,14 @@ namespace HalloDoc.Controllers
         {
             var model = _AdminDash.ViewUploadDataList(requestid);
             return PartialView("Tabs/_ViewUploadPartial", model);
-        }
+        }   
         [HttpPost]
         public IActionResult SendAgreement(AdminDashboard model)
         {
             _requestInterface.SendMailService(model.email,model.requestid);
             _notyf.Custom("Agrremtn mail sent Successfully!", 3, "green", "bi bi-check-circle-fill");
 
-            return GetTabs("Dashboard", default, default, default, default, default, default,default, default, default, default);
+            return RedirectToAction("Index", "Provider");
         }
        
         [HttpPost]

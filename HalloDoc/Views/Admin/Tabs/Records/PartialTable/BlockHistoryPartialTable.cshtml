@@ -73,7 +73,7 @@ else
                 @if (Model.CurrentPage > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link custompagination" data-page="@(
+                        <a class="page-link customblockpagination" data-page="@(
                 Model.CurrentPage - 1
                 )"><i class="fa-solid fa-chevron-left"></i></a>
                     </li>
@@ -81,20 +81,20 @@ else
                 else
                 {
                     <li class="page-item disabled">
-                        <a class="page-link custompagination" data-page="@(
+                        <a class="page-link customblockpagination" data-page="@(
                 Model.CurrentPage - 1
                 )"><i class="fa-solid fa-chevron-left"></i></a>
                     </li>
                 }
 
 
-                <li class="page-item custompagination active">
+                <li class="page-item customblockpagination active">
                     <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
                 </li>
                 @if (Model.CurrentPage < Model.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link custompagination" href="#" data-page="@(
+                        <a class="page-link customblockpagination" href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
                     </li>
@@ -102,7 +102,7 @@ else
                 else
                 {
                     <li class="page-item disabled">
-                        <a class="page-link custompagination " href="#" data-page="@(
+                        <a class="page-link customblockpagination " href="#" data-page="@(
                 Model.CurrentPage + 1
                 )"><i class="fa-solid fa-chevron-right"></i></a>
                     </li>
@@ -116,4 +116,12 @@ else
     $('.unblockreq').click(unblockreq);
         
   
+</script>
+<script>
+    //pegination
+    $(".customblockpagination").on('click', function () {
+        var currentpage = $(this).data('page');
+        $('#currentpageinput').val(currentpage);
+        $('#ssubmitbuttonblock').click();
+    });
 </script>

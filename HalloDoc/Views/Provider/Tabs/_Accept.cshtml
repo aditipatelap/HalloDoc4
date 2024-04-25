@@ -15,10 +15,32 @@
          type: 'POST',
          data: { Requestid: id },
          success: function (result) {
-             if (result.success) {
-                 LoadDashboard();
-             }
-         },
+                //$('#block-history-partial-table').html(data);
+                console.log("sucess");
+
+                $('#modeldiv').modal('hide');
+                if (result.success) {
+                    var TabId = "Dashboard";
+                    
+                    $.ajax({
+                        url: '/Provider/GetTabs',
+                        data: { Tabid: TabId },
+                        method: 'Post',
+                        success: function (data) {
+                            $("#TabContent").html(data);
+                            toastr.success("Request Accepted successfully!");
+                        },
+                        error: function () {
+                            console.error('Error fetching partial view.');
+                        }
+                    });
+
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+            
+            },
      });
  }
 </script>

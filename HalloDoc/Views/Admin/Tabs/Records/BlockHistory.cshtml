@@ -38,7 +38,7 @@
                             <label for="floatingTextarea2">Email</label>
                         </div>
                     </div>
-
+                    <input type="hidden" id="currentpageinput" asp-for="@Model.CurrentPage">
                     <div class="col-2 mt-3">
                         <div class="form-floating">
                             <input type="tel" class="form-control searchnumber" placeholder="Sent Date"
@@ -48,7 +48,7 @@
                     </div>
                     <div class="col-1 d-flex justify-content-between">
 
-                        <button type="submit" class="btn btn-info align-middle m-2">
+                        <button type="submit" id="ssubmitbuttonblock" class="btn btn-info align-middle m-2">
                             Search
                         </button>
                         <button type="button" class="btn btn-outline-info align-middle m-2" onclick="clearSearch()">
@@ -129,6 +129,7 @@
     }
 
 </script>
+
 <script>
 
     $('#BlockData').on('submit', function (e) {

@@ -33,15 +33,19 @@ namespace BusinessLogic.Service
             List<int> reqStatusId = new List<int>();
             Physician phy = new Physician();
 
-            if ( statusId != (int)Status.Active)
+            if ( statusId == (int)Status.Pending)
             {
                 reqStatusId.Add(statusId);
+            }
+            if (statusId == (int)Status.Unpaid)
+            {
+                reqStatusId.Add((int)Requeststatuses.Conclude);
             }
             if (statusId == (int)Status.New)
             {
                 reqStatusId.Add((int)Requeststatuses.assignedbyphysician);
-                //reqStatusId.Add((int)Requeststatuses.MDEnRoute);
             }
+
             else if (statusId == (int)Status.Active)
             {
 
@@ -133,7 +137,7 @@ namespace BusinessLogic.Service
 
 
         }
-        public ProviderDash GetAllRegions()
+        public ProviderDash GetAllRegions() 
         {
             var result = new ProviderDash
             {

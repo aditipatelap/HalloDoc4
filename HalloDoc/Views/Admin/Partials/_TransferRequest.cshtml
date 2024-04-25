@@ -96,13 +96,15 @@
             contentType: false,
             success: function (result) {
                 $('#modeldiv').modal('hide');
+                if (result.success) {
                 //$("#").html(result);
                 // $('#accounttype').val(0);
                 // $('#rolename').val('');
                 // $('.check_menu:checked').prop('checked', false);
                 // form.classlist.remove('was-validated');
                 $("#Dashboard").click();
-                toastr.error("Case Transferred Successfully");
+                //toastr.error("Case Transferred Successfully");
+                }
             },
             error: function () {
                 toastr.error("Error whiletransferring request");

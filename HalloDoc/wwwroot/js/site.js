@@ -24,39 +24,7 @@ document.getElementById('formFile').addEventListener('change', function () {
     document.getElementById('file-name').textContent = fileName;
 })*/;
 /****dark mode/****/
-const btn1 = document.querySelector(".btn-toggle");
-const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
 
-const currentTheme = localStorage.getItem("theme");
-if (currentTheme == "dark") {
-    document.body.classList.toggle("dark-theme");
-}
-else if (currentTheme == "light") {
-    document.body.classList.toggle("light-theme");
-}
-
-btn1.addEventListener("click", function () {
-    if (prefersDarkScheme.matches) {
-        document.body.classList.toggle("light-theme");
-        var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
-    }
-    else {
-        document.body.classList.toggle("dark-theme");
-        var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
-    }
-    localStorage.setItem("theme", theme);
-});
-
-    const phoneInputField = document.querySelectorAll("input[type='tel']");
-    for (var i = 0; i < phoneInputField.length; i++) {
-        const phoneInput = window.intlTelInput(phoneInputField[i], {
-        utilsScript:
-    "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    }
-    $(window).on('load', function () {
-        $('#myModal').modal('show');
-    });
 
 //<script>
 

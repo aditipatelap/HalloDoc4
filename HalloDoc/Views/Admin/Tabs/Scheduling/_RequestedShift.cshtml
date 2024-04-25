@@ -28,9 +28,9 @@
             <div class="d-flex align-items-center">
                 @*
                 <input type="hidden" id="viewAllOrCurrent" value="false"/> *@
-                <button type="button" class="btn btn-success text-white me-1 tablink0" id="Scheduling" id="data" @* onclick="viewCurrentMonthShift()" *@>
+               @* <button type="button" class="btn btn-success text-white me-1 tablink0" id="Scheduling" id="data"  onclick="viewCurrentMonthShift()" >
                     View Current Month Shifts
-                </button>
+                </button>*@
 
                 <button type="button" id="approvedSelected" class="btn btn-success text-white me-1">
                     Approved Selected
@@ -59,19 +59,19 @@
         $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
     });
 
-    // function viewCurrentMonthShift() {
-    //     var regionId = $('#SearchRegion').val();
-    //     if ($('#viewAllOrCurrent').val() == "true") {
-    //         $('#viewAllOrCurrent').val("false");
-    //         $('#data').text("View All Shift");
-    //     }
-    //     else {
-    //         $('#viewAllOrCurrent').val("true");
-    //         $('#data').text("View Current Month Shifts");
-    //     }
-    //     var viewAllOrCurrent = $('#viewAllOrCurrent').val();
-    //     $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
-    // }
+     //function viewCurrentMonthShift() {
+     //    var regionId = $('#SearchRegion').val();
+     //    if ($('#viewAllOrCurrent').val() == "true") {
+     //        $('#viewAllOrCurrent').val("false");
+     //        $('#data').text("View All Shift");
+     //    }
+     //    else {
+     //        $('#viewAllOrCurrent').val("true");
+     //        $('#data').text("View Current Month Shifts");
+     //    }
+     //    var viewAllOrCurrent = $('#viewAllOrCurrent').val();
+     //    $("#TableData").load('@Url.Action("LoadRequestedShiftTable", "Admin")?RegionId=' + regionId + "&currentMonthShift=" + viewAllOrCurrent);
+     //}
 
     //open calender view
    

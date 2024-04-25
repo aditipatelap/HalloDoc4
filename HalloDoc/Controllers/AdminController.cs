@@ -392,7 +392,7 @@ namespace HalloDoc.Controllers
             _AdminDash.SubmitBlockCase(model, requestid);
 
             _notyf.Custom("Case Blocked Successfully!", 3, "green", "bi bi-check-circle-fill");
-            return RedirectToAction("Index", "Admin");
+            return Json(new { success = true });
         }
         public IActionResult TransferReq(AdminDashboard model, int requestid)
         {
@@ -513,7 +513,7 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
         public IActionResult DeleteDocument(string filename, int requestid)
-                {
+                    {
             _AdminDash.deleteDocument(filename);
             _notyf.Information("dOCUMENT dELETED sUCCESSFULLY ...");
 
@@ -590,7 +590,7 @@ namespace HalloDoc.Controllers
             if (result)
             {
                 _notyf.Success("Case Closed...");
-                _notyf.Information("You can see Closed case in unpaid State...");
+                //_notyf.Information("You can see Closed case in unpaid State...");
             }
             else
             {
@@ -629,7 +629,7 @@ namespace HalloDoc.Controllers
 
         }
         public IActionResult CreateRolesPost(short AccountTypeId, string RoleName, List<int> MenuIds)
-        {
+            {
             _providerService.CreateRolePost(AccountTypeId, RoleName, MenuIds);
             _notyf.Success("Role Created Successfully");
             AdminDashboard admin = new AdminDashboard();
@@ -677,8 +677,6 @@ namespace HalloDoc.Controllers
         }
        
         /*******provider location****/
-        // provider location
-
         /** create admin**/
         [HttpPost]
         public IActionResult CreateAdminDataPost(AdminDashboard model)
@@ -748,7 +746,7 @@ namespace HalloDoc.Controllers
             return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
         /******provider datapost***/
-          /// Edit Physician /
+         
   [HttpPost]
         public JsonResult PhysicianResetPassDataUpdate(string password, int physicianid)
         {
@@ -763,22 +761,33 @@ namespace HalloDoc.Controllers
             }
         }
         [HttpPost]
-        public JsonResult PhysicianAccountInfoDataUpdate(AdminDashboard model)
+        public IActionResult PhysicianAccountInfoDataUpdate(AdminDashboard model)
         {
             _providerService.PhysiscianAccountInfoDataUpdate(model);
-            return Json(new { success = true });
+
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "EditPhysician";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
         [HttpPost]
-        public JsonResult PhysicianInfoDataUpdate(AdminDashboard model)
+        public IActionResult PhysicianInfoDataUpdate(AdminDashboard model)
         {
             _providerService.PhysicianInfoDataUpdate(model);
-            return Json(new { success = true });
+
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.tabid = "EditPhysician";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
+    
         [HttpPost]
-        public JsonResult PhysicianAddressDataUpdate(AdminDashboard model)
+        public IActionResult PhysicianAddressDataUpdate(AdminDashboard model)
         {
+            
             _providerService.PhysicianAddressDataUpdate(model);
-            return Json(new { success = true });
+            //return Json(new { success = true });
+            AdminDashboard adminDashboard=new AdminDashboard();
+            adminDashboard.tabid = "EditPhysician";
+            return GetTabs(adminDashboard, default, default, default, default, default, default);
         }
 
         [HttpPost]
@@ -797,7 +806,7 @@ namespace HalloDoc.Controllers
 
         [HttpPost]
         public JsonResult DeleteProviderAccount(int physicianid)
-        {
+            {
             _providerService.DeleteProviderAccount(physicianid);
             return Json(new { success = true });
         }
@@ -860,57 +869,7 @@ namespace HalloDoc.Controllers
         /***scheduling**/
 
 
-        //[HttpGet]
 
-        //public async Task<IActionResult> SchedulingDataGet(int RegionId)
-        //{
-
-
-        //    var physician = _db.Physicians
-        //        .Where(p => p.Regionid == RegionId || RegionId == 0)
-        //        .Select(p => new
-        //        {
-        //            physicianId = p.Physicianid,
-        //            firstName = p.Firstname,
-        //            lastName = p.Lastname
-        //        })
-        //        .ToList();
-
-        //    return Json(physician);
-        //}
-        //public IActionResult AddShift(AdminDashboard model)
-        //{
-        //    //string adminId = Crredntials.AspNetUserId();
-        //    var chk = Request.Form["repeatdays"].ToList();
-        //    _providerService.AddShift(model.ScheduleModel, chk, "2");
-        //    _notyf.Information("Shift Created  Successfully  ...");
-        //    AdminDashboard adminDashboard = new AdminDashboard();
-        //    adminDashboard.tabid = "Scheduling";
-        //    return GetTabs(adminDashboard, default, default, default, default, default, default);
-
-        //}
-        //public JsonResult GetEvents()
-        //{
-        //    var shiftDetails = _db.Shiftdetails
-        //        .Select(sd => new
-        //        {
-        //            //id = sd.Shiftdetailid,
-        //            //title = sd.phy,
-        //            start = sd.Starttime,
-        //            end = sd.Endtime
-        //        });
-        //    return Json(shiftDetails);
-        //}
-                /// Scheduling /
-
-        [CustomAuthorize("1")]
-        /*public IActionResult LoadSchedulingTab()
-        {
-            int reqid = 0;
-            var model = _adminDashboard.GetRegion(reqid);
-            return PartialView("Tabs/Provider/_Scheduling", model);
-        }
-*/
         public IActionResult LoadSchedulingCalendar(int RegionId, string currentView = "")
         {
             AdminDashboard model = new AdminDashboard();
@@ -1054,7 +1013,7 @@ namespace HalloDoc.Controllers
           /******** BlockHostory Data Get***/
           [HttpPost]
         public IActionResult BlockedHistoryPartialTable(AdminDashboard model)
-            {
+                {
             var info = _providerService.GetBlockHistoryData(model);
             return PartialView("Tabs/Records/PartialTable/BlockHistoryPartialTable", info);
         }

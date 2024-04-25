@@ -12,7 +12,7 @@
     </div>
     <div class="shadow border rounded p-5">
         <span class="fs-6 text-secondary"> Patient Name</span>
-       @* <h4 class="text-info mb-3">@Model.UserName<sapn class="text-secondary fs-5 ms-2">(@Model.ConfirmationNo)</span></h4>*@
+     @*   <h4 class="text-info mb-3">@Model.patientname<sapn class="text-secondary fs-5 ms-2">(@Model.ConfirmationNo)</span></h4>*@
 
         <span class="fs-6 text-secondary ">Check here for any files that you or the doctors of your subsequents requesters have attached for you to review. </span>
 
@@ -68,7 +68,7 @@
                 $.ajax({
                     url: '@Url.Action("DeleteDocument", "Admin")',
                     type: "Post",
-                    data: { filename: id, reqid: reqid },
+                    data: { filename: id, requestid: reqid },
                     success: function (result) {
                         $("#ViewUploadsTable").html(result);
                     }
@@ -93,12 +93,13 @@
                 return this.value;
             }).get();
 
-            if (selectedFiles.length > 0) {
-                alert(selectedFiles);
-                window.location.href = "/Admin/DownloadAll?file=" + selectedFiles;
+            if (selectedFiles.length == 0) {
+                 swal("Warning!", "Please select at least one file.", "warning");
+                
             }
             else {
-                swal("Warning!", "Please select at least one file.", "warning");
+              
+                window.location.href = "/Admin/DownloadAll?file=" + selectedFiles;
             }
         });
     });

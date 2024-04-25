@@ -21,7 +21,7 @@
             @Html.ValidationMessageFor(Model=>Model.blockreq.Blockreason,"",new{@class="text-danger"})
 
         </div>
-        <input value="@Model.requestid" hidden />
+        <input value="@Model.requestid" asp-for=@Model.requestid hidden />
             
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn-back btn btn-info btn-lg p-2 px-4 me-3 info-button me-2 ">Confirm</button>

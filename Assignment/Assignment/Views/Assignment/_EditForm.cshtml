@@ -14,7 +14,7 @@
 </div>
 <div class="modal-body m-auto">
    
-    <form id="EditReqForm" method="post" asp-action="EditFormData" asp-controller="Assignment">
+    <form id="EditReqForm" method="post" >
 
         <div class="container">
             <input asp-for="AddData.ProjectId" value="@Model.AddData.ProjectId" hidden/>
@@ -74,3 +74,39 @@
 
     </form>
 </div>
+<script>
+    $('#EditReqForm').submit(function (event) {
+        event.preventDefault();
+        console.log("Fweaf");
+
+        var data = new FormData(this);
+        debugger;
+        $.ajax({
+            url: '/Assignment/EditFormData',
+            type: 'Post',
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                //$('#block-history-partial-table').html(data);
+                console.log("sucess");
+                //$("#BodyContent").html(data);
+                $('#modeldiv').modal('hide');
+                if (result.success) {
+
+                    MainData();
+                    toastr.success("Data Edited successfully!");
+                }
+
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+
+            },
+            error: function () {
+                console.error("Error occurred while fetching data.");
+            }
+        });
+
+    });
+</script>
