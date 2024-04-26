@@ -21,7 +21,7 @@ namespace DataAccess.ViewModel
         public Month month { get; set; }
         public int RequestClientid { get; set; }
         public string ConfirmationNo { get; set; }
-        public string Email { get; set; }
+        public string? Email { get; set; }
         public int regionid { get; set; }
         public string? Requestor { get; set; }
         public string? PhysicianName { get; set; }

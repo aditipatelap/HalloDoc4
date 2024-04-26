@@ -53,7 +53,7 @@ namespace HalloDoc.Controllers
             _jwtService = jwtService;
         }
 
-
+       
         public IActionResult Index(AdminDashboard model)
         {
             return View(model);
@@ -65,9 +65,11 @@ namespace HalloDoc.Controllers
         {
             var result = "Tabs/" + "_" + model.tabid;
             string adminid = _httpContextAccessor.HttpContext.Session.GetString("Adminid");
+
             //int roleid =(int) _httpContextAccessor.HttpContext.Session.GetInt32("roleid");
             if (model.tabid == "Dashboard")
             {
+
                 var req = _AdminDash.RequestCount();
 
                 return PartialView(result, req);
