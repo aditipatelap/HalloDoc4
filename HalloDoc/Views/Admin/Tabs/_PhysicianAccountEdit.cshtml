@@ -9,9 +9,7 @@
             <h4 class="m-0 pt-2 ">Edit Physician Account</h4>
         </div>
         <div>
-            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info" onclick="location.href='@Url.Action("Dashboard", "Admin")'">
-                <i class="bi bi-chevron-left i-info"></i>Back
-            </button>
+          
         </div>
     </div>
 
@@ -329,12 +327,15 @@
             <tbody>
                 <tr>
                     <th scope="row" class="bg-transparent"> 
-                        @foreach (bool bitValue in Model.PhysicianProfile.Isagreementdoc)
-                                    {
-                                        var ischecked = bitValue ? "checked" : "";
-                                        <input type="checkbox" id="Isagreementdoc" class="btn-outline-info" disabled @ischecked />
-                                    }
-                    </th>
+                            @if (Model.PhysicianProfile.Isagreementdoc != null)
+                            {
+                                @foreach (bool bitValue in Model.PhysicianProfile.Isagreementdoc)
+                                {
+                                    var ischecked = bitValue ? "checked" : "";
+                                    <input type="checkbox" id="Isagreementdoc" class="btn-outline-info" disabled @ischecked />
+                                }
+                            }
+                        </th>
                     <td class="bg-transparent">
                         <p class="d-inline">Independent Contractor Agreement</p>
                     </td class="bg-transparent">
@@ -346,22 +347,28 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
+                         @if (Model.PhysicianProfile.Isagreementdoc != null)
+                            {
                          @if(Model.PhysicianProfile.Isagreementdoc[0])
  {
      <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/agreementdoc.pdf" target="_blank">
          <span class="d-none d-xl-inline d-lg-inline">View</span>
      </a>
  }
+                            }
                     </td>    
                 </tr>
 
                 <tr>
                     <th scope="row" class="bg-transparent">
+                        @if (Model.PhysicianProfile.Isbackgrounddoc != null)
+                            {
                          @foreach (bool bitValue in Model.PhysicianProfile.Isbackgrounddoc)
                                     {
                                         var ischecked = bitValue ? "checked" : "";
                                         <input type="checkbox" id="Isbackgrounddoc" class="btn-outline-info" disabled @ischecked />
                                     }
+                            }
                     </th>
                     <td class="bg-transparent">
                         <p class="d-inline">Background Check</p>
@@ -374,22 +381,28 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
+                        @if (Model.PhysicianProfile.Isbackgrounddoc != null)
+                            {
                          @if(Model.PhysicianProfile.Isbackgrounddoc[0])
  {
      <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/backgrounddoc.pdf" target="_blank">
          <span class="d-none d-xl-inline d-lg-inline">View</span>
      </a>
  }
+                            }
                     </td>                    
                 </tr>
 
                 <tr>
                     <th scope="row" class="bg-transparent">
+                        @if (Model.PhysicianProfile.Iscredentialdoc != null)
+                            {
                         @foreach (bool bitValue in Model.PhysicianProfile.Iscredentialdoc)
            {
                var ischecked = bitValue ? "checked" : "";
                <input type="checkbox" id="Iscredentialdoc" class="btn-outline-info" disabled @ischecked />
            }
+                            }
                     </th>
                     <td class="bg-transparent">
                         <p class="d-inline">HIPPA Compliance</p>
@@ -402,22 +415,28 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
+                        @if (Model.PhysicianProfile.Iscredentialdoc != null)
+                            {
                         @if(Model.PhysicianProfile.Iscredentialdoc[0])
  {
      <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/credentialdoc.pdf" target="_blank">
          <span class="d-none d-xl-inline d-lg-inline">View</span>
      </a>
  }
+                            }
                     </td>    
                 </tr>
 
                 <tr>
                     <th scope="row" class="bg-transparent">
+                        @if (Model.PhysicianProfile.Isnondisclosuredoc != null)
+                            {
                         @foreach (bool bitValue in Model.PhysicianProfile.Isnondisclosuredoc)
            {
                var ischecked = bitValue ? "checked" : "";
                <input type="checkbox" id="Isnondisclosuredoc" class="btn-outline-info" disabled @ischecked />
            }
+                            }
                        
                     </th>
                     <td class="bg-transparent">
@@ -431,22 +450,29 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
+                        @if (Model.PhysicianProfile.Isnondisclosuredoc != null)
+                            {
                          @if(Model.PhysicianProfile.Isnondisclosuredoc[0])
  {
      <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/nondisclosuredoc.pdf" target="_blank">
          <span class="d-none d-xl-inline d-lg-inline">View</span>
      </a>
  }
+                            }
+
                     </td>    
                 </tr>
             
                 <tr>
                     <th scope="row" class="bg-transparent">
+                        @if (Model.PhysicianProfile.Islicensedoc != null)
+                            {
                         @foreach (bool bitValue in Model.PhysicianProfile.Islicensedoc)
            {
                var ischecked = bitValue ? "checked" : "";
                <input type="checkbox" id="Islicensedoc" class="btn-outline-info" disabled @ischecked />
            }
+                            }
                         
                     </th>
                     <td class="bg-transparent">
@@ -460,12 +486,15 @@
 	    			    </div>
                     </td>
                     <td class="bg-transparent">
+                        @if (Model.PhysicianProfile.Islicensedoc != null)
+                            {
                         @if(Model.PhysicianProfile.Islicensedoc[0])
  {
      <a type="button" class="btn btn-info text-light" href="~/PhysicianDocuments/@Model.PhysicianProfile.physicianid/licenseedoc.pdf" target="_blank">
          <span class="d-none d-xl-inline d-lg-inline">View</span>
      </a>
  }
+                            }
                     </td>    
                 </tr>
             </tbody>

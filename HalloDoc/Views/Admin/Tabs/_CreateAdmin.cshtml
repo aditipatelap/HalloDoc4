@@ -1,5 +1,6 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class="row justify-content-center mb-5 pb-5">
     <div class="row m-4 col-xl-8 col-md-9 col-11">
@@ -88,7 +89,7 @@
 
                 <div class="col-12 col-md-6 mb-3 z-3">
                     <div class="form-floating">
-                        <input type="tel" class="form-control p-3 ps-5" placeholder="(201) 555-0123" asp-for="myProfile.Mobile">
+                        <input type="tel" class="form-control p-3 ps-5" id="phoneNumber1" placeholder="(201) 555-0123" asp-for="myProfile.Mobile">
                     </div>
                     <span id="Phone" asp-validation-for="myProfile.Mobile" class="text-danger"></span>
                 </div>
@@ -158,7 +159,7 @@
 
                 <div class="col-12 col-md-6">
                     <div class="form-floating">
-                        <input type="tel" class="form-control p-3 ps-5" id="MailingMobile" asp-for="myProfile.PhoneNumber" placeholder="(201) 555-0123">
+                        <input type="tel" class="form-control p-3 ps-5" id="phoneNumbe2" asp-for="myProfile.PhoneNumber" placeholder="(201) 555-0123">
                     </div>
                     <span id="Phone1" asp-validation-for="myProfile.PhoneNumber" class="text-danger"></span>
                 </div>
@@ -170,6 +171,19 @@
         </form>
     </div>
 </div>
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+
+    $(window).on('load', function () {
+        $('#myModal').modal('show');
+    });
+</script>
 
 <script>
     // function updateHiddenInput() {
@@ -189,6 +203,16 @@
 
     $('#CreateAdminform').on('submit', function (e) {
         e.preventDefault();
+      
+
+        var form = $(this);
+        if (!form[0].checkValidity()) {
+
+
+            return;
+        }
+
+
         var selectedRegions = [];
         var data = new FormData(this);
         $("input[name='adminChecked']").each(function () {
@@ -210,19 +234,6 @@
         });
     });
 
-</script>
-<script>
-    const phoneInputField = document.querySelectorAll("input[type='tel']");
-    for (var i = 0; i < phoneInputField.length; i++) {
-        const phoneInput = window.intlTelInput(phoneInputField[i], {
-            utilsScript:
-                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-    }
-
-    $(window).on('load', function () {
-        $('#myModal').modal('show');
-    });
 </script>
 
 <script>
@@ -249,4 +260,24 @@
         });
     });
 
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
 </script>

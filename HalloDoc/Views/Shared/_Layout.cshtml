@@ -30,8 +30,9 @@
    @* Map*@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-   @*TOASTR AJAX*@
+    @*DAtatable*@
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    @*TOASTR AJAX*@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
    @* validation*@
@@ -91,12 +92,15 @@
         }
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>*@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
     @await Component.InvokeAsync("Notyf")
     @RenderSection("Scripts", required: false)
 </body>

@@ -23,7 +23,7 @@
        
     </div>
     <div class="w-100 my-3"></div>
-    <table class="table table-hover table-responsive" style="height:75px; text-align:match-parent">
+    <table class="table table-hover table-responsive" id="UserAccess" style="height:75px; text-align:match-parent">
         <thead>
             <tr class="table-secondary">
                 <td>Account type</td>
@@ -69,8 +69,97 @@
 
         </tbody>
     </table>
+</div>  
+<div id="my-pagination" class="d-flex justify-content-between fixed-bottom">
+    @if (Model.CurrentPage <= Model.TotalPages)
+    {
+        @if (Model.TotalPages != 0)
+        {
+            <div class="page-item disabled m-4 border-0 ">
+                <span class=""> @Model.CurrentPage of @Model.TotalPages</span>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center align-items-center pt-5">
+                <strong class="fs-2 fw-normal text-center  text-secondary "> No Data Found </strong>
+            </div>
+        }
+
+        <div class="mb-0 float-right m-4">
+            <ul class="pagination align-items-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link useraccesss" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link useraccesss" data-page="@(
+                Model.CurrentPage - 1
+                )"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
+                }
+
+
+                <li class="page-item useraccesss active">
+                    <a class="page-link" href="#" data-page="@Model.CurrentPage">@Model.CurrentPage</a>
+                </li>
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link useraccesss" href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <a class="page-link useraccesss " href="#" data-page="@(
+                Model.CurrentPage + 1
+                )"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
 </div>
 <script>
+    //$(document).ready(function () {
+    //    $('#UserAccess').DataTable();
+    //});
+    //$(document).ready(function () {
+
+    //    $('#UserAccess').DataTable({
+    //        "initComplete": function (settings, json) {
+
+    //            $('#my-search-input').val(settings.oPreviousSearch.sSearch);
+
+    //            $('#my-search-input').on('keyup', function () {
+    //                var searchValue = $(this).val();
+    //                settings.oPreviousSearch.sSearch = searchValue;
+    //                settings.oApi._fnReDraw(settings);
+    //            });
+    //        },
+    //        "lengthMenu": [[5, 10, -1], [5, 10, "All"]],
+    //        "pageLength": 5,
+    //        // "columns": [{ "searchable": true }, { "searchable": false }, { "searchable": true }, { "searchable": false }, { "searchable": false }, { "searchable": false }, { "searchable": false }, { "searchable": false }, { "searchable": false }],
+    //        language: {
+    //            oPaginate: {
+    //                sNext: '<i class="bi bi-caret-right-fill text-info"></i>',
+    //                sPrevious: '<i class="bi bi-caret-left-fill text-info"></i>'
+
+    //            }
+    //        }
+    //    });
+    //    // $('.dataTables_length').hide();
+    //    $('.dataTables_filter').hide();
+    //});
     $('.openEditAccess').click(function ()
     {
         var accounttypeid = $(this).data('accountypeid');
@@ -94,6 +183,8 @@
         });
 
     });
-    
+    $(document).on('click', '.useraccesss', TabLoad);
 </script>
+
+
 

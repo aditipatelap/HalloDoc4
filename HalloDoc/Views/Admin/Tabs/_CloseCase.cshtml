@@ -46,8 +46,8 @@
             </table>
         </div>
 
-        <form class="sbox mt-2 p-3" method="post ">
-            <input type="hidden" asp-for="requestid" class="inputs" />
+        <form class="sbox mt-2 p-3" method="post " >
+            <input type="hidden" asp-for="requestid" id="requestid" value="@Model.requestid" class="inputs" />
             <h5 class="text-black"><b>Patient Information</b></h5>
             <div class="row">
                 <div class="mb-3 col-lg-6 form-floating">
@@ -80,7 +80,7 @@
                 <div class="d-flex justify-content-end">
                     <a id="editprofile" onclick="enable_disable()" class=" btn btn-info text-white rounded px-3 py-2 me-2">Edit</a>
                     <input type="submit" asp-action="EditCloseCase" asp-controller="Admin" id="submit" class=" btn bg-info text-white rounded px-3 py-2 me-2" value="Save" style="display: none;">
-                    <button asp-action="CloseCaseUnpaid" asp-controller="Admin" class="btn btn-outline-info px-3 py-1 rounded me-2">Close Case</button>
+                    <button class="btn btn-outline-info px-3 py-1 rounded me-2 closedcase">Close Case</button>
                 </div>
 
         </form>
@@ -94,4 +94,34 @@
         $("#editprofile").css("display", "none");
     }
 
+</script>
+<script>
+    $('.closedcase').click(function (event) {
+        event.preventDefault();
+        var requestid = $('#requestid').val();
+        //var data = new FormData(this);
+        debugger;
+        $.ajax({
+            url: '/Admin/CloseCaseUnpaid',
+            type: 'Post',
+            data: { RequestID: requestid },
+            
+            success: function (result) {
+                
+                
+                if (result.success) {
+                    $("#Dashboard").click();
+
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+
+            },
+            error: function () {
+                console.error("Error occurred while fetching data.");
+            }
+        });
+
+    });
 </script>

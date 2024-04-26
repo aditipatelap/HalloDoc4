@@ -555,10 +555,10 @@ h1, h2, h3, h4, h5, h6, label, strong, input, textarea, i, p, td, .modal-content
     background-image: none !important;
 }
 
-/*a {
+a {
     text-decoration: none !important;
     color: inherit !important;
-}*/
+}
 
 ::-webkit-scrollbar {
     display: none;

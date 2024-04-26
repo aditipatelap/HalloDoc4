@@ -317,4 +317,8 @@
             $("#Dashboard")[0].click();
         });
     </script>
+    <script>
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById("createShiftDate").setAttribute('min', today);
+    </script>
 

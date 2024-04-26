@@ -380,25 +380,25 @@ namespace DataAccess.ViewModel
         public string? phonenumber { get; set; }
         public string? BusinessName { get; set; }
         public string? BusinessWebsite { get; set; }
-        public IFormFile Photo { get; set; }
-        public IFormFile signature { get; set; }
+        public IFormFile? Photo { get; set; }
+        public IFormFile? signature { get; set; }
         public string? notes { get; set; }
         public int? roleid { get; set; }
         public int physicianid { get; set; }
-        public BitArray Isagreementdoc { get; set; }
+        public BitArray ? Isagreementdoc { get; set; }
         public IFormFile? AgreementDocument { get; set; }
-        public BitArray Isbackgrounddoc { get; set; }
+        public BitArray ?Isbackgrounddoc { get; set; }
         public IFormFile? BackgroundDocument { get; set; }
-        public BitArray Istrainingdoc { get; set; }
+        public BitArray ?Istrainingdoc { get; set; }
         public IFormFile? TraningDocument { get; set; }
-        public BitArray Isnondisclosuredoc { get; set; }
+        public BitArray? Isnondisclosuredoc { get; set; }
         public IFormFile? NonDisclosureDocument { get; set; }
-        public BitArray Islicensedoc { get; set; }
+        public BitArray? Islicensedoc { get; set; }
         public IFormFile? LicenseDocument { get; set; }
-        public BitArray Iscredentialdoc { get; set; }
+        public BitArray? Iscredentialdoc { get; set; }
         public IFormFile? CredentialDocument { get; set; }
-        public BitArray IsPhoto { get; set ;}
-            public string PhotoName { get; set; }
+        public BitArray? IsPhoto { get; set ;}
+            public string ?PhotoName { get; set; }
         public int radioSMSEmail { get; set; }
         public string NotificationMassage { get; set; }
         public TimeOnly Starttime { get; set; }
@@ -639,6 +639,8 @@ public class Records
 
     public class AdminDashboard
     {
+        [Required(ErrorMessage = "the field is required")]
+        public string rolename { get; set; }
         public string email { get; set; }
         public List<ViewDoc> doc { get; set; }
         public string UserName { get; set; }

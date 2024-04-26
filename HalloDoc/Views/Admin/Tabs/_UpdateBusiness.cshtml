@@ -47,7 +47,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-floating">
-                    <input type="tel" class="form-control inputf" id="PhoneNumber" placeholder="Phone Number" asp-for="@Model.AddBusinessModel.PHoneNumber" required disabled>
+                    <input type="tel" class="form-control inputf" id="phoneNumber1" placeholder="Phone Number" asp-for="@Model.AddBusinessModel.PHoneNumber" required disabled>
                     <label for="PhoneNumber" class="floatingLabel text-secondary">Phone Number<span class="text-danger">*</span></label>
                     @Html.ValidationMessageFor(Model => Model.AddBusinessModel.PHoneNumber, "", new { @class = "text-danger" })
                 </div>
@@ -202,3 +202,33 @@
         saveBtn.style.display = "none";
     }
 </script>
+<script>
+ const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
+

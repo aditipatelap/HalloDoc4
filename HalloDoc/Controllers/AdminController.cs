@@ -191,7 +191,8 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "CreateNewReq")
             {
-                return PartialView(result);
+                var data = _AdminDash.GetRegions();
+                return PartialView(result,data);
             }
             if (model.tabid == "CloseCase")
             {
@@ -417,6 +418,22 @@ namespace HalloDoc.Controllers
             var model = _AdminDash.GetBusinessDetails(selectedvalue);
             return Json(model);
         }
+        //EncounterForm
+        [HttpPost]
+        public IActionResult EncounterFormDataPost(AdminDashboard model)
+        {
+
+            bool result = _AdminDash.EncounterFormDataPost(model.encounterform);
+            if (result)
+            {
+                _notyf.Success("Encounter Form Successfully Saved !!");
+            }
+            else
+            {
+                _notyf.Error("Encounter Form Failed To Save");
+            }
+            return Json(new { success = true });
+        }
         [HttpPost]
         public JsonResult SubmitClearCase(AdminDashboard model, int requestid, int adminid)
         {
@@ -554,22 +571,7 @@ namespace HalloDoc.Controllers
             }
 
         }
-        /****close case**********/
-        //[HttpPost]
-        //      public JsonResult CloseCaseDataPost(AdminDashboard model)
-        //      {
-        //          _AdminDash.CloseCaseDataPost(model);
-        //          return Json(new { success = true });
-        //      }
-
-        //      [HttpPost]
-        //      public IActionResult CloseTheCase(int reqid)
-        //      {
-        //          _AdminDash.CloseTheCase(reqid);
-        //          _notyf.Custom("Case CLosed Successfully!!", 3, "deepskyblue", "bi bi-check2");
-        //          string url = Url.Action("Dashboard", "Admin");
-        //          return Json(new { url });
-        //      }
+       
         public IActionResult EditCloseCase(AdminDashboard vc, int requestid)
         {
             bool result = _AdminDash.EditCloseCase(vc, requestid);
@@ -590,13 +592,17 @@ namespace HalloDoc.Controllers
             if (result)
             {
                 _notyf.Success("Case Closed...");
-                //_notyf.Information("You can see Closed case in unpaid State...");
+                return Json(new { success = true });
+
             }
             else
             {
                 _notyf.Error("there is some error in CloseCase...");
+                return Json(new { success = false });
+
             }
-            return RedirectToAction("Index", "Admin");
+
+
         }
         /////////**********provider*********/
         ///[
@@ -681,8 +687,17 @@ namespace HalloDoc.Controllers
         [HttpPost]
         public IActionResult CreateAdminDataPost(AdminDashboard model)
         {
-            _providerService.CreateAdminDataPost(model);
-            _notyf.Information("Admin Created Successfully ...");
+            if(model.myProfile==null)
+            {
+                _notyf.Error("Admin Created Error ...");
+            }
+            else
+            {
+                _providerService.CreateAdminDataPost(model);
+                _notyf.Information("Admin Created Successfully ...");
+
+            }
+           
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.tabid = "CreateAdmin";
             return GetTabs(adminDashboard, default, default, default, default, default, default);
@@ -980,7 +995,7 @@ namespace HalloDoc.Controllers
 
             return PartialView("Tabs/Scheduling/_RequestedShiftTable", model);
         }
-        public JsonResult RequestedShiftUpdate(string ids, int type)
+        public IActionResult RequestedShiftUpdate(string ids, int type)
         {
             var token = Request.Cookies["jwt"];
             var adminId = "";   
@@ -990,7 +1005,10 @@ namespace HalloDoc.Controllers
             //}
 
             _providerService.RequestedShiftUpdate(ids, type, adminId);
-            return Json(new { success = true });
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "RequestedShift";
+           
+            return GetTabs(admin, default, default, default, default, default, default);
         }
         /********************records**********************/
 

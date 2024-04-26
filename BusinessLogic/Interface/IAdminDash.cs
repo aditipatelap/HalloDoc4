@@ -35,8 +35,8 @@ namespace BusinessLogic.Interface
         public AdminDashboard GetViewNotes(int requestid);
         public void PostViewNotes( AdminDashboard model);
         public JsonArray GetBusiness(int selectedvalue);
-        public Healthprofessional GetBusinessDetails(int selectedvalue);    
-        //public AdminDashboard GetBusinessDetails(int selectedvalue);
+        public Healthprofessional GetBusinessDetails(int selectedvalue);
+        public AdminDashboard GetRegions();
         public void SendOrderReq(AdminDashboard model, int requestid,string adminname);
         public AdminDashboard ClearCase(int requestid);
         public void SubmitClearCase(AdminDashboard model, int requestid, int adminid);

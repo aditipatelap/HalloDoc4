@@ -30,5 +30,6 @@ namespace BusinessLogic.Interface
         /*viewnote****/
         public void PostViewNotes(AdminDashboard model, string aspnetuserid);
         public void SendMailLink(AdminDashboard model, int physicianid);
+        public bool ConcludeHouseCall(int reqid);
     }
 }

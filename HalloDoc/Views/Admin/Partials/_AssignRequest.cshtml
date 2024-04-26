@@ -46,9 +46,7 @@
                 <label for="floatingSelect">Narrow Down Region Name</label>
             </div>
             @Html.ValidationMessageFor(Model => Model.assignreq.RegionItems, "", new { @class = "text-danger" })
-            @* <span class="invalid-feedback">
-            Please choose a Region.
-            </span>*@
+          
         </div>
         <div class="dropdown my-3  ">
             <div class="form-floating">
@@ -95,7 +93,7 @@
                 } else {
                     var physician = '';
                     $.each(data, function (index, physicians) {
-                        physician += '<option>' + physicians + '<option>';
+                        physician += '<option>' + physicians + '</option>';
                     });
                     $('#Physician').html(physician);
                 }

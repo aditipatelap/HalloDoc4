@@ -1,5 +1,7 @@
 ﻿@using DataAccess.ViewModel;
 @model AdminDashboard
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <div class="container">
     <div class="d-flex justify-content-between mt-4">
         <div class="d-flex">
@@ -17,11 +19,10 @@
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="RoleName" placeholder="Role Name" required>
+                        <input type="text" class="form-control"  id="RoleName" placeholder="Role Name" required>
                         <label for="RoleName" class="text-secondary floatingLabel">Role Name</label>
-                        <div class="invalid-feedback">
-                            Please enter a role name.
-                        </div>
+                       
+
                     </div>
                 </div>
                 <div class="col-md">
@@ -49,9 +50,7 @@
                         </label>
                     </span>
                 }
-                <div id="checkboxerror" class="d-none text-danger mt-1">
-                    Please select at least one menu.
-                </div>
+               
             </div>
             <div class="mt-4 d-flex justify-content-end mb-3 ">
                 <button type="submit" class="btn btn-info btn-lg me-2 info-button" id="savebtn">Save</button>
@@ -83,7 +82,11 @@
 
     //create role
 
-    $('#savebtn').click(function () {
+    $('#savebtn').click(function (e) {
+        e.preventDefault();
+        if (!$('#createRoleForm')[0].checkValidity()) {
+            return;
+        }
         var form = $('#createRoleForm')[0];
 
      
@@ -101,11 +104,9 @@
         } else {
             $('#checkboxerror').addClass('d-none');
         }
-        e.preventDefault();
+       
 
-        if (!$('#createRoleForm')[0].checkValidity()) {
-            return;
-        }
+       
 
 
 

@@ -201,7 +201,7 @@
 
                         </div>
                         <div class="text-end pb-3">
-                            <button type="button" class="btn text-white px-4 p-2 ms-1 finalize" style="background-color:rebeccapurple" data-btn="@Model.requestid">Finalize</button>
+                            <button type="button" class="btn text-white px-4 p-2 ms-1 finalize" style="background-color:rebeccapurple" data-btn="@Model.requestid" disabled>Finalize</button>
                             <button type="reset" class="btn text-white px-4 p-2 bg-info button-info text-white" onclick="disableEditBtn()">Cancel</button>
                         </div>
                     </div>
@@ -209,7 +209,17 @@
         </div>
     </div>
 </div>
+<script>
+    // Enable the "Finalize" button after the "Save Changes" button is clicked
+    $('.savechanges').click(function () {
+        $('.finalize').prop('disabled', false);
+    });
 
+    // Function to disable the edit buttons
+    //function disableEditBtn() {
+    //    // Add your code here to disable the edit buttons as needed
+    //}
+</script>
 <script>
     function enbledata() {
         document.getElementById("email").disabled = false;

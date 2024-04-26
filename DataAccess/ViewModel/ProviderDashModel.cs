@@ -138,7 +138,7 @@ namespace DataAccess.ViewModel
         public string? firstName { get; set; }
         public bool? isfinalize{get;set;}
         public string? lastName { get; set; }
-
+        public short? calltype { get; set; }
         public string strMonth { get; set; }
 
         public int? Month { get; set; }

@@ -210,9 +210,9 @@ namespace BusinessLogic.Service
             AdminDashboard model = new AdminDashboard();
 
             var data = _db.Aspnetusers.Include(x => x.Aspnetuserroles).Include(x => x.AdminAspnetusers).Include(x => x.Physicians).
-                Where(x => (x.Aspnetuserroles.FirstOrDefault().Roleid != 3) && (adminaccountfilter == 0 || x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter) &&
-                (x.AdminAspnetusers.FirstOrDefault().Isdeleted == null || x.AdminAspnetusers.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }) ||
-               x.Physicians.FirstOrDefault().Isdeleted ==null|| x.Physicians.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }))).Select(x => new UserAccessModel
+                Where(x => (x.Aspnetuserroles.FirstOrDefault().Roleid != 3) && (adminaccountfilter == 0 || x.Aspnetuserroles.FirstOrDefault().Roleid == adminaccountfilter)
+                //(x.AdminAspnetusers.FirstOrDefault().Isdeleted == null || x.AdminAspnetusers.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }) ||
+              /* x.Physicians.FirstOrDefault().Isdeleted ==null|| x.Physicians.FirstOrDefault().Isdeleted == new BitArray(new bool[1] { false }))*/).Select(x => new UserAccessModel
                 {
                     AccountType = (Roles)x.Aspnetuserroles.FirstOrDefault().Roleid,
                     AccountPOC = x.Name,
@@ -224,15 +224,15 @@ namespace BusinessLogic.Service
                     //userid = _db.Users.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Userid)
                                     //.Union(_db.Physicians.Where(y => y.Aspnetuserid == x.Id).Select(x => x.Physicianid)).FirstOrDefault(),
                     aspnetuserid    = x.Id,
-                });
+                }).ToList();
 
 
             int totalrecords = data.Count();
-            int pagesize = 4;
+            int pagesize = 6;
             int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
-            var paginateddata = data.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
+            var paginateddashboard = data.Skip((currentpage - 1) * pagesize).Take(pagesize).ToList();
 
-            model.userAccessModels = paginateddata;
+            model.userAccessModels = paginateddashboard;
             model.CurrentPage = currentpage;
             model.TotalPages = totalPages;
             model.PageSize = pagesize;
@@ -267,7 +267,7 @@ namespace BusinessLogic.Service
                 Regionid = x.Regionid,
                 roleid = x.Roleid,
                 physicianid = x.Physicianid,
-                Isagreementdoc = x.Isagreementdoc,
+                Isagreementdoc  = x.Isagreementdoc ,
                 Isbackgrounddoc = x.Isbackgrounddoc,
                 Iscredentialdoc = x.Iscredentialdoc,
                 Isnondisclosuredoc = x.Isnondisclosuredoc,
@@ -731,26 +731,7 @@ namespace BusinessLogic.Service
             }
             return null;
         }
-        //private void SaveDocument(IFormFile document, int physicianId, string subfolder, string propertyName, Physician physician)
-        //{
-        //    var propertyInfo = typeof(Physician).GetProperty(propertyName);
-        //    if (document != null)
-        //    {
-        //        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/PhysicianDocument/{physicianId}");
-        //        string filePath = Path.Combine(folderPath, subfolder);
-
-        //        if (!Directory.Exists(folderPath))
-        //        {
-        //            Directory.CreateDirectory(folderPath);
-        //        }
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            document.CopyTo(stream);
-        //        }
-        //        propertyInfo.SetValue(physician, new BitArray(new bool[1] { true }));
-
-        //    }
-        //}
+        
 
         /***my profile**/
         public AdminDashboard MyProfileDataGet(string aspnetuserid)
@@ -784,13 +765,13 @@ namespace BusinessLogic.Service
                             Aspnetid = adminAspnetUser.Aspnetuserid
                         }).FirstOrDefault();
 
-
-            var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
-            {
-                RegionId = x.Regionid,
-                Regionname = x.Region.Name,
-            }).ToList();
-
+           
+                var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
+                {
+                    RegionId = x.Regionid,
+                    Regionname = x.Region.Name,
+                }).ToList();
+           
             var role = _db.Roles.ToList();
             var region = _db.Regions.ToList();
 

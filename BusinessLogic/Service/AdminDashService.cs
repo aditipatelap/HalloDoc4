@@ -551,20 +551,25 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard GetEncounterForm(int requestid)
         {
-            //var reqClient = _db.Requestclients.FirstOrDefault(x => x.Requestid == requestid);
-            var items = _db.Requestclients.Where(x => x.Requestid == requestid).FirstOrDefault();
-           
-            var model = _db.Encounters.FirstOrDefault(x => x.RequestId == requestid);
             EncounterForm EncounterFormDetails = new EncounterForm();
+            var reqClient = _db.Requestclients.FirstOrDefault(x => x.Requestid == requestid);
+            var items = _db.Requestclients.Where(x => x.Requestid == requestid).FirstOrDefault();
+           if(reqClient != null)
+            {
+                EncounterFormDetails.FirstName = items.Firstname;
+                EncounterFormDetails.LastName = items.Lastname;
+                EncounterFormDetails.Email = items.Email;
+                EncounterFormDetails.Address = items.Address;
+                // EncounterFormDetails.BirthDate=items.
+                EncounterFormDetails.Requestid = requestid;
+
+            }
+            var model = _db.Encounters.FirstOrDefault(x => x.RequestId == requestid);
+          
             EncounterFormDetails.Requestid = requestid;
             if (model != null)
             {
-                EncounterFormDetails.FirstName = items.Firstname;
-                EncounterFormDetails.LastName= items.Lastname;
-                EncounterFormDetails.Email= items.Email;
-                EncounterFormDetails.Address=items.Address;
-               // EncounterFormDetails.BirthDate=items.
-                EncounterFormDetails.Requestid = (int)model.RequestId;
+               
                 EncounterFormDetails.HistoryOfPresentIllness = model.HistoryOfPresentIllnessOrInjury;
                 EncounterFormDetails.MedicalHistory = model.MedicalHistory;
                 EncounterFormDetails.Medications = model.Medications;
@@ -1160,6 +1165,13 @@ namespace BusinessLogic.Service
             model.requestid = RequestID;
 
             return model;
+        }
+        public AdminDashboard GetRegions()
+        {
+            var data = _db.Regions.ToList();
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Regions=data;
+            return adminDashboard;  
         }
         public bool EditCloseCase(AdminDashboard vp, int RequestID)
         {

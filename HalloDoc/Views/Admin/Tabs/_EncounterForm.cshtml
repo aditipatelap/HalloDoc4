@@ -54,7 +54,7 @@
                             <div class="invalid-feedback">Please provide a Date.</div>
                         </div>
                         <div class="col-sm-12 col-md-6 col-xl-6 form-floating mb-3 text-muted">
-                            <input id="phone" class="form-control inp2 " asp-for="@Model.encounterform.Number" type="tel" placeholder="Phone Number" disabled required />
+                            <input id="phoneNumber1" class="form-control inp2 " asp-for="@Model.encounterform.Number" type="tel" placeholder="Phone Number" disabled required />
                             <div class="invalid-feedback">Please provide a PhoneNumber.</div>
                         </div>
                         <div class="col-sm-12 col-md-6 col-xl-6 form-floating mb-3 text-muted">
@@ -320,13 +320,19 @@
         var data = new FormData(this);
         disableEditBtn();
         $.ajax({
-            url: '@Url.Action("EncounterFormDataPost", "Provider")',
+            url: '@Url.Action("EncounterFormDataPost", "Admin")',
             type: 'Post',
             data: data,
             processData: false,
             contentType: false,
-            success: function (data) {
-                $(".TabContent1").html(data);
+            success: function (result) {
+
+                if (result.success) {
+                    $("#Dashboard").click();
+                    //toastr.error("Case Transferred Successfully");
+                }
+
+
             },
             error: function () {
 
@@ -373,3 +379,33 @@
 
 
 </script>
+<script>
+    const phoneInputField = document.querySelectorAll("input[type='tel']");
+    for (var i = 0; i < phoneInputField.length; i++) {
+        const phoneInput = window.intlTelInput(phoneInputField[i], {
+            utilsScript:
+                "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+    }
+</script>
+<script>
+    var phone1 = document.querySelector("#phoneNumber1");
+    var phoneInput1 = window.intlTelInput(phone1, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+    var phone2 = document.querySelector("#phoneNumber2");
+    var phoneInput2 = window.intlTelInput(phone2, {
+        utilsScript:
+            "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        nationalMode: false,
+        showSelectedDialCode: true,
+        autoInsertDialCode: true,
+        formatOnDisplay: false,
+    });
+</script>
+

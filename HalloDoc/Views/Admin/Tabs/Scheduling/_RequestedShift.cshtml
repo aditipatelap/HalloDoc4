@@ -88,24 +88,7 @@
                 type: "POST",
                 data: { ids: selectedPhysicians, type: 1 },
                 success: function (result) {
-                    if (result.success) {
-                        var TabId = "RequestedShift";
-                        $.ajax({
-                            url: '/Admin/GetTabs',
-                            data: { Tabid: TabId },
-                            method: 'GET',
-                            success: function (data) {
-                                $("#TabContent").html(data);
-                            },
-                            error: function () {
-                                console.error('Error fetching partial view.');
-                            }
-                        });
-                        toastr.success("Selected Shifts are approved!");
-                    }
-                    else {
-                        toastr.error("Error while approving shift!");
-                    }
+                    $("#TabContent").html(result);
                 }
             });
         }
@@ -125,24 +108,7 @@
                 type: "POST",
                 data: { ids: selectedPhysicians, type: 2 },
                 success: function (result) {
-                    if (result.success) {
-                        var TabId = "RequestedShift";
-                        $.ajax({
-                            url: '/Admin/GetTabs',
-                            data: { Tabid: TabId },
-                            method: 'GET',
-                            success: function (data) {
-                                $("#TabContent").html(data);
-                            },
-                            error: function () {
-                                console.error('Error fetching partial view.');
-                            }
-                        });
-                        toastr.success("Selected Shifts are deleted!");
-                    }
-                    else {
-                        toastr.error("Error while deleting shift!");
-                    }
+                    $("#TabContent").html(result);
                 }
             });
         }

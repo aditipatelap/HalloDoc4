@@ -11,11 +11,12 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Phone Number</th>
+                        
+                        <th scope="col">Address</th>
                         @if (Model.statusId == 3)
                         {
                             <th scope="col">Status</th>
                         }
-                        <th scope="col">Address</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -92,11 +93,23 @@
                                     }
                                 </div>
                             </td>
-                            @if (Model.statusId == 3)
-                            {
-                                <td style="background:@bgColor">status</td>
-                            }
+                         
                             <td style="background:@bgColor">@item.Address</td>
+
+                            @if (item.status == 4 || item.status == 5)
+                            {
+                                if (item.calltype == 1)
+                                {
+                                    <td style="background:@bgColor">
+                                        <button class="btn btn-lg btn-info" href="#" @*@(item.isfinalize == true ? "" : "disabled")*@ onclick="concludeRequest(@item.RequestId)">House Call</button>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="background:@bgColor"></td>
+                                }
+                            }
+
                             <td style="background:@bgColor">
                                 <div class="dropdown show">
                                     <button class="btn text-white border border-white py-1 bi " href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -141,23 +154,23 @@
                                                 Transfer
                                             </a>
                                         }
-                                        @if (Model.statusId == 6 )
+                                        @if (Model.statusId == 6)
                                         {
-                                          
+
                                             <a class="dropdown-item tablink" id="Conclude" data-btn="@item.RequestId">
                                                 <i class="fa-regular fa-circle-xmark"></i>
                                                 Conclude Care
                                             </a>
-                                           
+
 
                                         }
                                         @*@if (Model.statusId == 6 || Model.statusId == 2)
-                                        {
-                                            <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#dashModel" id="clearCase" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
-                                                <i class="bi bi-building"></i>
-                                                ClearCase
-                                            </a>
-                                        }*@
+                                {
+                                <a class="dropdown-item btnModel" href="#" data-bs-toggle="modal" data-bs-target="#dashModel" id="clearCase" data-btn="@item.RequestId" data-value1="@item.firstName @item.lastName ">
+                                <i class="bi bi-building"></i>
+                                ClearCase
+                                </a>
+                                }*@
                                         @if (Model.statusId == 3)
                                         {
                                             <a class="dropdown-item tablink" data-btn="@item.RequestId" id="SendOrdere">
@@ -165,7 +178,7 @@
                                                 Orders
                                             </a>
 
-                                           
+
 
                                         }
 
@@ -187,7 +200,7 @@
                                                         <i class="fa fa-file-text-o" aria-hidden="true"></i>
                                                         Encounter
                                                     </a>
-                                                   
+
                                                 }
                                                 else
                                                 {
@@ -202,8 +215,8 @@
 
 
 
-                                    
-                                </div>
+
+                                    </div>
                             </td>
                         </tr>
                     }
@@ -400,7 +413,7 @@
                                                 <button class="col-5 btn rounded-pill btn-danger mobile-font" onclick="DashboardCancelCase(@obj.RequestId)" type="button">Cancel Case</button>
                                             }
 
-                                            <button class="col-5 p-2 btn rounded-pill btn-success mobile-font tablink" id="ViewCaseProvider" data-btn="@obj.RequestId" >View Case</button>
+                                            <button class="col-5 p-2 btn rounded-pill btn-success mobile-font tablink" id="ViewCaseProvider" data-btn="@obj.RequestId">View Case</button>
 
                                             @if (@Model.statusId == 1)
                                             {
@@ -455,7 +468,7 @@
         {
 
             <div class="page-item p-1 m-4 border border-light rounded ">
-                <span class="page-link"> @Model.CurrentPage -  @Model.TotalPages of @Model.TotalPages</span>
+                <span class="page-link"> @Model.CurrentPage  of @Model.TotalPages</span>
             </div>
         }
         <div class="mb-0 float-right m-4">
@@ -510,117 +523,25 @@
     </div>
 </div>
 
-@*<script>
-    $(document).on('click', '.tablink', TabLoad);
-    //$('.btnModel').click(function () {
-    //    var ModelId = $(this).attr('id');
-    //    var id = $(this).data("btn");
-    //    var patientname = $(this).data('value1');
-    //    console.log(patientname);
-    //    $.ajax({
-    //        url: '/Admin/ActionView',
-    //        type: 'GET',
-    //        data: { id: ModelId, reqId: id, patientName: patientname },
-    //        success: function (result) {
-
-    //            $('.dashModel').html(result);
-    //        },
-    //        error: function (xhr, status, error) {
-    //            console.error(error);
-    //        }
-    //    });
-    //});
-    //$(document).ready(function () {
-    //    $('.tabBtn').click(function () {
-    //        var id = $(this).data("btn");
-    //        console.log(id);
-    //        var tabBtnId = $(this).attr('id');
-    //        $.ajax({
-    //            url: '@Url.Action("DashNavTavView", "Admin")',
-    //            type: 'GET',
-    //            data: { Id: tabBtnId, reqid: id },
-    //            success: function (result) {
-
-    //                $('.tab-content').html(result);
-    //            },
-    //            error: function (xhr, status, error) {
-    //                console.error(error);
-    //            }
-    //        });
-    //    });
-    //});
-   
-        $('.custompagination').click(function () {
-            var currentpage = $(this).data('page');
-            var tabId = globalstatusId;
-            var region = $('.regionDropDown').val();
-            var searchstream = $('.searchInput').val();
-            $.ajax({
-                url: '@Url.Action("PartialViewAction", "Provider")',
-                type: 'GET',
-                data: { statusId: tabId, currentPage: currentpage, region: region, searchstream: searchstream },
-                success: function (result) {
-
-                    $('.partialViewContainer1').html(result);
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        });
-    
-    //$('.tabBtn').click(function () {
-    //    var id = $(this).data("btn");
-    //    var tabBtnId = $(this).attr('id');
-    //    $.ajax({
-    //        url: '@Url.Action("DocumentList", "Admin")',
-    //        type: 'GET',
-    //        data: { Id: tabBtnId, reqid: id },
-    //        success: function (result) {
-
-    //            $('#DocumentList').html(result);
-    //        },
-    //        error: function (xhr, status, error) {
-    //            console.error(error);
-    //        }
-    //    });
-
-    //});
-</script>
 <script>
-    function DashPartialView() {
-        var id = $(this).data("btn");
-        console.log(id);
-        var tabBtnId = $(this).attr('id');
-        $.ajax({
-            url: '@Url.Action("DashNavTavView", "Admin")',
-            type: 'GET',
-            data: { Id: tabBtnId, reqid: id },
-            success: function (result) {
+    function concludeRequest(requestId) {
 
-                $('.tab-content').html(result);
+        $.ajax({
+            url: "/Provider/ConcludeHouseCall",
+            data: { reqId: requestId },
+            type: 'POST',
+            success: function (result) {
+                
+                $('#TabContent').html(result);
             },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
+            error: function (error) {
+                console.log(error);
+                alert('Error Fetching Request')
+            },
         });
     }
-    $('.custompagination').click(function () {
-        var currentpage = $(this).data('page');
-        var tabId = globalstatusId;
-        var region = $('.regionDropDown').val();
-        var searchstream = $('.searchInput').val();
-        $.ajax({
-            url: '@Url.Action("PartialViewAction", "Admin")',
-            type: 'GET',
-            data: { statusId: tabId, currentPage: currentpage, region: region, searchstream: searchstream },
-            success: function (result) {
 
-                $('.partialViewContainer').html(result);
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-            }
-        });
-    });
-</script>*@
+    function CloseEncounterModel() {
+        $("#dashModel").hide();
+    }
+</script>

@@ -97,6 +97,7 @@ namespace BusinessLogic.Service
                 usr.Email = patientReq.Email;
                 usr.Mobile = patientReq.Phonenumber;
                 usr.City = patientReq.City; 
+                usr.Street=patientReq.Street;   
                 usr.State = patientReq.State;
                 usr.Zip = patientReq.Zipcode;
                 usr.Createdby = Au.Id;
@@ -610,26 +611,6 @@ namespace BusinessLogic.Service
         }
 
 
-
-        /*   public void UserData(Profilemodel pm, int id)
-           {
-
-
-               User existuser = _db.Users.FirstOrDefault(u => u.Userid == id);
-               if (existuser != null)
-               {
-                   existuser.Firstname = pm.FirstName;
-                   existuser.Lastname = pm.LastName;
-                   existuser.Email = pm.Email;
-                   existuser.State = pm.State;
-                //   existuser.Street = profilemodel.Street
-                  // existuser.Zip = profilemodel.Zipcode;
-   //_db.Update(existuser)
-
-               }
-               _db.SaveChanges();
-
-           }*/
 
         
         public void SaveProfileData(Profilemodel model, int id)

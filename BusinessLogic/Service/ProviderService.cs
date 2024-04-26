@@ -79,6 +79,7 @@ namespace BusinessLogic.Service
                             RequestId = req.Requestid,
                             StatusId = req.Status,
                             Address = rc.Address,
+                            calltype=req.Calltype,
                             isfinalize = _db.Encounters.FirstOrDefault(x => x.RequestId == req.Requestid).IsFinalize,
                         };
 
@@ -147,68 +148,59 @@ namespace BusinessLogic.Service
         }
         public ProviderDash GetProviderInfo(string aspnetuserid)
         {
-            //var phy = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Physicianid == physicianId).Select(x=>new ProviderInfoModel
-
-            //ProviderInfo obj = new()
-            //{
-            //    PhysicianId = phy.Physicianid,
-            //    Password = phy.Aspnetuser.Passwordhash,
-            //    UserName = phy.Aspnetuser.Username,
-            //    FirstName = phy.Firstname,
-            //    LastName = phy.Lastname,
-            //    Email = phy.Email,
-            //    PhoneNumber = phy.Mobile,
-            //    MedicalLicenseNumber = phy.Medicallicense,
-            //    NPINumber = phy.Npinumber,
-            //    SyncEmail = phy.Syncemailaddress,
-            //    Address1 = phy.Address1,
-            //    Address2 = phy.Address2,
-            //    City = phy.City,
-            //    State = phy.City,
-            //    Zip = phy.Zip,
-            //    Phone = phy.Altphone, 
-            //    BusinessName = phy.Businessname,
-            //    BusinessWebsite = phy.Businesswebsite,
-            //    Photo1 = phy.Photo,
-            //    Signature1 = phy.Signature,
-            //    AdminNote = phy.Adminnotes,
-            //    RoleId = phy.Roleid,
-            //    regionId = phy.Regionid,
-            //};
-
-            //var result = new ProviderDash
-            //{
-            //    regions = GetAllRegions().regions,
-            //    ProviderInfo = obj,
-            //};
-            //return result;
-          var id = aspnetuserid.Trim();
-
-            var result = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == id).Select(x => new ProviderInfoModel
-            {
+            var id = aspnetuserid.Trim();
+            var phy = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == id).Select(x => new ProviderInfoModel
+            { 
+            
+         
+                PhysicianId = x.Physicianid,
+                Password = x.Aspnetuser.Passwordhash,
                 UserName = x.Aspnetuser.Name,
                 FirstName = x.Firstname,
                 LastName = x.Lastname,
                 Email = x.Email,
                 PhoneNumber = x.Mobile,
+                MedicalLicenseNumber = x.Medicallicense,
+                NPINumber = x.Npinumber,
+                SyncEmail = x.Syncemailaddress,
                 Address1 = x.Address1,
                 Address2 = x.Address2,
                 City = x.City,
+                State = x.City,
                 Zip = x.Zip,
+                Phone = x.Altphone,
                 BusinessName = x.Businessname,
                 BusinessWebsite = x.Businesswebsite,
-               // State = (PhysicianStatus)x.Status,
-                PhysicianId = x.Physicianid,
-                aspId = x.Aspnetuserid
-
-
-
+                Photo1 = x.Photo,
+                Signature1 = x.Signature,
+                AdminNote = x.Adminnotes,
+                RoleId = x.Roleid,
+                regionId = x.Regionid,
             }).FirstOrDefault();
-            ProviderDash adminDashboard = new ProviderDash();
-            adminDashboard.ProviderInfomodel = result;
-            adminDashboard.regions = GetAllRegions().regions;
-            //adminDashboard.physicianid = result.physicianid;
-            return adminDashboard;
+
+            var result = new ProviderDash
+            {
+                regions = GetAllRegions().regions,
+                ProviderInfomodel = phy,
+            };
+            return result;
+           
+
+            
+        }
+        public bool ConcludeHouseCall(int reqid)
+        {
+            var req = _db.Requests.Where(x => x.Requestid == reqid).FirstOrDefault();
+
+            if (req != null)
+            {
+                req.Status = (int)(Requeststatuses.Conclude);
+                req.Modifieddate = DateTime.Now;
+                _db.SaveChanges();
+                return true;
+            }
+
+            return false;
         }
         /*view notes*/
 
@@ -243,11 +235,13 @@ namespace BusinessLogic.Service
                 if (TOCId == 1)
                 {
                     req.Status = (int)(Requeststatuses.MDonSite);
+                    req.Calltype = 1;
                     req.Modifieddate = DateTime.Now;
                 }
                 else
                 {
                     req.Status = (int)(Requeststatuses.Conclude);
+                    req.Calltype = 2;
                     req.Modifieddate = DateTime.Now;
                 }
                 _db.SaveChanges();

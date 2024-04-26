@@ -260,6 +260,25 @@ namespace HalloDoc.Controllers
         //    _providerService.RequestedShiftUpdate(ids, type, adminId);
         //    return GetTabs("_RequestedShift", default, default, default, default);
         //}
+        /*conclude house call*/
+        public IActionResult ConcludeHouseCall(int reqid)
+        {
+            int? sessionPhysicianId = _httpContextAccessor.HttpContext?.Session?.GetInt32("physicianId");
+            int physicianId = sessionPhysicianId ?? default;
+            bool result = _providerDataService.ConcludeHouseCall(reqid);
+
+            if (result)
+            {
+                _notyf.Success("Request Successfully Concluded !!");
+                return GetTabs("Dashboard", default, default, default, default, default, default, reqid, default, default, default);
+            }
+            else
+            {
+                _notyf.Error("Request Failed To Conclude !!");
+                return GetTabs("Dashboard", default, default, default, default, default, default, reqid, default, default, default);
+
+            }
+        }
         /*********conclude care*******/
         public JsonResult ConcludeCare(int reqid, string notes)
         {

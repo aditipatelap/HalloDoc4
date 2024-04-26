@@ -1,5 +1,8 @@
 ﻿@model Int32
-
+<div class="modal-header bg-info ">
+    <h5 class="modal-title text-white" id="exampleModalLabel"> Accept Request  </h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
     <h3 class="">Confirmation for accept Request</h3>
     <p>Are sure you want to accept this Request?</p>
     <input type="hidden" id="acceptRequestid" />
@@ -28,7 +31,7 @@
                         method: 'Post',
                         success: function (data) {
                             $("#TabContent").html(data);
-                            toastr.success("Request Accepted successfully!");
+                            //toastr.success("Request Accepted successfully!");
                         },
                         error: function () {
                             console.error('Error fetching partial view.');

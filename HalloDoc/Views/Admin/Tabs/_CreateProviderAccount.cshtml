@@ -3,16 +3,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div class= "row justify-content-center mb-5 pb-5">
-    <div class="d-flex justify-content-between mt-5">
+   <div class="d-flex justify-content-between mt-4">
         <div class="d-flex">
-            <h4 class=" pt-2 mx-5 mt-3"> Provider Location </h4>
+            <h4 class="m-0 pt-2 ">Create Physician Account</h4>
         </div>
         <div>
-            <button type="button" class="btn btn-outline-info p-2 pe-3 button-info tablink" id="home">
-                <i class="bi bi-chevron-left i-info"></i>Back
-            </button>
+          
         </div>
     </div>
+
+   
     
     <div class="m-4 shadow col-xl-8 col-md-9 col-11 p-5">
         <form id="CreateProvider" class="pb-3">
@@ -88,7 +88,7 @@
                         <input type="text" class="form-control PhysicianInput" id="PhysicianMedicalLicense" placeholder="Confirm Email" asp-for="PhysicianProfile.LicenseNo">
                         <label for="PhysicianMedicalLicense" class="floatingLabel">Medical Liccense#</label>
                     </div>
-                    <span id="Medicallicense" asp-validation-for="PhysicianProfile.LicenseNo" class="text-danger"></span>
+                   
                 </div>
                 <div class="col-12 col-md-6 mb-3">
                     <div class="form-floating">
