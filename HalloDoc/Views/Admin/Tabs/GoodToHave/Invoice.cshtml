@@ -1,0 +1,52 @@
+﻿<div class="container mt-3 d-flex justify-content-between" id="back">
+    <div class="text-black h3">Timesheets</div>
+    <div></div>
+    <button class="btn btn-outline-info btn-large" onclick="location.href='@Url.Action("Dashboard", "Admin")'">
+        <i class="bi bi-chevron-left"></i>Back
+    </button>
+</div>
+<div class="shadow container p-4">
+    <div class="row gap-2 d-flex">
+        <div class="form-floating col-lg-3">
+            <select class="form-select regionDropDown dark-background-div " id="floatingSelect" aria-label="Floating label select example">
+                @*@if (Model.regions != null)
+                {*@
+                <option selected class=" text-white1" value="">Search By Physician</option>
+                @* @foreach (var item in Model.regions)
+                {
+                <option class="text-white1">@item.Name</option>
+                }*@
+                @*}*@
+            </select>
+            <label for="floatingSelect text-white1"><i class="bi bi-search ms-2"></i> Search By Physician</label>
+        </div>
+        <div class="form-floating col-lg-3">
+            <select class="form-select regionDropDown dark-background-div " id="floatingSelect" aria-label="Floating label select example">
+                @*@if (Model.regions != null)
+                {*@
+                <option selected class=" text-white1" value="">Search by Timesheetperiod</option>
+                @* @foreach (var item in Model.regions)
+                {
+                <option class="text-white1">@item.Name</option>
+                }*@
+                @*}*@
+            </select>
+            <label for="floatingSelect text-white1"><i class="bi bi-search ms-2"></i> Search by Timesheetperiod</label>
+        </div>
+    </div>
+    <div id="InvoiceTable"></div>
+</div>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetInvoiceTable", "Admin")',
+            type: 'Post',
+            success: function (result) {
+                $('#InvoiceTable').html(result);
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+</script>

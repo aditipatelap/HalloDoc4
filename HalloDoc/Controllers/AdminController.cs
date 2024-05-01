@@ -227,25 +227,21 @@ namespace HalloDoc.Controllers
                 var data = _providerService.GetSearchRecordInfo();
                 return PartialView("Tabs/Records/SearchRecords",data);
             }
+            if (model.tabid == "PhysicianInformation")
+            {
+               //var data = _providerService.EditPhysicianDataGet(aspnetuserid);
+                return PartialView("Tabs/GoodToHave/PhysicianInformation");
+            }
+             if (model.tabid == "Invoicing")
+            {
+               //var data = _providerService.EditPhysicianDataGet(aspnetuserid);
+                return PartialView("Tabs/GoodToHave/Invoice");
+            }
 
             return View();
 
         }
-        //public IActionResult DocumentList(int requestid)
-        //{
-        //    var res=_AdminDash.GetViewUpload(requestid);
-        //    return View(res);
-        //}
-        //public IActionResult DownloadAll(int statusid)
-
-        //{
-        //    statusid = 1;
-        //    MemoryStream ms = _AdminDash.ExportALl(statusid);
-        //    return File(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "data.xlsx");
-
-
-        //}
-
+      
         public IActionResult GetPartialView(string btnName, int statusid, string searchValue, int currentpage, string dropdown, int reqtype)
         {
 
