@@ -16,10 +16,11 @@ using static DataAccess.ViewModel.Constant;
 using Twilio.Types;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+using System.Globalization;
 
 namespace BusinessLogic.Service
 {
-    public class ProviderDataService:IProviderInterface
+    public class ProviderDataService : IProviderInterface
     {
         private readonly ApplicationDbContext _db;
         public ProviderDataService(ApplicationDbContext db)
@@ -29,11 +30,11 @@ namespace BusinessLogic.Service
         public ProviderDash reqByStatus(int statusId, int reqTypeId, int currentpage, string searchstream, string region, int physicianId)
         {
 
-           
+
             List<int> reqStatusId = new List<int>();
             Physician phy = new Physician();
 
-            if ( statusId == (int)Status.Pending)
+            if (statusId == (int)Status.Pending)
             {
                 reqStatusId.Add(statusId);
             }
@@ -54,7 +55,7 @@ namespace BusinessLogic.Service
             }
 
 
-                var query = from req in _db.Requests
+            var query = from req in _db.Requests
                         join rc in _db.Requestclients
                         on req.Requestid equals rc.Requestid
                         where reqStatusId.Contains(req.Status) && req.Physicianid == physicianId &&
@@ -79,12 +80,12 @@ namespace BusinessLogic.Service
                             RequestId = req.Requestid,
                             StatusId = req.Status,
                             Address = rc.Address,
-                            calltype=req.Calltype,
+                            calltype = req.Calltype,
                             isfinalize = _db.Encounters.FirstOrDefault(x => x.RequestId == req.Requestid).IsFinalize,
                         };
 
 
-           
+
             int totalrecords = query.Count();//10
             int pagesize = 2;
             int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
@@ -125,7 +126,7 @@ namespace BusinessLogic.Service
         //}
         public ProviderDash GetRequestStatusCountByPhysician(int physicianId)
         {
-           
+
             ProviderDash dash = new ProviderDash();
             var Request = _db.Requests.Include(x => x.Requestclients).Where(x => x.Requestid == x.Requestclients.FirstOrDefault().Requestid).ToList();
             dash.newcount = Request.Count(x => x.Status == (int)Requeststatuses.assignedbyphysician && x.Requestid == x.Requestclients.FirstOrDefault().Requestid && x.Physicianid == physicianId);
@@ -138,7 +139,7 @@ namespace BusinessLogic.Service
 
 
         }
-        public ProviderDash GetAllRegions() 
+        public ProviderDash GetAllRegions()
         {
             var result = new ProviderDash
             {
@@ -150,9 +151,9 @@ namespace BusinessLogic.Service
         {
             var id = aspnetuserid.Trim();
             var phy = _db.Physicians.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == id).Select(x => new ProviderInfoModel
-            { 
-            
-         
+            {
+
+
                 PhysicianId = x.Physicianid,
                 Password = x.Aspnetuser.Passwordhash,
                 UserName = x.Aspnetuser.Name,
@@ -184,9 +185,9 @@ namespace BusinessLogic.Service
                 ProviderInfomodel = phy,
             };
             return result;
-           
 
-            
+
+
         }
         public bool ConcludeHouseCall(int reqid)
         {
@@ -204,7 +205,7 @@ namespace BusinessLogic.Service
         }
         /*view notes*/
 
-        public void PostViewNotes(AdminDashboard model,string aspnetuserid)
+        public void PostViewNotes(AdminDashboard model, string aspnetuserid)
         {
 
 
@@ -299,7 +300,7 @@ namespace BusinessLogic.Service
 
                     _db.Requeststatuslogs.Add(rsl);
                     _db.SaveChanges();
-                   
+
                     Requestclosed requestclosed = new Requestclosed();
                     requestclosed.Requestid = reqId;
                     requestclosed.Requeststatuslogid = rsl.Requeststatuslogid;
@@ -360,8 +361,8 @@ namespace BusinessLogic.Service
 
         }
         /******accept****/
-       
- public void AcceptRequest(int Requestid, int physicianid)
+
+        public void AcceptRequest(int Requestid, int physicianid)
         {
             var request = _db.Requests.FirstOrDefault(r => r.Requestid == Requestid);
 
@@ -438,7 +439,7 @@ namespace BusinessLogic.Service
                     Requestid = reqid,
                     Filename = fileName,
                     Createddate = DateTime.Now,
-                    Isdeleted = new BitArray(new bool[1] {false}),
+                    Isdeleted = new BitArray(new bool[1] { false }),
                     Ispatientrecords = new BitArray(new bool[1]),
                     Physicianid = Physicianid,
                 };
@@ -464,14 +465,14 @@ namespace BusinessLogic.Service
 
             var shift = new Shift
             {
-                Physicianid  = _db.Aspnetusers
+                Physicianid = _db.Aspnetusers
     .Include(x => x.Physicians)
     .Where(x => x.Id == aspnetid && x.Physicians.Any())
     .FirstOrDefault()
     .Physicians
     .FirstOrDefault()
     .Physicianid,
-            Startdate = DateOnly.FromDateTime(scheduleModel.ShiftDate),
+                Startdate = DateOnly.FromDateTime(scheduleModel.ShiftDate),
                 Isrepeat = new BitArray(new bool[1] { scheduleModel.isRepeat }),
                 Weekdays = scheduleModel.SelectedDayIds,
                 Repeatupto = scheduleModel.RepeatEnd,
@@ -792,7 +793,296 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
         }
+        //invoicing
+        public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, string aspuserid)
+        {
+            DateTime currentDate = startDate;
+            List<TimesheetModel> model = new List<TimesheetModel>();
 
+            for (var i = 0; i < 15; i++)
+            {
+                var item = new TimesheetModel();
+                item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                model.Add(item);
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return model;
+        }
+
+        public bool CheckFinalize(DateTime startDate, string aspuserid)
+        {
+            int Physicianid = _db.Physicians.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Physicianid;
+            var data = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (data != null)
+            {
+                return data.Isfinalize;
+            }
+
+            return false;
+        }
+         
+        public List<InvoicingModel> SearchDataByRangeInvoicing(DateTime startDate, string aspuserid)
+        {
+            int ? Physicianid  = _db.Physicians.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Physicianid;
+
+            DateTime currentDate = startDate;
+            List<InvoicingModel> model = new List<InvoicingModel>();
+
+            for (var i = 0; i < 15; i++)
+            {
+                var item = new InvoicingModel();
+                item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                var invoice = _db.Invoicings.FirstOrDefault(a => a.Startdate == startDate && a.Physicianid == Physicianid);
+
+                if (invoice != null)
+                {
+                    item.OnCallHours = GetOnCallHours(invoice.Physicianid, currentDate);
+                    var timesheet = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoice.Id && r.Date == currentDate);
+
+                    if (timesheet != null)
+                    {
+                        item.isWeekEnd = timesheet.Weekend ?? false;
+                        item.TotalHours = timesheet.Totalhours ?? 0;
+                        item.HouseCall = timesheet.Housecall ?? 0;
+                        item.Consult = timesheet.Consult ?? 0;
+                        item.Item = timesheet.Item ?? "";
+                        item.Amount = timesheet.Amount ?? 0;
+                        item.BillName = timesheet.Billname ?? "";
+                        item.IsDeleted = timesheet.Isdeleted ?? false;
+                        item.physicianid = Physicianid;
+                    }
+                }
+
+                model.Add(item);
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return model;
+        }
+
+        public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, string aspuserid)
+        {
+            int Physicianid = _db.Physicians.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Physicianid;
+
+            DateTime currentDate = startDate;
+            List<InvoicingModel> model = new List<InvoicingModel>();
+
+            for (var i = 0; i < 15; i++)
+            {
+                var item = new InvoicingModel();
+                item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                var invoice = _db.Invoicings.FirstOrDefault(a => a.Startdate == startDate && a.Physicianid == Physicianid);
+
+                if (invoice != null)
+                {
+                    var timesheet = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoice.Id && r.Date == currentDate);
+
+                    if (timesheet != null)
+                    {
+                        item.BillName = timesheet.Billname ?? "";
+                        item.Item = timesheet.Item ?? "";
+                        item.Amount = timesheet.Amount ?? 0;
+                    }
+                }
+
+                if (item.BillName != "" || item.Item != "" || item.Amount != 0)
+                {
+                    model.Add(item);
+                }
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return model;
+        }
+
+        public int GetOnCallHours(int physicianId, DateTime date)
+        {
+            var data = _db.Shiftdetails.Where(r => r.Shift.Physicianid == physicianId && r.Shiftdate == date).ToList();
+
+            if (data != null)
+            {
+                int hours = 0;
+                foreach (var i in data)
+                {
+                    TimeSpan timeSpan = i.Endtime - i.Starttime;
+                    int count = Convert.ToInt32(timeSpan.TotalHours);
+                    hours += count;
+                }
+                return hours;
+            }
+            return 0;
+        }
+
+        public bool SaveTimeSheet(List<InvoicingModel> invoicingModels, string aspuserid)
+        {
+            int Physicianid = _db.Physicians.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Physicianid;
+            var startDate = DateTime.ParseExact(invoicingModels.FirstOrDefault().Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            var isInvoicing = _db.Invoicings.Any(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (!isInvoicing)
+            {
+                var data = new Invoicing
+                {
+                    Startdate = startDate,
+                    Enddate = startDate.AddDays(14),
+                    Physicianid = Physicianid,
+                    Isfinalize = false,
+                };
+                _db.Invoicings.Add(data);
+                _db.SaveChanges();
+            }
+
+            var invoicing = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            foreach (var i in invoicingModels)
+            {
+                if (i.TotalHours != 0 || i.HouseCall != 0 || i.Consult != 0)
+                {
+                    var isExists = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoicing.Id && r.Date == DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture));
+
+                    if (isExists != null)
+                    {
+                        isExists.Invoiceid = invoicing.Id;
+                        isExists.Date = DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        isExists.Totalhours = i.TotalHours;
+                        isExists.Weekend = i.isWeekEnd;
+                        isExists.Housecall = i.HouseCall;
+                        isExists.Consult = i.Consult;
+
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        var timesheet = new Timesheet
+                        {
+                            Invoiceid = invoicing.Id,
+                            Date = DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                            Totalhours = i.TotalHours,
+                            Weekend = i.isWeekEnd,
+                            Housecall = i.HouseCall,
+                            Consult = i.Consult
+                        };
+                        _db.Timesheets.Add(timesheet);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool SaveReimbursement(InvoicingModel invoicingModels, string aspuserid)
+        {
+            int Physicianid = _db.Physicians.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Physicianid;
+            var startDate = invoicingModels.StartDate;
+
+            var isInvoicing = _db.Invoicings.Any(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (!isInvoicing)
+            {
+                var data = new Invoicing
+                {
+                    Startdate = startDate,
+                    Enddate = startDate.AddDays(14),
+                    Physicianid = Physicianid,
+                    Isfinalize = false,
+                };
+                _db.Invoicings.Add(data);
+                _db.SaveChanges();
+            }
+
+            var invoicing = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (invoicingModels.Item != "" || invoicingModels.Amount != 0 || invoicingModels.Bill != null)
+            {
+                var isExists = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoicing.Id && r.Date == DateTime.ParseExact(invoicingModels.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture));
+
+                if (isExists != null)
+                {
+                    isExists.Invoiceid = invoicing.Id;
+                    isExists.Date = DateTime.ParseExact(invoicingModels.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    isExists.Item = invoicingModels.Item;
+                    isExists.Amount = invoicingModels.Amount;
+
+                    if (invoicingModels.Bill != null)
+                    {
+                        isExists.Billname = invoicingModels.Bill.FileName;
+
+                        var fileName = $"{invoicingModels.Date}.pdf";
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/invoicing/" + Physicianid + "/" + fileName);
+
+                        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/invoicing/" + Physicianid);
+
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            invoicingModels.Bill.CopyTo(stream);
+                        }
+                    }
+
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    var timesheet = new Timesheet
+                    {
+                        Invoiceid = invoicing.Id,
+                        Date = DateTime.ParseExact(invoicingModels.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                        Item = invoicingModels.Item,
+                        Amount = invoicingModels.Amount
+                    };
+
+                    if (invoicingModels.Bill != null)
+                    {
+                        timesheet.Billname = invoicingModels.Bill.FileName;
+
+                        var fileName = $"{invoicingModels.Date}.pdf";
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/invoicing/" + Physicianid + "/" + fileName);
+
+                        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/invoicing/" + Physicianid);
+
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            invoicingModels.Bill.CopyTo(stream);
+                        }
+                    }
+
+                    _db.Timesheets.Add(timesheet);
+                    _db.SaveChanges();
+                }
+            }
+
+            return false;
+        }
+        public void FinalizeTimesheet(DateTime startDate, int Physicianid)
+        {
+            var invoicing = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (invoicing != null)
+            {
+                invoicing.Isfinalize = true;
+                invoicing.Modifiedby = Physicianid;
+                invoicing.Modifieddate = DateTime.Now;
+
+                _db.SaveChanges();
+            }
+
+        }
     }
 
 }

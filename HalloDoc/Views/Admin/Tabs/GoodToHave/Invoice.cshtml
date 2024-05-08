@@ -21,18 +21,10 @@
             <label for="floatingSelect text-white1"><i class="bi bi-search ms-2"></i> Search By Physician</label>
         </div>
         <div class="form-floating col-lg-3">
-            <select class="form-select regionDropDown dark-background-div " id="floatingSelect" aria-label="Floating label select example">
-                @*@if (Model.regions != null)
-                {*@
-                <option selected class=" text-white1" value="">Search by Timesheetperiod</option>
-                @* @foreach (var item in Model.regions)
-                {
-                <option class="text-white1">@item.Name</option>
-                }*@
-                @*}*@
-            </select>
-            <label for="floatingSelect text-white1"><i class="bi bi-search ms-2"></i> Search by Timesheetperiod</label>
+            <select class="form-select regionDropDown dark-background-div" id="dateDropdown" aria-label="Floating label select example"></select>
+            <label for="dateDropdown" class="text-white1"><i class="bi bi-search ms-2"></i> Search by Timesheetperiod</label>
         </div>
+
     </div>
     <div id="InvoiceTable"></div>
 </div>
@@ -48,5 +40,39 @@
                 console.error(error);
             }
         });
+    });
+</script>
+<script>
+    // Function to generate date ranges in intervals of 15 days
+    function generateDateRanges() {
+        let dropdown = document.getElementById("dateDropdown");
+        let startDate = new Date();
+        let endDate = new Date();
+        endDate.setDate(startDate.getDate() + 365); // Change 365 to any number of days you want the dropdown to cover
+
+        while (startDate <= endDate) {
+            let endDateRange = new Date(startDate);
+            endDateRange.setDate(endDateRange.getDate() + 14); // Adding 14 days to get the end date of the range
+            let option = document.createElement("option");
+            let startDateString = formatDate(startDate);
+            let endDateString = formatDate(endDateRange);
+            option.value = startDateString + ' - ' + endDateString;
+            option.text = startDateString + ' - ' + endDateString;
+            dropdown.add(option);
+            startDate.setDate(startDate.getDate() + 15); // Interval of 15 days
+        }
+    }
+
+    // Function to format date as yyyy/mm/dd
+    function formatDate(date) {
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    }
+
+    // Call the function to generate date ranges on page load
+    $(document).ready(function () {
+        generateDateRanges();
     });
 </script>

@@ -274,8 +274,14 @@ namespace BusinessLogic.Service
                 Islicensedoc = x.Islicensedoc,
                 PhotoName = x.Photo,
                 SignatureName = x.Signature,
+                aspnetid=aspnetuserid
             }).FirstOrDefault();
 
+            
+            
+            
+            
+            
             var RegionCheckbox = _db.Physicianregions.Include(x => x.Region).Where(x => x.Physicianid == data.physicianid).Select(x => new RegionCheckbox
             {
                 RegionId = x.Regionid,
@@ -290,7 +296,7 @@ namespace BusinessLogic.Service
             adminDashboardModel.RoleModel = role;
             adminDashboardModel.Regions = region;
             adminDashboardModel.regionCheckbox = RegionCheckbox;
-
+            adminDashboardModel.physicianid = data.physicianid;
             return adminDashboardModel;
         }
 
@@ -406,26 +412,7 @@ namespace BusinessLogic.Service
             }
         }
 
-        //string FileUpload(IFormFile file, int physicianId)
-        //{
-        //    if (file != null && file.Length > 0)
-        //    {
-        //        var fileName = Path.GetFileName(file.FileName);
-        //        string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/PhysicianDocuments/" + physicianId);
-
-        //        if (!Directory.Exists(folderPath))
-        //        {
-        //            Directory.CreateDirectory(folderPath);
-        //        }
-        //        string filePath = Path.Combine(folderPath, fileName);
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            file.CopyTo(stream);
-        //        }
-        //        return filePath;
-        //    }
-        //    return null;
-        //}
+        
 
         public void ProviderOnboardingDataUpdate(AdminDashboard model)
         {
@@ -2033,6 +2020,94 @@ namespace BusinessLogic.Service
 
         //    }
         //}
+        //good to have
+        public AdminDashboard GetPayRateData(int physicianid)
+        {
+            AdminDashboard adminDashboardModel = new AdminDashboard();
+            var data = _db.Providerpayrates.FirstOrDefault(r => r.PhysicianId == physicianid);
+
+            if (data != null)
+            {
+                var pmodel = new PhysicianPayrateModel
+                {
+                    Physicianid = (int)data.PhysicianId,
+                    NightShiftWeekend = data.NightShiftWeekend ?? 0,
+                    Shift = data.Shift ?? 0,
+                    HouseCallsNightWeekend = data.HouseCallNightWeekend ?? 0,
+                    PhoneConsults = data.PhoneConsult ?? 0,
+                    PhoneConsultsNightWeekend = data.PhoneConsultNightWeekend ?? 0,
+                    BatchTesting = data.BatchTesting ?? 0,
+                    HouseCalls = data.HouseCall ?? 0
+                };
+                adminDashboardModel.PhysicianPayrateModel = pmodel;
+                adminDashboardModel.physicianid = physicianid;
+                return adminDashboardModel;
+            }
+            else
+            {
+                var pmodel = new PhysicianPayrateModel
+                {
+                    Physicianid = physicianid,
+                    NightShiftWeekend = 0,
+                    Shift = 0,
+                    HouseCallsNightWeekend = 0,
+                    PhoneConsults = 0,
+                    PhoneConsultsNightWeekend = 0,
+                    BatchTesting = 0,
+                    HouseCalls = 0
+                };
+                adminDashboardModel.PhysicianPayrateModel = pmodel;
+                adminDashboardModel.physicianid = physicianid;
+                return adminDashboardModel;
+            }
+        }
+
+
+        public void SavePayrateData(int Physicianid, int rate, int type)
+        {
+            var check = _db.Providerpayrates.Any(p => p.PhysicianId == Physicianid);
+
+            if (!check)
+            {
+                var payrate = new Providerpayrate
+                {
+                    PhysicianId = Physicianid,
+                    CreatedBy = "Admin"
+                };
+                _db.Providerpayrates.Add(payrate);
+                _db.SaveChanges();
+            }
+
+            var data = _db.Providerpayrates.FirstOrDefault(p => p.PhysicianId == Physicianid);
+            switch (type)
+            {
+                case 1:
+                    data.NightShiftWeekend = rate;
+                    break;
+                case 2:
+                    data.Shift = rate;
+                    break;
+                case 3:
+                    data.HouseCallNightWeekend = rate;
+                    break;
+                case 4:
+                    data.PhoneConsult = rate;
+                    break;
+                case 5:
+                    data.PhoneConsultNightWeekend = rate;
+                    break;
+                case 6:
+                    data.BatchTesting = rate;
+                    break;
+                case 7:
+                    data.HouseCall = rate;
+                    break;
+            }
+            _db.SaveChanges();
+        }
+
+
+
 
     }
 }

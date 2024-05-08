@@ -1,0 +1,120 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+<div class="row justify-content-center mb-5 pb-5">
+    <div class="row my-4 mx-0 col-xl-6 col-md-8 col-11">
+        <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Timesheets</p>
+        <div class="col mb-0 text-end">
+            <a class="text-decoration-none text-info rounded border border-info p-2" onclick="LoadDashboard()">
+                <i class="bi bi-chevron-left text-info"></i>
+                Back
+            </a>
+        </div>
+    </div>
+
+    <div class="m-4 shadow col-xl-6 col-md-8 col-11">
+        <div class="mx-2">
+            <div class="d-inline d-md-flex align-items-center justify-content-between">
+                <div class="d-flex ms-2 mt-3 mb-1">
+                    @* <input type="text" id="datepicker" name="selectedDate"> *@
+                    <div class="form-floating">
+                        <select class="form-select regionDropDown dark-background-div" id="dateDropdown" aria-label="Floating label select example"></select>
+                        <label for="dateDropdown" class="text-white1"><i class="bi bi-search ms-2"></i> Search by </label>
+                    </div>
+                   
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center ms-2 mt-3 mb-1">
+                    @if (Model != null && Model.IsFinalize != null && Model.IsFinalize == false)
+                    {
+                        <div class="d-flex flex-wrap align-items-center ms-2 mt-3 mb-1">
+                            <button class="me-1 rounded btn border border-info text-info" id="finalizeButton" onclick="finalizeTimesheet()">
+                                Finalize Timesheet
+                            </button>
+                        </div>
+                    }
+
+
+                </div>
+            </div>
+
+            <div id="timeSheet">
+                <p class="text-secondary">No Record(s) Found</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-4 shadow col-xl-6 col-md-8 col-11 mt-3">
+        <div class="mx-2">
+            <p class="col fs-5 fw-semibold pb-0 mb-0 d-inline">TimeSheet Reimbursement</p>
+        </div>
+
+        <div class="mb-2" id="timeSheetReimbursement">
+            <p class="text-secondary">No Record(s) Found</p>
+        </div>
+    </div>
+</div>
+<script>
+    var  midMonth, end;
+    var start = moment();
+    // Function to generate date ranges in intervals of 15 days
+    function generateDateRanges() {
+        let dropdown = document.getElementById("dateDropdown");
+        let startDate = new Date();
+        let endDate = new Date();
+        endDate.setDate(startDate.getDate() + 365); // Change 365 to any number of days you want the dropdown to cover
+
+        while (startDate <= endDate) {
+            let endDateRange = new Date(startDate);
+            endDateRange.setDate(endDateRange.getDate() + 14); // Adding 14 days to get the end date of the range
+            let option = document.createElement("option");
+            let startDateString = formatDate(startDate);
+            let endDateString = formatDate(endDateRange);
+            option.value = startDateString + ' - ' + endDateString;
+            option.text = startDateString + ' - ' + endDateString;
+            dropdown.add(option);
+            startDate.setDate(startDate.getDate() + 15); // Interval of 15 days
+        }
+    }
+    function formatDate(date) {
+      
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    }
+    document.getElementById('dateDropdown').addEventListener('change', function () {
+        let selectedOption = this.options[this.selectedIndex].value;
+        let startDateString = selectedOption.split(' - ')[0];
+        start = moment(startDateString); 
+        SearchDataByRange(startDateString); 
+    });
+    $(document).ready(function () {
+        generateDateRanges();
+    });
+
+    function finalizeTimesheet() {
+        FinalizeInvoicing(start);
+    }
+    function SearchDataByRange(start) {
+        start = moment(start); 
+        var startDate = start.format("YYYY-MM-DD");
+        $('#timeSheet').load('@Url.Action("SearchDataByRange", "Provider")?startDate=' + startDate);
+        $('#timeSheetReimbursement').load('@Url.Action("LoadTimeSheetReimbursement", "Provider")?startDate=' + startDate);
+    }
+    function FinalizeInvoicing(start) {
+        var startDate = start.format("YYYY-MM-DD");
+        $.ajax({
+            url: '/Provider/LoadFinalizeInvoicing',
+            type: 'Post',
+            data: {
+                startDate: startDate
+            },
+            success: function (result) {
+                $('#TabContent').html(result);
+            }
+        });
+    }
+</script>

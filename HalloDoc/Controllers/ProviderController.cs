@@ -8,6 +8,7 @@ using DocumentFormat.OpenXml.Drawing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO.Compression;
 using Twilio.Http;
 using Path = System.IO.Path;
@@ -24,14 +25,16 @@ namespace HalloDoc.Controllers
         private readonly IRequestInterface _requestInterface;
         private readonly ApplicationDbContext _db;
         private readonly INotyfService _notyf;
-        public ProviderController(ApplicationDbContext db,IProviderInterface providerDataService, IHttpContextAccessor httpContextAccessor, IRequestInterface requestInterface,INotyfService notyf,IAdminDash adminDash, IProviderService providerService)
+        private readonly IJwtService _jwtService;
+        public ProviderController(ApplicationDbContext db,IProviderInterface providerDataService, IHttpContextAccessor httpContextAccessor,
+            IRequestInterface requestInterface,INotyfService notyf,IAdminDash adminDash, IProviderService providerService, IJwtService jwtService)
         {
             _providerDataService = providerDataService;
             _httpContextAccessor = httpContextAccessor;
             _AdminDash = adminDash;
             _providerService = providerService;
             _requestInterface = requestInterface;
-
+            _jwtService = jwtService;
             _db = db;
             _notyf = notyf;
                 
@@ -94,6 +97,11 @@ namespace HalloDoc.Controllers
             {
                 var orderdetail =_providerDataService.ConcludeCareGet(requestid);
                 return PartialView("Tabs/_ConcludeCare",orderdetail);
+            }
+            if (tabid == "Invoicing")
+            {
+                //var orderdetail = _providerDataService.ConcludeCareGet(requestid);
+                return PartialView("Tabs/_invoicing");
             }
             if (tabid == "CreateReq")
             {
@@ -489,6 +497,91 @@ namespace HalloDoc.Controllers
             return RedirectToAction("Index", "Provider");
 
         }
+        /*Invoicing*/
+        public IActionResult LoadInvoicingTab()
+        {
+            return PartialView("Tabs/_invoicing");
+        }
+        public IActionResult SearchDataByRange(DateTime startDate)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            ProviderDash model = new ProviderDash();
+            model.TimesheetModel = _providerDataService.SearchDataByRangeTimeSheet(startDate, aspuserid);
+            model.IsFinalize = _providerDataService.CheckFinalize(startDate, aspuserid);
+
+            return PartialView("Tabs/_timeSheet", model);
+        }
+
+        public IActionResult LoadFinalizeInvoicing(DateTime startDate)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            ProviderDash model = new ProviderDash();
+            model.InvoicingModel = _providerDataService.SearchDataByRangeInvoicing(startDate, aspuserid);
+            model.startDate = startDate;
+
+            return PartialView("Tabs/_finalizeInvoicing", model);
+        }
+
+        public IActionResult LoadTimeSheetReimbursement(DateTime startDate)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            ProviderDash model = new ProviderDash();
+            model.InvoicingModel = _providerDataService.SearchDataByRangeReimbursement(startDate, aspuserid);
+
+            return PartialView("Tabs/_timeSheetReimbursement", model);
+        }
+
+        public IActionResult SaveTimeSheet(List<InvoicingModel> invoicingModels)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            _providerDataService.SaveTimeSheet(invoicingModels, aspuserid);
+            return Json(new { success = true });
+        }
+
+        public IActionResult SaveReimbursement(InvoicingModel invoicingModels)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
+            }
+
+            _providerDataService.SaveReimbursement(invoicingModels, aspuserid);
+            return Json(new { success = true });
+        }
+        public IActionResult FinalizeTimesheet(DateTime startDate)
+        {
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+
+            _providerDataService.FinalizeTimesheet(startDate, Physicianid); 
+            return Json(new { success = true });
+        }
+
 
 
 

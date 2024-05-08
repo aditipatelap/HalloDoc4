@@ -42,6 +42,8 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Healthprofessionaltype> Healthprofessionaltypes { get; set; }
 
+    public virtual DbSet<Invoicing> Invoicings { get; set; }
+
     public virtual DbSet<Menu> Menus { get; set; }
 
     public virtual DbSet<Orderdetail> Orderdetails { get; set; }
@@ -53,6 +55,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Physiciannotification> Physiciannotifications { get; set; }
 
     public virtual DbSet<Physicianregion> Physicianregions { get; set; }
+
+    public virtual DbSet<Providerpayrate> Providerpayrates { get; set; }
 
     public virtual DbSet<Region> Regions { get; set; }
 
@@ -87,6 +91,8 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<Shiftdetailregion> Shiftdetailregions { get; set; }
 
     public virtual DbSet<Smslog> Smslogs { get; set; }
+
+    public virtual DbSet<Timesheet> Timesheets { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -237,6 +243,15 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.Healthprofessionalid).UseIdentityAlwaysColumn();
         });
 
+        modelBuilder.Entity<Invoicing>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("invoicing_pkey");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Invoicings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("invoicing_physicianid_fkey");
+        });
+
         modelBuilder.Entity<Menu>(entity =>
         {
             entity.HasKey(e => e.Menuid).HasName("pk_menu");
@@ -303,6 +318,17 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Region).WithMany(p => p.Physicianregions)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_physicianregion1");
+        });
+
+        modelBuilder.Entity<Providerpayrate>(entity =>
+        {
+            entity.HasKey(e => e.PayrateId).HasName("providerpayrate_pkey");
+
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.HasOne(d => d.Physician).WithMany(p => p.Providerpayrates)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_provider");
         });
 
         modelBuilder.Entity<Region>(entity =>
@@ -517,6 +543,15 @@ public partial class ApplicationDbContext : DbContext
             entity.HasOne(d => d.Physician).WithMany(p => p.Smslogs).HasConstraintName("fk_smslog3");
 
             entity.HasOne(d => d.Request).WithMany(p => p.Smslogs).HasConstraintName("fk_smslog2");
+        });
+
+        modelBuilder.Entity<Timesheet>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("timesheet_pkey");
+
+            entity.HasOne(d => d.Invoice).WithMany(p => p.Timesheets)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("timesheet_invoiceid_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>

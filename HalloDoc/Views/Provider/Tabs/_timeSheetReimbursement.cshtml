@@ -1,0 +1,27 @@
+﻿@using DataAccess.ViewModel;
+@model ProviderDash
+
+<table class="table">
+    <thead>
+        <tr class="d-none d-xl-table-row d-md-table-row">
+            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
+            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Item </p> </th>
+            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Amount </p> </th>
+            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Bill </p> </th>
+            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Action </p> </th>
+        </tr>
+    </thead>
+
+    <tbody id="tableBody">
+        @foreach (var i in Model.InvoicingModel)
+        {
+            <tr class="d-none d-xl-table-row d-md-table-row">
+                <td> <p> @i.Date </p> </td>
+                <td> <p> @i.Item </p> </td>
+                <td> <p> @i.Amount </p> </td>
+                <td> <p> @i.BillName </p> </td>
+                <td> <a class="btn border border-info text-info" href="~/invoicing/@i.physicianid/@i.Date" target="_blank">View</a> </td>
+            </tr>
+        }
+    </tbody>
+</table>

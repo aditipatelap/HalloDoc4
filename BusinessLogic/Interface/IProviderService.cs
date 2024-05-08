@@ -94,6 +94,11 @@ namespace BusinessLogic.Interface
         public AdminDashboard PatientRecords(int id, int currentpage);
         public void requestsupport(string Notes, int AdminId);
 
+        //goo to have
+        public void SavePayrateData(int Physicianid, int rate, int type);
+
+        public AdminDashboard GetPayRateData(int physicianid);
+
     }
     
 }

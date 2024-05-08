@@ -767,6 +767,28 @@ public class Records
         public List<PatientHistoryModel>? PatientHistory { get; set; }
 
         public List<PatientRecordModel>? PatientsRecord { get; set; }
+        //good to have
+         public PhysicianPayrateModel PhysicianPayrateModel { get; set; }
+        public Providerpayrate Providerpayrate { get; set; }    
+    }
+    //good to have
+    public class PhysicianPayrateModel
+    {
+        public int Physicianid { get; set; }
+
+        public int? NightShiftWeekend { get; set; } = 0;
+
+        public int? Shift { get; set; } = 0;
+
+        public int? HouseCallsNightWeekend { get; set; } = 0;
+
+        public int? PhoneConsults { get; set; } = 0;
+
+        public int? PhoneConsultsNightWeekend { get; set; } = 0;
+
+        public int? BatchTesting { get; set; } = 0;
+
+        public int? HouseCalls { get; set; } = 0;
 
     }
     public class GetTabParameter

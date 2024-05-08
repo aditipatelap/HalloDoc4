@@ -144,6 +144,9 @@ public partial class Physician
     public virtual ICollection<Encounter> Encounters { get; set; } = new List<Encounter>();
 
     [InverseProperty("Physician")]
+    public virtual ICollection<Invoicing> Invoicings { get; set; } = new List<Invoicing>();
+
+    [InverseProperty("Physician")]
     public virtual ICollection<Physicianlocation> Physicianlocations { get; set; } = new List<Physicianlocation>();
 
     [InverseProperty("Pysician")]
@@ -151,6 +154,9 @@ public partial class Physician
 
     [InverseProperty("Physician")]
     public virtual ICollection<Physicianregion> Physicianregions { get; set; } = new List<Physicianregion>();
+
+    [InverseProperty("Physician")]
+    public virtual ICollection<Providerpayrate> Providerpayrates { get; set; } = new List<Providerpayrate>();
 
     [ForeignKey("Regionid")]
     [InverseProperty("Physicians")]

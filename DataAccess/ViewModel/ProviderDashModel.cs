@@ -132,7 +132,57 @@ namespace DataAccess.ViewModel
         public string? Procedures { get; set; }
         public string? FollowUp { get; set; }
     }
+    //good to have
+    public class TimesheetModel
+    {
+        public int Id { get; set; }
 
+        public string Date { get; set; } = string.Empty;
+
+        public int shift { get; set; } = 0;
+
+        public int NightShiftWeekend { get; set; } = 0;
+
+        public int HouseCall { get; set; } = 0;
+
+        public int HouseCallNightWeekend { get; set; } = 0;
+
+        public int PhoneConsults { get; set; } = 0;
+
+        public int PhoneConsultsNightWeekend { get; set; } = 0;
+
+        public int BatchTesting { get; set; } = 0;
+    }
+
+    public class InvoicingModel
+    {
+        public int Id { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public string Date { get; set; } = string.Empty;
+
+        public int OnCallHours { get; set; } = 0;
+
+        public int TotalHours { get; set; } = 0;
+
+        public bool isWeekEnd { get; set; } = false;
+
+        public int HouseCall { get; set; } = 0;
+
+        public int Consult { get; set; } = 0;
+
+        public string Item { get; set; } = string.Empty;
+
+        public int Amount { get; set; } = 0;
+
+        public string BillName { get; set; } = string.Empty;
+
+        public IFormFile? Bill { get; set; }
+        public int? physicianid { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
+    }
     public class ProviderDashModel
     {
         public string? firstName { get; set; }
@@ -194,8 +244,10 @@ namespace DataAccess.ViewModel
 
     public class ProviderDash
     {
-        public scheduleModel scheduleModel { get; set; }    
-        public List<EventModel> eventModel { get; set; }  
+        public List<InvoicingModel>? InvoicingModel { get;set; }
+        public List<TimesheetModel>? TimesheetModel { get;set; }
+        public scheduleModel? scheduleModel { get; set; }    
+        public List<EventModel>? eventModel { get; set; }  
         public List<ProviderDashModel>? requestByStatus { get; set; }
         public int? statusId { get; set; }
         public Status? Status { get; set; }
@@ -210,8 +262,10 @@ namespace DataAccess.ViewModel
         public int activecount { get; set; }
         public int conclude { get; set; }
         public int? Isfinalize { get; set; }
-        public string PhysicianNotes { get;set; }
+        public bool? IsFinalize { get; set; }
+        public string? PhysicianNotes { get;set; }
         public int RequestId { get; set; }
         public int PhysicianId { get;set; }
+        public DateTime startDate { get; set; }  
     }
 }

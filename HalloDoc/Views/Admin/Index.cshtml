@@ -157,26 +157,9 @@
     });
    
     function TabLoad() {
-        
-       
-        // Assuming you have a parent container with the id "tabContainer" that contains elements with the class "tablink"
-        // Get all elements with the class "tablink"
-        //var tabLinks = document.querySelectorAll(".tablink");
-
-        //// Add click event listener to each tablink element
-        //tabLinks.forEach(function (tabLink) {
-        //    tabLink.addEventListener("click", function (event) {
-        //        // Update TabId with the ID of the clicked tablink
-        //        var TabId = event.target.id;
-        //        // Use TabId as needed
-        //        console.log("Clicked tab ID:", TabId);
-        //    });
-        //});
-
-
-      
         var TabId = $(this).attr("id");
         var aspnetuserid=$(this).data('aspnetuserid');
+       
         var requestid = $(this).data('btn');
         var physicianid = $(this).data('id');
         var regionid = $('.filterphysician').val(); 
@@ -185,9 +168,7 @@
         var adminaccountfilter = $('#adminaccountfilter').val();
         var businessid = $(this).data('businessid');
        var currentpage=$(this).data('page');
-        //console.log(adminaccountfilter);
-        //var roleid = checkbox.getAttribute('data-roleid');
-        //console.log(businessid);
+        
         var roleid = $(this).data('roleid');
         
         if (typeof requestid === 'undefined') {
@@ -196,6 +177,7 @@
         if (typeof aspnetuserid === 'undefined') {
             aspnetuserid = null;
         }
+       
         if (typeof adminaccountfilter === 'undefined') {
             adminaccountfilter = 0;
         }
@@ -244,7 +226,8 @@
             adminaccountfilter:adminaccountfilter,
             VendorId: businessid,
                 aspnetuserid: aspnetuserid,
-            currentpage: currentpage
+            currentpage: currentpage,
+
             };
 
             $.ajax({

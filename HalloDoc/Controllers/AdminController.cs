@@ -227,12 +227,14 @@ namespace HalloDoc.Controllers
                 var data = _providerService.GetSearchRecordInfo();
                 return PartialView("Tabs/Records/SearchRecords",data);
             }
-            if (model.tabid == "PhysicianInformation")
+           
+            if (model.tabid == "PayRate")
             {
-               //var data = _providerService.EditPhysicianDataGet(aspnetuserid);
-                return PartialView("Tabs/GoodToHave/PhysicianInformation");
+
+                var data = _providerService.GetPayRateData(model.physicianid);
+                return PartialView("Tabs/GoodToHave/PayRate",data);
             }
-             if (model.tabid == "Invoicing")
+            if (model.tabid == "Invoicing")
             {
                //var data = _providerService.EditPhysicianDataGet(aspnetuserid);
                 return PartialView("Tabs/GoodToHave/Invoice");
@@ -467,15 +469,7 @@ namespace HalloDoc.Controllers
 
             return Json(new { success = true });
         }
-        //[HttpPost]
-        //public IActionResult PostMyProfile( AdminDashboard adminDashboard,int adminid)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _AdminDash.PostMyProfile( adminDashboard,adminid);
-        //    }
-        //    return View();
-        //}
+       
         [HttpPost]
         public JsonResult PostViewNotes(AdminDashboard model)
 
@@ -960,17 +954,6 @@ namespace HalloDoc.Controllers
         {
             return _db.Physicians.Where(p => p.Regionid == Regionid).ToList();
         }
-
-        // MD or ProviderOnCall
-        //public IActionResult LoadMDOnCall()
-        //{
-        //    AdminDashboard model = new AdminDashboard();
-        //    _providerService.GetRegion(0);
-        //    model.PhysicianProfilList = _providerService.GetProvider(0);
-
-        //    return PartialView("_MDsOnCall", model);
-        //}
-
         public IActionResult LoadMDOnCallData(int RegionId)
         {
             AdminDashboard model = new AdminDashboard();
@@ -1075,6 +1058,15 @@ namespace HalloDoc.Controllers
             _providerService.requestsupport(model.AdminNoes, Adminid);
             AdminDashboard admin= new AdminDashboard();
             admin.tabid = "Dashboard";
+            return GetTabs(admin, default, default, default, default, default, default);
+        }
+        //good to have
+        public IActionResult SavePayrate(int Physicianid, int rate, int type)
+        {
+            _providerService.SavePayrateData(Physicianid, rate, type);
+            AdminDashboard admin = new AdminDashboard();
+            admin.tabid = "PayRate";
+            admin.physicianid = Physicianid;
             return GetTabs(admin, default, default, default, default, default, default);
         }
 

@@ -62,5 +62,6 @@ namespace BusinessLogic.Interface
         public bool EditCloseCase(AdminDashboard vp, int RequestID);
         public bool CloseCase(int RequestID);
         
+        
         }
 }
