@@ -64,9 +64,6 @@
 
     </div>
 </div>
-
-
-
 <div class="d-flex justify-content-between m-3 p-3 bg-white">
     <div class="d-flex">
 
@@ -86,62 +83,15 @@
 
     </div>
 </div>
-
-
-
-
-
-
-
 <div id="btnContent">
-    @* <div class="modelbody">
-    </div>*@
-
-
 </div>
 <div class="modal fade  col-sm-12" id="modeldiv" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
         <div class="modelbody modal-content"></div>
     </div>
 </div>
-
-
-
-
 <script>
     var tabidglobal;
-    //$(".createreq").click(function () {
-    //    var TabId = $(this).attr("id");
-
-
-    //    if ($(this).hasClass('createreq')) {
-    //        tabidglobal = TabId;
-
-    //    }
-    //    var payload = {
-
-    //        "tabid": tabidglobal,
-
-
-    //    };
-    //    $.ajax({
-    //        url: '/Admin/GetTabs',
-    //        data: payload,
-
-    //        method: 'GET',
-    //        success: function (data) {
-    //            // Replace the content of the btnContent div with the retrieved partial view
-    //            $("#TabContent").html(data);
-
-    //        },
-    //        error: function () {
-    //            console.error('Error fetching partial view.');
-    //        }
-    //    });
-    //});
-
-
-
 
     //Export ALl
     $(".status").click(function () {
@@ -149,29 +99,16 @@
         var statusid = $(this).data('id');
         $("#hidden").val(statusid);
     });
-
-
     $(document).ready(function () {
-
-
-        // Variable to keep track of whether the event has been triggered initially
-
-
-
-        // Function to trigger the event initially and subsequently
         function triggerEvent() {
             if (dashboardclick == 1) {
-                //$('#status').text("(NEW)").css('font-weight', 'bold').css('color', 'darkblue');
-                // Trigger the event with fixed data-btn and data-id values
                 $("[data-btn='NewPartial'][data-id='1']").click();
-
                 dashboardclick = 2;
             } else {
                 // Trigger the event using the values of btnnameglobal and statusidglobal
                 $("[data-btn='" + btnnameglobal + "'][data-id='" + statusidglobal + "']").click();
             }
         }
-
         // Call the triggerEvent function
         triggerEvent();
     });
