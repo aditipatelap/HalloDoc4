@@ -3,7 +3,7 @@
 
 <div class="row justify-content-center mb-5 pb-5">
     <div class="m-4 me-5 mb-0 text-end col-xl-6 col-md-8 col-11">
-        <a class="text-decoration-none text-info rounded border border-info p-2 invoicing-tab">
+        <a class="text-decoration-none text-info rounded border border-info p-2 invoicing-tab" id="Invoicing">
             <i class="bi bi-chevron-left text-info"></i>
             Back
         </a>
@@ -13,13 +13,13 @@
         <form id="SaveTimeSheet">
             <table class="table" id="invoiceTable">
                 <thead>
-                    <tr class="d-none d-xl-table-row d-md-table-row">
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> On Call Hours </p> </th>
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Total Hours </p> </th>
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Weekend/ Holiday </p> </th>
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Number of Housecalls </p> </th>
-                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Number of Phone Consults </p> </th>
+                    <tr class="d-none d-xl-table-row d-md-table-row bg-light">
+                        <th scope="col" class=""> <p> Date </p> </th>
+                        <th scope="col" class=""> <p> On Call Hours </p> </th>
+                        <th scope="col" class=""> <p> Total Hours </p> </th>
+                        <th scope="col" class=""> <p> Weekend/ Holiday </p> </th>
+                        <th scope="col" class=""> <p> Number of Housecalls </p> </th>
+                        <th scope="col" class=""> <p> Number of Phone Consults </p> </th>
                     </tr>
                 </thead>
 
@@ -63,6 +63,7 @@
         </form>
     </div>
 
+
     <div class="m-4 mt-2 col-xl-6 col-md-8 col-11">
         <button class="btn btn-info text-light" type="button" onclick="ShowRecipts()">Add Receipts</button>
     </div>
@@ -70,12 +71,12 @@
     <div class="m-4 p-0 pt-3 shadow col-xl-6 col-md-8 col-11" id="Recipts" style="display:none">
         <table class="table" id="ReciptsTable">
             <thead>
-                <tr class="d-none d-xl-table-row d-md-table-row">
-                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
-                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Item </p> </th>
-                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Amount </p> </th>
-                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Bill </p> </th>
-                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Action </p> </th>
+                <tr class="d-none d-xl-table-row d-md-table-row bg-light">
+                    <th scope="col" class=""> <p> Date </p> </th>
+                    <th scope="col" class=""> <p> Item </p> </th>
+                    <th scope="col" class=""> <p> Amount </p> </th>
+                    <th scope="col" class=""> <p> Bill </p> </th>
+                    <th scope="col" class=""> <p> Action </p> </th>
                 </tr>
             </thead>
 
@@ -154,7 +155,7 @@
                                     @{
                                         var filename = $"{i.Date}.pdf";
                                     }
-                                    <a class="btn border border-info text-info" id="viewBtn-@i.Date" href="~/invoicing/@i.physicianid/@filename" target="_blank">View</a>
+                                    <a class="btn border border-info text-info" id="viewBtn-@i.Date" href="~/invoicing/2/@filename" target="_blank">View</a>
                                 </div>
                             }
                         </td>
@@ -228,7 +229,7 @@
                             startDate: start
                         },
                         success: function (result) {
-                            $('#dashboard').html(result);
+                            $('#TabBody').html(result);
                         }
                     });
                     toastr.success("Data Saved!");
@@ -269,7 +270,7 @@
                             startDate: start
                         },
                         success: function (result) {
-                            $('#dashboard').html(result);
+                            $('#TabBody').html(result);
                         }
                     });
                     toastr.success("Data Saved!");
@@ -353,7 +354,7 @@
         fd.append('Amount', Amount);
 
         $.ajax({
-            url: "/Provider/DeleteReceipt",
+            url: "/Provider/DeleteReimbursement",
             type: "Post",
             data: fd,
             processData: false,
@@ -367,10 +368,10 @@
                             startDate: start
                         },
                         success: function (result) {
-                            $('#dashboard').html(result);
+                            $('#TabBody').html(result);
                         }
                     });
-                    toastr.success("Data Saved!");
+                    toastr.success("Data Deleted!");
                 }
                 else {
                     toastr.error("Please provide valid data.");
@@ -378,6 +379,7 @@
             }
         });
     });
+
     $('#FinalizeBtn').on('click', function () {
         var start = '@Model.startDate';
 

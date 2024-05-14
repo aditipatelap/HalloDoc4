@@ -1,6 +1,5 @@
 ﻿@using DataAccess.ViewModel;
 @model ProviderDash
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <div class="row justify-content-center mb-5 pb-5">
@@ -17,25 +16,15 @@
     <div class="m-4 shadow col-xl-6 col-md-8 col-11">
         <div class="mx-2">
             <div class="d-inline d-md-flex align-items-center justify-content-between">
-                <div class="d-flex ms-2 mt-3 mb-1">
-                    @* <input type="text" id="datepicker" name="selectedDate"> *@
-                    <div class="form-floating">
-                        <select class="form-select regionDropDown dark-background-div" id="dateDropdown" aria-label="Floating label select example"></select>
-                        <label for="dateDropdown" class="text-white1"><i class="bi bi-search ms-2"></i> Search by </label>
-                    </div>
-                   
+                <div class="form-floating mt-3 mb-1">
+                    <select class="form-select regionDropDown dark-background-div" id="dateDropdown" aria-label="Floating label select example"></select>
+                    <label for="dateDropdown" class="text-white1"> Search by Timesheetperiod </label>
                 </div>
 
                 <div class="d-flex flex-wrap align-items-center ms-2 mt-3 mb-1">
-                   
-                        <div class="d-flex flex-wrap align-items-center ms-2 mt-3 mb-1">
-                            <button class="me-1 rounded btn border border-info text-info" id="finalizeButton" onclick="finalizeTimesheet()">
-                                Finalize Timesheet
-                            </button>
-                        </div>
-                   
-
-
+                    <button class="me-1 rounded btn border border-info text-info" id="finalizeButton" onclick="finalizeTimesheet()" style="display: none">
+                        Finalize Timesheet
+                    </button>
                 </div>
             </div>
 
@@ -47,7 +36,7 @@
 
     <div class="m-4 shadow col-xl-6 col-md-8 col-11 mt-3">
         <div class="mx-2">
-            <p class="col fs-5 fw-semibold pb-0 mb-0 d-inline">TimeSheet Reimbursement</p>
+            <p class="col fs-5 fw-bold mb-2 d-inline">TimeSheet Reimbursement</p>
         </div>
 
         <div class="mb-2" id="timeSheetReimbursement">
@@ -55,52 +44,65 @@
         </div>
     </div>
 </div>
+
 <script>
     var start = moment();
 
-    // Function to generate date ranges with varying intervals based on the number of days in the month
-    function generateDateRanges() {
+    function generateDateRangesForYear() {
         let dropdown = document.getElementById("dateDropdown");
-        let startDate = moment().startOf('month'); // Start from the 1st of the current month
-        let endDate = moment().endOf('month'); // End at the end of the current month
+        let currentDate = moment().subtract(1, 'year').startOf('month'); 
+        let today = moment().startOf('day'); 
+        let dateIntervals = [];
 
-        while (startDate <= endDate) {
-            let endDateRange;
-            if (startDate.daysInMonth() === 31) {
-                endDateRange = moment(startDate).add(15, 'days'); // If the month has 31 days, use a 16-day interval
+        while (currentDate <= today) {
+            let startDate = moment(currentDate);
+            let endDate;
+            if (startDate.date() <= 15) {
+                endDate = moment(currentDate).date(15); 
             } else {
-                endDateRange = moment(startDate).add(14, 'days'); // Otherwise, use a 15-day interval
+                startDate.startOf('month').add(15, 'days'); 
+                endDate = moment(currentDate).endOf('month');
             }
 
-            let option = document.createElement("option");
             let startDateString = startDate.format("YYYY/MM/DD");
-            let endDateString = endDateRange.format("YYYY/MM/DD");
-            option.value = startDateString + ' - ' + endDateString;
-            option.text = startDateString + ' - ' + endDateString;
-            dropdown.add(option);
-            startDate = endDateRange.add(1, 'day'); // Move start date to the next interval
+            let endDateString = endDate.format("YYYY/MM/DD");
+            let optionText = startDateString + ' - ' + endDateString;
+            dateIntervals.push(optionText);
+
+            currentDate = endDate.add(1, 'day'); 
         }
+
+        for (let i = dateIntervals.length - 1; i >= 0; i--) {
+            let option = document.createElement("option");
+            option.value = dateIntervals[i];
+            option.text = dateIntervals[i];
+            dropdown.add(option);
+        }
+
+        let initialStartDateString = dateIntervals[dateIntervals.length - 1].split(' - ')[0]; // Get the start date of the last interval
+        start = moment(initialStartDateString);
+        SearchDataByRange(initialStartDateString);
     }
 
     document.getElementById('dateDropdown').addEventListener('change', function () {
         let selectedOption = this.options[this.selectedIndex].value;
         let startDateString = selectedOption.split(' - ')[0];
-        start = moment(startDateString);
-        SearchDataByRange(startDateString);
+        start = moment(startDateString);    
+            SearchDataByRange(startDateString); 
     });
 
     $(document).ready(function () {
-        generateDateRanges();
+        generateDateRangesForYear();
     });
 
-    function SearchDataByRange(start) {
-        start = moment(start);
+    function SearchDataByRange(selectedStartDate) {
+        start = moment(selectedStartDate);
         var startDate = start.format("YYYY-MM-DD");
         $('#timeSheet').load('@Url.Action("SearchDataByRange", "Provider")?startDate=' + startDate);
         $('#timeSheetReimbursement').load('@Url.Action("LoadTimeSheetReimbursement", "Provider")?startDate=' + startDate);
     }
 
-    function FinalizeInvoicing(start) {
+    function finalizeTimesheet() {
         var startDate = start.format("YYYY-MM-DD");
         $.ajax({
             url: '/Provider/LoadFinalizeInvoicing',
@@ -114,4 +116,3 @@
         });
     }
 </script>
-

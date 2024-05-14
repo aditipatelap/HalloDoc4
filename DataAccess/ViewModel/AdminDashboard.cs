@@ -635,10 +635,30 @@ public class Records
         public string Status { get; set; }
         public string FinalReport { get; set; }
         public int DocumentCount { get; set; }
-    }   
+    }
+    public class SheetModel
+    {
+        public int Id { get; set; }
 
+        public int PhysicianId { get; set; }
+
+        public string StartDate { get; set; }
+
+        public string EndDate { get; set; }
+
+        public string status { get; set; }
+
+        public bool isApproved { get; set; }
+
+        public bool isFinalize { get; set; }
+
+        public string physicianName { get; set; }
+    }
     public class AdminDashboard
     {
+        public SheetModel SheetModel { get; set; }
+        public List<InvoicingModel>? invoicingModels { get; set; }
+        public List<TimesheetModel>? timesheetsModels { get; set; }
         [Required(ErrorMessage = "the field is required")]
         public string rolename { get; set; }
         public string email { get; set; }
@@ -790,6 +810,56 @@ public class Records
 
         public int? HouseCalls { get; set; } = 0;
 
+    }
+    public class Timesheet
+    {
+        public int Id { get; set; }
+
+        public string Date { get; set; } = string.Empty;
+
+        public int shift { get; set; } = 0;
+
+        public int NightShiftWeekend { get; set; } = 0;
+
+        public int HouseCall { get; set; } = 0;
+
+        public int HouseCallNightWeekend { get; set; } = 0;
+
+        public int PhoneConsults { get; set; } = 0;
+
+        public int PhoneConsultsNightWeekend { get; set; } = 0;
+
+        public int BatchTesting { get; set; } = 0;
+    }
+
+    public class Invoicing
+    {
+        public int Id { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public string Date { get; set; } = string.Empty;
+
+        public int OnCallHours { get; set; } = 0;
+
+        public int TotalHours { get; set; } = 0;
+
+        public bool isWeekEnd { get; set; } = false;
+
+        public int HouseCall { get; set; } = 0;
+
+        public int Consult { get; set; } = 0;
+
+        public string Item { get; set; } = string.Empty;
+
+        public int Amount { get; set; } = 0;
+
+        public string BillName { get; set; } = string.Empty;
+
+        public IFormFile? Bill { get; set; }
+        public int? physicianid { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
     }
     public class GetTabParameter
     {

@@ -22,6 +22,7 @@ using System.Net.Mail;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Office2010.PowerPoint;
 using System.Net;
+using System.Globalization;
 
 namespace BusinessLogic.Service
 {
@@ -1182,34 +1183,7 @@ namespace BusinessLogic.Service
 
             return list;
         }
-        //public List<PhysicianProfile> GetProvider(int Regionid)
-        //{
-        //    var list = _db.Physicians
-        //        .Select(p => new PhysicianProfile
-        //        {
-        //            physicianid = p.Physicianid,
-        //            UserName = "MD." + p.Lastname + "." + p.Firstname,
-        //            firstName = p.Firstname,
-        //            lastName = p.Lastname,
-        //            roleid = p.Roleid,
-        //            role = _db.Roles.FirstOrDefault(r => r.Roleid == p.Roleid).Name,
-        //            Regionid = p.Regionid,
-        //            phone = p.Mobile,
-        //            email = p.Email,
-        //            status = p.Status,
-        //            IsPhoto = p.Photo != null ? new BitArray(new bool[1] { true }) : new BitArray(new bool[1] { false }),
-        //            PhotoName = p.Photo,
-        //        })
-        //        .OrderBy(p => p.firstName)
-        //        .ToList();
-
-        //    if (Regionid != 0)
-        //    {
-        //        list = list.Where(r => r.Regionid == Regionid).ToList();
-        //    }
-
-        //    return list;
-        //}
+      
         public AdminDashboard GetProviderOnCallData(int Regionid)
         {
             DateTime dateTime = DateTime.Now;
@@ -2023,7 +1997,7 @@ namespace BusinessLogic.Service
         //good to have
         public AdminDashboard GetPayRateData(int physicianid)
         {
-            AdminDashboard adminDashboardModel = new AdminDashboard();
+            AdminDashboard AdminDashboard = new AdminDashboard();
             var data = _db.Providerpayrates.FirstOrDefault(r => r.PhysicianId == physicianid);
 
             if (data != null)
@@ -2039,9 +2013,9 @@ namespace BusinessLogic.Service
                     BatchTesting = data.BatchTesting ?? 0,
                     HouseCalls = data.HouseCall ?? 0
                 };
-                adminDashboardModel.PhysicianPayrateModel = pmodel;
-                adminDashboardModel.physicianid = physicianid;
-                return adminDashboardModel;
+                AdminDashboard.PhysicianPayrateModel = pmodel;
+                AdminDashboard.physicianid = physicianid;
+                return AdminDashboard;
             }
             else
             {
@@ -2056,23 +2030,20 @@ namespace BusinessLogic.Service
                     BatchTesting = 0,
                     HouseCalls = 0
                 };
-                adminDashboardModel.PhysicianPayrateModel = pmodel;
-                adminDashboardModel.physicianid = physicianid;
-                return adminDashboardModel;
+                AdminDashboard.PhysicianPayrateModel = pmodel;
+                AdminDashboard.physicianid = physicianid;
+                return AdminDashboard;
             }
         }
-
 
         public void SavePayrateData(int Physicianid, int rate, int type)
         {
             var check = _db.Providerpayrates.Any(p => p.PhysicianId == Physicianid);
-
             if (!check)
             {
                 var payrate = new Providerpayrate
                 {
-                    PhysicianId = Physicianid,
-                    CreatedBy = "Admin"
+                    PhysicianId = Physicianid
                 };
                 _db.Providerpayrates.Add(payrate);
                 _db.SaveChanges();
@@ -2104,6 +2075,210 @@ namespace BusinessLogic.Service
                     break;
             }
             _db.SaveChanges();
+        }
+
+        public List<Physician> GetPhysicians(int Regionid)
+        {
+            if (Regionid == 0)
+            {
+                return _db.Physicians.Where(p => p.Isdeleted != new BitArray(new bool[] { true })).ToList();
+            }
+            return _db.Physicians.Where(p => p.Regionid == Regionid && p.Isdeleted != new BitArray(new bool[] { true })).ToList();
+        }
+
+        public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, int Physicianid)
+        {
+            DateTime currentDate = startDate;
+            List<TimesheetModel> model = new List<TimesheetModel>();
+
+            for (var i = 0; i < 15; i++)
+            {
+                var item = new TimesheetModel();
+                item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                var shiftid = _db.Shifts.Where(r => r.Physicianid == Physicianid && r.Startdate == DateOnly.FromDateTime(currentDate));
+                var invoice = _db.Invoicings.FirstOrDefault(a => a.Startdate == startDate && a.Physicianid == Physicianid);
+                if (shiftid != null)
+                {
+                    item.shift = shiftid.Count();
+                }
+                if (invoice != null)
+                {
+                    var timesheet = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoice.Id && r.Date == currentDate && r.Isdeleted != true);
+                    if (timesheet != null)
+                    {
+                        var weekend = (bool)timesheet.Weekend ? 0 : 1;
+                        item.NightShiftWeekend = weekend;
+                        item.HouseCall = timesheet.Housecall ?? 0;
+                        item.PhoneConsults = timesheet.Consult ?? 0;
+                        item.BatchTesting = 0;
+                    }
+                }
+                model.Add(item);
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return model;
+        }
+        public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, int Physicianid)
+        {
+            DateTime currentDate = startDate;
+            List<InvoicingModel> model = new List<InvoicingModel>();
+
+            for (var i = 0; i < 15; i++)
+            {
+                var item = new InvoicingModel();
+                item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                var invoice = _db.Invoicings.FirstOrDefault(a => a.Startdate == startDate && a.Physicianid == Physicianid);
+
+                if (invoice != null)
+                {
+                    var timesheet = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoice.Id && r.Date == currentDate && r.Isdeleted != true);
+
+                    if (timesheet != null)
+                    {
+                        item.BillName = timesheet.Billname ?? "";
+                        item.Item = timesheet.Item ?? "";
+                        item.Amount = timesheet.Amount ?? 0;
+                        item.physicianid = Physicianid;
+                    }
+                }
+
+                if (item.BillName != "" || item.Item != "" || item.Amount != 0)
+                {
+                    model.Add(item);
+                }
+                currentDate = currentDate.AddDays(1);
+            }
+
+            return model;
+        }
+
+        public SheetModel CheckApproved(DateTime startDate, int Physicianid)
+        {
+            var data = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (data != null)
+            {
+                var model = new SheetModel
+                {
+                    Id = data.Id,
+                    PhysicianId = Physicianid,
+                    StartDate = data.Startdate.ToString("dd-MM-yyyy"),
+                    EndDate = data.Enddate.ToString("dd-MM-yyyy"),
+                    status = "pending",
+                    isApproved = data.Isapproved,
+                    isFinalize = data.Isfinalize,
+                    physicianName = _db.Physicians.FirstOrDefault(r => r.Physicianid == Physicianid)?.Firstname + " " + _db.Physicians.FirstOrDefault(r => r.Physicianid == Physicianid)?.Lastname
+                };
+                return model;
+            }
+
+            return null;
+        }
+
+        public List<InvoicingModel> SearchDataById(int Id)
+        {
+            var invoice = _db.Invoicings.FirstOrDefault(a => a.Id == Id);
+
+            if (invoice != null)
+            {
+                List<InvoicingModel> model = new List<InvoicingModel>();
+                DateTime currentDate = invoice.Startdate;
+
+                for (var i = 0; i < 15; i++)
+                {
+                    var item = new InvoicingModel();
+                    item.Date = currentDate.ToString("dd/MM/yyyy");
+
+                    var timesheet = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoice.Id && r.Date == currentDate && r.Isdeleted != true);
+
+                    if (timesheet != null)
+                    {
+                        item.isWeekEnd = timesheet.Weekend ?? false;
+                        item.TotalHours = timesheet.Totalhours ?? 0;
+                        item.HouseCall = timesheet.Housecall ?? 0;
+                        item.Consult = timesheet.Consult ?? 0;
+                        item.Item = timesheet.Item ?? "";
+                        item.Amount = timesheet.Amount ?? 0;
+                        item.BillName = timesheet.Billname ?? "";
+                        item.IsDeleted = timesheet.Isdeleted ?? false;
+                    }
+
+                    model.Add(item);
+                    currentDate = currentDate.AddDays(1);
+                }
+                return model;
+            }
+
+            return null;
+        }
+
+        public bool SaveTimeSheet(List<InvoicingModel> invoicingModels, int Physicianid, string aspuserid)
+        {
+            int Adminid = _db.Admins.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Adminid;
+            var startDate = DateTime.ParseExact(invoicingModels.FirstOrDefault().Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
+            var invoicing = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+            var count = 0;
+
+            foreach (var i in invoicingModels)
+            {
+                if (count == 15)
+                {
+                    break;
+                }
+                count++;
+                if (i.TotalHours != 0 || i.HouseCall != 0 || i.Consult != 0)
+                {
+                    var isExists = _db.Timesheets.FirstOrDefault(r => r.Invoiceid == invoicing.Id && r.Date == DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture) && r.Isdeleted != true);
+
+                    if (isExists != null)
+                    {
+                        isExists.Invoiceid = invoicing.Id;
+                        isExists.Date = DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                        isExists.Totalhours = i.TotalHours;
+                        isExists.Weekend = i.isWeekEnd;
+                        isExists.Housecall = i.HouseCall;
+                        isExists.Consult = i.Consult;
+
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        var timesheet = new DataAccess.Models.Timesheet
+                        {
+                            Invoiceid = invoicing.Id,
+                            Date = DateTime.ParseExact(i.Date, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                            Totalhours = i.TotalHours,
+                            Weekend = i.isWeekEnd,
+                            Housecall = i.HouseCall,
+                            Consult = i.Consult
+                        };
+                        _db.Timesheets.Add(timesheet);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void ApproveTimesheet(DateTime startDate, int Physicianid, string aspuserid, int bonus, string adminDescription)
+        {
+            int Adminid = _db.Admins.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Adminid;
+            var invoicing = _db.Invoicings.FirstOrDefault(r => r.Startdate == startDate && r.Physicianid == Physicianid);
+
+            if (invoicing != null)
+            {
+                invoicing.Isapproved = true;
+                invoicing.Bonus = bonus;
+                invoicing.AdminDescription = adminDescription;
+                invoicing.Modifiedby = Adminid;
+                invoicing.Modifieddate = DateTime.Now;
+
+                _db.SaveChanges();
+            }
         }
 
 

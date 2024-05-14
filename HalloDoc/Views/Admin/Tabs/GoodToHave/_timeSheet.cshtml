@@ -1,0 +1,116 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+@if(Model.SheetModel == null)
+{
+    <div class="m-3">No data found</div>
+}
+else
+{
+    @if(Model.SheetModel.isFinalize)
+    {
+        @if (!Model.SheetModel.isApproved)
+        {
+            <div class="mx-2">
+                <p class="col fs-5 pb-0 mb-0 d-inline fw-bold mt-4">Pending Bi-Weekly Timesheet</p>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Start Date </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> End Date </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Status </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Action </p> </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>@Model.SheetModel.StartDate </td>
+                        <td>@Model.SheetModel.EndDate </td>
+                        <td>@Model.SheetModel.status </td>
+                        <td>
+                            <button class="btn border border-info text-info" onclick="LoadApprove(@Model.SheetModel.Id, @Model.SheetModel.PhysicianId, '@Model.SheetModel.StartDate')">
+                                Approve
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Shift Date </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Shift </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Night Shift Weekend </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> House Call </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> House Call Night Weekend </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Phone Consults </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Phone Consults Night Weekend </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Batch Testing </p> </th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody">
+                    @foreach (var i in Model.timesheetsModels)
+                    {
+                        <tr class="d-none d-xl-table-row d-md-table-row">
+                            <td> <p> @i.Date </p> </td>
+                            <td> <p> @i.shift </p> </td>
+                            <td> <p> @i.NightShiftWeekend </p> </td>
+                            <td> <p> @i.HouseCall </p> </td>
+                            <td> <p> @i.HouseCallNightWeekend </p> </td>
+                            <td> <p> @i.PhoneConsults </p> </td>
+                            <td> <p> @i.PhoneConsultsNightWeekend </p> </td>
+                            <td> <p> @i.BatchTesting </p> </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="mx-2">
+                <p class="col fs-5 pb-0 mb-0 d-inline fw-bold mt-5">TimeSheet Reimbursement</p>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Item </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Amount </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Bill </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Action </p> </th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody">
+                    @foreach (var i in Model.invoicingModels)
+                    {
+                        var filename = i.Date + ".pdf";
+                        <tr class="d-none d-xl-table-row d-md-table-row">
+                            <td> <p> @i.Date </p> </td>
+                            <td> <p> @i.Item </p> </td>
+                            <td> <p> @i.Amount </p> </td>
+                            <td> <p> @i.BillName </p> </td>
+                            <td> <a class="btn border border-info text-info" href="~/invoicing/@i.physicianid/@filename" target="_blank">View</a> </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    else
+    {
+        <div class="m-3">@Model.SheetModel.physicianName has not finalized the timesheet in specified time period.</div>
+    }
+}
+
+<script>
+    function LoadApprove(Id, PhysicianId, startDate) {
+        $('#TabContent').load('@Url.Action("LoadApproveInvoicing", "Admin")?Id=' + Id + '&PhysicianId=' + PhysicianId + '&startDate=' + startDate);
+    }
+</script>

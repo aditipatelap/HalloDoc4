@@ -1,0 +1,53 @@
+﻿<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <h1>SignalR Connection Example</h1>
+<!-- UI to send messages -->
+<div>
+    <input type="text" id="username" placeholder="Enter your name">
+    <input type="text" id="message" placeholder="Enter message">
+    <button onclick="sendMessage()">Send</button>
+</div>
+    <div id="messages"></div>
+
+    <script>
+        // Create a SignalR connection
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/Chathub") // Specify the URL of your SignalR hub
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Define a function to handle received messages
+        connection.on("ReceiveMessage", (user, message) => {
+            const encodedMsg = `${user}: ${message}`;
+            const li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messages").appendChild(li);
+        });
+
+        // Start the connection
+        connection.start().then(function () {
+            console.log("SignalR Connected.");
+        }).catch(function (err) {
+            console.error(err.toString());
+        });
+
+        // Function to send a message
+
+        function sendMessage() {
+          
+            const user = document.getElementById("username").value;
+            const message = document.getElementById("message").value;
+        if (connection.state === signalR.HubConnectionState.Connected) {
+            // Connection is in the "Connected" state, proceed with invoking SendMessage
+            connection.invoke("SendMessage", user, message);
+               
+           
+        } else {
+            console.error("SignalR connection is not in the 'Connected' state.");
+        }
+
+        }
+    </script>
+
+   
+
+

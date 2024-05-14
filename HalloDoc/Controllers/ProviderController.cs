@@ -486,7 +486,7 @@ namespace HalloDoc.Controllers
             _providerDataService.SaveDocument(document, Requestid, PhysicianId);
             _notyf.Custom("Document uploded Successfully", 3, "green", "bi bi-check-circle-fill");
             return Json(new { success = true });
-            //return GetTabs("Conclude", default, default, default, default, default, default, Requestid, default, default, default);
+           
         }
         public IActionResult SendLinkDataPost(AdminDashboard model)
         {
@@ -497,38 +497,28 @@ namespace HalloDoc.Controllers
             return RedirectToAction("Index", "Provider");
 
         }
-        /*Invoicing*/
-        public IActionResult LoadInvoicingTab()
+       
+          /*Invoicing*/
+   public IActionResult LoadInvoicingTab()
         {
             return PartialView("Tabs/_invoicing");
         }
         public IActionResult SearchDataByRange(DateTime startDate)
-        {
-            var token = Request.Cookies["jwt"];
-            var aspuserid = "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
             {
-                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
-            }
-
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
             ProviderDash model = new ProviderDash();
-            model.TimesheetModel = _providerDataService.SearchDataByRangeTimeSheet(startDate, aspuserid);
-            model.IsFinalize = _providerDataService.CheckFinalize(startDate, aspuserid);
+            model.TimesheetModel = _providerDataService.SearchDataByRangeTimeSheet(startDate, Physicianid);
+            model.IsFinalize = _providerDataService.CheckFinalize(startDate, Physicianid);  
 
             return PartialView("Tabs/_timeSheet", model);
         }
 
         public IActionResult LoadFinalizeInvoicing(DateTime startDate)
         {
-            var token = Request.Cookies["jwt"];
-            var aspuserid = "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
-            }
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
 
             ProviderDash model = new ProviderDash();
-            model.InvoicingModel = _providerDataService.SearchDataByRangeInvoicing(startDate, aspuserid);
+            model.InvoicingModel = _providerDataService.SearchDataByRangeInvoicing(startDate, Physicianid);
             model.startDate = startDate;
 
             return PartialView("Tabs/_finalizeInvoicing", model);
@@ -536,49 +526,39 @@ namespace HalloDoc.Controllers
 
         public IActionResult LoadTimeSheetReimbursement(DateTime startDate)
         {
-            var token = Request.Cookies["jwt"];
-            var aspuserid = "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
-            }
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
 
             ProviderDash model = new ProviderDash();
-            model.InvoicingModel = _providerDataService.SearchDataByRangeReimbursement(startDate, aspuserid);
+            model.InvoicingModel = _providerDataService.SearchDataByRangeReimbursement(startDate, Physicianid);
+            model.IsFinalize = _providerDataService.CheckFinalize(startDate, Physicianid);
 
             return PartialView("Tabs/_timeSheetReimbursement", model);
         }
 
         public IActionResult SaveTimeSheet(List<InvoicingModel> invoicingModels)
         {
-            var token = Request.Cookies["jwt"];
-            var aspuserid = "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
-            }
-
-            _providerDataService.SaveTimeSheet(invoicingModels, aspuserid);
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+            _providerDataService.SaveTimeSheet(invoicingModels, Physicianid);
             return Json(new { success = true });
         }
 
         public IActionResult SaveReimbursement(InvoicingModel invoicingModels)
         {
-            var token = Request.Cookies["jwt"];
-            var aspuserid = "";
-            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
-            {
-                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID").Value;
-            }
-
-            _providerDataService.SaveReimbursement(invoicingModels, aspuserid);
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+            _providerDataService.SaveReimbursement(invoicingModels, Physicianid);
+            return Json(new { success = true });
+        }
+        public IActionResult DeleteReimbursement(InvoicingModel invoicingModel)
+        {
+            var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
+            _providerDataService.DeleteReimbursement(invoicingModel, Physicianid);
             return Json(new { success = true });
         }
         public IActionResult FinalizeTimesheet(DateTime startDate)
         {
             var Physicianid = (int)_httpContextAccessor.HttpContext.Session.GetInt32("physicianid");
 
-            _providerDataService.FinalizeTimesheet(startDate, Physicianid); 
+            _providerDataService.FinalizeTimesheet(startDate, Physicianid);
             return Json(new { success = true });
         }
 

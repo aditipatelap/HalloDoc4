@@ -43,6 +43,11 @@ public partial class Invoicing
     [Column("modifieddate", TypeName = "timestamp without time zone")]
     public DateTime Modifieddate { get; set; }
 
+    [Column(TypeName = "character varying")]
+    public string? AdminDescription { get; set; }
+
+    public int? Bonus { get; set; }
+
     [ForeignKey("Physicianid")]
     [InverseProperty("Invoicings")]
     public virtual Physician Physician { get; set; } = null!;

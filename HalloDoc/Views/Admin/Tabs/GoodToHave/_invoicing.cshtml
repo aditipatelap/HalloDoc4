@@ -5,9 +5,9 @@
     <div class="row my-4 mx-0 col-xl-6 col-md-8 col-11">
         <p class="col fs-4 fw-bold pb-0 mb-0 d-inline">Timesheets</p>
         <div class="col mb-0 text-end">
-            @*   <a class="text-decoration-none text-info rounded border border-info p-2" onclick="LoadDashboard()">
-            <i class="bi bi-chevron-left text-info"></i>
-            Back
+          @*   <a class="text-decoration-none text-info rounded border border-info p-2" onclick="LoadDashboard()">
+                <i class="bi bi-chevron-left text-info"></i>
+                Back
             </a> *@
         </div>
     </div>
@@ -15,7 +15,7 @@
     <div class="m-3 shadow col-xl-6 col-md-8 col-11">
         <div class="mx-2">
             <div class="d-inline d-md-flex align-items-center justify-content-between">
-                <div class="d-flex ms-2 mt-3 mb-1">
+                <div class="d-flex ms-2 mt-3 mb-1"> 
                     <div class="form-floating mt-3 mb-1">
                         <select id="physician" t class="form-select">
                             @foreach (var i in Model.Physicians)
@@ -40,7 +40,7 @@
 </div>
 
 <script>
-
+  
     var start = moment();
 
     function generateDateRangesForYear() {

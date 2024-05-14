@@ -98,6 +98,13 @@ namespace BusinessLogic.Interface
         public void SavePayrateData(int Physicianid, int rate, int type);
 
         public AdminDashboard GetPayRateData(int physicianid);
+        public void ApproveTimesheet(DateTime startDate, int Physicianid, string aspuserid, int bonus, string adminDescription);
+        public bool SaveTimeSheet(List<InvoicingModel> invoicingModels, int Physicianid, string aspuserid);
+        public List<InvoicingModel> SearchDataById(int Id);
+        public SheetModel CheckApproved(DateTime startDate, int Physicianid);
+        public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, int Physicianid);
+        public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, int Physicianid);
+        public List<Physician> GetPhysicians(int Regionid);
 
     }
     

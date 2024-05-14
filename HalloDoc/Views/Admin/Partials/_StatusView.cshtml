@@ -22,7 +22,7 @@
                 {
                     <th scope="col">Requestor</th>
                 }
-
+                    <th scope="col"> Chat</th>
                 @if (Model.statusid == 1)
                 {
                     <th scope="col">Requested Date</th>
@@ -89,6 +89,7 @@
                         {
                             <td>@items.Requestor</td>
                         }
+                            <td> <button class="btn border text-white " onclick="location.href='@Url.Action("Chat", "Admin")'"><i class="bi bi-telephone"></i>Chat With </button></td>
                         @if (Model.statusid == 1)
                         {
                           @*  <td>@items.RequestedDate</td>*@
@@ -328,87 +329,6 @@ else
         <div class="modelbody modal-content"></div>
     </div>
 </div>
-<script>
-
-
-
-    //$(".tablink").click(function () {
-    //    var TabId = $(this).attr("id");
-    //    var requestid = $(this).data('btn');
-    //if (typeof requestid === 'undefined') {
-    //    requestid = 0;
-    //}
-    //    //var statusid=$(this).data('value1');
-    //    //console.log(requestid);
-    //    $.ajax({
-    //        url: '/Admin/GetTabs',
-    //        data: { Tabid: TabId, requestid: requestid, statusid: statusidglobal },
-    //        method: 'GET',
-    //        success: function (data) {
-
-    //            $("#TabContent").html(data);
-    //        },
-    //        error: function () {
-    //            console.error('Error fetching partial view.');
-    //        }
-    //    });
-    //});
-
-
-
-
-
-
-    //$(".custompagination").click(function () {
-
-    //    var currentpage = $(this).data('page');
-    //    var btnName = "NewPartial";
-    //    var statusid = 1;
-    //    var searchvalue = $("#searchInput").val();
-    //    //console.log(requestid);
-
-
-    //    $.ajax({
-    //        url: '/Admin/GetPartialView',
-    //        data: { btnName: btnName, statusid: statusid, currentpage: currentpage, searchvalue: searchvalue },
-    //        method: 'GET',
-    //        success: function (data) {
-    //            // Replace the content of the btnContent div with the retrieved partial view
-    //            $("#btnContent").html(data);
-    //        },
-    //        error: function () {
-    //            console.error('Error fetching partial view.');
-    //        }
-    //    });
-    //});
-
-
-
-
-
-
-    //$(".tablink").click(function () {
-    //    var tabid = $(this).attr("id");
-    //    var requestid = $(this).data('btn');
-    //    console.log(requestid);
-    //    $.ajax({
-    //        url: '/admin/gettabs',
-    //        data: { tabid: tabid, requestid: requestid },
-    //        method: 'get',
-    //        success: function (data) {
-    //            // replace the content of the btncontent div with the retrieved partial view
-    //            $("#tabcontent").html(data);
-    //        },
-    //        error: function () {
-    //            console.error('error fetching partial view.');
-    //        }
-    //    });
-    //});
-
-
-</script>
-
-
 
 
 

@@ -32,13 +32,14 @@ namespace BusinessLogic.Interface
         public void SendMailLink(AdminDashboard model, int physicianid);
         public bool ConcludeHouseCall(int reqid);
         //good to have
-        public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, string aspuserid);
-        public bool CheckFinalize(DateTime startDate, string aspuserid);
-        public List<InvoicingModel> SearchDataByRangeInvoicing(DateTime startDate, string aspuserid);
-        public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, string aspuserid);
+        public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, int Physicianid);
+        public bool CheckFinalize(DateTime startDate, int Physicianid);
+        public List<InvoicingModel> SearchDataByRangeInvoicing(DateTime startDate, int Physicianid);
+        public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, int Physicianid);
         public int GetOnCallHours(int physicianId, DateTime date);
-        public bool SaveTimeSheet(List<InvoicingModel> invoicingModels, string aspuserid);
-        public bool SaveReimbursement(InvoicingModel invoicingModels, string aspuserid);
+        public bool SaveTimeSheet(List<InvoicingModel> invoicingModels, int Physicianid);
+        public bool SaveReimbursement(InvoicingModel invoicingModels, int Physicianid);
         public void FinalizeTimesheet(DateTime startDate, int Physicianid);
+        public bool DeleteReimbursement(InvoicingModel invoicingModels, int Physicianid);
     }
 }

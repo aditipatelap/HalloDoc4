@@ -1,0 +1,214 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="container mt-3 d-flex justify-content-between" id="back">
+    <div class="text-black h3">Payrate</div>
+    <div></div>
+    <button class="btn btn-outline-info button-info btn-large tablinkBack" id="EditPhysician" data-value="@Model.physicianid">
+        <i class="bi bi-chevron-left"></i>Back
+    </button>
+</div>
+<div class="row justify-content-center">
+    <div class="m-4 shadow py-5 col-xl-8 col-md-9 col-11">
+        <table class="table">
+            <thead>
+                <tr class="d-none d-xl-table-row d-md-table-row">
+                    <th scope="col" class="bg-secondary-subtle align-middle text-center fw-semibold"> <p>Category</p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle text-center fw-semibold"> <p>Payrate</p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle text-center fw-semibold"> <p>Action</p> </th>
+                </tr>
+            </thead>
+
+            <tbody id="tableBody">
+                <tr>
+                    <td class="align-middle text-center"> NightShift_Weekend </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="NightShiftWeekend" placeholder="Payrate" asp-for="PhysicianPayrateModel.NightShiftWeekend">
+                            <label for="NightShiftWeekend" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.NightShiftWeekend == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(1)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(1)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> Shift </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="Shift" placeholder="Payrate" asp-for="PhysicianPayrateModel.Shift">
+                            <label for="Shift" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.Shift == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(2)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(2)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> HouseCalls_Night_Weekend </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="HouseCallsNightWeekend" placeholder="Payrate" asp-for="PhysicianPayrateModel.HouseCallsNightWeekend">
+                            <label for="HouseCallsNightWeekend" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.HouseCallsNightWeekend == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(3)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(3)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> PhoneConsults </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="PhoneConsults" placeholder="Payrate" asp-for="PhysicianPayrateModel.PhoneConsults">
+                            <label for="PhoneConsults" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.PhoneConsults == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(4)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(4)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> PhoneConsults_Night_Weekend </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="PhoneConsultsNightWeekend" placeholder="Payrate" asp-for="PhysicianPayrateModel.PhoneConsultsNightWeekend">
+                            <label for="PhoneConsultsNightWeekend" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.PhoneConsultsNightWeekend == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(5)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(5)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> BatchTesting </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="BatchTesting" placeholder="Payrate" asp-for="PhysicianPayrateModel.BatchTesting">
+                            <label for="BatchTesting" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.BatchTesting == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(6)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(6)">Edit</button>
+                        }
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="align-middle text-center"> HouseCalls </td>
+                    <td class="align-middle text-center">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="HouseCalls" placeholder="Payrate" asp-for="PhysicianPayrateModel.HouseCalls">
+                            <label for="HouseCalls" class="floatingLabel">Payrate</label>
+                        </div>
+                    </td>
+                    <td class="align-middle text-center">
+                        @if (Model.PhysicianPayrateModel.HouseCalls == 0)
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(7)">Save</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-info text-light" onclick="SavePayrate(7)">Edit</button>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    // cancel & Back button
+    $(".tablinkBack").click(TabLink);
+</script>
+
+<script>
+    function SavePayrate(type) {
+        var rate = 0;
+        switch (type) {
+            case 1:
+                rate = $('#NightShiftWeekend').val();
+                break;
+            case 2:
+                rate = $('#Shift').val();
+                break;
+            case 3:
+                rate = $('#HouseCallsNightWeekend').val();
+                break;
+            case 4:
+                rate = $('#PhoneConsults').val();
+                break;
+            case 5:
+                rate = $('#PhoneConsultsNightWeekend').val();
+                break;
+            case 6:
+                rate = $('#BatchTesting').val();
+                break;
+            case 7:
+                rate = $('#HouseCalls').val();
+                break;
+        }
+
+        if (rate == 0) {
+            toastr.error("Please provide valid rate");
+        }
+        else {
+            var physicianid = @Model.PhysicianPayrateModel.Physicianid;
+            $.ajax({
+                url: '/Admin/SavePayrate',
+                type: 'POST',
+                data: { Physicianid: physicianid, rate: rate, type: type },
+                success: function (result) {            
+                        $("#TabContent").html(result);
+                        toastr.success("Payrate updated!");             
+                }
+            });
+        }
+    }
+</script>

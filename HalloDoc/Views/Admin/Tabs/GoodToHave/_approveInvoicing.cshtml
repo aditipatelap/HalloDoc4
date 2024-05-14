@@ -1,0 +1,400 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="row justify-content-center mb-5 pb-5">
+    <div class="m-4 me-5 mb-0 text-end col-xl-6 col-md-8 col-11">
+        <a class="text-decoration-none text-info rounded border border-info p-2 invoicing-tab tablink0" id="Invoicing">
+            <i class="bi bi-chevron-left text-info"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="m-4 p-0 pt-3 shadow col-xl-6 col-md-8 col-11">
+        <form id="SaveTimeSheet">
+            <table class="table" id="invoiceTable">
+                <thead>
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> On Call Hours </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Total Hours </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Weekend/ Holiday </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Number of Housecalls </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Number of Phone Consults </p> </th>
+                        <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Total </p> </th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody">
+                    @if (Model != null)
+                    {
+                        @foreach (var i in Model.invoicingModels)
+                        {
+                            <tr class="d-none d-xl-table-row d-md-table-row">
+                                <td class="date">
+                                    @i.Date
+                                </td>
+                                <td>
+                                    @i.OnCallHours
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control totalHours" value="@i.TotalHours" />
+                                </td>
+                                <td>
+                                    @if (i.isWeekEnd)
+                                    {
+                                        <input type="checkbox" class="checkbox" name="checkbox" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" class="checkbox" name="checkbox" />
+                                    }
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control housecall" value="@i.HouseCall" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control consult" value="@i.Consult" />
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <td class="date">
+                            Payrate
+                        </td>
+                        <td></td>
+                        <td>
+                            <input type="text" class="form-control" id="shiftPayrate" value="@Model?.PhysicianPayrateModel?.Shift" disabled/>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="weekendPayrate" value="@Model?.PhysicianPayrateModel?.Shift" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="housecallPayrate" value="@Model?.PhysicianPayrateModel?.HouseCalls" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="consultPayrate" value="@Model?.PhysicianPayrateModel?.PhoneConsults" disabled />
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <td class="date">
+                            Invoice Total
+                        </td>
+                        <td></td>
+                        <td>
+                            <input type="text" class="form-control" id="shiftTotal" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="weekendTotal" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="housecallTotal" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="consultTotal" disabled />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="total" disabled />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="text-end mb-2 me-2">
+                <button class="btn btn-info text-light" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="m-4 mt-2 col-xl-6 col-md-8 col-11">
+        <button class="btn btn-info text-light" type="button" onclick="ShowRecipts()">Add Receipts</button>
+    </div>
+
+    <div class="m-4 p-0 pt-3 shadow col-xl-6 col-md-8 col-11" id="Recipts" style="display:none">
+        <table class="table" id="ReciptsTable">
+            <thead>
+                <tr class="d-none d-xl-table-row d-md-table-row">
+                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Date </p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Item </p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Amount </p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Bill </p> </th>
+                    <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Action </p> </th>
+                </tr>
+            </thead>
+
+            <tbody id="tableBody">
+                @foreach (var i in Model.invoicingModels)
+                {
+                    <tr class="d-none d-xl-table-row d-md-table-row">
+                        <td class="date">
+                            @i.Date
+                        </td>
+                        <td>
+                            @if (i.BillName == "" || i.Item == "" || i.Amount == 0)
+                            {
+                                <input type="text" class="form-control item" name="item" value="@i.Item" />
+                            }
+                            else
+                            {
+                                <div>@i.Item</div>
+                            }
+                        </td>
+                        <td>
+                            @if (i.BillName == "" || i.Item == "" || i.Amount == 0)
+                            {
+                                <input type="text" class="form-control amount" name="amount" value="@i.Amount" />
+                            }
+                            else
+                            {
+                                <div>@i.Amount</div>
+                            }
+                        </td>
+                        <td>
+                            @if (i.BillName == "" || i.Item == "" || i.Amount == 0)
+                            {
+                                <input type="text" class="form-control" disabled />
+                            }
+                            else
+                            {
+                                <p id="nameTag-@i.Date">@i.BillName</p>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (i.BillName == "" || i.Item == "" || i.Amount == 0)
+                            {
+                                <div></div>
+                            }
+                            else
+                            {
+                                <a class="btn border border-info text-info" href="~/invoicing/1/01-05-2024.pdf" target="_blank">View</a>
+                            }                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="m-4 mt-2 col-xl-6 col-md-8 col-11">
+        <div class="row justify-content-end">
+            <div class="col-xl-3 col-md-4 col-12 mb-2">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="bonus" placeholder="Bonus Amount">
+                    <label for="bonus" class="floatingLabel">Bonus Amount</label>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-4 col-12 mb-2">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="description" placeholder="Admin Description">
+                    <label for="description" class="floatingLabel">Admin Description</label>
+                </div>
+            </div>
+            <button class="col-4 col-md-2 me-2 me-md-0 mb-2 btn btn-info text-light" type="button" id="ApproveBtn">Approve</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(".tablink0").click(TabLoad);
+
+    $(document).ready(function () {
+        var totalHours = $('.totalHours');
+        var shiftPayrate = $('#shiftPayrate').val();
+        var shiftTotal = 0;
+        $.each(totalHours, function (i, value) {
+            shiftTotal += parseInt(value.getAttribute('value'));         
+        });
+        shiftTotal = shiftTotal * shiftPayrate;
+        $('#shiftTotal').val(shiftTotal);
+
+        var isWeekend = $('input[name="checkbox"]:checked').map(function () {
+            return this;
+        }).get();
+
+        var weekendPayrate = $('#weekendPayrate').val();
+        var weekendTotal = isWeekend.length * weekendPayrate;
+        $('#weekendTotal').val(weekendTotal);
+
+        var housecall = $('.housecall');
+        var housecallPayrate = $('#housecallPayrate').val();
+        var housecallTotal = 0;
+        $.each(housecall, function (i, value) {
+            housecallTotal += parseInt(value.getAttribute('value'));
+        });
+        housecallTotal = housecallTotal * housecallPayrate;
+        $('#housecallTotal').val(housecallTotal);
+
+        var consult = $('.consult');
+        var consultPayrate = $('#consultPayrate').val();
+        var consultTotal = 0;
+        $.each(consult, function (i, value) {
+            consultTotal += parseInt(value.getAttribute('value'));
+        });
+        consultTotal = consultTotal * consultPayrate;
+        $('#consultTotal').val(consultTotal);
+
+        var total = shiftTotal + weekendTotal + housecallTotal + consultTotal;
+        $('#total').val(total);
+    });
+
+    $('.totalHours').change(function () {
+        var totalHours = $('.totalHours');
+        var shiftPayrate = $('#shiftPayrate').val();
+        var shiftTotal = 0;
+        $.each(totalHours, function (i, value) {
+            shiftTotal += parseInt(value.value);
+        });
+        shiftTotal = shiftTotal * shiftPayrate;
+        $('#shiftTotal').val(shiftTotal);
+
+        var weekendTotal = $('#weekendTotal').val();
+        var housecallTotal = $('#housecallTotal').val();
+        var consultTotal = $('#consultTotal').val();
+
+        var total = shiftTotal + parseInt(weekendTotal) + parseInt(housecallTotal) + parseInt(consultTotal);
+        $('#total').val(total);
+    });
+
+    $('input[name="checkbox"]').change(function () {
+        var isWeekend = $('input[name="checkbox"]:checked').map(function () {
+            return this;
+        }).get();
+        var weekendPayrate = $('#weekendPayrate').val();
+        var weekendTotal = isWeekend.length * weekendPayrate;
+        $('#weekendTotal').val(weekendTotal);
+
+        var shiftTotal = $('#shiftTotal').val();
+        var housecallTotal = $('#housecallTotal').val();
+        var consultTotal = $('#consultTotal').val();
+
+        var total = parseInt(shiftTotal) + weekendTotal + parseInt(housecallTotal) + parseInt(consultTotal);
+        $('#total').val(total);
+    });
+
+    $('.housecall').change(function () {
+        var housecall = $('.housecall');
+        var housecallPayrate = $('#housecallPayrate').val();
+        var housecallTotal = 0;
+        $.each(housecall, function (i, value) {
+            housecallTotal += parseInt(value.value);
+        });
+        housecallTotal = housecallTotal * housecallPayrate;
+        $('#housecallTotal').val(housecallTotal);
+
+        var weekendTotal = $('#weekendTotal').val();
+        var shiftTotal = $('#shiftTotal').val();
+        var consultTotal = $('#consultTotal').val();
+
+        var total = parseInt(shiftTotal) + parseInt(weekendTotal) + parseInt(housecallTotal) + parseInt(consultTotal);
+        $('#total').val(total);
+    });
+
+    $('.consult').change(function () {
+        var consult = $('.consult');
+        var consultPayrate = $('#consultPayrate').val();
+        var consultTotal = 0;
+        $.each(consult, function (i, value) {
+            consultTotal += parseInt(value.value);
+        });
+        consultTotal = consultTotal * consultPayrate;
+        $('#consultTotal').val(consultTotal);
+
+        var weekendTotal = $('#weekendTotal').val();
+        var shiftTotal = $('#shiftTotal').val();
+        var housecallTotal = $('#housecallTotal').val();
+
+        var total = parseInt(shiftTotal) + parseInt(weekendTotal) + parseInt(housecallTotal) + parseInt(consultTotal);
+        $('#total').val(total);
+    });
+
+    // script for file upload name
+    function upload(file, date) {
+        var name = file.files[0].name;
+        var id = "upload-" + date;
+        var span = document.getElementById(id);
+        span.innerHTML = name;
+    }
+
+    function ShowRecipts() {
+        var btn = document.getElementById("Recipts");
+        if (btn.style.display == 'none') {
+            btn.style.display = 'block';
+        }
+        else {
+            btn.style.display = 'none';
+        }
+    }
+
+    $('#SaveTimeSheet').on('submit', function (e) {
+        e.preventDefault();
+
+        var invoicingModels = [];
+
+        $('#invoiceTable tbody tr').each(function () {
+            var Date = $(this).find('.date').text().trim();
+            var TotalHours = $(this).find('input.totalHours').val();
+            var isWeekEnd = $(this).find('input.checkbox').prop('checked');
+            var HouseCall = $(this).find('input.housecall').val();
+            var Consult = $(this).find('input.consult').val();
+
+            var invoice = {
+                Date: Date,
+                TotalHours: TotalHours,
+                isWeekEnd: isWeekEnd,
+                HouseCall: HouseCall,
+                Consult: Consult
+            };
+            invoicingModels.push(invoice);
+        });
+
+        $.ajax({
+            url: "/Admin/SaveTimeSheet",
+            type: "Post",
+            data: { invoicingModels: invoicingModels, Physicianid : @Model.SheetModel.PhysicianId },
+            success: function (result) {
+                if (result.success) {
+                    $.ajax({
+                        url: "/Admin/LoadApproveInvoicing",
+                        type: "Post",
+                        data: {
+                            Id: @Model.SheetModel.Id,
+                            PhysicianId: @Model.SheetModel.PhysicianId,
+                            startDate: '@Model.SheetModel.StartDate'
+                        },
+                        success: function (result) {
+                            $('#TabContent').html(result);
+                        }
+                    });
+                    toastr.success("Data Saved!");
+                }
+                else {
+                    toastr.error("Please provide valid data.");
+                }
+            }
+        });
+    });
+
+    $('#ApproveBtn').on('click', function () {
+        var start = '@Model.SheetModel.StartDate';
+        var Physicianid = @Model.SheetModel.PhysicianId;
+        var bonus = $('#bonus').val();
+        var description = $('#description').val();
+
+        $.ajax({
+            url: "/Admin/ApproveTimesheet",
+            type: "Post",
+            data: { startDate: start, Physicianid: Physicianid, bonus: bonus, adminDescription: description },
+            success: function (result) {
+                if (result.success) {
+                    $('#TabContent').load('@Url.Action("LoadInvoicingTab", "Admin")');
+                    toastr.success("Timesheet Approved!!");
+                }
+                else {
+                    toastr.error("Could not finalize timesheet.");
+                }
+            }
+        });
+    });
+</script>

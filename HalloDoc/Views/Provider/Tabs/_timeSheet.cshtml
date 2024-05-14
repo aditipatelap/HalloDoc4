@@ -1,44 +1,49 @@
 ﻿@using DataAccess.ViewModel;
 @model ProviderDash
 
-<table class="table">
-    <thead>
-        <tr class="d-none d-xl-table-row d-md-table-row">
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Shift Date </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Shift </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Night Shift Weekend </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> House Call </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> House Call Night Weekend </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Phone Consults </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Phone Consults Night Weekend </p> </th>
-            <th scope="col" class="bg-secondary-subtle align-middle fw-semibold"> <p> Batch Testing </p> </th>
-        </tr>
-    </thead>
-
-    <tbody id="tableBody">
-        @foreach(var i in Model.TimesheetModel)
-        {
-            <tr class="d-none d-xl-table-row d-md-table-row">
-                <td> <p> @i.Date </p> </td>
-                <td> <p> @i.shift </p> </td>
-                <td> <p> @i.NightShiftWeekend </p> </td>
-                <td> <p> @i.HouseCall </p> </td>
-                <td> <p> @i.HouseCallNightWeekend </p> </td>
-                <td> <p> @i.PhoneConsults </p> </td>
-                <td> <p> @i.PhoneConsultsNightWeekend </p> </td>
-                <td> <p> @i.BatchTesting </p> </td>
+@if(Model.IsFinalize != false)
+{
+    <table class="table">
+        <thead>
+            <tr class="d-none d-xl-table-row d-md-table-row bg-light">
+                <th scope="col" class=""> <p> Shift Date </p> </th>
+                <th scope="col" class=""> <p> Shift </p> </th>
+                <th scope="col" class=""> <p> Night Shift Weekend </p> </th>
+                <th scope="col" class=""> <p> House Call </p> </th>
+                <th scope="col" class=""> <p> House Call Night Weekend </p> </th>
+                <th scope="col" class=""> <p> Phone Consults </p> </th>
+                <th scope="col" class=""> <p> Phone Consults Night Weekend </p> </th>
+                <th scope="col" class=""> <p> Batch Testing </p> </th>
             </tr>
-        }
-    </tbody>
-</table>
-
+        </thead>
+        <tbody id="tableBody">
+            @foreach (var i in Model.TimesheetModel)
+            {
+                <tr class="d-none d-xl-table-row d-md-table-row">
+                    <td> <p> @i.Date </p> </td>
+                    <td> <p> @i.shift </p> </td>
+                    <td> <p> @i.NightShiftWeekend </p> </td>
+                    <td> <p> @i.HouseCall </p> </td>
+                    <td> <p> @i.HouseCallNightWeekend </p> </td>
+                    <td> <p> @i.PhoneConsults </p> </td>
+                    <td> <p> @i.PhoneConsultsNightWeekend </p> </td>
+                    <td> <p> @i.BatchTesting </p> </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="my-3 ">No Record(s) Found</div>
+}
 <script>
-    // if ('@Model.IsFinalize' != "False") {
-    //     var btn = document.getElementById("finalizeButton");
-    //     btn.style.display = 'none';
-    // }
-    // else {
-    var btn = document.getElementById("finalizeButton");
+    if ('@Model.IsFinalize' != 'False') {
+        var btn = document.getElementById("finalizeButton");
+        btn.style.display = 'none';
+    }
+    else {
+        var btn = document.getElementById("finalizeButton");
         btn.style.display = 'inline';
-    // }
+    }
 </script>

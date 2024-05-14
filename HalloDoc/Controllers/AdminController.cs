@@ -26,6 +26,7 @@ using System.IdentityModel.Tokens.Jwt;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.CodeAnalysis.Differencing;
+using System.Globalization;
 
 namespace HalloDoc.Controllers
 {
@@ -79,6 +80,7 @@ namespace HalloDoc.Controllers
                 var req = _providerService.MyProfileDataGet(model.aspnetuserid);
                 return PartialView(result, req);
             }
+           
             if (model.tabid == "ProviderLocation")
             {
                 AdminDashboard getLocation = _providerService.GetPhysicianlocations();
@@ -236,8 +238,9 @@ namespace HalloDoc.Controllers
             }
             if (model.tabid == "Invoicing")
             {
-               //var data = _providerService.EditPhysicianDataGet(aspnetuserid);
-                return PartialView("Tabs/GoodToHave/Invoice");
+                AdminDashboard admin = new AdminDashboard();
+              admin.Physicians = _providerService.GetPhysicians(0);
+                return PartialView("Tabs/GoodToHave/Invoice",admin);
             }
 
             return View();
@@ -314,6 +317,10 @@ namespace HalloDoc.Controllers
             //}
             return PartialView(partialname);
 
+        }
+        public IActionResult Chat()
+        {
+            return View();
         }
         [HttpPost]
         public FileResult Export(string GridHtml)
@@ -952,6 +959,7 @@ namespace HalloDoc.Controllers
         }
         public List<Physician> GetPhysicians(int Regionid)
         {
+
             return _db.Physicians.Where(p => p.Regionid == Regionid).ToList();
         }
         public IActionResult LoadMDOnCallData(int RegionId)
@@ -1069,6 +1077,53 @@ namespace HalloDoc.Controllers
             admin.physicianid = Physicianid;
             return GetTabs(admin, default, default, default, default, default, default);
         }
+        public IActionResult SearchDataByRange(DateTime startDate, int Physicianid)
+        {
+            AdminDashboard model = new AdminDashboard();
+            model.timesheetsModels = _providerService.SearchDataByRangeTimeSheet(startDate, Physicianid);
+            model.invoicingModels = _providerService.SearchDataByRangeReimbursement(startDate, Physicianid);
+            model.SheetModel = _providerService.CheckApproved(startDate, Physicianid);
+
+            return PartialView("Tabs/GoodToHave/_timeSheet", model);
+        }
+
+        public IActionResult LoadApproveInvoicing(int Id, int PhysicianId, string startDate)
+        {
+            var date = DateTime.ParseExact(startDate, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            AdminDashboard model = new AdminDashboard();
+            model = _providerService.GetPayRateData(PhysicianId);
+            model.invoicingModels = _providerService.SearchDataById(Id);
+
+            model.SheetModel = _providerService.CheckApproved(date, PhysicianId);
+
+            return PartialView("Tabs/GoodToHave/_approveInvoicing", model);
+        }
+
+        public IActionResult SaveTimeSheet(List<InvoicingModel> invoicingModels, int Physicianid)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+            }
+            _providerService.SaveTimeSheet(invoicingModels, Physicianid, aspuserid);
+            return Json(new { success = true });
+        }
+
+        public IActionResult ApproveTimesheet(DateTime startDate, int Physicianid, int bonus, string adminDescription)
+        {
+            var token = Request.Cookies["jwt"];
+            var aspuserid = "";
+            if (_jwtService.ValidateToken(token, out JwtSecurityToken jwtToken))
+            {
+                aspuserid = jwtToken.Claims.FirstOrDefault(c => c.Type == "UserID")?.Value;
+            }
+
+            _providerService.ApproveTimesheet(startDate, Physicianid, aspuserid, bonus, adminDescription);
+            return Json(new { success = true });
+        }
+
 
     }
 }
