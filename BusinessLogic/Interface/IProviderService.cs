@@ -105,6 +105,10 @@ namespace BusinessLogic.Interface
         public List<InvoicingModel> SearchDataByRangeReimbursement(DateTime startDate, int Physicianid);
         public List<TimesheetModel> SearchDataByRangeTimeSheet(DateTime startDate, int Physicianid);
         public List<Physician> GetPhysicians(int Regionid);
+        //chat
+        public ChatModel GetGroupChat(int Patientid, int Physicianid, string aspuserid);
+        public ChatModel getChatPhysician(int Physicianid, string aspuserid);
+        public ChatModel getChatPatient(int Patientid, string aspuserid);
 
     }
     

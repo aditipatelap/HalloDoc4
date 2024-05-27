@@ -1,0 +1,205 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header z-3 bg-info">
+        @if(Model.ChatModel.chatWith == "patient")
+        {
+            <h5 id="offcanvasRightLabel" class="text-light">
+                @Model.ChatModel.Patientname
+            </h5>
+        }
+        else if(Model.ChatModel.chatWith == "physician")
+        {
+            <h5 id="offcanvasRightLabel" class="text-light">
+                @Model.ChatModel.PhysicianName
+            </h5>
+        }
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="container-fluid position-relative h-100 pb-5">
+            <div class="row h-100 overflow-auto flex-column-reverse">
+                <div class="col-12 pe-4">
+                    <ul id="messagesList"></ul>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="senderId" value="@Model.ChatModel.SenderId" />
+        <input type="hidden" id="senderType" value="@Model.ChatModel.SenderType" />
+        <input type="hidden" id="receiverId" value="@Model.ChatModel.ReceiverId"/>
+        <input type="hidden" id="receiverType" value="@Model.ChatModel.ReceiverType" />
+
+        <div class="row d-flex position-absolute bottom-0 pb-3 w-100 pe-5">
+            <div class="col-10 mt-3 pe-1">
+                <input type="text" class="form-control" id="messageInput" placeholder="Type a Message">
+            </div>
+            <div class="col-2 mt-3 text-end">
+                <button type="button" class="btn btn-info rounded" id="sendButton" onclick="sendMessage(event)">
+                    <i class="bi bi-send text-light"></i>
+                </button>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+@if (Model.ChatModel.isUser)
+{
+    <script>
+        $(document).ready(function () {
+            var myOffcanvas = document.getElementById('offcanvasRight');
+            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas);
+
+            bsOffcanvas.show();
+        });
+
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/Chathub").build();
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessages", function (messages) {
+            var senderType = document.getElementById("senderType").value;
+
+            messages.forEach(function (message) {
+                var li = document.createElement("li");
+                li.style.listStyleType = "none";
+                if (message.messageBy == senderType) {
+                    li.classList.add("d-flex");
+                    li.classList.add("justify-content-end");
+                }
+
+                var div = document.createElement("div");
+                div.textContent = `${message.message}`;
+                div.classList.add("d-flex");
+                div.classList.add("flex-column");
+                div.classList.add("bg-info");
+                div.classList.add("p-1");
+                div.classList.add("px-3");
+                div.classList.add("border");
+                div.classList.add("rounded");
+                div.classList.add("text-white");
+                div.style.wordBreak = "break-all";
+                div.style.width = "fit-content";
+                li.appendChild(div);
+
+                var li2 = document.createElement("li");
+                li2.style.listStyleType = "none";
+                li2.classList.add("mb-2");
+                if (message.messageBy == senderType) {
+                    li2.classList.add("d-flex");
+                    li2.classList.add("justify-content-end");
+                }
+
+                var div2 = document.createElement("div");
+                div2.textContent = `${message.time}`;
+                div2.style.fontSize = "12px";
+                div2.classList.add("p-1");
+                div2.classList.add("text-secondary");
+                div2.style.width = "fit-content";
+
+                li2.appendChild(div2);
+
+                document.getElementById("messagesList").appendChild(li);
+                document.getElementById("messagesList").appendChild(li2);
+            });
+        });
+
+        connection.on("ReceiveMessage", function (messageData) {
+            var senderType = document.getElementById("senderType").value;
+
+            var li = document.createElement("li");
+            li.style.listStyleType = "none";
+            if (messageData.messageBy == senderType) {
+                li.classList.add("d-flex");
+                li.classList.add("justify-content-end");
+            }
+
+            var div = document.createElement("div");
+            div.textContent = `${messageData.message}`;
+            div.classList.add("d-flex");
+            div.classList.add("flex-column");
+            div.classList.add("bg-info");
+            div.classList.add("p-1");
+            div.classList.add("px-3");
+            div.classList.add("border");
+            div.classList.add("rounded");
+            div.classList.add("text-white");
+            div.style.wordBreak = "break-all";
+            div.style.width = "fit-content";
+            li.appendChild(div);
+
+            var li2 = document.createElement("li");
+            li2.style.listStyleType = "none";
+            li2.classList.add("mb-2");
+            if (messageData.messageBy == senderType) {
+                li2.classList.add("d-flex");
+                li2.classList.add("justify-content-end");
+            }
+
+            var div2 = document.createElement("div");
+            div2.textContent = `${messageData.time}`;
+            div2.style.fontSize = "12px";
+            div2.classList.add("p-1");
+            div2.classList.add("text-secondary");
+            div2.style.width = "fit-content";
+
+            li2.appendChild(div2);
+
+            document.getElementById("messagesList").appendChild(li);
+            document.getElementById("messagesList").appendChild(li2);
+        });
+
+        function getMessages(senderId, senderType, receiverId, receiverType) {
+            connection.invoke("GetMessages", senderId, senderType, receiverId, receiverType).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            var senderId = parseInt(document.getElementById("senderId").value);
+            var senderType = document.getElementById("senderType").value;
+            var receiverId = parseInt(document.getElementById("receiverId").value);
+            var receiverType = document.getElementById("receiverType").value;
+
+            getMessages(senderId, senderType, receiverId, receiverType);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function sendMessage(event) {
+            debugger;
+            var senderId = parseInt(document.getElementById("senderId").value);
+            var senderType = document.getElementById("senderType").value;
+            var receiverId = parseInt(document.getElementById("receiverId").value);
+            var receiverType = document.getElementById("receiverType").value;
+            var message = document.getElementById("messageInput").value;
+
+            connection.invoke("SendMessage", senderId, senderType, receiverId, receiverType, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            document.getElementById("messageInput").value = "";
+
+            event.preventDefault();
+        }
+
+        var myOffcanvas = document.getElementById('offcanvasRight');
+        myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
+            connection.stop();
+        });
+    </script>
+}
+else
+{
+    <script>
+        toastr.error("User does not have account!");
+     </script>
+}
+
+@* <svg width="1em" height="1em" viewBox="0 0 16 16" class="position-absolute start-100 top-0 translate-middle mt-1 bi bi-caret-down-fill" fill="#cff4fc" xmlns="http://www.w3.org/2000/svg"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"></path></svg> *@

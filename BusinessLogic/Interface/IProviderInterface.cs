@@ -12,8 +12,6 @@ namespace BusinessLogic.Interface
     {
         public ProviderDash reqByStatus(int statusId, int reqTypeId, int currentpage, string searchstream, string region, int physicianId);
         public ProviderDash GetRequestStatusCountByPhysician(int physicianId);
-        //public ProviderDash GetProviderInfo(int physicianId);
-        //public ProviderDash GetProviderAcccountData(string aspnetuserid);
         public ProviderDash GetProviderInfo(string aspnetuserid);
         public bool SetTypeOfCare(int requestid, int TOCId);
         /*******conclude care*/

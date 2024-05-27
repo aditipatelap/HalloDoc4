@@ -89,10 +89,14 @@
                         {
                             <td>@items.Requestor</td>
                         }
-                            <td> <button class="btn border text-white " onclick="location.href='@Url.Action("Chat", "Admin")'"><i class="bi bi-telephone"></i>Chat With </button></td>
+                            <td>
+                                <button class="btn border text-white " onclick="location.href='@Url.Action("LoadChatPatient", "Admin")?Patientid=@items.UserId'">
+                                    ><i class="bi bi-telephone"></i>Chat With Patient
+                                </button>
+                            </td>
+                            <td> <button class="btn border text-white " onclick="location.href='@Url.Action("LoadChatPhysician", "Admin")?PhysicianId=@items.PhysicianId'"><i class="bi bi-telephone"></i>Chat With Physician </button></td>
                         @if (Model.statusid == 1)
                         {
-                          @*  <td>@items.RequestedDate</td>*@
                             <td>@items.month &nbsp;@items.RequestedDate.Day, @items.RequestedDate.Year</td>
                         }
 
@@ -161,19 +165,6 @@
                         {
                             <td>@items.Notes</td>
                         }
-
-
-                        @* <tr style="background: @bgcolor" class="text-white">
-            <td>@items.Name</td>
-            <td>@items.StrMonth @items.IntDate , @items.IntYear</td>
-            <td>@items.Requestor</td>
-            <td>@items.RequestedDate</td>
-
-            <td>@items.Address</td>
-            <td>@items.Notes</td>
-            <td><button type="button" class="btn  border border-white text-white">Provider</button></td>
-            *@
-
                         <td class="action">
 
                             <div class="btn-group">

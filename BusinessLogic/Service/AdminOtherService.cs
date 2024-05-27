@@ -3,24 +3,14 @@ using Microsoft.AspNetCore.Http;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
-using System.Net.Http;
-using System.Web.WebPages;
 using static DataAccess.ViewModel.Constant;
-
-using System.Drawing.Printing;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using System.Net.Mail;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Office2010.PowerPoint;
 using System.Net;
 using System.Globalization;
 
@@ -43,11 +33,9 @@ namespace BusinessLogic.Service
                 Role = x.Role.Name,
                 notification = x.Physiciannotifications.FirstOrDefault().Isnotificationstopped,
                 //OnCall = x.Isnondisclosuredoc,
-
-
                 ProviderStatus = (PhysicianStatus)x.Status,
                 aspnetuserid=x.Aspnetuserid
-                //OnCall
+              
 
             }).ToList();
             var regions = _db.Regions.ToList();
@@ -94,7 +82,6 @@ namespace BusinessLogic.Service
             }).FirstOrDefault();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.myProfile = result;
-            //adminDashboard.physicianid = result.physicianid;
             return adminDashboard;
         }
         public void PostProviderProfile(AdminDashboard adminDashboard)
@@ -178,11 +165,7 @@ namespace BusinessLogic.Service
             if (result != null)
             {
                 var existingMenuIds = _db.Rolemenus.Where(x => x.Roleid == result.Roleid).Select(x => x.Menuid).ToList();
-
-                // Find unique MenuIds not already present in the Rolemenu table
                 var uniqueMenuIds = MenuIds.Except(existingMenuIds).ToList();
-
-                // Insert unique MenuIds into the Rolemenu table
                 foreach (var menuId in uniqueMenuIds)
                 {
                     var newRoleMenu = new Rolemenu
@@ -278,11 +261,6 @@ namespace BusinessLogic.Service
                 aspnetid=aspnetuserid
             }).FirstOrDefault();
 
-            
-            
-            
-            
-            
             var RegionCheckbox = _db.Physicianregions.Include(x => x.Region).Where(x => x.Physicianid == data.physicianid).Select(x => new RegionCheckbox
             {
                 RegionId = x.Regionid,
@@ -591,10 +569,7 @@ namespace BusinessLogic.Service
             aspuser.Email = model.PhysicianProfile.email;
             aspuser.Phonenumber = model.PhysicianProfile.phone;
             aspuser.Createddate = DateTime.Now;
-
-            // Hash the password
-            //var passwordHasher = new PasswordHasher<Aspnetuser>();
-            //aspuser.Passwordhash = passwordHasher.HashPassword(aspuser, model.PhysicianProfile.Password);
+         
             aspuser.Passwordhash = model.PhysicianProfile.Password;
             _db.Aspnetusers.Add(aspuser);
             _db.SaveChanges();
@@ -602,7 +577,6 @@ namespace BusinessLogic.Service
             Aspnetuserrole aspnetrole = new Aspnetuserrole();
 
             aspnetrole.Userid = aspuser.Id;
-            //aspnetrole.Roleid = (int)model.PhysicianProfile.roleid;
             aspnetrole.Roleid =(int) Roles.Provider;
 
             _db.Aspnetuserroles.Add(aspnetrole);
@@ -632,7 +606,7 @@ namespace BusinessLogic.Service
             physician.Syncemailaddress = model.PhysicianProfile.SynchronizationEmailAddress;
             physician.Medicallicense = model.PhysicianProfile.LicenseNo;
             physician.Adminnotes = model.PhysicianProfile.notes;
-            physician.Createddate = DateTime.Now;
+            physician.Createddate = DateTime.Now; 
             _db.Physicians.Add(physician);
             _db.SaveChanges();
 
@@ -986,170 +960,7 @@ namespace BusinessLogic.Service
             }
         }
         /***scheduling***/
-        //public AdminDashboard SchedulingDataGet(int RegionId)
-        //        {
-        //    var data = _db.Regions.ToList();
-        //    //var data1 = _db.Physicians.ToList();
-        //    AdminDashboard adminDashboard = new AdminDashboard();
-        //    adminDashboard.Regions = data;
-        //    //adminDashboard.Physicians = data1;
-        //    return adminDashboard;
-        //}
-        //public AdminDashboard CreateShiftGet()
-        //{
-        //    var data = _db.Regions.ToList();
-        //    var data1 = _db.Physicians.ToList();
-        //    AdminDashboard adminDashboard = new AdminDashboard();
-        //    adminDashboard.Regions = data;
-        //    adminDashboard.Physicians = data1;
-        //    return adminDashboard;
-
-        //}
-        //public void AddShift(ScheduleModel model, List<string?>? chk, string adminId)
-        //{
-        //    //AdminDashboard data = new AdminDashboard();
-        //    //var model = data.ScheduleModel;
-
-        //    var shiftid = _db.Shifts.Where(u => u.Physicianid == model.Physicianid).Select(u => u.Shiftid).ToList();
-        //    if (shiftid.Count() > 0)
-        //    {
-        //        foreach (var obj in shiftid)
-        //        {
-        //            var shiftdetailchk = _db.Shiftdetails.Where(u => u.Shiftid == obj && u.Shiftdate == DateOnly.FromDateTime( model.Shiftdate)).ToList();
-        //            if (shiftdetailchk.Count() > 0)
-        //            {
-        //                foreach (var item in shiftdetailchk)
-        //                {
-        //                    if ((model.Starttime >= item.Starttime && model.Starttime <= item.Endtime) || (model.Endtime >= item.Starttime && model.Endtime <= item.Endtime))
-        //                    {
-        //                        //TempData["error"] = "Shift is already assigned in this time";
-        //                        return;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    Shift shift = new Shift
-        //    {
-        //        Physicianid = model.Physicianid,
-        //        Startdate = DateOnly.FromDateTime(model.Shiftdate),
-        //        Repeatupto = model.repeatcount,
-        //        Createddate = DateTime.Now,
-        //        Createdby = adminId,
-        //    };
-        //    foreach (var obj in chk)
-        //    {
-        //        shift.Weekdays += obj;
-        //    }
-        //    if (model.repeatcount > 0)
-        //    {
-        //        shift.Isrepeat = new BitArray(new[] { true });
-        //    }
-        //    else
-        //    {
-        //        shift.Isrepeat = new BitArray(new[] { false });
-        //    }
-        //    _db.Shifts.Add(shift);
-        //    _db.SaveChanges();
-
-        //    DateTime curdate = model.Shiftdate;
-        //   Shiftdetail shiftdetail = new Shiftdetail();
-        //    shiftdetail.Shiftid = shift.Shiftid;
-        //    shiftdetail.Shiftdate = DateOnly.FromDateTime( model.Shiftdate);
-        //    shiftdetail.Regionid = model.Regionid;
-        //    shiftdetail.Starttime = model.Starttime;
-        //    shiftdetail.Endtime = model.Endtime;
-        //    shiftdetail.Isdeleted = new BitArray(new[] { false });
-        //    _db.Shiftdetails.Add(shiftdetail);
-        //    _db.SaveChanges();
-        //    Shiftdetailregion shiftregionnews = new Shiftdetailregion
-        //    {
-        //        Shiftdetailid = shiftdetail.Shiftdetailid,
-        //        Regionid = model.Regionid,
-        //        Isdeleted = new BitArray(new[] { false })
-        //    };
-        //    _db.Shiftdetailregions.Add(shiftregionnews);
-        //    _db.SaveChanges();
-        //    var dayofweek = model.Shiftdate.DayOfWeek.ToString();
-        //    int valueforweek;
-        //    if (dayofweek == "Sunday")
-        //    {
-        //        valueforweek = 0;
-        //    }
-        //    else if (dayofweek == "Monday")
-        //    {
-        //        valueforweek = 1;
-        //    }
-        //    else if (dayofweek == "Tuesday")
-        //    {
-        //        valueforweek = 2;
-        //    }
-        //    else if (dayofweek == "Wednesday")
-        //    {
-        //        valueforweek = 3;
-        //    }
-        //    else if (dayofweek == "Thursday")
-        //    {
-        //        valueforweek = 4;
-        //    }
-        //    else if (dayofweek == "Friday")
-        //    {
-        //        valueforweek = 5;
-        //    }
-        //    else
-        //    {
-        //        valueforweek = 6;
-        //    }
-
-        //    if (shift.Isrepeat[0] == true)
-        //    {
-        //        for (int j = 0; j < shift.Weekdays.Count(); j++)
-        //        {
-        //            var z = shift.Weekdays;
-        //            var p = shift.Weekdays.ElementAt(j).ToString();
-        //            int ele = Int32.Parse(p);
-        //            int x;
-        //            if (valueforweek > ele)
-        //            {
-        //                x = 6 - valueforweek + 1 + ele;
-        //            }
-        //            else
-        //            {
-        //                x = ele - valueforweek;
-        //            }
-        //            if (x == 0)
-        //            {
-        //                x = 7;
-        //            }
-        //            DateTime newcurdate = model.Shiftdate.AddDays(x);
-        //            for (int i = 0; i < model.repeatcount; i++)
-        //            {
-        //                Shiftdetail shiftdetailnew = new Shiftdetail
-        //                {
-        //                    Shiftid = shift.Shiftid,
-        //                    Shiftdate = DateOnly.FromDateTime( newcurdate),
-        //                    Regionid = model.Regionid,
-        //                    Starttime = model.Starttime,
-        //                    Endtime = model.Endtime,
-
-        //                    Isdeleted = new BitArray(new[] { false })
-        //                };
-        //                _db.Shiftdetails.Add(shiftdetailnew);
-        //                _db.SaveChanges();
-        //                Shiftdetailregion shiftregionnew = new Shiftdetailregion
-        //                {
-        //                    Shiftdetailid = shiftdetailnew.Shiftdetailid,
-        //                    Regionid = model.Regionid,
-        //                    Isdeleted = new BitArray(new[] { false })
-        //                };
-        //                _db.Shiftdetailregions.Add(shiftregionnew);
-        //                _db.SaveChanges();
-        //                newcurdate = newcurdate.AddDays(7);
-        //            }
-        //        }
-
-        //    }
-        //}
+    
         /// Scheduling / <summary>
         /// Scheduling /
         /// </summary>
@@ -1283,7 +1094,7 @@ namespace BusinessLogic.Service
         public bool CreateShift(scheduleModel scheduleModel, string adminId)
         {
             var data = _db.Shiftdetails.Include(s => s.Shift).ToList();
-            //////
+            
             foreach (var i in data)
             {
                 if (i.Shift.Physicianid == scheduleModel.Physicianid && i.Shiftdate == new DateTime(scheduleModel.ShiftDate.Year, scheduleModel.ShiftDate.Month, scheduleModel.ShiftDate.Day))
@@ -1335,7 +1146,7 @@ namespace BusinessLogic.Service
             if (shift.Weekdays != null)
             {
                 var list = scheduleModel.SelectedDayIds.Split(",").Select(int.Parse).ToList();
-                //////////////
+               
                 var currentDate = scheduleModel.ShiftDate.AddDays(1);
                 int occurrences = 0;
                 int totalShift = scheduleModel.RepeatEnd * list.Count;
@@ -1535,9 +1346,9 @@ namespace BusinessLogic.Service
                             PatientNote = "abc"
                         }).ToList();
             int totalrecords = list.Count();
-            int pagesize = 2;
-            int totalPages = (int)Math.Ceiling((double)totalrecords / pagesize);
-            var paginateddashboard = list.Skip((model.CurrentPage - 1) * pagesize).Take(pagesize).ToList();
+            
+            int totalPages = (int)Math.Ceiling((double)totalrecords / model.PageSize);
+            var paginateddashboard = list.Skip((model.CurrentPage - 1) * model.PageSize).Take(model.PageSize).ToList();
 
 
             var result = new AdminDashboard()
@@ -1545,7 +1356,7 @@ namespace BusinessLogic.Service
                 RecordsList = paginateddashboard,
                 CurrentPage = model.CurrentPage,
                 TotalPages = totalPages,
-                PageSize = pagesize,
+                PageSize = model.PageSize,
                 ToatCount = totalrecords
             };
             return result;
@@ -2280,6 +2091,106 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
         }
+        public ChatModel getChatPatient(int Patientid, string aspuserid)
+        {
+            var Adminid = _db.Admins.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Adminid;
+            var patient = _db.Users.FirstOrDefault(r => r.Userid == Patientid);
+
+            if (patient == null)
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Patientid = Patientid,
+                    isUser = false
+                };
+                return model;
+            }
+            else
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Patientid = Patientid,
+                    chatWith = "patient",
+                    isUser = true,
+                    Patientname = patient.Firstname,
+                    SenderId = Adminid,
+                    SenderType = "Admin",
+                    ReceiverId = Patientid,
+                    ReceiverType = "Patient"
+                };
+                return model;
+            }
+        }
+
+        public ChatModel getChatPhysician(int Physicianid, string aspuserid)
+        {
+            var Adminid = _db.Admins.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Adminid;
+            var physician = _db.Physicians.FirstOrDefault(r => r.Physicianid == Physicianid);
+
+            if (physician == null)
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Physicianid = Physicianid,
+                    isUser = false
+                };
+                return model;
+            }
+            else
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Physicianid = Physicianid,
+                    chatWith = "physician",
+                    isUser = true,
+                    PhysicianName = physician.Firstname + " " + physician.Lastname,
+                    SenderId = Adminid,
+                    SenderType = "Admin",
+                    ReceiverId = Physicianid,
+                    ReceiverType = "Physician"
+                };
+                return model;
+            }
+        }
+
+        public ChatModel GetGroupChat(int Patientid, int Physicianid, string aspuserid)
+        {
+            var Adminid = _db.Admins.FirstOrDefault(r => r.Aspnetuserid == aspuserid).Adminid;
+            var physician = _db.Physicians.FirstOrDefault(r => r.Physicianid == Physicianid);
+            var patient = _db.Users.FirstOrDefault(r => r.Userid == Patientid);
+
+            if (patient == null)
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Physicianid = Physicianid,
+                    Patientid = Patientid,
+                    isUser = false
+                };
+                return model;
+            }
+            else
+            {
+                var model = new ChatModel
+                {
+                    Adminid = Adminid,
+                    Physicianid = Physicianid,
+                    Patientid = Patientid,
+                    isUser = true,
+                    Patientname = patient.Firstname + " " + patient.Lastname,
+                    PhysicianName = physician.Firstname + " " + physician.Lastname,
+                    SenderId = Adminid,
+                    SenderType = "Admin"
+                };
+                return model;
+            }
+        }
+
 
 
 

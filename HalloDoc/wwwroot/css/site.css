@@ -691,3 +691,9 @@ html[data-bs-theme="dark"] .Unpaid {
     color: white !important;
 }
 
+#messagesList {
+    padding-left: 0rem !important;
+}
+::-webkit-scrollbar {
+    display: none;
+}

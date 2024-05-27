@@ -38,7 +38,8 @@ namespace DataAccess.ViewModel
         public int status { get; set; }
         public int PageSize { get; set; }
 
-
+        public int? PhysicianId { get; set; }
+        public int? UserId { get; set; }
 
 
     }
@@ -654,9 +655,25 @@ public class Records
 
         public string physicianName { get; set; }
     }
+    public class ChatModel
+    {
+        public bool isUser { get; set; }
+        public int Patientid { get; set; }
+        public int Adminid { get; set; }
+        public int Physicianid { get; set; }
+        public string? chatWith { get; set; }
+        public string? Patientname { get; set; }
+        public string? PhysicianName { get; set; }
+        public int? SenderId { get; set; }
+        public string? SenderType { get; set; }
+        public int? ReceiverId { get; set; }
+        public string? ReceiverType { get; set; }
+
+    }
     public class AdminDashboard
     {
         public SheetModel SheetModel { get; set; }
+         public ChatModel? ChatModel { get; set; }
         public List<InvoicingModel>? invoicingModels { get; set; }
         public List<TimesheetModel>? timesheetsModels { get; set; }
         [Required(ErrorMessage = "the field is required")]
@@ -677,7 +694,7 @@ public class Records
         public Profile myProfile { get; set; }
         public CreateReqquestModel CreateReqquestModel { get; set; }
         public CloseCaseModel CloseCaseModel { get; set; }
-        public int PageSize { get; set; }
+        public int PageSize { get; set; } = 5;
         public IEnumerable<Adminregion> adminregions { get; set; }
         public int CurrentPage { get; set; } = 1;
         public int TotalPages { get; set; }

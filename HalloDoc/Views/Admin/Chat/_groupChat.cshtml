@@ -1,0 +1,227 @@
+﻿@using DataAccess.ViewModel;
+@model AdminDashboard
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header bg-info">
+        <div class="d-flex flex-column">
+            <h5 id="offcanvasRightLabel" class="text-light">
+                @Model.ChatModel.Patientname
+            </h5>
+            <h5 id="offcanvasRightLabel" class="text-light">
+                @Model.ChatModel.PhysicianName
+            </h5>
+        </div>        
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="container-fluid position-relative h-100 pb-5">
+            <div class="row h-100 overflow-auto flex-column-reverse">
+                <div class="col-12 pe-4">
+                    <ul id="messagesList"></ul>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="adminId" value="@Model.ChatModel.Adminid" />
+        <input type="hidden" id="senderType" value="@Model.ChatModel.SenderType" />
+        <input type="hidden" id="physicianId" value="@Model.ChatModel.Physicianid" />
+        <input type="hidden" id="patientId" value="@Model.ChatModel.Patientid" />
+
+        <div class="row d-flex position-absolute bottom-0 pb-3 w-100 pe-5">
+            <div class="col-10 mt-3 pe-1">
+                <input type="text" class="form-control" id="messageInput" placeholder="Type a Message">
+            </div>
+            <div class="col-2 mt-3 text-end">
+                <button type="button" class="btn btn-info rounded" id="sendButton" onclick="sendMessage(event)">
+                    <i class="bi bi-send text-light"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+
+@if (Model.ChatModel.isUser)
+{
+    <script>
+        $(document).ready(function () {
+            var myOffcanvas = document.getElementById('offcanvasRight');
+            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas);
+
+            bsOffcanvas.show();
+        });
+
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessages", function (messages) {
+            var senderType = document.getElementById("senderType").value;
+
+            messages.forEach(function (message) {
+                var li0 = document.createElement("li");
+                li0.style.listStyleType = "none";
+                if (message.messageBy == senderType) {
+                    li0.classList.add("d-flex");
+                    li0.classList.add("justify-content-end");
+                }
+
+                var div0 = document.createElement("div");
+                div0.textContent = `${message.senderName}`;
+                div0.style.fontSize = "15px";
+                div0.classList.add("d-inline");
+                div0.classList.add("p-1");
+                div0.classList.add("text-info");
+                li0.appendChild(div0);
+
+                var li1 = document.createElement("li");
+                li1.style.listStyleType = "none";
+                if (message.messageBy == senderType) {
+                    li1.classList.add("d-flex");
+                    li1.classList.add("justify-content-end");
+                }
+
+                var div1 = document.createElement("div");
+                div1.textContent = `${message.message}`;
+                div1.classList.add("d-flex");
+                div1.classList.add("flex-column");
+                div1.classList.add("bg-info");
+                div1.classList.add("p-1");
+                div1.classList.add("px-3");
+                div1.classList.add("border");
+                div1.classList.add("rounded");
+                div1.classList.add("text-white");
+                div1.style.wordBreak = "break-all";
+                div1.style.width = "fit-content";
+                li1.appendChild(div1);
+
+                var li2 = document.createElement("li");
+                li2.style.listStyleType = "none";
+                li2.classList.add("mb-2");
+                if (message.messageBy == senderType) {
+                    li2.classList.add("d-flex");
+                    li2.classList.add("justify-content-end");
+                }
+
+                var div2 = document.createElement("div");
+                div2.textContent = `${message.time}`;
+                div2.style.fontSize = "12px";
+                div2.classList.add("d-inline");
+                div2.classList.add("p-1");
+                div2.classList.add("text-secondary");
+                li2.appendChild(div2);
+
+                document.getElementById("messagesList").appendChild(li0);
+                document.getElementById("messagesList").appendChild(li1);
+                document.getElementById("messagesList").appendChild(li2);
+            });
+        });
+
+        connection.on("ReceiveMessage", function (messageData) {
+            var senderType = document.getElementById("senderType").value;
+
+            var li0 = document.createElement("li");
+            li0.style.listStyleType = "none";
+            if (message.messageBy == senderType) {
+                li0.classList.add("d-flex");
+                li0.classList.add("justify-content-end");
+            }
+
+            var div0 = document.createElement("div");
+            div0.textContent = `${message.senderName}`;
+            div0.style.fontSize = "15px";
+            div0.classList.add("d-inline");
+            div0.classList.add("p-1");
+            div0.classList.add("text-info");
+            li0.appendChild(div0);
+
+            var li1 = document.createElement("li");
+            li1.style.listStyleType = "none";
+            if (message.messageBy == senderType) {
+                li1.classList.add("d-flex");
+                li1.classList.add("justify-content-end");
+            }
+
+            var div1 = document.createElement("div");
+            div1.textContent = `${message.message}`;
+            div1.classList.add("d-flex");
+            div1.classList.add("flex-column");
+            div1.classList.add("bg-info");
+            div1.classList.add("p-1");
+            div1.classList.add("px-3");
+            div1.classList.add("border");
+            div1.classList.add("rounded");
+            div1.classList.add("text-white");
+            div1.style.wordBreak = "break-all";
+            div1.style.width = "fit-content";
+            li1.appendChild(div1);
+
+            var li2 = document.createElement("li");
+            li2.style.listStyleType = "none";
+            li2.classList.add("mb-2");
+            if (message.messageBy == senderType) {
+                li2.classList.add("d-flex");
+                li2.classList.add("justify-content-end");
+            }
+
+            var div2 = document.createElement("div");
+            div2.textContent = `${message.time}`;
+            div2.style.fontSize = "12px";
+            div2.classList.add("d-inline");
+            div2.classList.add("p-1");
+            div2.classList.add("text-secondary");
+            li2.appendChild(div2);
+
+            document.getElementById("messagesList").appendChild(li0);
+            document.getElementById("messagesList").appendChild(li1);
+            document.getElementById("messagesList").appendChild(li2);
+        });
+
+        function getMessages(adminId, patientId, physicianId) {
+            connection.invoke("GetMessageGroup", adminId, patientId, physicianId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            var adminId = parseInt(document.getElementById("adminId").value);
+            var physicianId = parseInt(document.getElementById("physicianId").value);
+            var patientId = parseInt(document.getElementById("patientId").value);
+
+            getMessages(adminId, patientId, physicianId);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        function sendMessage(event) {
+            var adminId = parseInt(document.getElementById("adminId").value);
+            var senderType = document.getElementById("senderType").value;
+            var physicianId = parseInt(document.getElementById("physicianId").value);
+            var patientId = parseInt(document.getElementById("patientId").value);
+            var message = document.getElementById("messageInput").value;
+
+            connection.invoke("SendMessageGroup", adminId, patientId, physicianId, senderType, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            document.getElementById("messageInput").value = "";
+
+            event.preventDefault();
+        }
+
+        var myOffcanvas = document.getElementById('offcanvasRight');
+        myOffcanvas.addEventListener('hidden.bs.offcanvas', function () {
+            connection.stop();
+        });
+    </script>
+}
+else
+{
+    <script>
+        toastr.error("User does not have account!");
+    </script>
+}

@@ -32,6 +32,10 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<Casetag> Casetags { get; set; }
 
+    public virtual DbSet<Chat> Chats { get; set; }
+
+    public virtual DbSet<Chatdatum> Chatdata { get; set; }
+
     public virtual DbSet<Concierge> Concierges { get; set; }
 
     public virtual DbSet<Emaillog> Emaillogs { get; set; }
@@ -188,6 +192,22 @@ public partial class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Casetagid).HasName("casetagid");
 
             entity.Property(e => e.Casetagid).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<Chat>(entity =>
+        {
+            entity.HasKey(e => e.Chatid).HasName("Chat_pkey");
+
+            entity.Property(e => e.Chatid).UseIdentityAlwaysColumn();
+        });
+
+        modelBuilder.Entity<Chatdatum>(entity =>
+        {
+            entity.HasKey(e => e.Chatdataid).HasName("Chatdata_pkey");
+
+            entity.Property(e => e.Chatdataid).ValueGeneratedNever();
+
+            entity.HasOne(d => d.Chat).WithMany(p => p.Chatdata).HasConstraintName("Chatid");
         });
 
         modelBuilder.Entity<Concierge>(entity =>

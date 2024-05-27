@@ -1,13 +1,8 @@
 ﻿using BusinessLogic.Interface;
-
-using ClosedXML.Excel;
 using DataAccess.Data;
 using DataAccess.Models;
 using DataAccess.ViewModel;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Net;
@@ -41,22 +36,14 @@ namespace BusinessLogic.Service
             dash.toclosecount = req.Count(x => x.Status == (short)Requeststatuses.Cancelled || x.Status == (short)Requeststatuses.Cancelledbypatient || x.Status == (short)Requeststatuses.Closed);
             dash.unpaidcount = req.Count(x => x.Status == (short)Requeststatuses.Unpaid);
             dash.concludecount = req.Count(x => x.Status == (short)Requeststatuses.Conclude);
-
-            
             return dash;
-
-
         }
-       
-
         public AdminDashboard GetName(int statusid)
         {
             AdminDashboard dash = new AdminDashboard();
             dash.Status = (status)statusid;
             return dash;
         }
-        
-
         public AdminDashboard GetDashboardData(string btnname,int statusid, string searchValue,int currentpage,string dropdown,int reqtype )
           {
 
@@ -78,8 +65,6 @@ namespace BusinessLogic.Service
                 id.Add((short)Requeststatuses.Closed);
 
             }
-            // List<AdminDash> list = new List<AdminDash>();
-
             var dashboard = (from Request in _db.Requests
                              join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
                              
@@ -109,19 +94,16 @@ namespace BusinessLogic.Service
                                  Email = Request.Requestclients.FirstOrDefault().Email,
                                  PhysicianName = _db.Physicians.Where(p => p.Physicianid == Request.Physicianid).Select(p => p.Firstname).FirstOrDefault(),
                                  regionid = Request.Requestclients.FirstOrDefault().Regionid,
-                                 //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
-                                 // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
-                                 RequestTypeid = Request.Requesttypeid
+                                 RequestTypeid = Request.Requesttypeid,
+                                 PhysicianId=Request.Physicianid,
+                                 UserId=Request.Userid,
                              });
 
                
             int totalrecords = dashboard.Count();
             int pagesize = 2;
             int totalPages = (int)Math.Ceiling((double)totalrecords/pagesize);
-           var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
-
-            
-          
+            var  paginateddashboard = dashboard.Skip((currentpage-1)*pagesize).Take(pagesize).ToList();
             AdminDashboard adminDashboard = new AdminDashboard()
             {
                 Dashboards = paginateddashboard,
@@ -153,8 +135,7 @@ namespace BusinessLogic.Service
             else if (statusid == (short)Status.New)
             {
                 id.Add((short)Requeststatuses.Unassigned);
-                //id.Add((short)Requeststatuses.assignedbyphysician);
-
+               
             }
             else
             {
@@ -165,7 +146,7 @@ namespace BusinessLogic.Service
             }
             var query = (from Request in _db.Requests
                          join Requestclient in _db.Requestclients on Request.Requestid equals Requestclient.Requestid
-                         // join Physician in _db.Physicians on Request.Physicianid equals Physician.Physicianid
+                      
                          where id.Contains(Request.Status) && Request.Isdeleted == false
                          select new AdminDash
                          {
@@ -181,8 +162,6 @@ namespace BusinessLogic.Service
                              Address = Requestclient.Address,
                              Notes = Requestclient.Notes,
                              requestid = Request.Requestid,
-                             //PhysicianName=Physician.Firstname+" "+Physician.Lastname,
-                             // Dob=Convert.ToDateTime(Requestclient.Intdate.ToString() + "-" + Requestclient.Strmonth + "-" + Requestclient.Intyear.ToString()),
                              RequestTypeid = Request.Requesttypeid
                          });
 
@@ -280,12 +259,9 @@ namespace BusinessLogic.Service
                             .Select(req => new ViewCase()
                             {
                                 RequestId = requestid,
-                                //RequestTypeId = Requesttypeid,
-                                 //ConfNo = req.Address.Substring(0, 2) + req.IntDate.ToString() + (Month)req.StrMonth + req.IntYear.ToString() + req.Lastname.Substring(0, 2) + req.FirstName.Substring(0, 2) + "002",
                                 Symptoms = req.Notes,
                                 FirstName = req.Firstname,
                                 LastName = req.Lastname,
-                                //DOB = new DateTime((int)req.Intyear, Convert.ToInt32(req.Strmonth.Trim()), (int)req.Intdate),
                                 Mobile = req.Phonenumber,
                                 Email = req.Email,
                                 Address = req.Address,
@@ -293,10 +269,6 @@ namespace BusinessLogic.Service
                             }).FirstOrDefault();
             dashboard.viewcase = items;
             dashboard.requestid = requestid;
-            //dashboard.ConfirmationNo=items.
-            //dashboard.statusid = statusid;
-            //dashboard.btnname=btnname;
-            
             return dashboard;
         }
         public void EditViewCaseData(AdminDashboard model, int requestid)
@@ -316,7 +288,6 @@ namespace BusinessLogic.Service
             var regions = _db.Regions.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             adminDashboard.Regions = regions;
-            //adminDashboard.patientname= patientname;
             adminDashboard.requestid = requestid;
 
 
@@ -339,10 +310,6 @@ namespace BusinessLogic.Service
             _db.Requeststatuslogs.Add(requeststatuslog);
             _db.SaveChanges();
 
-
-
-
-
         }
         public AdminDashboard BlockCase(int reqid, string patientname)
         {
@@ -363,7 +330,7 @@ namespace BusinessLogic.Service
             blockrequest.Reason = model.blockreq.Blockreason;
             blockrequest.Email = request.Email;
             blockrequest.Isactive = new BitArray(new bool[1] { false });
-            //reqid must be not null
+            
             blockrequest.Requestid =reqid;
             blockrequest.Createddate=DateTime.Now;
             _db.Blockrequests.Add(blockrequest);
@@ -416,33 +383,7 @@ namespace BusinessLogic.Service
             }
             return data;
         }
-        //public  SendOrders GetVendorDetails(int selectedvalue)
-        //{
-        //    SendOrders orders = new SendOrders();
-        //  orders result = _db.Healthprofessionals.Where(x => x.Profession==selectedvalue).FirstOrDefault();
-        //    //var result = new
-        //    //{
-        //    //    faxnumber = data.Faxnumber,
-        //    //    businesscontact = data.Businesscontact,
-        //    //    email = data.Email
-
-        //    //};
-        //    return orders;
-        //}
-        //public AdminDashboard GetBusinessDetails(int selectedvalue)
-        //{
-
-        //    var items = _db.Healthprofessionals.Where(x => x.Vendorid == selectedvalue).Select(m => new SendOrders
-        //    {
-        //        FaxNumber = m.Faxnumber,
-        //        BusinessContact = m.Businesscontact,
-        //        Email = m.Email
-        //    }).FirstOrDefault();
-        //    AdminDashboard model = new AdminDashboard();
-        //    model.sendorder = items;
-
-        //    return model;
-        //}
+       
         public Healthprofessional GetBusinessDetails(int selectedvalue)
         {
 
@@ -452,13 +393,10 @@ namespace BusinessLogic.Service
         }
         public AdminDashboard SendOrder(int requestid)
         {
-
-            //var regions = _db.Professions.ToList();
             AdminDashboard adminDashboard = new AdminDashboard();
             var healthprof = _db.Healthprofessionals.ToList();
             var healthproftypes = _db.Healthprofessionaltypes.ToList();
-
-            // adminDashboard.sendorder.Email=
+         
             adminDashboard.Healthprofessionals = healthprof;
             adminDashboard.healthprofessionaltypes = healthproftypes;
 
@@ -485,8 +423,6 @@ namespace BusinessLogic.Service
             orderdetail.Requestid = requestid;
             orderdetail.Createddate = DateTime.Now;
             orderdetail.Createdby = adminname;
-
-
             _db.Orderdetails.Add(orderdetail);
             _db.SaveChanges();
 
@@ -516,23 +452,7 @@ namespace BusinessLogic.Service
             _db.SaveChanges();
 
         }
-        //public AdminDashboard GetViewUpload(int requestid)
-        //{
-        //    var items = _db.Requestwisefiles.Where(x => x.Requestid == requestid).Select(m => new ViewUpload
-        //    {
-
-        //        uploaddate = m.Createddate,
-        //        uploader = m.Filename
-        //    }).ToList();
-        //    var result = new AdminDashboard()
-        //    {
-        //         ViewUpload= items,
-               
-        //    };
-
-        //    return result;
-
-       // }
+        
         public AdminDashboard SendAgreeement(int requestid)
         {
             var req = _db.Requestclients.Where(x => x.Requestid == requestid).Select(x => new AgreementReq
@@ -560,7 +480,7 @@ namespace BusinessLogic.Service
                 EncounterFormDetails.LastName = items.Lastname;
                 EncounterFormDetails.Email = items.Email;
                 EncounterFormDetails.Address = items.Address;
-                // EncounterFormDetails.BirthDate=items.
+                
                 EncounterFormDetails.Requestid = requestid;
 
             }
@@ -687,23 +607,7 @@ namespace BusinessLogic.Service
             }
 
         }
-        //public AdminDashboard GetEncounterForm(int requestid)
-        //{
-        //    var items = _db.Requestclients.Where(x => x.Requestid == requestid).Select(m => new EncounterForm
-        //    {
-
-        //        FirstName = m.Firstname,
-        //        LastName = m.Lastname,
-        //        Email = m.Email
-
-        //    }).FirstOrDefault();
-        //    var result = new AdminDashboard()
-        //    {
-        //        encounterform = items
-        //    };
-        //    return result;
-
-        //}
+       
         public AdminDashboard GetViewNotes(int requestid)
         {
             
@@ -761,79 +665,7 @@ namespace BusinessLogic.Service
                 _db.SaveChanges();
             }
 
-        //public AdminDashboard MyProfileDataGet(string aspnetuserid)
-        //{
-        //    var data = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuser.Id == "19").Select(x => new Profile
-        //    {
-        //        UserName = x.Aspnetuser.Name,
-        //        Password = x.Aspnetuser.Passwordhash,
-        //        //status = x.Status,
-        //        FirstName = x.Firstname,
-        //        LastName = x.Lastname,
-        //        Email = x.Email,
-        //        ConfirmEmail = x.Email,
-        //        PhoneNumber = x.Aspnetuser.Phonenumber,
-        //        Mobile = x.Altphone,
-        //        Address1 = x.Address1,
-        //        Address2 = x.Address2,
-        //        //City = x.ci,
-        //        //Zipcode =x.Zipcode,
-        //        regionid = x.Regionid,
-        //        roleid = x.Roleid,
-        //        adminid = x.Adminid,
-        //    }).FirstOrDefault();
-
-        //    var RegionCheckbox = _db.Adminregions.Include(x => x.Region).Where(x => x.Adminid == data.adminid).Select(x => new RegionCheckbox
-        //    {
-        //        RegionId = x.Regionid,
-        //        Regionname = x.Region.Name,
-        //    }).ToList();
-
-        //    var role = _db.Roles.ToList();
-        //    var region = _db.Regions.ToList();
-
-        //    AdminDashboard adminDashboardModel = new AdminDashboard();
-        //    adminDashboardModel.myProfile = data;
-        //    //adminDashboardModel. = aspnetuserid;
-        //    //adminDashboardModel.role = role;
-        //    adminDashboardModel.Regions = region;
-        //    adminDashboardModel.regionCheckbox= RegionCheckbox;
-        //    return adminDashboardModel;
-        //}
-
-        //public void PostMyProfile(string adminid,AdminDashboard adminDashboard)
-        //{
-        //    var result = _db.Admins.Include(x => x.Aspnetuser).Where(x => x.Aspnetuserid == adminid).FirstOrDefault();
-
-        //    result.Firstname = adminDashboard.myProfile.FirstName;
-        //    //LastName = result.Lastname,
-        //    //Email = result.Email,
-        //    //Address1 = result.Address1,
-        //    //Address2 = result.Address2,
-        //    //Zipcode = result.Zip,
-        //    //UserName = result.Aspnetuser.Name
-
-
-        //    _db.SaveChanges();
-
-        //}
-        //public void PostMyProfile(AdminDashboard model,int adminid)
-        //{
-        //    var data = _db.Admins.Include(x=>x.Adminregions).FirstOrDefault(x => x.Adminid == adminid);
-        //    if (data != null)
-        //    {
-        //        data.Firstname = model.myProfile.FirstName;
-        //        data.Lastname = model.myProfile.LastName;
-        //        // = model.PhysicianProfile.roleid;
-              
-        //        //data.Adminregions.
-        //        _db.SaveChanges();
-        //    }
-        //    if(model.regionCheckbox!=null)
-        //    {
-
-        //    }
-        //}
+        
         /**************view uploads**********/
         /*View Uploads*/
 
@@ -1073,71 +905,16 @@ namespace BusinessLogic.Service
             }
             else { return false; }
         }
-        /***close case*********/
-        //public AdminDashboard CloseCaseData(int reqid)
-        //     {
-        //         var items = _db.Requestwisefiles.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(m => new ViewUpload
-        //         {
-        //             CreatedDate = m.Createddate,
-        //             FileName = m.Filename,
-        //             Month = (Month)m.Createddate.Month,
-        //             UploaderName = m.Request.Firstname + " " + m.Request.Lastname,
-
-        //         }).ToList();
-
-        //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCaseModel
-        //         {
-        //             FirstName = x.Firstname,
-        //             LastName = x.Lastname,
-        //             DOB = Convert.ToDateTime(x.Intdate.ToString() + "-" + x.Strmonth + "-" + x.Intyear.ToString()),
-        //             PhoneNumber = x.Phonenumber,
-        //             Email = x.Email,
-        //             ConfirmationNo = x.Request.Confirmationnumber,
-        //         }).FirstOrDefault();
-
-
-        //         AdminDashboard model = new AdminDashboard();
-        //         model.ViewUpload = items;
-        //         model.CloseCaseModel = data;
-        //         model.UserName = data.FirstName + " " + data.LastName;
-        //         model.ConfirmationNo = data.ConfirmationNo;
-        //         model.requestid = reqid;
-
-        //         return model;
-        //     }
-
-        //public void CloseCaseDataPost(AdminDashboard model)
-        //{
-        //    var requestclient = _db.Requestclients.FirstOrDefault(x => x.Requestid == model.requestid);
-        //    if (requestclient != null)
-        //    {
-        //        requestclient.Phonenumber = model.CloseCaseModel.PhoneNumber;
-        //        requestclient.Email = model.CloseCaseModel.Email;
-        //        _db.SaveChanges();
-        //    }
-        //}
-        //public void CloseTheCase(int reqid)
-        //{
-        //    var request = _db.Requests.FirstOrDefault(x => x.Requestid == reqid);
-        //    if (request != null)
-        //    {
-        //        request.Status = (int)Requeststatus.Unpaid;
-        //        request.Modifieddate = DateTime.Now;
-        //        _db.SaveChanges();
-        //    }
-        //}
+       
 
         public AdminDashboard CloseCaseData(int RequestID)
         {
 
-            //         var data = _db.Requestclients.Include(x => x.Request).Where(x => x.Requestid == reqid).Select(x => new CloseCase
             var list =
                        _db.Requestclients.Include(req => req.Request)
                       .Where(req => req.Requestid == RequestID)
                       .Select(req => new CloseCaseModel
                       {
-                          //req = RequestID,
-                          //ConfirmationNo = req.Address.Substring(0, 2) + req.Intdate.ToString() + req.Strmonth + req.Intyear.ToString() + req.Lastname.Substring(0, 2) + req.Firstname.Substring(0, 2) + "002",
                           ConfirmationNo = req.Request.Confirmationnumber,
                           FirstName = req.Firstname,
                           LastName = req.Lastname,
@@ -1145,7 +922,7 @@ namespace BusinessLogic.Service
                           PhoneNumber = req.Phonenumber,
                           Email = req.Email,
                       }).FirstOrDefault();
-           var items = _db.Requestwisefiles
+            var items = _db.Requestwisefiles
                      .Where(r => r.Requestid == RequestID && r.Isdeleted == new BitArray(1))
                      .OrderByDescending(x => x.Createddate)
                      .Select(r => new ViewUpload

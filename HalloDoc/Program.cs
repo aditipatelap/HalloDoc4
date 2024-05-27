@@ -20,6 +20,10 @@ options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContex
 builder.Services.AddScoped<IRequestInterface, requestService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ILoginInterface, LoginService>();
+
+
+
+
 builder.Services.AddScoped<IAdminDash, AdminDashService>();
 builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IProviderInterface, ProviderDataService>();

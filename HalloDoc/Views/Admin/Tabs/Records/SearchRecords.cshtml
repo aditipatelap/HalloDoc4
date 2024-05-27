@@ -178,32 +178,43 @@
        
         //$('#formdata').submit();
     }
-    $(document).on('click', '.customrecordpagination', function () {
+    var currentpageglobal;
+    var pagesizeglobal;
+    function SearcRecrdsPagination()
+    {  
         var currentpage = $(this).data('page');
-        console.log(currentpage);
-
+        currentpageglobal = currentpage;
+        var pagesize = $('.customchangerecordpagination').val();
+        pagesizeglobal = pagesize;
+        console.log(pagesizeglobal);
+        if (typeof currentpage === 'undefined') {
+            currentpage = 1;
+        };
+        if (typeof pagesize === 'undefined') {
+            pagesizeglobal = 5;
+        };
         $.ajax({
             url: "/Admin/SearchRecordPartialTable",
             type: 'POST',
-            data: { currentpage: currentpage },
+            data: { currentpage: currentpageglobal, pagesize: pagesizeglobal },
             success: function (result) {
                 console.log("aaa");
                 $('#search-record-partial-table').html(result);
+
             },
             error: function (error) {
                 console.log(error);
                 alert('error fetching details')
             },
         });
-    });
+
+    }
+    $(document).on('click', '.customrecordpagination', SearcRecrdsPagination);
+    $(document).on('change', '.customchangerecordpagination', SearcRecrdsPagination);
+       
     $(document).ready(function () {
         SearchRecords();
     });
-
-   
-
-
-
 </script>
 <script type="text/javascript">
     $(function () {
